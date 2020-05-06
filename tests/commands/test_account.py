@@ -20,6 +20,14 @@ import pytest
 
 from platformio.commands.account.command import cli as cmd_account
 
+pytestmark = pytest.mark.skipif(
+    not (
+        os.environ.get("PLATFORMIO_TEST_ACCOUNT_LOGIN")
+        and os.environ.get("PLATFORMIO_TEST_ACCOUNT_PASSWORD")
+    ),
+    reason="requires PLATFORMIO_TEST_ACCOUNT_LOGIN, PLATFORMIO_TEST_ACCOUNT_PASSWORD environ variables",
+)
+
 
 @pytest.fixture(scope="session")
 def credentials():
@@ -93,7 +101,7 @@ def test_account_login(clirunner, credentials, validate_cliresult, isolated_pio_
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are already authenticated with" in str(result.exception)
+        assert "You are already authorized with" in str(result.exception)
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
@@ -113,7 +121,7 @@ def test_account_logout(clirunner, credentials, validate_cliresult, isolated_pio
         result = clirunner.invoke(cmd_account, ["logout"])
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
     finally:
@@ -192,7 +200,7 @@ def test_account_password_change(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -250,7 +258,7 @@ def test_account_token_with_invalid_password(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -302,7 +310,7 @@ def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -371,7 +379,7 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         result = clirunner.invoke(cmd_account, ["show"],)
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -427,7 +435,7 @@ def test_account_profile_update_with_invalid_password(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -460,7 +468,7 @@ def test_account_profile_update_only_firstname_and_lastname(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -508,7 +516,7 @@ def test_account_profile_update(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
@@ -549,7 +557,7 @@ def test_account_profile_update(
         result = clirunner.invoke(cmd_account, ["show"],)
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
+        assert "You are not authorized! Please login to PIO Account" in str(
             result.exception
         )
 
