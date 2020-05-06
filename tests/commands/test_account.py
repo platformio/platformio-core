@@ -258,7 +258,7 @@ def test_account_token_with_invalid_password(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -310,7 +310,7 @@ def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -379,7 +379,7 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         result = clirunner.invoke(cmd_account, ["show"],)
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -435,7 +435,7 @@ def test_account_profile_update_with_invalid_password(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -468,7 +468,7 @@ def test_account_profile_update_only_firstname_and_lastname(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -516,7 +516,7 @@ def test_account_profile_update(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
@@ -557,7 +557,7 @@ def test_account_profile_update(
         result = clirunner.invoke(cmd_account, ["show"],)
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
