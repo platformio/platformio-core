@@ -72,7 +72,7 @@ class AccountClient(object):
         app.set_state_item("account", result)
         return result
 
-    def login_with_code(self, client_id, code, redirect_uri):
+    def login_with_code(self, code, redirect_uri):
         try:
             self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
@@ -84,7 +84,7 @@ class AccountClient(object):
 
         response = self._session.post(
             self.api_base_url + "/v1/login/code",
-            data={"client_id": client_id, "code": code, "redirect_uri": redirect_uri},
+            data={"code": code, "redirect_uri": redirect_uri},
         )
         result = self.raise_error_from_response(response)
         app.set_state_item("account", result)
