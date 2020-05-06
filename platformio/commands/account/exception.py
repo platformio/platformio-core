@@ -20,11 +20,11 @@ class AccountError(PlatformioException):
     MESSAGE = "{0}"
 
 
-class AccountNotAuthenticated(AccountError):
+class AccountNotAuthorized(AccountError):
 
-    MESSAGE = "You are not authenticated! Please login to PIO Account."
+    MESSAGE = "You are not authorized! Please log in to PIO Account."
 
 
-class AccountAlreadyAuthenticated(AccountError):
+class AccountAlreadyAuthorized(AccountError):
 
-    MESSAGE = "You are already authenticated with {0} account."
+    MESSAGE = "You are already authorized with {0} account."

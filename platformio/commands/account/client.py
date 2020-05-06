@@ -43,13 +43,24 @@ class AccountClient(object):
         adapter = requests.adapters.HTTPAdapter(max_retries=retry)
         self._session.mount(api_base_url, adapter)
 
+    @staticmethod
+    def get_refresh_token():
+        try:
+            return app.get_state_item("account").get("auth").get("refresh_token")
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthorized()
+
+    @staticmethod
+    def delete_local_session():
+        app.delete_state_item("account")
+
     def login(self, username, password):
         try:
             self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthenticated(
+            raise exception.AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
@@ -67,7 +78,7 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthenticated(
+            raise exception.AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
@@ -83,7 +94,8 @@ class AccountClient(object):
         try:
             refresh_token = self.get_refresh_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
+        self.delete_local_session()
         response = requests.post(
             self.api_base_url + "/v1/logout", data={"refresh_token": refresh_token},
         )
@@ -91,14 +103,13 @@ class AccountClient(object):
             self.raise_error_from_response(response)
         except exception.AccountError:
             pass
-        app.delete_state_item("account")
         return True
 
     def change_password(self, old_password, new_password):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
         response = self._session.post(
             self.api_base_url + "/v1/password",
             headers={"Authorization": "Bearer %s" % token},
@@ -115,7 +126,7 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthenticated(
+            raise exception.AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
@@ -135,7 +146,7 @@ class AccountClient(object):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
         response = self._session.post(
             self.api_base_url + "/v1/token",
             headers={"Authorization": "Bearer %s" % token},
@@ -153,7 +164,7 @@ class AccountClient(object):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
         response = self._session.get(
             self.api_base_url + "/v1/profile",
             headers={"Authorization": "Bearer %s" % token},
@@ -164,7 +175,7 @@ class AccountClient(object):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
         profile["current_password"] = current_password
         response = self._session.put(
             self.api_base_url + "/v1/profile",
@@ -177,7 +188,7 @@ class AccountClient(object):
         if offline:
             account = app.get_state_item("account")
             if not account:
-                raise exception.AccountNotAuthenticated()
+                raise exception.AccountNotAuthorized()
             return {
                 "profile": {
                     "email": account.get("email"),
@@ -187,7 +198,7 @@ class AccountClient(object):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
+            raise exception.AccountNotAuthorized()
         response = self._session.get(
             self.api_base_url + "/v1/summary",
             headers={"Authorization": "Bearer %s" % token},
@@ -211,19 +222,10 @@ class AccountClient(object):
                     app.set_state_item("account", result)
                     return result.get("auth").get("access_token")
                 except exception.AccountError:
-                    app.delete_state_item("account")
-        raise exception.AccountNotAuthenticated()
+                    self.delete_local_session()
+        raise exception.AccountNotAuthorized()
 
-    @staticmethod
-    def get_refresh_token():
-        try:
-            auth = app.get_state_item("account").get("auth").get("refresh_token")
-            return auth
-        except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthenticated()
-
-    @staticmethod
-    def raise_error_from_response(response, expected_codes=(200, 201, 202)):
+    def raise_error_from_response(self, response, expected_codes=(200, 201, 202)):
         if response.status_code in expected_codes:
             try:
                 return response.json()
@@ -234,5 +236,5 @@ class AccountClient(object):
         except (KeyError, ValueError):
             message = response.text
         if "Authorization session has been expired" in message:
-            app.delete_state_item("account")
+            self.delete_local_session()
         raise exception.AccountError(message)
