@@ -121,7 +121,7 @@ def test_account_logout(clirunner, credentials, validate_cliresult, isolated_pio
         result = clirunner.invoke(cmd_account, ["logout"])
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
     finally:
@@ -200,7 +200,7 @@ def test_account_password_change(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "You are not authorized! Please login to PIO Account" in str(
+        assert "You are not authorized! Please log in to PIO Account" in str(
             result.exception
         )
 
