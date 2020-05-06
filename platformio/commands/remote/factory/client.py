@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from twisted.cred import credentials  # pylint: disable=import-error
-from twisted.internet import protocol, reactor  # pylint: disable=import-error
+from twisted.internet import defer, protocol, reactor  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
 from platformio.app import get_host_id
@@ -35,16 +35,26 @@ class RemoteClientFactory(pb.PBClientFactory, protocol.ReconnectingClientFactory
         self.remote_client.log.info("Successfully connected")
         self.remote_client.log.info("Authenticating")
 
+        auth_token = None
+        try:
+            auth_token = AccountClient().fetch_authentication_token()
+        except Exception as e:  # pylint:disable=broad-except
+            d = defer.Deferred()
+            d.addErrback(self.clientAuthorizationFailed)
+            d.errback(pb.Error(e))
+            return d
+
         d = self.login(
-            credentials.UsernamePassword(
-                AccountClient().fetch_authentication_token().encode(),
-                get_host_id().encode(),
-            ),
+            credentials.UsernamePassword(auth_token.encode(), get_host_id().encode(),),
             client=self.remote_client,
         )
         d.addCallback(self.remote_client.cb_client_authorization_made)
-        d.addErrback(self.remote_client.cb_client_authorization_failed)
+        d.addErrback(self.clientAuthorizationFailed)
         return d
+
+    def clientAuthorizationFailed(self, err):
+        AccountClient.delete_local_session()
+        self.remote_client.cb_client_authorization_failed(err)
 
     def clientConnectionFailed(self, connector, reason):
         self.remote_client.log.warn(
