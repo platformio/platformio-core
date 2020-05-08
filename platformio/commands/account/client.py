@@ -55,7 +55,7 @@ class AccountClient(object):
         app.delete_state_item("account")
 
     @staticmethod
-    def delete_data_from_local_session(key):
+    def delete_local_state(key):
         try:
             account = app.get_state_item("account")
             del account[key]
@@ -191,7 +191,7 @@ class AccountClient(object):
             headers={"Authorization": "Bearer %s" % token},
             data=profile,
         )
-        self.delete_data_from_local_session("summary")
+        self.delete_local_state("summary")
         return self.raise_error_from_response(response)
 
     def get_account_info(self, offline):
