@@ -25,6 +25,9 @@ from platformio.commands.account import exception
 
 
 class AccountClient(object):
+
+    SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
+
     def __init__(
         self, api_base_url=__pioaccount_api__, retries=3,
     ):
@@ -199,7 +202,10 @@ class AccountClient(object):
             account = app.get_state_item("account")
             if not account:
                 raise exception.AccountNotAuthorized()
-            if account.get("summary"):
+            if (
+                account.get("summary")
+                and account["summary"].get("expired_at", 0) > time.time()
+            ):
                 return account["summary"]
             return {
                 "profile": {
@@ -212,14 +218,19 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthorized()
         account = app.get_state_item("account")
-        if account.get("summary"):
+        if (
+            account.get("summary")
+            and account["summary"].get("expired_at", 0) > time.time()
+        ):
             return account["summary"]
         response = self._session.get(
             self.api_base_url + "/v1/summary",
             headers={"Authorization": "Bearer %s" % token},
         )
         result = self.raise_error_from_response(response)
-        account["summary"] = result
+        account["summary"] = dict(
+            **result, expired_at=int(time.time()) + self.SUMMARY_CACHE_TTL
+        )
         app.set_state_item("account", account)
         return result
 
