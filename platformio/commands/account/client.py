@@ -59,12 +59,11 @@ class AccountClient(object):
 
     @staticmethod
     def delete_local_state(key):
-        try:
-            account = app.get_state_item("account")
-            del account[key]
-            app.set_state_item("account", account)
-        except KeyError:
-            pass
+        account = app.get_state_item("account")
+        if not account or key not in account:
+            return
+        del account[key]
+        app.set_state_item("account", account)
 
     def login(self, username, password):
         try:
