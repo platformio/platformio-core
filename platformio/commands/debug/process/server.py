@@ -117,6 +117,8 @@ class DebugServer(BaseProcess):
             self._debug_port = ":2331"
         elif "qemu" in server_executable.lower():
             self._debug_port = ":1234"
+        elif "simavr" in server_executable.lower():
+            self._debug_port = ":1234"
 
         yield self._wait_until_ready()
 
