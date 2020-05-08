@@ -54,6 +54,15 @@ class AccountClient(object):
     def delete_local_session():
         app.delete_state_item("account")
 
+    @staticmethod
+    def delete_data_from_local_session(key):
+        try:
+            account = app.get_state_item("account")
+            del account[key]
+            app.set_state_item("account", account)
+        except KeyError:
+            pass
+
     def login(self, username, password):
         try:
             self.fetch_authentication_token()
@@ -182,6 +191,7 @@ class AccountClient(object):
             headers={"Authorization": "Bearer %s" % token},
             data=profile,
         )
+        self.delete_data_from_local_session("summary")
         return self.raise_error_from_response(response)
 
     def get_account_info(self, offline):
@@ -189,6 +199,8 @@ class AccountClient(object):
             account = app.get_state_item("account")
             if not account:
                 raise exception.AccountNotAuthorized()
+            if account.get("summary"):
+                return account["summary"]
             return {
                 "profile": {
                     "email": account.get("email"),
@@ -199,11 +211,17 @@ class AccountClient(object):
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthorized()
+        account = app.get_state_item("account")
+        if account.get("summary"):
+            return account["summary"]
         response = self._session.get(
             self.api_base_url + "/v1/summary",
             headers={"Authorization": "Bearer %s" % token},
         )
-        return self.raise_error_from_response(response)
+        result = self.raise_error_from_response(response)
+        account["summary"] = result
+        app.set_state_item("account", account)
+        return result
 
     def fetch_authentication_token(self):
         if "PLATFORMIO_AUTH_TOKEN" in os.environ:
