@@ -389,6 +389,16 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         )
         validate_cliresult(result)
 
+        result = clirunner.invoke(cmd_account, ["show", "--json-output", "--offline"])
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert not json_result.get("user_id")
+        assert json_result.get("profile")
+        assert json_result.get("profile").get("username")
+        assert json_result.get("profile").get("email")
+        assert not json_result.get("packages")
+        assert not json_result.get("subscriptions")
+
         result = clirunner.invoke(cmd_account, ["show"])
         validate_cliresult(result)
         assert credentials["login"] in result.output
@@ -415,12 +425,19 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         result = clirunner.invoke(cmd_account, ["show", "--json-output", "--offline"])
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert not json_result.get("user_id")
+        assert json_result.get("user_id")
         assert json_result.get("profile")
         assert json_result.get("profile").get("username")
         assert json_result.get("profile").get("email")
-        assert not json_result.get("packages")
-        assert not json_result.get("subscriptions")
+        assert credentials["login"] == json_result.get("profile").get(
+            "username"
+        ) or credentials["login"] == json_result.get("profile").get("email")
+        assert json_result.get("profile").get("firstname")
+        assert json_result.get("profile").get("lastname")
+        assert json_result.get("packages")
+        assert json_result.get("packages")[0].get("name")
+        assert json_result.get("packages")[0].get("path")
+        assert json_result.get("subscriptions") is not None
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
