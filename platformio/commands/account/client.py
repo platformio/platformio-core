@@ -198,15 +198,15 @@ class AccountClient(object):
         return self.raise_error_from_response(response)
 
     def get_account_info(self, offline):
+        account = app.get_state_item("account")
+        if not account:
+            raise exception.AccountNotAuthorized()
+        if (
+            account.get("summary")
+            and account["summary"].get("expire_at", 0) > time.time()
+        ):
+            return account["summary"]
         if offline:
-            account = app.get_state_item("account")
-            if not account:
-                raise exception.AccountNotAuthorized()
-            if (
-                account.get("summary")
-                and account["summary"].get("expired_at", 0) > time.time()
-            ):
-                return account["summary"]
             return {
                 "profile": {
                     "email": account.get("email"),
@@ -217,19 +217,13 @@ class AccountClient(object):
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthorized()
-        account = app.get_state_item("account")
-        if (
-            account.get("summary")
-            and account["summary"].get("expired_at", 0) > time.time()
-        ):
-            return account["summary"]
         response = self._session.get(
             self.api_base_url + "/v1/summary",
             headers={"Authorization": "Bearer %s" % token},
         )
         result = self.raise_error_from_response(response)
         account["summary"] = dict(
-            **result, expired_at=int(time.time()) + self.SUMMARY_CACHE_TTL
+            **result, expire_at=int(time.time()) + self.SUMMARY_CACHE_TTL
         )
         app.set_state_item("account", account)
         return result
