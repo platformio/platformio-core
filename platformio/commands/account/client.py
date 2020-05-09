@@ -222,7 +222,11 @@ class AccountClient(object):
         )
         result = self.raise_error_from_response(response)
         account["summary"] = dict(
-            **result, expire_at=int(time.time()) + self.SUMMARY_CACHE_TTL
+            profile=result.get("profile"),
+            packages=result.get("packages"),
+            subscriptions=result.get("subscriptions"),
+            user_id=result.get("user_id"),
+            expire_at=int(time.time()) + self.SUMMARY_CACHE_TTL,
         )
         app.set_state_item("account", account)
         return result
