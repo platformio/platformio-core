@@ -59,8 +59,8 @@ class MultiThreadingStdStream(object):
         result = ""
         try:
             result = self.getvalue()
-            self.truncate(0)
             self.seek(0)
+            self.truncate(0)
         except AttributeError:
             pass
         return result

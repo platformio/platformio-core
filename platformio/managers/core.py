@@ -138,7 +138,7 @@ def build_contrib_pysite_deps(target_dir):
 
     pythonexe = get_pythonexe_path()
     for dep in get_contrib_pysite_deps():
-        subprocess.call(
+        subprocess.check_call(
             [
                 pythonexe,
                 "-m",
