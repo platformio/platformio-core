@@ -32,9 +32,9 @@ def cli():
 
 @cli.group("completion", short_help="Shell completion support")
 def completion():
-    # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-error,import-outside-toplevel
     try:
-        import click_completion  # pylint: disable=import-error,unused-import
+        import click_completion  # pylint: disable=unused-import,unused-variable
     except ImportError:
         click.echo("Installing dependent packages...")
         subprocess.check_call(
