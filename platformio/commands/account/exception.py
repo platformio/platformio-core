@@ -28,3 +28,11 @@ class AccountNotAuthorized(AccountError):
 class AccountAlreadyAuthorized(AccountError):
 
     MESSAGE = "You are already authorized with {0} account."
+
+
+class AccountInternetIsOffline(AccountError):
+
+    MESSAGE = (
+        "Failed to make request to PlatformIO Account API. "
+        "Please check your Internet connection."
+    )
