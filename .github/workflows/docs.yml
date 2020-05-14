@@ -7,13 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          git submodule update --init --recursive
           python -m pip install --upgrade pip
           pip install tox
 
