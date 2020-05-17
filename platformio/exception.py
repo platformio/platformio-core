@@ -232,8 +232,8 @@ class InternetIsOffline(UserSideException):
 
     MESSAGE = (
         "You are not connected to the Internet.\n"
-        "If you build a project first time, we need Internet connection "
-        "to install all dependencies and toolchains."
+        "PlatformIO needs the Internet connection to"
+        " download dependent packages or to work with PIO Account."
     )
 
 
