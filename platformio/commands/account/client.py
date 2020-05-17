@@ -21,7 +21,7 @@ import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
 from platformio import __pioaccount_api__, app
-from platformio import exception as core_exception
+from platformio.exception import InternetIsOffline
 from platformio.commands.account import exception
 
 
@@ -244,7 +244,7 @@ class AccountClient(object):
                 url, headers=headers or {}, data=data or {}
             )
         except requests.exceptions.ConnectionError:
-            raise core_exception.InternetIsOffline()
+            raise InternetIsOffline()
         return self.raise_error_from_response(response)
 
     def raise_error_from_response(self, response, expected_codes=(200, 201, 202)):
