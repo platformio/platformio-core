@@ -28,7 +28,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import fs
+from platformio import compat, fs
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
@@ -119,6 +119,16 @@ env.Replace(
         config.get_optional_dir("globallib"),
     ],
 )
+
+if (
+    compat.WINDOWS
+    and sys.version_info >= (3, 8)
+    and env["PROJECT_DIR"].startswith("\\\\")
+):
+    click.secho(
+        "There is a known issue with Python 3.8+ and mapped network drives on "
+        "Windows.\nPlease downgrade Python to the latest 3.7. More details at:\n"
+        "https://github.com/platformio/platformio-core/issues/3417", fg="yellow")
 
 if env.subst("$BUILD_CACHE_DIR"):
     if not isdir(env.subst("$BUILD_CACHE_DIR")):
