@@ -582,7 +582,11 @@ class PkgInstallerMixin(object):
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
             fs.rmtree(pkg_dir)
-        shutil.move(tmp_dir, pkg_dir)
+        shutil.copytree(tmp_dir, pkg_dir, symlinks=True)
+        try:
+            shutil.rmtree(tmp_dir)
+        except:  # pylint: disable=bare-except
+            pass
         assert isdir(pkg_dir)
         self.cache_reset()
         return pkg_dir
