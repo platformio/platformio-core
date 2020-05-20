@@ -21,8 +21,8 @@ import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
 from platformio import __pioaccount_api__, app
-from platformio.exception import InternetIsOffline
 from platformio.commands.account import exception
+from platformio.exception import InternetIsOffline
 
 
 class AccountClient(object):

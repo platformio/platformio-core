@@ -475,7 +475,7 @@ class PkgInstallerMixin(object):
                     self.unpack(_url, tmp_dir)
                 else:
                     fs.rmtree(tmp_dir)
-                    shutil.copytree(_url, tmp_dir)
+                    shutil.copytree(_url, tmp_dir, symlinks=True)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
                 assert isfile(dlpath)
