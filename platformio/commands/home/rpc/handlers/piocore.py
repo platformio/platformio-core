@@ -52,7 +52,7 @@ class MultiThreadingStdStream(object):
         thread_id = thread_get_ident()
         self._ensure_thread_buffer(thread_id)
         return self._buffers[thread_id].write(
-            value.decode() if is_bytes(value) else value
+            value.decode() if not PY2 and is_bytes(value) else value
         )
 
     def get_value_and_reset(self):
