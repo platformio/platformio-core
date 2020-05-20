@@ -11,6 +11,7 @@ PlatformIO Core 4
 
 * Added `PlatformIO CLI Shell Completion <https://docs.platformio.org/page/core/userguide/misc/completion/index.html>`__  for Fish, Zsh, Bash, and PowerShell (`issue #3435 <https://github.com/platformio/platformio-core/issues/3435>`_)
 * Automatically build ``contrib-pysite`` package on a target machine when pre-built package is not compatible (`issue #3482 <https://github.com/platformio/platformio-core/issues/3482>`_)
+* Fixed an issue on Windows when installing a dependency from Git repository raised a permission error (`issue #2844 <https://github.com/platformio/platformio-core/issues/2844>`_, `issue #3328 <https://github.com/platformio/platformio-core/issues/3328>`_)
 
 4.3.3 (2020-04-28)
 ~~~~~~~~~~~~~~~~~~
