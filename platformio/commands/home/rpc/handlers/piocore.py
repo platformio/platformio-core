@@ -51,7 +51,7 @@ class MultiThreadingStdStream(object):
     def write(self, value):
         thread_id = thread_get_ident()
         self._ensure_thread_buffer(thread_id)
-        if PY2 and isinstance(value, unicode):
+        if PY2 and isinstance(value, unicode):  # pylint: disable=undefined-variable
             value = value.encode()
         return self._buffers[thread_id].write(
             value.decode() if is_bytes(value) else value
