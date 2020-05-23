@@ -44,7 +44,7 @@ def cli(ctx, agent):
             "https://docs.platformio.org/page/core/installation.html"
         )
     ctx.obj = agent
-    inject_contrib_pysite()
+    inject_contrib_pysite(verify_openssl=True)
 
 
 @cli.group("agent", short_help="Start a new agent or list active")

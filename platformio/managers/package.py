@@ -475,7 +475,7 @@ class PkgInstallerMixin(object):
                     self.unpack(_url, tmp_dir)
                 else:
                     fs.rmtree(tmp_dir)
-                    shutil.copytree(_url, tmp_dir)
+                    shutil.copytree(_url, tmp_dir, symlinks=True)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
                 assert isfile(dlpath)
@@ -582,7 +582,11 @@ class PkgInstallerMixin(object):
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
             fs.rmtree(pkg_dir)
-        shutil.move(tmp_dir, pkg_dir)
+        shutil.copytree(tmp_dir, pkg_dir, symlinks=True)
+        try:
+            shutil.rmtree(tmp_dir)
+        except:  # pylint: disable=bare-except
+            pass
         assert isdir(pkg_dir)
         self.cache_reset()
         return pkg_dir

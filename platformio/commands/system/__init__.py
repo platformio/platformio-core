@@ -11,20 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from platformio.exception import PlatformioException
-
-
-class AccountError(PlatformioException):
-
-    MESSAGE = "{0}"
-
-
-class AccountNotAuthorized(AccountError):
-
-    MESSAGE = "You are not authorized! Please log in to PIO Account."
-
-
-class AccountAlreadyAuthorized(AccountError):
-
-    MESSAGE = "You are already authorized with {0} account."

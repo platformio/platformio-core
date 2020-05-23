@@ -300,7 +300,7 @@ class ProjectRPC(object):
             src_dir = config.get_optional_dir("src")
             if os.path.isdir(src_dir):
                 fs.rmtree(src_dir)
-            shutil.copytree(arduino_project_dir, src_dir)
+            shutil.copytree(arduino_project_dir, src_dir, symlinks=True)
         return project_dir
 
     @staticmethod
@@ -313,7 +313,7 @@ class ProjectRPC(object):
             AppRPC.load_state()["storage"]["projectsDir"],
             time.strftime("%y%m%d-%H%M%S-") + os.path.basename(project_dir),
         )
-        shutil.copytree(project_dir, new_project_dir)
+        shutil.copytree(project_dir, new_project_dir, symlinks=True)
 
         state = AppRPC.load_state()
         args = ["init"]

@@ -6,6 +6,13 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.4 (2020-05-23)
+~~~~~~~~~~~~~~~~~~
+
+* Added `PlatformIO CLI Shell Completion <https://docs.platformio.org/page/core/userguide/system/completion/index.html>`__ for Fish, Zsh, Bash, and PowerShell (`issue #3435 <https://github.com/platformio/platformio-core/issues/3435>`_)
+* Automatically build ``contrib-pysite`` package on a target machine when pre-built package is not compatible (`issue #3482 <https://github.com/platformio/platformio-core/issues/3482>`_)
+* Fixed an issue on Windows when installing a library dependency from Git repository (`issue #2844 <https://github.com/platformio/platformio-core/issues/2844>`_, `issue #3328 <https://github.com/platformio/platformio-core/issues/3328>`_)
+
 4.3.3 (2020-04-28)
 ~~~~~~~~~~~~~~~~~~
 
@@ -17,7 +24,7 @@ PlatformIO Core 4
 * New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__ (preview)
 * Open source `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ client
 * Improved `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ with more accurate project processing
-* Echo what is typed when ``send_on_enter`` device monitor filter <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ is used (`issue #3452 <https://github.com/platformio/platformio-core/issues/3452>`_)
+* Echo what is typed when ``send_on_enter`` `device monitor filter <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ is used (`issue #3452 <https://github.com/platformio/platformio-core/issues/3452>`_)
 * Fixed PIO Unit Testing for Zephyr RTOS
 * Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Fixed an issue when saving libraries in new project results in error "No option 'lib_deps' in section" (`issue #3442 <https://github.com/platformio/platformio-core/issues/3442>`_)

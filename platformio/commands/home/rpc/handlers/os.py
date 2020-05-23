@@ -107,7 +107,7 @@ class OSRPC(object):
 
     @staticmethod
     def copy(src, dst):
-        return shutil.copytree(src, dst)
+        return shutil.copytree(src, dst, symlinks=True)
 
     @staticmethod
     def glob(pathnames, root=None):

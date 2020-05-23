@@ -167,7 +167,7 @@ def account_update(current_password, **kwargs):
         return None
     try:
         client.logout()
-    except exception.AccountNotAuthenticated:
+    except exception.AccountNotAuthorized:
         pass
     if email_changed:
         return click.secho(

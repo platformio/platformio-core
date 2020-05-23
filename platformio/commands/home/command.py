@@ -22,11 +22,7 @@ import click
 
 from platformio import exception
 from platformio.compat import WINDOWS
-from platformio.managers.core import (
-    build_contrib_pysite_deps,
-    get_core_package_dir,
-    inject_contrib_pysite,
-)
+from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
 
 
 @click.command("home", short_help="PIO Home")
@@ -55,12 +51,7 @@ def cli(port, host, no_open, shutdown_timeout):
     # import contrib modules
     inject_contrib_pysite()
 
-    try:
-        from autobahn.twisted.resource import WebSocketResource
-    except:  # pylint: disable=bare-except
-        build_contrib_pysite_deps(get_core_package_dir("contrib-pysite"))
-        from autobahn.twisted.resource import WebSocketResource
-
+    from autobahn.twisted.resource import WebSocketResource
     from twisted.internet import reactor
     from twisted.web import server
     from twisted.internet.error import CannotListenError
