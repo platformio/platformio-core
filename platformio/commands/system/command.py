@@ -18,14 +18,14 @@ import subprocess
 import click
 
 from platformio import proc
-from platformio.commands.misc.completion import (
+from platformio.commands.system.completion import (
     get_completion_install_path,
     install_completion_code,
     uninstall_completion_code,
 )
 
 
-@click.group("misc", short_help="Miscellaneous commands")
+@click.group("system", short_help="Miscellaneous system commands")
 def cli():
     pass
 

@@ -52,7 +52,7 @@ def install_completion_code(shell, path):
     if is_completion_code_installed(shell, path):
         return None
 
-    return click_completion.install(shell=shell, path=path)
+    return click_completion.install(shell=shell, path=path, append=shell != "fish")
 
 
 def uninstall_completion_code(shell, path):
