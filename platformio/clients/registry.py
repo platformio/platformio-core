@@ -25,16 +25,18 @@ class RegistryClient(RESTClient):
     def publish_package(
         self, archive_path, owner=None, released_at=None, private=False
     ):
-        client = AccountClient()
+        account = AccountClient()
         if not owner:
-            owner = client.get_account_info(offline=True).get("profile").get("username")
+            owner = (
+                account.get_account_info(offline=True).get("profile").get("username")
+            )
         with open(archive_path, "rb") as fp:
             response = self.send_request(
                 "post",
                 "/v3/package/%s/%s" % (owner, PackageType.from_archive(archive_path)),
                 params={"private": 1 if private else 0, "released_at": released_at},
                 headers={
-                    "Authorization": "Bearer %s" % client.fetch_authentication_token()
+                    "Authorization": "Bearer %s" % account.fetch_authentication_token()
                 },
                 data=fp,
             )

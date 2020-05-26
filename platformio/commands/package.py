@@ -34,6 +34,14 @@ def cli():
     pass
 
 
+@cli.command("pack", short_help="Create a tarball from a package")
+@click.argument("package", required=True, metavar="[source directory, tar.gz or zip]")
+def package_pack(package):
+    p = PackagePacker(package)
+    tarball_path = p.pack()
+    click.secho('Wrote a tarball to "%s"' % tarball_path, fg="green")
+
+
 @cli.command(
     "publish", short_help="Publish a package to the PlatformIO Universal Registry"
 )
