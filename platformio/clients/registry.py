@@ -41,3 +41,22 @@ class RegistryClient(RESTClient):
                 data=fp,
             )
             return response
+
+    def unpublish_package(self, name, owner=None, version=None, undo=False):
+        account = AccountClient()
+        if not owner:
+            owner = (
+                account.get_account_info(offline=True).get("profile").get("username")
+            )
+        path = "/v3/package/%s/%s" % (owner, name)
+        if version:
+            path = path + "/version/" + version
+        response = self.send_request(
+            "delete",
+            path,
+            params={"undo": 1 if undo else 0},
+            headers={
+                "Authorization": "Bearer %s" % account.fetch_authentication_token()
+            },
+        )
+        return response

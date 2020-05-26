@@ -19,6 +19,7 @@ import click
 
 from platformio.clients.registry import RegistryClient
 from platformio.package.pack import PackagePacker
+from platformio.package.spec import PackageSpec
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
@@ -38,17 +39,15 @@ def cli():
 @click.argument("package", required=True, metavar="[source directory, tar.gz or zip]")
 def package_pack(package):
     p = PackagePacker(package)
-    tarball_path = p.pack()
-    click.secho('Wrote a tarball to "%s"' % tarball_path, fg="green")
+    archive_path = p.pack()
+    click.secho('Wrote a tarball to "%s"' % archive_path, fg="green")
 
 
-@cli.command(
-    "publish", short_help="Publish a package to the PlatformIO Universal Registry"
-)
+@cli.command("publish", short_help="Publish a package to the registry")
 @click.argument("package", required=True, metavar="[source directory, tar.gz or zip]")
 @click.option(
     "--owner",
-    help="PIO Account username (could be organization username). "
+    help="PIO Account username (can be organization username). "
     "Default is set to a username of the authorized PIO Account",
 )
 @click.option(
@@ -64,4 +63,19 @@ def package_publish(package, owner, released_at, private):
         archive_path, owner, released_at, private
     )
     os.remove(archive_path)
+    click.secho(response.get("message"), fg="green")
+
+
+@cli.command("unpublish", short_help="Remove a pushed package from the registry")
+@click.argument("package", required=True, metavar="[<@organization>/]<pkg>[@<version>]")
+@click.option(
+    "--undo",
+    is_flag=True,
+    help="Undo a remove, putting a version back into the registry",
+)
+def package_unpublish(package, undo):
+    spec = PackageSpec(package)
+    response = RegistryClient().unpublish_package(
+        owner=spec.organization, name=spec.name, version=spec.version, undo=undo
+    )
     click.secho(response.get("message"), fg="green")
