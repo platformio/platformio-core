@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=unused-import, no-name-in-module, import-error,
-# pylint: disable=no-member, undefined-variable
+# pylint: disable=no-member, undefined-variable, unexpected-keyword-arg
 
 import glob
 import inspect
