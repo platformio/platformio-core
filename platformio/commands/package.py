@@ -76,6 +76,6 @@ def package_publish(package, owner, released_at, private):
 def package_unpublish(package, undo):
     spec = PackageSpec(package)
     response = RegistryClient().unpublish_package(
-        owner=spec.organization, name=spec.name, version=spec.version, undo=undo
+        name=spec.name, owner=spec.organization, version=spec.version, undo=undo
     )
     click.secho(response.get("message"), fg="green")
