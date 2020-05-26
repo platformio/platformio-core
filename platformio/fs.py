@@ -18,12 +18,11 @@ import re
 import shutil
 import stat
 import sys
-from glob import glob
 
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS, glob_escape
+from platformio.compat import WINDOWS, glob_escape, glob_recursive
 
 
 class cd(object):
@@ -135,7 +134,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
     for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
         items = set()
-        for item in glob(os.path.join(glob_escape(src_dir), pattern)):
+        for item in glob_recursive(os.path.join(glob_escape(src_dir), pattern)):
             if os.path.isdir(item):
                 for root, _, files in os.walk(item, followlinks=followlinks):
                     for f in files:

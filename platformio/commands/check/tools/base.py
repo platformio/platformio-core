@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import glob
 import os
 from tempfile import NamedTemporaryFile
 
 import click
 
-from platformio import fs, proc
+from platformio import compat, fs, proc
 from platformio.commands.check.defect import DefectItem
 from platformio.project.helpers import load_project_ide_data
 
@@ -183,7 +182,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
                 result["c++"].append(os.path.realpath(path))
 
         for pattern in patterns:
-            for item in glob.glob(pattern):
+            for item in compat.glob_recursive(pattern):
                 if not os.path.isdir(item):
                     _add_file(item)
                 for root, _, files in os.walk(item, followlinks=True):

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from glob import glob
 from os import getenv, makedirs, remove
 from os.path import basename, isdir, isfile, join, realpath
 from shutil import copyfile, copytree
@@ -20,11 +19,10 @@ from tempfile import mkdtemp
 
 import click
 
-from platformio import app, fs
+from platformio import app, compat, fs
 from platformio.commands.project import project_init as cmd_project_init
 from platformio.commands.project import validate_boards
 from platformio.commands.run.command import cli as cmd_run
-from platformio.compat import glob_escape
 from platformio.exception import CIBuildEnvsEmpty
 from platformio.project.config import ProjectConfig
 
@@ -36,7 +34,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
         if p.startswith("~"):
             value[i] = fs.expanduser(p)
         value[i] = realpath(value[i])
-        if not glob(value[i]):
+        if not compat.glob_recursive(value[i]):
             invalid_path = p
             break
     try:
@@ -98,7 +96,7 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
                 continue
             contents = []
             for p in patterns:
-                contents += glob(p)
+                contents += compat.glob_recursive(p)
             _copy_contents(join(build_dir, dir_name), contents)
 
         if project_conf and isfile(project_conf):
@@ -159,7 +157,7 @@ def _copy_contents(dst_dir, contents):
 def _exclude_contents(dst_dir, patterns):
     contents = []
     for p in patterns:
-        contents += glob(join(glob_escape(dst_dir), p))
+        contents += compat.glob_recursive(join(compat.glob_escape(dst_dir), p))
     for path in contents:
         path = realpath(path)
         if isdir(path):

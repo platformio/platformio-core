@@ -6,6 +6,11 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.5 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
+
 4.3.4 (2020-05-23)
 ~~~~~~~~~~~~~~~~~~
 

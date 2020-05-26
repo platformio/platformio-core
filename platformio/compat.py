@@ -15,6 +15,7 @@
 # pylint: disable=unused-import, no-name-in-module, import-error,
 # pylint: disable=no-member, undefined-variable
 
+import glob
 import inspect
 import json
 import locale
@@ -81,6 +82,9 @@ if PY2:
     _magic_check = re.compile("([*?[])")
     _magic_check_bytes = re.compile(b"([*?[])")
 
+    def glob_recursive(pathname):
+        return glob.glob(pathname)
+
     def glob_escape(pathname):
         """Escape all special characters."""
         # https://github.com/python/cpython/blob/master/Lib/glob.py#L161
@@ -121,6 +125,9 @@ else:
         if isinstance(obj, string_types):
             return obj
         return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+
+    def glob_recursive(pathname):
+        return glob.glob(pathname, recursive=True)
 
     def load_python_module(name, pathname):
         spec = importlib.util.spec_from_file_location(name, pathname)

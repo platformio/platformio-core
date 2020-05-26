@@ -14,7 +14,6 @@
 
 from __future__ import absolute_import
 
-import glob
 import io
 import os
 import shutil
@@ -25,7 +24,7 @@ from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import app, fs, util
 from platformio.commands.home import helpers
-from platformio.compat import PY2, get_filesystem_encoding
+from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
 
 
 class OSRPC(object):
@@ -115,7 +114,9 @@ class OSRPC(object):
             pathnames = [pathnames]
         result = set()
         for pathname in pathnames:
-            result |= set(glob.glob(os.path.join(root, pathname) if root else pathname))
+            result |= set(
+                glob_recursive(os.path.join(root, pathname) if root else pathname)
+            )
         return list(result)
 
     @staticmethod
