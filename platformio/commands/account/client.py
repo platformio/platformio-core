@@ -20,7 +20,7 @@ import time
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
-from platformio import __pioaccount_api__, app
+from platformio import __accounts_api__, app
 from platformio.commands.account import exception
 from platformio.exception import InternetIsOffline
 
@@ -30,7 +30,7 @@ class AccountClient(object):
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
     def __init__(
-        self, api_base_url=__pioaccount_api__, retries=3,
+        self, api_base_url=__accounts_api__, retries=3,
     ):
         if api_base_url.endswith("/"):
             api_base_url = api_base_url[:-1]
@@ -184,7 +184,7 @@ class AccountClient(object):
         )
         return response
 
-    def get_account_info(self, offline):
+    def get_account_info(self, offline=False):
         account = app.get_state_item("account")
         if not account:
             raise exception.AccountNotAuthorized()

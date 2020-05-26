@@ -40,7 +40,7 @@ class ManifestFileType(object):
 
     @classmethod
     def items(cls):
-        return get_object_members(ManifestFileType)
+        return get_object_members(cls)
 
     @classmethod
     def from_uri(cls, uri):
