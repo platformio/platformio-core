@@ -18,7 +18,7 @@ import time
 
 import pytest
 
-from platformio.commands.account.command import cli as cmd_account
+from platformio.commands.account import cli as cmd_account
 
 pytestmark = pytest.mark.skipif(
     not (

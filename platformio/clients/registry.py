@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from platformio import __registry_api__
+from platformio.clients.account import AccountClient
 from platformio.clients.rest import RESTClient
-from platformio.commands.account.client import AccountClient
 from platformio.package.pack import PackageType
 
 

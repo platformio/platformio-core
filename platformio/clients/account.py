@@ -12,47 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=unused-argument
-
 import os
 import time
 
-import requests.adapters
-from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
-
 from platformio import __accounts_api__, app
-from platformio.commands.account import exception
-from platformio.exception import InternetIsOffline
+from platformio.clients.rest import RESTClient
+from platformio.exception import PlatformioException
 
 
-class AccountClient(object):
+class AccountError(PlatformioException):
+
+    MESSAGE = "{0}"
+
+
+class AccountNotAuthorized(AccountError):
+
+    MESSAGE = "You are not authorized! Please log in to PIO Account."
+
+
+class AccountAlreadyAuthorized(AccountError):
+
+    MESSAGE = "You are already authorized with {0} account."
+
+
+class AccountClient(RESTClient):
 
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
-    def __init__(
-        self, api_base_url=__accounts_api__, retries=3,
-    ):
-        if api_base_url.endswith("/"):
-            api_base_url = api_base_url[:-1]
-        self.api_base_url = api_base_url
-        self._session = requests.Session()
-        self._session.headers.update({"User-Agent": app.get_user_agent()})
-        retry = Retry(
-            total=retries,
-            read=retries,
-            connect=retries,
-            backoff_factor=2,
-            method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
-        )
-        adapter = requests.adapters.HTTPAdapter(max_retries=retry)
-        self._session.mount(api_base_url, adapter)
+    def __init__(self):
+        super(AccountClient, self).__init__(base_url=__accounts_api__)
 
     @staticmethod
     def get_refresh_token():
         try:
             return app.get_state_item("account").get("auth").get("refresh_token")
         except:  # pylint:disable=bare-except
-            raise exception.AccountNotAuthorized()
+            raise AccountNotAuthorized()
 
     @staticmethod
     def delete_local_session():
@@ -72,14 +67,12 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthorized(
+            raise AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
         result = self.send_request(
-            "post",
-            self.api_base_url + "/v1/login",
-            data={"username": username, "password": password},
+            "post", "/v1/login", data={"username": username, "password": password},
         )
         app.set_state_item("account", result)
         return result
@@ -90,13 +83,13 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthorized(
+            raise AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
         result = self.send_request(
             "post",
-            self.api_base_url + "/v1/login/code",
+            "/v1/login/code",
             data={"client_id": client_id, "code": code, "redirect_uri": redirect_uri},
         )
         app.set_state_item("account", result)
@@ -107,11 +100,9 @@ class AccountClient(object):
         self.delete_local_session()
         try:
             self.send_request(
-                "post",
-                self.api_base_url + "/v1/logout",
-                data={"refresh_token": refresh_token},
+                "post", "/v1/logout", data={"refresh_token": refresh_token},
             )
-        except exception.AccountError:
+        except AccountError:
             pass
         return True
 
@@ -119,7 +110,7 @@ class AccountClient(object):
         token = self.fetch_authentication_token()
         self.send_request(
             "post",
-            self.api_base_url + "/v1/password",
+            "/v1/password",
             headers={"Authorization": "Bearer %s" % token},
             data={"old_password": old_password, "new_password": new_password},
         )
@@ -133,13 +124,13 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             pass
         else:
-            raise exception.AccountAlreadyAuthorized(
+            raise AccountAlreadyAuthorized(
                 app.get_state_item("account", {}).get("email", "")
             )
 
         return self.send_request(
             "post",
-            self.api_base_url + "/v1/registration",
+            "/v1/registration",
             data={
                 "username": username,
                 "email": email,
@@ -153,23 +144,19 @@ class AccountClient(object):
         token = self.fetch_authentication_token()
         result = self.send_request(
             "post",
-            self.api_base_url + "/v1/token",
+            "/v1/token",
             headers={"Authorization": "Bearer %s" % token},
             data={"password": password, "regenerate": 1 if regenerate else 0},
         )
         return result.get("auth_token")
 
     def forgot_password(self, username):
-        return self.send_request(
-            "post", self.api_base_url + "/v1/forgot", data={"username": username},
-        )
+        return self.send_request("post", "/v1/forgot", data={"username": username},)
 
     def get_profile(self):
         token = self.fetch_authentication_token()
         return self.send_request(
-            "get",
-            self.api_base_url + "/v1/profile",
-            headers={"Authorization": "Bearer %s" % token},
+            "get", "/v1/profile", headers={"Authorization": "Bearer %s" % token},
         )
 
     def update_profile(self, profile, current_password):
@@ -178,7 +165,7 @@ class AccountClient(object):
         self.delete_local_state("summary")
         response = self.send_request(
             "put",
-            self.api_base_url + "/v1/profile",
+            "/v1/profile",
             headers={"Authorization": "Bearer %s" % token},
             data=profile,
         )
@@ -187,7 +174,7 @@ class AccountClient(object):
     def get_account_info(self, offline=False):
         account = app.get_state_item("account")
         if not account:
-            raise exception.AccountNotAuthorized()
+            raise AccountNotAuthorized()
         if (
             account.get("summary")
             and account["summary"].get("expire_at", 0) > time.time()
@@ -202,9 +189,7 @@ class AccountClient(object):
             }
         token = self.fetch_authentication_token()
         result = self.send_request(
-            "get",
-            self.api_base_url + "/v1/summary",
-            headers={"Authorization": "Bearer %s" % token},
+            "get", "/v1/summary", headers={"Authorization": "Bearer %s" % token},
         )
         account["summary"] = dict(
             profile=result.get("profile"),
@@ -227,36 +212,13 @@ class AccountClient(object):
                 try:
                     result = self.send_request(
                         "post",
-                        self.api_base_url + "/v1/login",
+                        "/v1/login",
                         headers={
                             "Authorization": "Bearer %s" % auth.get("refresh_token")
                         },
                     )
                     app.set_state_item("account", result)
                     return result.get("auth").get("access_token")
-                except exception.AccountError:
+                except AccountError:
                     self.delete_local_session()
-        raise exception.AccountNotAuthorized()
-
-    def send_request(self, method, url, headers=None, data=None):
-        try:
-            response = getattr(self._session, method)(
-                url, headers=headers or {}, data=data or {}
-            )
-        except requests.exceptions.ConnectionError:
-            raise InternetIsOffline()
-        return self.raise_error_from_response(response)
-
-    def raise_error_from_response(self, response, expected_codes=(200, 201, 202)):
-        if response.status_code in expected_codes:
-            try:
-                return response.json()
-            except ValueError:
-                pass
-        try:
-            message = response.json()["message"]
-        except (KeyError, ValueError):
-            message = response.text
-        if "Authorization session has been expired" in message:
-            self.delete_local_session()
-        raise exception.AccountError(message)
+        raise AccountNotAuthorized()

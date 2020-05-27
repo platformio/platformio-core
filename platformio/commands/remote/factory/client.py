@@ -17,7 +17,7 @@ from twisted.internet import defer, protocol, reactor  # pylint: disable=import-
 from twisted.spread import pb  # pylint: disable=import-error
 
 from platformio.app import get_host_id
-from platformio.commands.account.client import AccountClient
+from platformio.clients.account import AccountClient
 
 
 class RemoteClientFactory(pb.PBClientFactory, protocol.ReconnectingClientFactory):
