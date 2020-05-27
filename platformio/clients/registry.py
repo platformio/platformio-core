@@ -36,7 +36,8 @@ class RegistryClient(RESTClient):
                 "/v3/package/%s/%s" % (owner, PackageType.from_archive(archive_path)),
                 params={"private": 1 if private else 0, "released_at": released_at},
                 headers={
-                    "Authorization": "Bearer %s" % account.fetch_authentication_token()
+                    "Authorization": "Bearer %s" % account.fetch_authentication_token(),
+                    "Content-Type": "application/octet-stream",
                 },
                 data=fp,
             )
