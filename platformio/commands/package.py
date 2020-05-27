@@ -23,6 +23,8 @@ from platformio.package.spec import PackageSpec, PackageType
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
+    if not value:
+        return value
     try:
         datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
     except ValueError as e:
