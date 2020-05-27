@@ -14,7 +14,7 @@
 
 import jsonrpc  # pylint: disable=import-error
 
-from platformio.commands.account.client import AccountClient
+from platformio.clients.account import AccountClient
 
 
 class AccountRPC(object):

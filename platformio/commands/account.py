@@ -21,8 +21,7 @@ import re
 import click
 from tabulate import tabulate
 
-from platformio.commands.account import exception
-from platformio.commands.account.client import AccountClient
+from platformio.clients.account import AccountClient, AccountNotAuthorized
 
 
 @click.group("account", short_help="Manage PIO Account")
@@ -167,7 +166,7 @@ def account_update(current_password, **kwargs):
         return None
     try:
         client.logout()
-    except exception.AccountNotAuthorized:
+    except AccountNotAuthorized:
         pass
     if email_changed:
         return click.secho(
