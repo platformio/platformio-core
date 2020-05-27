@@ -19,7 +19,7 @@ import click
 
 from platformio.clients.registry import RegistryClient
 from platformio.package.pack import PackagePacker
-from platformio.package.spec import PackageSpec
+from platformio.package.spec import PackageSpec, PackageType
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
@@ -67,15 +67,27 @@ def package_publish(package, owner, released_at, private):
 
 
 @cli.command("unpublish", short_help="Remove a pushed package from the registry")
-@click.argument("package", required=True, metavar="[<@organization>/]<pkg>[@<version>]")
+@click.argument(
+    "package", required=True, metavar="[<@organization>/]<pkgname>[@<version>]"
+)
+@click.option(
+    "--type",
+    type=click.Choice(list(PackageType.items().values())),
+    default="library",
+    help="Package type, default is set to `library`",
+)
 @click.option(
     "--undo",
     is_flag=True,
     help="Undo a remove, putting a version back into the registry",
 )
-def package_unpublish(package, undo):
+def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
     spec = PackageSpec(package)
     response = RegistryClient().unpublish_package(
-        name=spec.name, owner=spec.organization, version=spec.version, undo=undo
+        type=type,
+        name=spec.name,
+        owner=spec.organization,
+        version=spec.version,
+        undo=undo,
     )
     click.secho(response.get("message"), fg="green")

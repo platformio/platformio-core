@@ -19,47 +19,10 @@ import tarfile
 import tempfile
 
 from platformio import fs
-from platformio.compat import get_object_members
 from platformio.package.exception import PackageException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.unpacker import FileUnpacker
-
-
-class PackageType(object):
-    LIBRARY = "library"
-    PLATFORM = "platform"
-    TOOL = "tool"
-
-    @classmethod
-    def items(cls):
-        return get_object_members(cls)
-
-    @classmethod
-    def get_manifest_map(cls):
-        return {
-            cls.PLATFORM: (ManifestFileType.PLATFORM_JSON,),
-            cls.LIBRARY: (
-                ManifestFileType.LIBRARY_JSON,
-                ManifestFileType.LIBRARY_PROPERTIES,
-                ManifestFileType.MODULE_JSON,
-            ),
-            cls.TOOL: (ManifestFileType.PACKAGE_JSON,),
-        }
-
-    @classmethod
-    def from_archive(cls, path):
-        assert path.endswith("tar.gz")
-        manifest_map = cls.get_manifest_map()
-        with tarfile.open(path, mode="r|gz") as tf:
-            for t in sorted(cls.items().values()):
-                try:
-                    for manifest in manifest_map[t]:
-                        if tf.getmember(manifest):
-                            return t
-                except KeyError:
-                    pass
-        return None
 
 
 class PackagePacker(object):

@@ -15,7 +15,7 @@
 from platformio import __registry_api__
 from platformio.clients.account import AccountClient
 from platformio.clients.rest import RESTClient
-from platformio.package.pack import PackageType
+from platformio.package.spec import PackageType
 
 
 class RegistryClient(RESTClient):
@@ -42,13 +42,15 @@ class RegistryClient(RESTClient):
             )
             return response
 
-    def unpublish_package(self, name, owner=None, version=None, undo=False):
+    def unpublish_package(  # pylint: disable=redefined-builtin,too-many-arguments
+        self, type, name, owner=None, version=None, undo=False
+    ):
         account = AccountClient()
         if not owner:
             owner = (
                 account.get_account_info(offline=True).get("profile").get("username")
             )
-        path = "/v3/package/%s/%s" % (owner, name)
+        path = "/v3/package/%s/%s/%s" % (owner, type, name)
         if version:
             path = path + "/version/" + version
         response = self.send_request(
