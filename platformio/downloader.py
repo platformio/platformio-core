@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import hashlib
 import io
 import math
 import sys
@@ -23,7 +22,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import app, util
+from platformio import app, fs, util
 from platformio.exception import (
     FDSHASumMismatch,
     FDSizeMismatch,
@@ -103,17 +102,9 @@ class FileDownloader(object):
             raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
         if not sha1:
             return None
-
-        checksum = hashlib.sha1()
-        with io.open(self._destination, "rb", buffering=0) as fp:
-            while True:
-                chunk = fp.read(io.DEFAULT_BUFFER_SIZE)
-                if not chunk:
-                    break
-                checksum.update(chunk)
-
-        if sha1.lower() != checksum.hexdigest().lower():
-            raise FDSHASumMismatch(checksum.hexdigest(), self._fname, sha1)
+        checksum = fs.calculate_file_hashsum("sha1", self._destination)
+        if sha1.lower() != checksum.lower():
+            raise FDSHASumMismatch(checksum, self._fname, sha1)
         return True
 
     def _preserve_filemtime(self, lmdate):

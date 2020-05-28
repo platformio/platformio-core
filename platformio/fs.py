@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
+import io
 import json
 import os
 import re
@@ -70,6 +72,17 @@ def format_filesize(filesize):
             return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
     return "%d%sB" % ((base * filesize / unit), suffix)
+
+
+def calculate_file_hashsum(algorithm, path):
+    h = hashlib.new(algorithm)
+    with io.open(path, "rb", buffering=0) as fp:
+        while True:
+            chunk = fp.read(io.DEFAULT_BUFFER_SIZE)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def ensure_udev_rules():
