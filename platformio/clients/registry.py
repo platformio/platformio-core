@@ -17,13 +17,15 @@ from platformio.clients.account import AccountClient
 from platformio.clients.rest import RESTClient
 from platformio.package.spec import PackageType
 
+# pylint: disable=too-many-arguments
+
 
 class RegistryClient(RESTClient):
     def __init__(self):
         super(RegistryClient, self).__init__(base_url=__registry_api__)
 
     def publish_package(
-        self, archive_path, owner=None, released_at=None, private=False
+        self, archive_path, owner=None, released_at=None, private=False, notify=True
     ):
         account = AccountClient()
         if not owner:
@@ -34,7 +36,11 @@ class RegistryClient(RESTClient):
             response = self.send_request(
                 "post",
                 "/v3/package/%s/%s" % (owner, PackageType.from_archive(archive_path)),
-                params={"private": 1 if private else 0, "released_at": released_at},
+                params={
+                    "private": 1 if private else 0,
+                    "notify": 1 if notify else 0,
+                    "released_at": released_at,
+                },
                 headers={
                     "Authorization": "Bearer %s" % account.fetch_authentication_token(),
                     "Content-Type": "application/octet-stream",
@@ -46,7 +52,7 @@ class RegistryClient(RESTClient):
             )
             return response
 
-    def unpublish_package(  # pylint: disable=redefined-builtin,too-many-arguments
+    def unpublish_package(  # pylint: disable=redefined-builtin
         self, type, name, owner=None, version=None, undo=False
     ):
         account = AccountClient()

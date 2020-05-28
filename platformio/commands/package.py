@@ -58,11 +58,16 @@ def package_pack(package):
     help="Custom release date and time in the next format (UTC): 2014-06-13 17:08:52",
 )
 @click.option("--private", is_flag=True, help="Restricted access (not a public)")
-def package_publish(package, owner, released_at, private):
+@click.option(
+    "--notify/--no-notify",
+    default=True,
+    help="Notify by email when package is processed",
+)
+def package_publish(package, owner, released_at, private, notify):
     p = PackagePacker(package)
     archive_path = p.pack()
     response = RegistryClient().publish_package(
-        archive_path, owner, released_at, private
+        archive_path, owner, released_at, private, notify
     )
     os.remove(archive_path)
     click.secho(response.get("message"), fg="green")
