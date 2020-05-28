@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio import __registry_api__
+from platformio import __registry_api__, fs
 from platformio.clients.account import AccountClient
 from platformio.clients.rest import RESTClient
 from platformio.package.spec import PackageType
@@ -38,6 +38,7 @@ class RegistryClient(RESTClient):
                 headers={
                     "Authorization": "Bearer %s" % account.fetch_authentication_token(),
                     "Content-Type": "application/octet-stream",
+                    "X-PIO-SHA256": fs.calculate_file_hashsum("sha256", archive_path),
                 },
                 data=fp,
             )
