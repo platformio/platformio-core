@@ -38,7 +38,9 @@ class RegistryClient(RESTClient):
                 headers={
                     "Authorization": "Bearer %s" % account.fetch_authentication_token(),
                     "Content-Type": "application/octet-stream",
-                    "X-PIO-SHA256": fs.calculate_file_hashsum("sha256", archive_path),
+                    "X-PIO-Content-SHA256": fs.calculate_file_hashsum(
+                        "sha256", archive_path
+                    ),
                 },
                 data=fp,
             )
