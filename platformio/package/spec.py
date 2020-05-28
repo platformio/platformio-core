@@ -45,12 +45,12 @@ class PackageType(object):
         manifest_map = cls.get_manifest_map()
         with tarfile.open(path, mode="r|gz") as tf:
             for t in sorted(cls.items().values()):
-                try:
-                    for manifest in manifest_map[t]:
+                for manifest in manifest_map[t]:
+                    try:
                         if tf.getmember(manifest):
                             return t
-                except KeyError:
-                    pass
+                    except KeyError:
+                        pass
         return None
 
 
