@@ -43,6 +43,7 @@ def long_sources_hook(env, sources):
 
 def long_incflags_hook(env, incflags):
     _incflags = env.subst(incflags).replace("\\", "/")
+    _incflags = " -I".join(sorted(_incflags.split(" -I")))
     if len(_incflags) < MAX_LINE_LENGTH:
         return incflags
 

@@ -1006,6 +1006,7 @@ def ConfigureProjectLibBuilder(env):
 
     def _print_deps_tree(root, level=0):
         margin = "|   " * (level)
+        root.depbuilders.sort(key=lambda lb: lb.path)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
             vcs_info = _get_vcs_info(lb)
