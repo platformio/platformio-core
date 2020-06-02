@@ -34,8 +34,8 @@ def validate_username(value):
     if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
         raise click.BadParameter(
             "Invalid username format. "
-            "Username must contain at least 4 characters including single hyphens,"
-            " and cannot begin or end with a hyphen"
+            "Username may only contain alphanumeric characters "
+            "or single hyphens, and cannot begin or end with a hyphen."
         )
     return value
 

@@ -201,6 +201,66 @@ class AccountClient(RESTClient):
         app.set_state_item("account", account)
         return result
 
+    def create_org(self, orgname, email, display_name):
+        token = self.fetch_authentication_token()
+        response = self.send_request(
+            "post",
+            "/v1/orgs",
+            headers={"Authorization": "Bearer %s" % token},
+            data={"orgname": orgname, "email": email, "displayname": display_name},
+        )
+        return response
+
+    def list_orgs(self):
+        token = self.fetch_authentication_token()
+        response = self.send_request(
+            "get", "/v1/orgs", headers={"Authorization": "Bearer %s" % token},
+        )
+        return response
+
+    def update_org(self, orgname, data):
+        token = self.fetch_authentication_token()
+        for key in data.copy():
+            if data.get(key):
+                continue
+            del data[key]
+        response = self.send_request(
+            "put",
+            "/v1/orgs/%s" % orgname,
+            headers={"Authorization": "Bearer %s" % token},
+            data=data,
+        )
+        return response
+
+    def add_org_owner(self, orgname, username):
+        token = self.fetch_authentication_token()
+        response = self.send_request(
+            "post",
+            "/v1/orgs/%s/owners" % orgname,
+            headers={"Authorization": "Bearer %s" % token},
+            data={"username": username},
+        )
+        return response
+
+    def list_org_owners(self, orgname):
+        token = self.fetch_authentication_token()
+        response = self.send_request(
+            "get",
+            "/v1/orgs/%s/owners" % orgname,
+            headers={"Authorization": "Bearer %s" % token},
+        )
+        return response
+
+    def remove_org_owner(self, orgname, username):
+        token = self.fetch_authentication_token()
+        response = self.send_request(
+            "delete",
+            "/v1/orgs/%s/owners" % orgname,
+            headers={"Authorization": "Bearer %s" % token},
+            data={"username": username},
+        )
+        return response
+
     def fetch_authentication_token(self):
         if "PLATFORMIO_AUTH_TOKEN" in os.environ:
             return os.environ["PLATFORMIO_AUTH_TOKEN"]
