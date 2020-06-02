@@ -137,3 +137,55 @@ def test_org_update(clirunner, credentials, validate_cliresult, isolated_pio_hom
         assert json.loads(result.output.strip()) == json_result
     finally:
         clirunner.invoke(cmd_account, ["logout"])
+
+
+def test_org_owner(clirunner, credentials, validate_cliresult, isolated_pio_home):
+    try:
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+        assert "Successfully logged in!" in result.output
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert len(json_result) == 3
+        org = json_result[0]
+        assert "orgname" in org
+        assert "displayname" in org
+        assert "email" in org
+        assert "owners" in org
+
+        result = clirunner.invoke(cmd_org, ["add", org["orgname"], "ivankravets"],)
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert len(json_result) == 3
+        check = False
+        for item in json_result:
+            if item["orgname"] != org["orgname"]:
+                continue
+            for owner in item.get("owners"):
+                check = owner["username"] == "ivankravets" if not check else True
+        assert check
+
+        result = clirunner.invoke(cmd_org, ["remove", org["orgname"], "ivankravets"],)
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert len(json_result) == 3
+        check = False
+        for item in json_result:
+            if item["orgname"] != org["orgname"]:
+                continue
+            for owner in item.get("owners"):
+                check = owner["username"] == "ivankravets" if not check else True
+        assert not check
+
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
