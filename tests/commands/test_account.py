@@ -145,8 +145,12 @@ def test_account_password_change_with_invalid_old_password(
         )
         assert result.exit_code > 0
         assert result.exception
-        assert "Invalid user password" in str(result.exception)
-
+        assert (
+            "Invalid request data for new_password -> "
+            "'Password must contain at least 8 "
+            "characters including a number and a lowercase letter'"
+            in str(result.exception)
+        )
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
@@ -174,9 +178,9 @@ def test_account_password_change_with_invalid_new_password_format(
         assert result.exit_code > 0
         assert result.exception
         assert (
-            "Invalid password format. Password must contain at"
-            " least 8 characters including a number and a lowercase letter"
-            in str(result.exception)
+            "Invalid request data for new_password -> "
+            "'Password must contain at least 8 characters"
+            " including a number and a lowercase letter'" in str(result.exception)
         )
 
     finally:

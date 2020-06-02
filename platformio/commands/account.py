@@ -31,7 +31,7 @@ def cli():
 
 def validate_username(value):
     value = str(value).strip()
-    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
+    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$", value, flags=re.I):
         raise click.BadParameter(
             "Invalid username format. "
             "Username may only contain alphanumeric characters "

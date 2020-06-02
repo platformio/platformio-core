@@ -55,7 +55,7 @@ def test_org_add(clirunner, credentials, validate_cliresult, isolated_pio_home):
                     cmd_org,
                     [
                         "create",
-                        "org-%s-%s" % (i, credentials["login"]),
+                        "%s-%s" % (i, credentials["login"]),
                         "--email",
                         "test@test.com",
                         "--display-name",
