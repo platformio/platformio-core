@@ -119,7 +119,8 @@ def test_org_update(clirunner, credentials, validate_cliresult, isolated_pio_hom
         assert "owners" in org
 
         old_orgname = org["orgname"]
-        new_orgname = org["orgname"] + "-new"
+        if len(old_orgname) > 10:
+            new_orgname = "neworg" + org["orgname"][6:]
 
         result = clirunner.invoke(
             cmd_org, ["update", old_orgname, "--new-orgname", new_orgname],
