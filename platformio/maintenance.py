@@ -139,7 +139,10 @@ def after_upgrade(ctx):
         return
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
-        app.clean_cache()
+        try:
+            app.clean_cache()
+        except PermissionError:
+            pass
 
         # Update PlatformIO's Core packages
         update_core_packages(silent=True)
