@@ -43,7 +43,7 @@ def validate_orgname(value):
 def org_create(orgname, email, display_name):
     client = AccountClient()
     client.create_org(orgname, email, display_name)
-    return click.secho("An organization has been successfully created. ", fg="green",)
+    return click.secho("An organization has been successfully created.", fg="green",)
 
 
 @cli.command("list", short_help="List organizations")
