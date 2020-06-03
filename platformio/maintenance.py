@@ -141,7 +141,7 @@ def after_upgrade(ctx):
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         try:
             app.clean_cache()
-        except PermissionError:
+        except:  # pylint: disable=bare-except
             pass
 
         # Update PlatformIO's Core packages
