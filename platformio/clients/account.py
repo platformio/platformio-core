@@ -206,11 +206,9 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return response
 
     def update_org(self, orgname, data):
-        for key in data.copy():
-            if data.get(key):
-                continue
-            del data[key]
-        response = self.send_auth_request("put", "/v1/orgs/%s" % orgname, data=data,)
+        response = self.send_auth_request(
+            "put", "/v1/orgs/%s" % orgname, data={k: v for k, v in data.items() if v}
+        )
         return response
 
     def add_org_owner(self, orgname, username):

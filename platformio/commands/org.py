@@ -15,45 +15,30 @@
 # pylint: disable=unused-argument
 
 import json
-import re
 
 import click
 from tabulate import tabulate
 
 from platformio.clients.account import AccountClient
+from platformio.commands.account import validate_email, validate_username
 
 
-@click.group("org", short_help="Manage PIO Account")
+@click.group("org", short_help="Manage Organizations")
 def cli():
     pass
 
 
 def validate_orgname(value):
-    value = str(value).strip()
-    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,37}$", value, flags=re.I):
-        raise click.BadParameter(
-            "Invalid organization name format. "
-            "Organization name may only contain alphanumeric characters "
-            "or single hyphens, cannot begin or end with a hyphen, "
-            "and must not be longer than 38 characters."
-        )
-    return value
-
-
-def validate_email(value):
-    if not value:
-        return value
-    value = str(value).strip()
-    if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
-        raise click.BadParameter("Invalid email address")
-    return value
+    return validate_username(value, "Organization name")
 
 
 @cli.command("create", short_help="Create a new organization")
 @click.argument(
     "orgname", callback=lambda _, __, value: validate_orgname(value),
 )
-@click.option("--email", callback=lambda _, __, value: validate_email(value))
+@click.option(
+    "--email", callback=lambda _, __, value: validate_email(value) if value else value
+)
 @click.option("--display-name",)
 def org_create(orgname, email, display_name):
     client = AccountClient()
@@ -61,7 +46,7 @@ def org_create(orgname, email, display_name):
     return click.secho("An organization has been successfully created. ", fg="green",)
 
 
-@cli.command("list", short_help="List all user organizations")
+@cli.command("list", short_help="List organizations")
 @click.option("--json-output", is_flag=True)
 def org_list(json_output):
     client = AccountClient()
@@ -132,12 +117,12 @@ def org_add_owner(orgname, username):
     )
 
 
-@cli.command("remove", short_help="Remove a owner from organization")
+@cli.command("remove", short_help="Remove an owner from organization")
 @click.argument("orgname",)
 @click.argument("username",)
 def org_remove_owner(orgname, username):
     client = AccountClient()
     client.remove_org_owner(orgname, username)
     return click.secho(
-        "A owner has been successfully removed from organization.", fg="green",
+        "An owner has been successfully removed from organization.", fg="green",
     )
