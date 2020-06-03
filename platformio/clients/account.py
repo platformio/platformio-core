@@ -35,7 +35,7 @@ class AccountAlreadyAuthorized(AccountError):
     MESSAGE = "You are already authorized with {0} account."
 
 
-class AccountClient(RESTClient):
+class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
 
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
@@ -60,6 +60,14 @@ class AccountClient(RESTClient):
             return
         del account[key]
         app.set_state_item("account", account)
+
+    def send_auth_request(self, *args, **kwargs):
+        headers = kwargs.get("headers", {})
+        if "Authorization" not in headers:
+            token = self.fetch_authentication_token()
+            headers["Authorization"] = "Bearer %s" % token
+        kwargs["headers"] = headers
+        return self.send_request(*args, **kwargs)
 
     def login(self, username, password):
         try:
@@ -107,11 +115,9 @@ class AccountClient(RESTClient):
         return True
 
     def change_password(self, old_password, new_password):
-        token = self.fetch_authentication_token()
-        self.send_request(
+        self.send_auth_request(
             "post",
             "/v1/password",
-            headers={"Authorization": "Bearer %s" % token},
             data={"old_password": old_password, "new_password": new_password},
         )
         return True
@@ -141,11 +147,9 @@ class AccountClient(RESTClient):
         )
 
     def auth_token(self, password, regenerate):
-        token = self.fetch_authentication_token()
-        result = self.send_request(
+        result = self.send_auth_request(
             "post",
             "/v1/token",
-            headers={"Authorization": "Bearer %s" % token},
             data={"password": password, "regenerate": 1 if regenerate else 0},
         )
         return result.get("auth_token")
@@ -154,21 +158,12 @@ class AccountClient(RESTClient):
         return self.send_request("post", "/v1/forgot", data={"username": username},)
 
     def get_profile(self):
-        token = self.fetch_authentication_token()
-        return self.send_request(
-            "get", "/v1/profile", headers={"Authorization": "Bearer %s" % token},
-        )
+        return self.send_auth_request("get", "/v1/profile",)
 
     def update_profile(self, profile, current_password):
-        token = self.fetch_authentication_token()
         profile["current_password"] = current_password
         self.delete_local_state("summary")
-        response = self.send_request(
-            "put",
-            "/v1/profile",
-            headers={"Authorization": "Bearer %s" % token},
-            data=profile,
-        )
+        response = self.send_auth_request("put", "/v1/profile", data=profile,)
         return response
 
     def get_account_info(self, offline=False):
@@ -187,10 +182,7 @@ class AccountClient(RESTClient):
                     "username": account.get("username"),
                 }
             }
-        token = self.fetch_authentication_token()
-        result = self.send_request(
-            "get", "/v1/summary", headers={"Authorization": "Bearer %s" % token},
-        )
+        result = self.send_auth_request("get", "/v1/summary",)
         account["summary"] = dict(
             profile=result.get("profile"),
             packages=result.get("packages"),
@@ -200,6 +192,40 @@ class AccountClient(RESTClient):
         )
         app.set_state_item("account", account)
         return result
+
+    def create_org(self, orgname, email, display_name):
+        response = self.send_auth_request(
+            "post",
+            "/v1/orgs",
+            data={"orgname": orgname, "email": email, "displayname": display_name},
+        )
+        return response
+
+    def list_orgs(self):
+        response = self.send_auth_request("get", "/v1/orgs",)
+        return response
+
+    def update_org(self, orgname, data):
+        response = self.send_auth_request(
+            "put", "/v1/orgs/%s" % orgname, data={k: v for k, v in data.items() if v}
+        )
+        return response
+
+    def add_org_owner(self, orgname, username):
+        response = self.send_auth_request(
+            "post", "/v1/orgs/%s/owners" % orgname, data={"username": username},
+        )
+        return response
+
+    def list_org_owners(self, orgname):
+        response = self.send_auth_request("get", "/v1/orgs/%s/owners" % orgname,)
+        return response
+
+    def remove_org_owner(self, orgname, username):
+        response = self.send_auth_request(
+            "delete", "/v1/orgs/%s/owners" % orgname, data={"username": username},
+        )
+        return response
 
     def fetch_authentication_token(self):
         if "PLATFORMIO_AUTH_TOKEN" in os.environ:

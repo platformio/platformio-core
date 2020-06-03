@@ -29,13 +29,15 @@ def cli():
     pass
 
 
-def validate_username(value):
+def validate_username(value, field="username"):
     value = str(value).strip()
-    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
+    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,37}$", value, flags=re.I):
         raise click.BadParameter(
-            "Invalid username format. "
-            "Username must contain at least 4 characters including single hyphens,"
-            " and cannot begin or end with a hyphen"
+            "Invalid %s format. "
+            "%s may only contain alphanumeric characters "
+            "or single hyphens, cannot begin or end with a hyphen, "
+            "and must not be longer than 38 characters."
+            % (field.lower(), field.capitalize())
         )
     return value
 
