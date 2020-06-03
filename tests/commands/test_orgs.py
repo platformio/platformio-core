@@ -157,7 +157,7 @@ def test_org_owner(clirunner, credentials, validate_cliresult, isolated_pio_home
         assert "email" in org
         assert "owners" in org
 
-        result = clirunner.invoke(cmd_org, ["add", org["orgname"], "platformio"],)
+        result = clirunner.invoke(cmd_org, ["add", org["orgname"], "ivankravets"],)
         validate_cliresult(result)
 
         result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
@@ -169,10 +169,10 @@ def test_org_owner(clirunner, credentials, validate_cliresult, isolated_pio_home
             if item["orgname"] != org["orgname"]:
                 continue
             for owner in item.get("owners"):
-                check = owner["username"] == "platformio" if not check else True
+                check = owner["username"] == "ivankravets" if not check else True
         assert check
 
-        result = clirunner.invoke(cmd_org, ["remove", org["orgname"], "platformio"],)
+        result = clirunner.invoke(cmd_org, ["remove", org["orgname"], "ivankravets"],)
         validate_cliresult(result)
 
         result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
@@ -184,7 +184,7 @@ def test_org_owner(clirunner, credentials, validate_cliresult, isolated_pio_home
             if item["orgname"] != org["orgname"]:
                 continue
             for owner in item.get("owners"):
-                check = owner["username"] == "platformio" if not check else True
+                check = owner["username"] == "ivankravets" if not check else True
         assert not check
 
     finally:
