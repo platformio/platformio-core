@@ -30,7 +30,7 @@ def cli():
 
 def validate_orgname(value):
     value = str(value).strip()
-    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
+    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,37}$", value, flags=re.I):
         raise click.BadParameter(
             "Invalid organization name format. "
             "Organization name may only contain alphanumeric characters "
