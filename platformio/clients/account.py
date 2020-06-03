@@ -65,7 +65,7 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         if "Authorization" not in kwargs.get("headers", {}):
             token = self.fetch_authentication_token()
             kwargs["headers"]["Authorization"] = "Bearer %s" % token
-        return self.send_request(*args, **kwargs,)
+        return self.send_request(*args, **kwargs)
 
     def login(self, username, password):
         try:

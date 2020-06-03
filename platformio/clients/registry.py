@@ -28,7 +28,7 @@ class RegistryClient(RESTClient):
         if "Authorization" not in kwargs.get("headers", {}):
             token = AccountClient().fetch_authentication_token()
             kwargs["headers"]["Authorization"] = "Bearer %s" % token
-        return self.send_request(*args, **kwargs,)
+        return self.send_request(*args, **kwargs)
 
     def publish_package(
         self, archive_path, owner=None, released_at=None, private=False, notify=True
