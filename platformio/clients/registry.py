@@ -24,6 +24,12 @@ class RegistryClient(RESTClient):
     def __init__(self):
         super(RegistryClient, self).__init__(base_url=__registry_api__)
 
+    def send_auth_request(self, *args, **kwargs):
+        if "Authorization" not in kwargs.get("headers", {}):
+            token = AccountClient().fetch_authentication_token()
+            kwargs["headers"]["Authorization"] = "Bearer %s" % token
+        return self.send_request(*args, **kwargs,)
+
     def publish_package(
         self, archive_path, owner=None, released_at=None, private=False, notify=True
     ):
@@ -33,7 +39,7 @@ class RegistryClient(RESTClient):
                 account.get_account_info(offline=True).get("profile").get("username")
             )
         with open(archive_path, "rb") as fp:
-            response = self.send_request(
+            response = self.send_auth_request(
                 "post",
                 "/v3/package/%s/%s" % (owner, PackageType.from_archive(archive_path)),
                 params={
@@ -42,7 +48,6 @@ class RegistryClient(RESTClient):
                     "released_at": released_at,
                 },
                 headers={
-                    "Authorization": "Bearer %s" % account.fetch_authentication_token(),
                     "Content-Type": "application/octet-stream",
                     "X-PIO-Content-SHA256": fs.calculate_file_hashsum(
                         "sha256", archive_path
@@ -63,12 +68,7 @@ class RegistryClient(RESTClient):
         path = "/v3/package/%s/%s/%s" % (owner, type, name)
         if version:
             path = path + "/version/" + version
-        response = self.send_request(
-            "delete",
-            path,
-            params={"undo": 1 if undo else 0},
-            headers={
-                "Authorization": "Bearer %s" % account.fetch_authentication_token()
-            },
+        response = self.send_auth_request(
+            "delete", path, params={"undo": 1 if undo else 0},
         )
         return response
