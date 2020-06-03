@@ -53,12 +53,9 @@ def org_list(json_output):
     orgs = client.list_orgs()
     if json_output:
         return click.echo(json.dumps(orgs))
-    click.echo()
-    click.secho("Organizations", fg="cyan")
-    click.echo("=" * len("Organizations"))
     for org in orgs:
         click.echo()
-        click.secho(org.get("orgname"), bold=True)
+        click.secho(org.get("orgname"), fg="cyan")
         click.echo("-" * len(org.get("orgname")))
         data = []
         if org.get("displayname"):
@@ -113,7 +110,7 @@ def org_add_owner(orgname, username):
     client = AccountClient()
     client.add_org_owner(orgname, username)
     return click.secho(
-        "A new owner has been successfully added to organization.", fg="green",
+        "A new owner has been successfully added to the organization.", fg="green",
     )
 
 
@@ -124,5 +121,5 @@ def org_remove_owner(orgname, username):
     client = AccountClient()
     client.remove_org_owner(orgname, username)
     return click.secho(
-        "An owner has been successfully removed from organization.", fg="green",
+        "An owner has been successfully removed from the organization.", fg="green",
     )
