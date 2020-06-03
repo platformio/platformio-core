@@ -34,7 +34,8 @@ def validate_orgname(value):
         raise click.BadParameter(
             "Invalid organization name format. "
             "Organization name may only contain alphanumeric characters "
-            "or single hyphens, and cannot begin or end with a hyphen."
+            "or single hyphens, cannot begin or end with a hyphen, "
+            "and must not be longer than 38 characters."
         )
     return value
 

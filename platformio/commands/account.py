@@ -35,7 +35,8 @@ def validate_username(value):
         raise click.BadParameter(
             "Invalid username format. "
             "Username may only contain alphanumeric characters "
-            "or single hyphens, and cannot begin or end with a hyphen."
+            "or single hyphens, cannot begin or end with a hyphen, "
+            "and must not be longer than 38 characters."
         )
     return value
 
