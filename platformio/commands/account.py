@@ -34,7 +34,7 @@ def validate_username(value, field="username"):
     if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,37}$", value, flags=re.I):
         raise click.BadParameter(
             "Invalid %s format. "
-            "%s may only contain alphanumeric characters "
+            "%s must only contain alphanumeric characters "
             "or single hyphens, cannot begin or end with a hyphen, "
             "and must not be longer than 38 characters."
             % (field.lower(), field.capitalize())

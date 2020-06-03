@@ -43,7 +43,9 @@ def validate_orgname(value):
 def org_create(orgname, email, display_name):
     client = AccountClient()
     client.create_org(orgname, email, display_name)
-    return click.secho("An organization has been successfully created.", fg="green",)
+    return click.secho(
+        "The organization %s has been successfully created." % orgname, fg="green",
+    )
 
 
 @cli.command("list", short_help="List organizations")
@@ -100,7 +102,9 @@ def org_update(orgname, **kwargs):
             {key.replace("new_", ""): value for key, value in kwargs.items() if value}
         )
     client.update_org(orgname, new_org)
-    return click.secho("An organization has been successfully updated.", fg="green",)
+    return click.secho(
+        "The organization %s has been successfully updated." % orgname, fg="green",
+    )
 
 
 @cli.command("add", short_help="Add a new owner to organization")
@@ -110,7 +114,9 @@ def org_add_owner(orgname, username):
     client = AccountClient()
     client.add_org_owner(orgname, username)
     return click.secho(
-        "A new owner has been successfully added to the organization.", fg="green",
+        "The new owner %s has been successfully added to the %s organization."
+        % (username, orgname),
+        fg="green",
     )
 
 
@@ -121,5 +127,7 @@ def org_remove_owner(orgname, username):
     client = AccountClient()
     client.remove_org_owner(orgname, username)
     return click.secho(
-        "An owner has been successfully removed from the organization.", fg="green",
+        "The %s owner has been successfully removed from the %s organization."
+        % (username, orgname),
+        fg="green",
     )
