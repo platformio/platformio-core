@@ -228,8 +228,8 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return response
 
     def fetch_authentication_token(self):
-        if "PLATFORMIO_AUTH_TOKEN" in os.environ:
-            return os.environ["PLATFORMIO_AUTH_TOKEN"]
+        if os.environ.get("PLATFORMIO_AUTH_TOKEN"):
+            return os.environ.get("PLATFORMIO_AUTH_TOKEN")
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
             if auth.get("access_token_expire") > time.time():
