@@ -167,15 +167,13 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return response
 
     def get_account_info(self, offline=False):
-        account = app.get_state_item("account")
-        if not account:
-            raise AccountNotAuthorized()
+        account = app.get_state_item("account") or {}
         if (
             account.get("summary")
             and account["summary"].get("expire_at", 0) > time.time()
         ):
             return account["summary"]
-        if offline:
+        if offline and account.get("email"):
             return {
                 "profile": {
                     "email": account.get("email"),
