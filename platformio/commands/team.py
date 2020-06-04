@@ -29,7 +29,7 @@ def validate_orgname_teamname(value, teamname_validate=False):
             "Please specify organization and team name in the next"
             " format - orgname:teamname. For example, mycompany:DreamTeam"
         )
-    teamname = str(value.strip().split(":", maxsplit=1)[1])
+    teamname = str(value.strip().split(":", 1)[1])
     if teamname_validate:
         validate_teamname(teamname)
     return value
@@ -65,7 +65,7 @@ def cli():
 )
 @click.option("--description",)
 def team_create(orgname_teamname, description):
-    orgname, teamname = orgname_teamname.split(":", maxsplit=1)
+    orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     client.create_team(orgname, teamname, description)
     return click.secho(
@@ -78,29 +78,27 @@ def team_create(orgname_teamname, description):
 @click.option("--json-output", is_flag=True)
 def team_list(orgname, json_output):
     client = AccountClient()
-    json_data = {}
+    data = {}
     if not orgname:
         for item in client.list_orgs():
             teams = client.list_teams(item.get("orgname"))
-            json_data[item.get("orgname")] = teams
+            data[item.get("orgname")] = teams
     else:
         teams = client.list_teams(orgname)
-        json_data[orgname] = teams
+        data[orgname] = teams
     if json_output:
-        if not orgname:
-            return click.echo(json.dumps(json_data))
-        return click.echo(json.dumps(json_data[orgname]))
-    if not any(json_data.values()):
+        return click.echo(json.dumps(data[orgname] if orgname else data))
+    if not any(data.values()):
         return click.secho("You do not have any teams.", fg="yellow")
-    for org_name in json_data:
-        for team in json_data[org_name]:
+    for org_name in data:
+        for team in data[org_name]:
             click.echo()
             click.secho("%s:%s" % (org_name, team.get("name")), fg="cyan")
             click.echo("-" * len("%s:%s" % (org_name, team.get("name"))))
-            data = []
+            table_data = []
             if team.get("description"):
-                data.append(("Description:", team.get("description")))
-            data.append(
+                table_data.append(("Description:", team.get("description")))
+            table_data.append(
                 (
                     "Members:",
                     ", ".join(
@@ -110,7 +108,7 @@ def team_list(orgname, json_output):
                     else "-",
                 )
             )
-            click.echo(tabulate(data, tablefmt="plain"))
+            click.echo(tabulate(table_data, tablefmt="plain"))
     return click.echo()
 
 
@@ -125,7 +123,7 @@ def team_list(orgname, json_output):
 )
 @click.option("--description",)
 def team_update(orgname_teamname, **kwargs):
-    orgname, teamname = orgname_teamname.split(":", maxsplit=1)
+    orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     team = client.get_team(orgname, teamname)
     del team["id"]
@@ -153,7 +151,7 @@ def team_update(orgname_teamname, **kwargs):
     callback=lambda _, __, value: validate_orgname_teamname(value),
 )
 def team_destroy(orgname_teamname):
-    orgname, teamname = orgname_teamname.split(":", maxsplit=1)
+    orgname, teamname = orgname_teamname.split(":", 1)
     click.confirm(
         click.style(
             "Are you sure you want to destroy the %s team?" % teamname, fg="yellow"
@@ -175,7 +173,7 @@ def team_destroy(orgname_teamname):
 )
 @click.argument("username",)
 def team_add_member(orgname_teamname, username):
-    orgname, teamname = orgname_teamname.split(":", maxsplit=1)
+    orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     client.add_team_member(orgname, teamname, username)
     return click.secho(
@@ -193,7 +191,7 @@ def team_add_member(orgname_teamname, username):
 )
 @click.argument("username",)
 def org_remove_owner(orgname_teamname, username):
-    orgname, teamname = orgname_teamname.split(":", maxsplit=1)
+    orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     client.remove_team_member(orgname, teamname, username)
     return click.secho(
