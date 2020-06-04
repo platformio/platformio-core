@@ -81,6 +81,7 @@ Development Platforms
 ---------------------
 
 * `Aceinna IMU <https://platformio.org/platforms/aceinna_imu?utm_source=github&utm_medium=core>`_
+* `ASR Microelectronics ASR605x <https://platformio.org/platforms/asrmicro650x?utm_source=github&utm_medium=core>`_
 * `Atmel AVR <https://platformio.org/platforms/atmelavr?utm_source=github&utm_medium=core>`_
 * `Atmel SAM <https://platformio.org/platforms/atmelsam?utm_source=github&utm_medium=core>`_
 * `Espressif 32 <https://platformio.org/platforms/espressif32?utm_source=github&utm_medium=core>`_
