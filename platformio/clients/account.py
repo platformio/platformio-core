@@ -201,6 +201,10 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         )
         return response
 
+    def get_org(self, orgname):
+        response = self.send_auth_request("get", "/v1/orgs/%s" % orgname)
+        return response
+
     def list_orgs(self):
         response = self.send_auth_request("get", "/v1/orgs",)
         return response
@@ -224,6 +228,54 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
     def remove_org_owner(self, orgname, username):
         response = self.send_auth_request(
             "delete", "/v1/orgs/%s/owners" % orgname, data={"username": username},
+        )
+        return response
+
+    def create_team(self, orgname, teamname, description):
+        response = self.send_auth_request(
+            "post",
+            "/v1/orgs/%s/teams" % orgname,
+            data={"name": teamname, "description": description},
+        )
+        return response
+
+    def destroy_team(self, orgname, teamname):
+        response = self.send_auth_request(
+            "delete", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+        )
+        return response
+
+    def get_team(self, orgname, teamname):
+        response = self.send_auth_request(
+            "get", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+        )
+        return response
+
+    def list_teams(self, orgname):
+        response = self.send_auth_request("get", "/v1/orgs/%s/teams" % orgname,)
+        return response
+
+    def update_team(self, orgname, teamname, data):
+        response = self.send_auth_request(
+            "put",
+            "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            data={k: v for k, v in data.items() if v},
+        )
+        return response
+
+    def add_team_member(self, orgname, teamname, username):
+        response = self.send_auth_request(
+            "post",
+            "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
+            data={"username": username},
+        )
+        return response
+
+    def remove_team_member(self, orgname, teamname, username):
+        response = self.send_auth_request(
+            "delete",
+            "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
+            data={"username": username},
         )
         return response
 
