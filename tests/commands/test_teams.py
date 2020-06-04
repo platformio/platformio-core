@@ -39,7 +39,6 @@ def credentials():
     }
 
 
-@pytest.mark.skip
 def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
     orgname = ""
     teamname = "test-" + str(int(time.time() * 1000))
@@ -89,10 +88,15 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
         assert len(json_result) >= 1
-        assert json_result[0]["id"]
-        assert json_result[0]["name"] == teamname
-        assert json_result[0]["description"] == "team for CI test"
-        assert json_result[0]["members"] == []
+        check = False
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            if team["name"] == teamname:
+                check = True
+            assert "description" in team
+            assert "members" in team
+        assert check
 
         result = clirunner.invoke(
             cmd_team, ["add", "%s:%s" % (orgname, teamname), credentials["login"]],
@@ -102,11 +106,18 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 1
-        assert json_result[0]["id"]
-        assert json_result[0]["name"] == teamname
-        assert json_result[0]["description"] == "team for CI test"
-        assert json_result[0]["members"][0]["username"] == credentials["login"]
+        check = False
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            assert "description" in team
+            assert "members" in team
+            if (
+                len(team["members"]) > 0
+                and team["members"][0]["username"] == credentials["login"]
+            ):
+                check = True
+        assert check
 
         result = clirunner.invoke(
             cmd_team, ["remove", "%s:%s" % (orgname, teamname), credentials["login"]],
@@ -115,12 +126,6 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
 
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 1
-        assert json_result[0]["id"]
-        assert json_result[0]["name"] == teamname
-        assert json_result[0]["description"] == "team for CI test"
-        assert json_result[0]["members"] == []
 
         result = clirunner.invoke(
             cmd_team,
@@ -137,11 +142,15 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
         assert len(json_result) >= 1
-        assert json_result[0]["id"]
-        assert json_result[0]["name"] == teamname
-        assert json_result[0]["description"] == "Updated Description"
-        assert json_result[0]["members"] == []
-        validate_cliresult(result)
+        check = False
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            assert "description" in team
+            if team.get("description") == "Updated Description":
+                check = True
+            assert "members" in team
+        assert check
     finally:
         clirunner.invoke(
             cmd_team, ["destroy", "%s:%s" % (orgname, teamname),],

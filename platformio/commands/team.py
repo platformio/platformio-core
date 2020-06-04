@@ -26,7 +26,7 @@ from platformio.clients.account import AccountClient
 def validate_orgname_teamname(value, teamname_validate=False):
     if ":" not in value:
         raise click.BadParameter(
-            "Please specify organization and team names in the next"
+            "Please specify organization and team name in the next"
             " format - orgname:teamname. For example, mycompany:DreamTeam"
         )
     teamname = str(value.strip().split(":", maxsplit=1)[1])
@@ -39,14 +39,13 @@ def validate_teamname(value):
     if not value:
         return value
     value = str(value).strip()
-    if not re.match(
-        r"^[a-z\d\-_](?:[a-z\d]|-(?=[a-z\d])|_(?=[a-z\d])){0,19}$", value, flags=re.I
-    ):
+    if not re.match(r"^[a-z\d](?:[a-z\d]|[\-_ ](?=[a-z\d])){0,19}$", value, flags=re.I):
         raise click.BadParameter(
             "Invalid team name format. "
             "Team name must only contain alphanumeric characters, "
-            "single hyphens or underscores, cannot begin or end with a hyphen or a underscore, "
-            "and must not be longer than 20 characters."
+            "single hyphens, underscores, spaces. It can not "
+            "begin or end with a hyphen or a underscore and must"
+            " not be longer than 20 characters."
         )
     return value
 
@@ -87,12 +86,12 @@ def team_list(orgname, json_output):
     else:
         teams = client.list_teams(orgname)
         json_data[orgname] = teams
-    if not any(json_data.values()):
-        return click.secho("You do not have any teams.", fg="yellow")
     if json_output:
         if not orgname:
             return click.echo(json.dumps(json_data))
         return click.echo(json.dumps(json_data[orgname]))
+    if not any(json_data.values()):
+        return click.secho("You do not have any teams.", fg="yellow")
     for org_name in json_data:
         for team in json_data[org_name]:
             click.echo()
@@ -143,7 +142,7 @@ def team_update(orgname_teamname, **kwargs):
         new_team.update({key: value for key, value in kwargs.items() if value})
     client.update_team(orgname, teamname, new_team)
     return click.secho(
-        "A team %s has been successfully updated." % teamname, fg="green",
+        "The team %s has been successfully updated." % teamname, fg="green",
     )
 
 
