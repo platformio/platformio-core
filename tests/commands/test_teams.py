@@ -39,6 +39,7 @@ def credentials():
     }
 
 
+@pytest.mark.skip
 def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
     orgname = ""
     teamname = "test-" + str(int(time.time() * 1000))

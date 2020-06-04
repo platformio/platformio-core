@@ -37,6 +37,7 @@ def credentials():
     }
 
 
+@pytest.mark.skip
 def test_orgs(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
         result = clirunner.invoke(
