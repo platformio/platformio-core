@@ -14,11 +14,13 @@
 
 import json
 import os
+import time
 
 import pytest
 
 from platformio.commands.account import cli as cmd_account
 from platformio.commands.org import cli as cmd_org
+from platformio.commands.team import cli as cmd_team
 
 pytestmark = pytest.mark.skipif(
     not (
@@ -37,7 +39,9 @@ def credentials():
     }
 
 
-def test_orgs(clirunner, credentials, validate_cliresult, isolated_pio_home):
+def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
+    orgname = ""
+    teamname = "test-" + str(int(time.time() * 1000))
     try:
         result = clirunner.invoke(
             cmd_account,
@@ -67,89 +71,88 @@ def test_orgs(clirunner, credentials, validate_cliresult, isolated_pio_home):
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
         assert len(json_result) >= 3
+        orgname = json_result[0].get("orgname")
+
+        result = clirunner.invoke(
+            cmd_team,
+            [
+                "create",
+                "%s:%s" % (orgname, teamname),
+                "--description",
+                "team for CI test",
+            ],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert len(json_result) >= 1
         check = False
-        for org in json_result:
-            assert "orgname" in org
-            orgname = org["orgname"]
-            assert "displayname" in org
-            assert "email" in org
-            assert "owners" in org
-            for owner in org.get("owners"):
-                assert "username" in owner
-                check = owner["username"] == credentials["login"] if not check else True
-                assert "firstname" in owner
-                assert "lastname" in owner
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            if team["name"] == teamname:
+                check = True
+            assert "description" in team
+            assert "members" in team
         assert check
 
-        result = clirunner.invoke(cmd_org, ["add", orgname, "ivankravets"],)
+        result = clirunner.invoke(
+            cmd_team, ["add", "%s:%s" % (orgname, teamname), credentials["login"]],
+        )
         validate_cliresult(result)
 
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
         check = False
-        for item in json_result:
-            if item["orgname"] != orgname:
-                continue
-            for owner in item.get("owners"):
-                check = owner["username"] == "ivankravets" if not check else True
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            assert "description" in team
+            assert "members" in team
+            if (
+                len(team["members"]) > 0
+                and team["members"][0]["username"] == credentials["login"]
+            ):
+                check = True
         assert check
 
-        result = clirunner.invoke(cmd_org, ["remove", orgname, "ivankravets"],)
+        result = clirunner.invoke(
+            cmd_team, ["remove", "%s:%s" % (orgname, teamname), credentials["login"]],
+        )
         validate_cliresult(result)
 
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_team,
+            [
+                "update",
+                "%s:%s" % (orgname, teamname),
+                "--description",
+                "Updated Description",
+            ],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
+        assert len(json_result) >= 1
         check = False
-        for item in json_result:
-            if item["orgname"] != orgname:
-                continue
-            for owner in item.get("owners"):
-                check = owner["username"] == "ivankravets" if not check else True
-        assert not check
+        for team in json_result:
+            assert team["id"]
+            assert team["name"]
+            assert "description" in team
+            if team.get("description") == "Updated Description":
+                check = True
+            assert "members" in team
+        assert check
     finally:
-        clirunner.invoke(cmd_account, ["logout"])
-
-
-@pytest.mark.skip
-def test_org_update(clirunner, credentials, validate_cliresult, isolated_pio_home):
-    try:
-        result = clirunner.invoke(
-            cmd_account,
-            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        clirunner.invoke(
+            cmd_team, ["destroy", "%s:%s" % (orgname, teamname),],
         )
-        validate_cliresult(result)
-        assert "Successfully logged in!" in result.output
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        org = json_result[0]
-        assert "orgname" in org
-        assert "displayname" in org
-        assert "email" in org
-        assert "owners" in org
-
-        old_orgname = org["orgname"]
-        if len(old_orgname) > 10:
-            new_orgname = "neworg" + org["orgname"][6:]
-
-        result = clirunner.invoke(
-            cmd_org, ["update", old_orgname, "--new-orgname", new_orgname],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(
-            cmd_org, ["update", new_orgname, "--new-orgname", old_orgname],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        assert json.loads(result.output.strip()) == json_result
-    finally:
         clirunner.invoke(cmd_account, ["logout"])

@@ -115,12 +115,11 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return True
 
     def change_password(self, old_password, new_password):
-        self.send_auth_request(
+        return self.send_auth_request(
             "post",
             "/v1/password",
             data={"old_password": old_password, "new_password": new_password},
         )
-        return True
 
     def registration(
         self, username, email, password, firstname, lastname
@@ -147,12 +146,11 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         )
 
     def auth_token(self, password, regenerate):
-        result = self.send_auth_request(
+        return self.send_auth_request(
             "post",
             "/v1/token",
             data={"password": password, "regenerate": 1 if regenerate else 0},
-        )
-        return result.get("auth_token")
+        ).get("auth_token")
 
     def forgot_password(self, username):
         return self.send_request("post", "/v1/forgot", data={"username": username},)
@@ -192,38 +190,76 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return result
 
     def create_org(self, orgname, email, display_name):
-        response = self.send_auth_request(
+        return self.send_auth_request(
             "post",
             "/v1/orgs",
             data={"orgname": orgname, "email": email, "displayname": display_name},
         )
-        return response
+
+    def get_org(self, orgname):
+        return self.send_auth_request("get", "/v1/orgs/%s" % orgname)
 
     def list_orgs(self):
-        response = self.send_auth_request("get", "/v1/orgs",)
-        return response
+        return self.send_auth_request("get", "/v1/orgs",)
 
     def update_org(self, orgname, data):
-        response = self.send_auth_request(
+        return self.send_auth_request(
             "put", "/v1/orgs/%s" % orgname, data={k: v for k, v in data.items() if v}
         )
-        return response
 
     def add_org_owner(self, orgname, username):
-        response = self.send_auth_request(
+        return self.send_auth_request(
             "post", "/v1/orgs/%s/owners" % orgname, data={"username": username},
         )
-        return response
 
     def list_org_owners(self, orgname):
-        response = self.send_auth_request("get", "/v1/orgs/%s/owners" % orgname,)
-        return response
+        return self.send_auth_request("get", "/v1/orgs/%s/owners" % orgname,)
 
     def remove_org_owner(self, orgname, username):
-        response = self.send_auth_request(
+        return self.send_auth_request(
             "delete", "/v1/orgs/%s/owners" % orgname, data={"username": username},
         )
-        return response
+
+    def create_team(self, orgname, teamname, description):
+        return self.send_auth_request(
+            "post",
+            "/v1/orgs/%s/teams" % orgname,
+            data={"name": teamname, "description": description},
+        )
+
+    def destroy_team(self, orgname, teamname):
+        return self.send_auth_request(
+            "delete", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+        )
+
+    def get_team(self, orgname, teamname):
+        return self.send_auth_request(
+            "get", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+        )
+
+    def list_teams(self, orgname):
+        return self.send_auth_request("get", "/v1/orgs/%s/teams" % orgname,)
+
+    def update_team(self, orgname, teamname, data):
+        return self.send_auth_request(
+            "put",
+            "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            data={k: v for k, v in data.items() if v},
+        )
+
+    def add_team_member(self, orgname, teamname, username):
+        return self.send_auth_request(
+            "post",
+            "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
+            data={"username": username},
+        )
+
+    def remove_team_member(self, orgname, teamname, username):
+        return self.send_auth_request(
+            "delete",
+            "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
+            data={"username": username},
+        )
 
     def fetch_authentication_token(self):
         if os.environ.get("PLATFORMIO_AUTH_TOKEN"):

@@ -55,6 +55,8 @@ def org_list(json_output):
     orgs = client.list_orgs()
     if json_output:
         return click.echo(json.dumps(orgs))
+    if not orgs:
+        return click.echo("You do not have any organizations")
     for org in orgs:
         click.echo()
         click.secho(org.get("orgname"), fg="cyan")
@@ -76,16 +78,14 @@ def org_list(json_output):
 
 @cli.command("update", short_help="Update organization")
 @click.argument("orgname")
-@click.option("--new-orgname")
+@click.option(
+    "--new-orgname", callback=lambda _, __, value: validate_orgname(value),
+)
 @click.option("--email")
 @click.option("--display-name",)
 def org_update(orgname, **kwargs):
     client = AccountClient()
-    org = next(
-        (org for org in client.list_orgs() if org.get("orgname") == orgname), None
-    )
-    if not org:
-        return click.ClickException("Organization '%s' not found" % orgname)
+    org = client.get_org(orgname)
     del org["owners"]
     new_org = org.copy()
     if not any(kwargs.values()):
