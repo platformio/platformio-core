@@ -87,7 +87,7 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) == 1
+        assert len(json_result) >= 1
         assert json_result[0]["id"]
         assert json_result[0]["name"] == teamname
         assert json_result[0]["description"] == "team for CI test"
@@ -101,7 +101,7 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) == 1
+        assert len(json_result) >= 1
         assert json_result[0]["id"]
         assert json_result[0]["name"] == teamname
         assert json_result[0]["description"] == "team for CI test"
@@ -115,7 +115,7 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) == 1
+        assert len(json_result) >= 1
         assert json_result[0]["id"]
         assert json_result[0]["name"] == teamname
         assert json_result[0]["description"] == "team for CI test"
@@ -135,7 +135,7 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) == 1
+        assert len(json_result) >= 1
         assert json_result[0]["id"]
         assert json_result[0]["name"] == teamname
         assert json_result[0]["description"] == "Updated Description"
