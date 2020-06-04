@@ -167,15 +167,13 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return response
 
     def get_account_info(self, offline=False):
-        account = app.get_state_item("account")
-        if not account:
-            raise AccountNotAuthorized()
+        account = app.get_state_item("account") or {}
         if (
             account.get("summary")
             and account["summary"].get("expire_at", 0) > time.time()
         ):
             return account["summary"]
-        if offline:
+        if offline and account.get("email"):
             return {
                 "profile": {
                     "email": account.get("email"),
@@ -280,8 +278,8 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return response
 
     def fetch_authentication_token(self):
-        if "PLATFORMIO_AUTH_TOKEN" in os.environ:
-            return os.environ["PLATFORMIO_AUTH_TOKEN"]
+        if os.environ.get("PLATFORMIO_AUTH_TOKEN"):
+            return os.environ.get("PLATFORMIO_AUTH_TOKEN")
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
             if auth.get("access_token_expire") > time.time():
