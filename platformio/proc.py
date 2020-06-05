@@ -15,7 +15,6 @@
 import os
 import subprocess
 import sys
-from os.path import isdir, isfile, join, normpath
 from threading import Thread
 
 from platformio import exception
@@ -143,18 +142,16 @@ def is_ci():
 
 
 def is_container():
-    if not isfile("/proc/1/cgroup"):
+    if os.path.exists("/.dockerenv"):
+        return True
+    if not os.path.isfile("/proc/1/cgroup"):
         return False
     with open("/proc/1/cgroup") as fp:
-        for line in fp:
-            line = line.strip()
-            if ":" in line and not line.endswith(":/"):
-                return True
-    return False
+        return ":/docker/" in fp.read()
 
 
 def get_pythonexe_path():
-    return os.environ.get("PYTHONEXEPATH", normpath(sys.executable))
+    return os.environ.get("PYTHONEXEPATH", os.path.normpath(sys.executable))
 
 
 def copy_pythonpath_to_osenv():
@@ -164,7 +161,10 @@ def copy_pythonpath_to_osenv():
     for p in os.sys.path:
         conditions = [p not in _PYTHONPATH]
         if not WINDOWS:
-            conditions.append(isdir(join(p, "click")) or isdir(join(p, "platformio")))
+            conditions.append(
+                os.path.isdir(os.path.join(p, "click"))
+                or os.path.isdir(os.path.join(p, "platformio"))
+            )
         if all(conditions):
             _PYTHONPATH.append(p)
     os.environ["PYTHONPATH"] = os.pathsep.join(_PYTHONPATH)
@@ -178,16 +178,16 @@ def where_is_program(program, envpath=None):
     # try OS's built-in commands
     try:
         result = exec_command(["where" if WINDOWS else "which", program], env=env)
-        if result["returncode"] == 0 and isfile(result["out"].strip()):
+        if result["returncode"] == 0 and os.path.isfile(result["out"].strip()):
             return result["out"].strip()
     except OSError:
         pass
 
     # look up in $PATH
     for bin_dir in env.get("PATH", "").split(os.pathsep):
-        if isfile(join(bin_dir, program)):
-            return join(bin_dir, program)
-        if isfile(join(bin_dir, "%s.exe" % program)):
-            return join(bin_dir, "%s.exe" % program)
+        if os.path.isfile(os.path.join(bin_dir, program)):
+            return os.path.join(bin_dir, program)
+        if os.path.isfile(os.path.join(bin_dir, "%s.exe" % program)):
+            return os.path.join(bin_dir, "%s.exe" % program)
 
     return program

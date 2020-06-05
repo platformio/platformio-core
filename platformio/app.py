@@ -25,9 +25,8 @@ from time import time
 
 import requests
 
-from platformio import __version__, exception, fs, lockfile
+from platformio import __version__, exception, fs, lockfile, proc
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
-from platformio.proc import is_ci
 from platformio.project.helpers import (
     get_default_projects_dir,
     get_project_cache_dir,
@@ -383,7 +382,7 @@ def is_disabled_progressbar():
     return any(
         [
             get_session_var("force_option"),
-            is_ci(),
+            proc.is_ci(),
             getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
         ]
     )
@@ -420,7 +419,11 @@ def get_cid():
 
 
 def get_user_agent():
-    data = ["PlatformIO/%s" % __version__, "CI/%d" % int(is_ci())]
+    data = [
+        "PlatformIO/%s" % __version__,
+        "CI/%d" % int(proc.is_ci()),
+        "Container/%d" % int(proc.is_container()),
+    ]
     if get_session_var("caller_id"):
         data.append("Caller/%s" % get_session_var("caller_id"))
     if os.getenv("PLATFORMIO_IDE"):

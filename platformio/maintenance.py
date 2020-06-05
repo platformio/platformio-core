@@ -66,10 +66,9 @@ def on_platformio_exception(e):
 
 
 def set_caller(caller=None):
+    caller = caller or getenv("PLATFORMIO_CALLER")
     if not caller:
-        if getenv("PLATFORMIO_CALLER"):
-            caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+        if getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
             caller = "vscode"
         elif is_container():
             if getenv("C9_UID"):
