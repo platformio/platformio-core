@@ -266,8 +266,8 @@ def test_account(
         result = clirunner.invoke(cmd_account, ["destroy"], "y")
         assert result.exit_code != 0
         assert (
-                "We can not destroy the %s account due to 1 linked resources from registry"
-                % username
+            "We can not destroy the %s account due to 1 linked resources from registry"
+            % username
         )
 
         result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)

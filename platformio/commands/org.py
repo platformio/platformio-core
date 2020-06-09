@@ -107,13 +107,14 @@ def org_update(orgname, **kwargs):
     )
 
 
-@cli.command("destroy", short_help="Destroy a organization")
+@cli.command("destroy", short_help="Destroy organization")
 @click.argument("orgname")
 def account_destroy(orgname):
     client = AccountClient()
     click.confirm(
-        "Are you sure you want to delete organization account?\n"
-        "Warning! All linked data will be permanently removed and can not be restored.",
+        "Are you sure you want to delete the %s organization account?\n"
+        "Warning! All linked data will be permanently removed and can not be restored."
+        % orgname,
         abort=True,
     )
     client.destroy_org(orgname)

@@ -182,8 +182,9 @@ def account_update(current_password, **kwargs):
 def account_destroy():
     client = AccountClient()
     click.confirm(
-        "Are you sure you want to delete user account?\n"
-        "Warning! All linked data will be permanently removed and can not be restored.",
+        "Are you sure you want to delete the %s user account?\n"
+        "Warning! All linked data will be permanently removed and can not be restored."
+        % client.get_account_info().get("profile").get("username"),
         abort=True,
     )
     client.destroy_account()
