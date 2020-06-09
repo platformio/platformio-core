@@ -189,11 +189,14 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         app.set_state_item("account", account)
         return result
 
-    def create_org(self, orgname, email, display_name):
+    def destroy_account(self):
+        return self.send_auth_request("delete", "/v1/account")
+
+    def create_org(self, orgname, email, displayname):
         return self.send_auth_request(
             "post",
             "/v1/orgs",
-            data={"orgname": orgname, "email": email, "displayname": display_name},
+            data={"orgname": orgname, "email": email, "displayname": displayname},
         )
 
     def get_org(self, orgname):
@@ -206,6 +209,9 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         return self.send_auth_request(
             "put", "/v1/orgs/%s" % orgname, data={k: v for k, v in data.items() if v}
         )
+
+    def destroy_org(self, orgname):
+        return self.send_auth_request("delete", "/v1/orgs/%s" % orgname,)
 
     def add_org_owner(self, orgname, username):
         return self.send_auth_request(

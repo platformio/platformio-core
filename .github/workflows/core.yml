@@ -28,8 +28,9 @@ jobs:
           tox -e lint
       - name: Integration Tests
         env:
-          PLATFORMIO_TEST_ACCOUNT_LOGIN: ${{ secrets.PLATFORMIO_TEST_ACCOUNT_LOGIN }}
-          PLATFORMIO_TEST_ACCOUNT_PASSWORD: ${{ secrets.PLATFORMIO_TEST_ACCOUNT_PASSWORD }}
+          TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
+          TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
+          TEST_EMAIL_POP3_SERVER: ${{ secrets.TEST_EMAIL_POP3_SERVER }}
         run: |
           tox -e testcore
 

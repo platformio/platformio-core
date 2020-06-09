@@ -14,142 +14,150 @@
 
 import json
 import os
+import time
 
 import pytest
+import requests
 
 from platformio.commands.account import cli as cmd_account
 from platformio.commands.org import cli as cmd_org
 
-pytestmark = pytest.mark.skipif(
-    not (
-        os.environ.get("PLATFORMIO_TEST_ACCOUNT_LOGIN")
-        and os.environ.get("PLATFORMIO_TEST_ACCOUNT_PASSWORD")
-    ),
-    reason="requires PLATFORMIO_TEST_ACCOUNT_LOGIN, PLATFORMIO_TEST_ACCOUNT_PASSWORD environ variables",
-)
 
+@pytest.mark.skipif(
+    not os.environ.get("TEST_EMAIL_LOGIN"),
+    reason="requires TEST_EMAIL_LOGIN, TEST_EMAIL_PASSWORD environ variables",
+)  # pylint:disable=too-many-arguments
+def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
+    username = "test-piocore-%s" % str(int(time.time() * 1000))
+    splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
+    email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
+    firstname = "Test"
+    lastname = "User"
+    password = "Qwerty123!"
 
-@pytest.fixture(scope="session")
-def credentials():
-    return {
-        "login": os.environ["PLATFORMIO_TEST_ACCOUNT_LOGIN"],
-        "password": os.environ["PLATFORMIO_TEST_ACCOUNT_PASSWORD"],
-    }
+    # pio account register
+    result = clirunner.invoke(
+        cmd_account,
+        [
+            "register",
+            "-u",
+            username,
+            "-e",
+            email,
+            "-p",
+            password,
+            "--firstname",
+            firstname,
+            "--lastname",
+            lastname,
+        ],
+    )
+    validate_cliresult(result)
 
+    # email verification
+    result = receive_email(email)
+    link = (
+        result.split("Click on the link below to start this process.")[1]
+        .split("This link will expire within 12 hours.")[0]
+        .strip()
+    )
+    session = requests.Session()
+    result = session.get(link).text
+    link = result.split('<a href="')[1].split('"', 1)[0]
+    link = link.replace("&amp;", "&")
+    session.get(link)
 
-def test_orgs(clirunner, credentials, validate_cliresult, isolated_pio_home):
+    # pio account login
+    result = clirunner.invoke(cmd_account, ["login", "-u", username, "-p", password],)
+    validate_cliresult(result)
+
+    orgname = "testorg-piocore-%s" % str(int(time.time() * 1000))
+    display_name = "Test Org for PIO Core"
+    second_username = "ivankravets"
     try:
+        # pio org create
         result = clirunner.invoke(
-            cmd_account,
-            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+            cmd_org,
+            ["create", "--email", email, "--displayname", display_name, orgname],
         )
         validate_cliresult(result)
-        assert "Successfully logged in!" in result.output
 
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        # pio org list
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"])
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        if len(json_result) < 3:
-            for i in range(3 - len(json_result)):
-                result = clirunner.invoke(
-                    cmd_org,
-                    [
-                        "create",
-                        "%s-%s" % (i, credentials["login"]),
-                        "--email",
-                        "test@test.com",
-                        "--display-name",
-                        "TEST ORG %s" % i,
-                    ],
-                )
-                validate_cliresult(result)
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        assert json_result == [
+            {
+                "orgname": orgname,
+                "displayname": display_name,
+                "email": email,
+                "owners": [
+                    {"username": username, "firstname": firstname, "lastname": lastname}
+                ],
+            }
+        ]
+
+        # pio org add (owner)
+        result = clirunner.invoke(cmd_org, ["add", orgname, second_username])
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"])
+        validate_cliresult(result)
+        assert second_username in result.output
+
+        # pio org remove (owner)
+        result = clirunner.invoke(cmd_org, ["remove", orgname, second_username])
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"])
+        validate_cliresult(result)
+        assert second_username not in result.output
+
+        # pio org update
+        new_orgname = "neworg-piocore-%s" % str(int(time.time() * 1000))
+        new_display_name = "Test Org for PIO Core"
+
+        result = clirunner.invoke(
+            cmd_org,
+            [
+                "update",
+                orgname,
+                "--new-orgname",
+                new_orgname,
+                "--displayname",
+                new_display_name,
+            ],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_org, ["list", "--json-output"])
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        check = False
-        for org in json_result:
-            assert "orgname" in org
-            orgname = org["orgname"]
-            assert "displayname" in org
-            assert "email" in org
-            assert "owners" in org
-            for owner in org.get("owners"):
-                assert "username" in owner
-                check = owner["username"] == credentials["login"] if not check else True
-                assert "firstname" in owner
-                assert "lastname" in owner
-        assert check
+        assert json_result == [
+            {
+                "orgname": new_orgname,
+                "displayname": new_display_name,
+                "email": email,
+                "owners": [
+                    {"username": username, "firstname": firstname, "lastname": lastname}
+                ],
+            }
+        ]
 
-        result = clirunner.invoke(cmd_org, ["add", orgname, "ivankravets"],)
+        result = clirunner.invoke(
+            cmd_org,
+            [
+                "update",
+                new_orgname,
+                "--new-orgname",
+                orgname,
+                "--displayname",
+                display_name,
+            ],
+        )
         validate_cliresult(result)
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        check = False
-        for item in json_result:
-            if item["orgname"] != orgname:
-                continue
-            for owner in item.get("owners"):
-                check = owner["username"] == "ivankravets" if not check else True
-        assert check
-
-        result = clirunner.invoke(cmd_org, ["remove", orgname, "ivankravets"],)
-        validate_cliresult(result)
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        check = False
-        for item in json_result:
-            if item["orgname"] != orgname:
-                continue
-            for owner in item.get("owners"):
-                check = owner["username"] == "ivankravets" if not check else True
-        assert not check
     finally:
-        clirunner.invoke(cmd_account, ["logout"])
-
-
-@pytest.mark.skip
-def test_org_update(clirunner, credentials, validate_cliresult, isolated_pio_home):
-    try:
-        result = clirunner.invoke(
-            cmd_account,
-            ["login", "-u", credentials["login"], "-p", credentials["password"]],
-        )
+        result = clirunner.invoke(cmd_org, ["destroy", orgname], "y")
         validate_cliresult(result)
-        assert "Successfully logged in!" in result.output
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
+        result = clirunner.invoke(cmd_account, ["destroy"], "y")
         validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        org = json_result[0]
-        assert "orgname" in org
-        assert "displayname" in org
-        assert "email" in org
-        assert "owners" in org
-
-        old_orgname = org["orgname"]
-        if len(old_orgname) > 10:
-            new_orgname = "neworg" + org["orgname"][6:]
-
-        result = clirunner.invoke(
-            cmd_org, ["update", old_orgname, "--new-orgname", new_orgname],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(
-            cmd_org, ["update", new_orgname, "--new-orgname", old_orgname],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        assert json.loads(result.output.strip()) == json_result
-    finally:
-        clirunner.invoke(cmd_account, ["logout"])

@@ -17,123 +17,128 @@ import os
 import time
 
 import pytest
+import requests
 
 from platformio.commands.account import cli as cmd_account
 from platformio.commands.org import cli as cmd_org
 from platformio.commands.team import cli as cmd_team
 
-pytestmark = pytest.mark.skipif(
-    not (
-        os.environ.get("PLATFORMIO_TEST_ACCOUNT_LOGIN")
-        and os.environ.get("PLATFORMIO_TEST_ACCOUNT_PASSWORD")
-    ),
-    reason="requires PLATFORMIO_TEST_ACCOUNT_LOGIN, PLATFORMIO_TEST_ACCOUNT_PASSWORD environ variables",
-)
 
+@pytest.mark.skipif(
+    not os.environ.get("TEST_EMAIL_LOGIN"),
+    reason="requires TEST_EMAIL_LOGIN, TEST_EMAIL_PASSWORD environ variables",
+)  # pylint:disable=too-many-arguments
+def test_teams(clirunner, validate_cliresult, receive_email, isolated_pio_home):
+    username = "test-piocore-%s" % str(int(time.time() * 1000))
+    splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
+    email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
+    firstname = "Test"
+    lastname = "User"
+    password = "Qwerty123!"
 
-@pytest.fixture(scope="session")
-def credentials():
-    return {
-        "login": os.environ["PLATFORMIO_TEST_ACCOUNT_LOGIN"],
-        "password": os.environ["PLATFORMIO_TEST_ACCOUNT_PASSWORD"],
-    }
+    # pio account register
+    result = clirunner.invoke(
+        cmd_account,
+        [
+            "register",
+            "-u",
+            username,
+            "-e",
+            email,
+            "-p",
+            password,
+            "--firstname",
+            firstname,
+            "--lastname",
+            lastname,
+        ],
+    )
+    validate_cliresult(result)
 
+    # email verification
+    result = receive_email(email)
+    link = (
+        result.split("Click on the link below to start this process.")[1]
+        .split("This link will expire within 12 hours.")[0]
+        .strip()
+    )
+    session = requests.Session()
+    result = session.get(link).text
+    link = result.split('<a href="')[1].split('"', 1)[0]
+    link = link.replace("&amp;", "&")
+    session.get(link)
 
-def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
-    orgname = ""
+    # pio account login
+    result = clirunner.invoke(cmd_account, ["login", "-u", username, "-p", password],)
+    validate_cliresult(result)
+
+    orgname = "testorg-piocore-%s" % str(int(time.time() * 1000))
+    display_name = "Test Org for PIO Core"
+
+    # pio org create
+    result = clirunner.invoke(
+        cmd_org, ["create", "--email", email, "--displayname", display_name, orgname]
+    )
+    validate_cliresult(result)
+
     teamname = "test-" + str(int(time.time() * 1000))
+    team_description = "team for CI test"
+    second_username = "ivankravets"
     try:
-        result = clirunner.invoke(
-            cmd_account,
-            ["login", "-u", credentials["login"], "-p", credentials["password"]],
-        )
-        validate_cliresult(result)
-        assert "Successfully logged in!" in result.output
-
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        if len(json_result) < 3:
-            for i in range(3 - len(json_result)):
-                result = clirunner.invoke(
-                    cmd_org,
-                    [
-                        "create",
-                        "%s-%s" % (i, credentials["login"]),
-                        "--email",
-                        "test@test.com",
-                        "--display-name",
-                        "TEST ORG %s" % i,
-                    ],
-                )
-                validate_cliresult(result)
-        result = clirunner.invoke(cmd_org, ["list", "--json-output"],)
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 3
-        orgname = json_result[0].get("orgname")
-
+        # pio team create
         result = clirunner.invoke(
             cmd_team,
             [
                 "create",
                 "%s:%s" % (orgname, teamname),
                 "--description",
-                "team for CI test",
+                team_description,
             ],
         )
         validate_cliresult(result)
 
+        # pio team list
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 1
-        check = False
-        for team in json_result:
-            assert team["id"]
-            assert team["name"]
-            if team["name"] == teamname:
-                check = True
-            assert "description" in team
-            assert "members" in team
-        assert check
+        for item in json_result:
+            del item["id"]
+        assert json_result == [
+            {"name": teamname, "description": team_description, "members": []}
+        ]
 
+        # pio team add (member)
         result = clirunner.invoke(
-            cmd_team, ["add", "%s:%s" % (orgname, teamname), credentials["login"]],
+            cmd_team, ["add", "%s:%s" % (orgname, teamname), second_username],
         )
         validate_cliresult(result)
 
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        check = False
-        for team in json_result:
-            assert team["id"]
-            assert team["name"]
-            assert "description" in team
-            assert "members" in team
-            if (
-                len(team["members"]) > 0
-                and team["members"][0]["username"] == credentials["login"]
-            ):
-                check = True
-        assert check
+        assert second_username in result.output
 
+        # pio team remove (member)
         result = clirunner.invoke(
-            cmd_team, ["remove", "%s:%s" % (orgname, teamname), credentials["login"]],
+            cmd_team, ["remove", "%s:%s" % (orgname, teamname), second_username],
         )
         validate_cliresult(result)
 
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
+        assert second_username not in result.output
 
+        # pio team update
+        new_teamname = "new-" + str(int(time.time() * 1000))
+        newteam_description = "Updated Description"
         result = clirunner.invoke(
             cmd_team,
             [
                 "update",
                 "%s:%s" % (orgname, teamname),
+                "--name",
+                new_teamname,
                 "--description",
-                "Updated Description",
+                newteam_description,
             ],
         )
         validate_cliresult(result)
@@ -141,18 +146,30 @@ def test_teams(clirunner, credentials, validate_cliresult, isolated_pio_home):
         result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
         validate_cliresult(result)
         json_result = json.loads(result.output.strip())
-        assert len(json_result) >= 1
-        check = False
-        for team in json_result:
-            assert team["id"]
-            assert team["name"]
-            assert "description" in team
-            if team.get("description") == "Updated Description":
-                check = True
-            assert "members" in team
-        assert check
-    finally:
-        clirunner.invoke(
-            cmd_team, ["destroy", "%s:%s" % (orgname, teamname),],
+        for item in json_result:
+            del item["id"]
+        assert json_result == [
+            {"name": new_teamname, "description": newteam_description, "members": []}
+        ]
+
+        result = clirunner.invoke(
+            cmd_team,
+            [
+                "update",
+                "%s:%s" % (orgname, new_teamname),
+                "--name",
+                teamname,
+                "--description",
+                team_description,
+            ],
         )
-        clirunner.invoke(cmd_account, ["logout"])
+        validate_cliresult(result)
+    finally:
+        result = clirunner.invoke(
+            cmd_team, ["destroy", "%s:%s" % (orgname, teamname)], "y"
+        )
+        validate_cliresult(result)
+        result = clirunner.invoke(cmd_org, ["destroy", orgname], "y")
+        validate_cliresult(result)
+        result = clirunner.invoke(cmd_account, ["destroy"], "y")
+        validate_cliresult(result)
