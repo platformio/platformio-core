@@ -143,7 +143,8 @@ def _escape_build_flag(flags):
     return [flag if " " not in flag else '"%s"' % flag for flag in flags]
 
 
-def DumpIDEData(env):
+def DumpIDEData(env, globalenv):
+    """ env here is `projenv`"""
 
     env["__escape_build_flag"] = _escape_build_flag
 
@@ -169,6 +170,7 @@ def DumpIDEData(env):
         ],
         "svd_path": _get_svd_path(env),
         "compiler_type": env.GetCompilerType(),
+        "targets": globalenv.DumpTargets(),
     }
 
     env_ = env.Clone()

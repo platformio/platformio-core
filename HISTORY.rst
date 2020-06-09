@@ -6,9 +6,16 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.3.5 (2020-??-??)
+4.4.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__ (preview)
+
+  - Manage own organizations
+  - Manage organization teams
+  - Manage resource access
+
+* Added support for `custom targets <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-targets>`__ (user cases: command shortcuts, pre/post processing based on dependencies, custom command launcher with options, etc.)
 * Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
 
 4.3.4 (2020-05-23)

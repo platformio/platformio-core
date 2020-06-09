@@ -55,6 +55,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "c++",
         "link",
         "platformio",
+        "piotarget",
         "pioplatform",
         "pioproject",
         "piomaxlen",
@@ -217,7 +218,7 @@ if "idedata" in COMMAND_LINE_TARGETS:
     click.echo(
         "\n%s\n"
         % dump_json_to_unicode(
-            projenv.DumpIDEData()  # pylint: disable=undefined-variable
+            projenv.DumpIDEData(env)  # pylint: disable=undefined-variable
         )
     )
     env.Exit(0)
