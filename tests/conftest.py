@@ -83,7 +83,9 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
             for index, _ in enumerate(mails):
                 _, lines, _ = server.retr(index + 1)
                 msg_content = b"\n".join(lines)
-                msg = email.message_from_bytes(msg_content)
+                msg = email.message_from_string(
+                    msg_content.decode("ASCII", errors="surrogateescape")
+                )
                 if from_who not in msg.get("To"):
                     continue
                 server.dele(index + 1)
