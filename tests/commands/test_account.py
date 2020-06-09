@@ -14,7 +14,7 @@
 
 import json
 import os
-import time
+import random
 
 import pytest
 import requests
@@ -32,7 +32,7 @@ from platformio.unpacker import FileUnpacker
 def test_account(
     clirunner, validate_cliresult, receive_email, isolated_pio_home, tmpdir_factory
 ):
-    username = "test-piocore-%s" % str(int(time.time() * 1000))
+    username = "test-piocore-%s" % str(random.randint(0, 100000))
     splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
     email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
     firstname = "Test"
@@ -191,10 +191,10 @@ def test_account(
         validate_cliresult(result)
 
         # pio account update
-        firstname = "First " + str(int(time.time() * 1000))
-        lastname = "Last" + str(int(time.time() * 1000))
+        firstname = "First " + str(random.randint(0, 100000))
+        lastname = "Last" + str(random.randint(0, 100000))
 
-        new_username = "username" + str(int(time.time() * 1000))[-5:]
+        new_username = "username" + str(random.randint(0, 100000))
         new_email = "%s+new-%s@%s" % (splited_email[0], username, splited_email[1])
         result = clirunner.invoke(
             cmd_account,
