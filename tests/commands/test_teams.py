@@ -83,7 +83,7 @@ def test_teams(clirunner, validate_cliresult, receive_email, isolated_pio_home):
 
     teamname = "test-" + str(int(time.time() * 1000))
     team_description = "team for CI test"
-    second_username = "rustam"
+    second_username = "ivankravets"
     try:
         # pio team create
         result = clirunner.invoke(

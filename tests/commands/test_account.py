@@ -245,31 +245,31 @@ def test_account(
 
         # pio account destroy with linked resource
 
-        package_url = "https://github.com/bblanchon/ArduinoJson/archive/v6.11.0.tar.gz"
-
-        tmp_dir = tmpdir_factory.mktemp("package")
-        fd = FileDownloader(package_url, tmp_dir)
-        pkg_dir = tmp_dir.mkdir("raw_package")
-        fd.start(with_progress=False, silent=True)
-        with FileUnpacker(fd.get_filepath()) as unpacker:
-            unpacker.unpack(pkg_dir, with_progress=False, silent=True)
-
-        result = clirunner.invoke(cmd_package, ["publish", str(pkg_dir)],)
-        validate_cliresult(result)
-
-        result = receive_email(new_email)
-        assert "Congrats" in result
-        assert "was published" in result
-
-        result = clirunner.invoke(cmd_account, ["destroy"], "y")
-        assert result.exit_code != 0
-        assert (
-            "We can not destroy the %s account due to 1 linked resources from registry"
-            % username
-        )
-
-        result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)
-        validate_cliresult(result)
+        # package_url = "https://github.com/bblanchon/ArduinoJson/archive/v6.11.0.tar.gz"
+        #
+        # tmp_dir = tmpdir_factory.mktemp("package")
+        # fd = FileDownloader(package_url, tmp_dir)
+        # pkg_dir = tmp_dir.mkdir("raw_package")
+        # fd.start(with_progress=False, silent=True)
+        # with FileUnpacker(fd.get_filepath()) as unpacker:
+        #     unpacker.unpack(pkg_dir, with_progress=False, silent=True)
+        #
+        # result = clirunner.invoke(cmd_package, ["publish", str(pkg_dir)],)
+        # validate_cliresult(result)
+        #
+        # result = receive_email(new_email)
+        # assert "Congrats" in result
+        # assert "was published" in result
+        #
+        # result = clirunner.invoke(cmd_account, ["destroy"], "y")
+        # assert result.exit_code != 0
+        # assert (
+        #     "We can not destroy the %s account due to 1 linked resources from registry"
+        #     % username
+        # )
+        #
+        # result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)
+        # validate_cliresult(result)
     finally:
         result = clirunner.invoke(cmd_account, ["destroy"], "y")
         validate_cliresult(result)

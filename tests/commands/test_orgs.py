@@ -73,7 +73,7 @@ def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
 
     orgname = "testorg-piocore-%s" % str(int(time.time() * 1000))
     display_name = "Test Org for PIO Core"
-    second_username = "rustam"
+    second_username = "ivankravets"
     try:
         # pio org create
         result = clirunner.invoke(

@@ -76,7 +76,7 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
         start_time = time.time()
         while not result:
             time.sleep(5)
-            server = poplib.POP3_SSL(pop_server, timeout=30)
+            server = poplib.POP3_SSL(pop_server)
             server.user(test_email)
             server.pass_(test_password)
             _, mails, _ = server.list()
