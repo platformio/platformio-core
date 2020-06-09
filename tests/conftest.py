@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import email
+import imaplib
 import os
-import poplib
 import time
 
 import pytest
@@ -63,9 +63,7 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
     def _receive_email(from_who):
         test_email = os.environ.get("TEST_EMAIL_LOGIN")
         test_password = os.environ.get("TEST_EMAIL_PASSWORD")
-        pop_server = os.environ.get("TEST_EMAIL_POP3_SERVER") or "pop.gmail.com"
-        if "gmail" in pop_server:
-            test_email = "recent:" + test_email
+        imap_server = os.environ.get("TEST_EMAIL_IMAP_SERVER") or "imap.gmail.com"
 
         def get_body(msg):
             if msg.is_multipart():
@@ -76,23 +74,26 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
         start_time = time.time()
         while not result:
             time.sleep(5)
-            server = poplib.POP3_SSL(pop_server)
-            server.user(test_email)
-            server.pass_(test_password)
-            _, mails, _ = server.list()
-            for index, _ in enumerate(mails):
-                _, lines, _ = server.retr(index + 1)
-                msg_content = b"\n".join(lines)
+            server = imaplib.IMAP4_SSL(imap_server)
+            server.login(test_email, test_password)
+            server.select("INBOX")
+            _, mails = server.search(None, "ALL")
+            for index in mails[0].split():
+                _, data = server.fetch(index, "(RFC822)")
                 msg = email.message_from_string(
-                    msg_content.decode("ASCII", errors="surrogateescape")
+                    data[0][1].decode("ASCII", errors="surrogateescape")
                 )
                 if from_who not in msg.get("To"):
                     continue
-                server.dele(index + 1)
+                if "gmail" in imap_server:
+                    server.store(index, "+X-GM-LABELS", "\\Trash")
+                server.store(index, "+FLAGS", "\\Deleted")
+                server.expunge()
                 result = get_body(msg).decode()
             if time.time() - start_time > 120:
                 break
-            server.quit()
+            server.close()
+            server.logout()
         return result
 
     return _receive_email
