@@ -39,10 +39,10 @@ def validate_orgname(value):
 @click.option(
     "--email", callback=lambda _, __, value: validate_email(value) if value else value
 )
-@click.option("--display-name",)
-def org_create(orgname, email, display_name):
+@click.option("--displayname",)
+def org_create(orgname, email, displayname):
     client = AccountClient()
-    client.create_org(orgname, email, display_name)
+    client.create_org(orgname, email, displayname)
     return click.secho(
         "The organization %s has been successfully created." % orgname, fg="green",
     )
@@ -82,7 +82,7 @@ def org_list(json_output):
     "--new-orgname", callback=lambda _, __, value: validate_orgname(value),
 )
 @click.option("--email")
-@click.option("--display-name",)
+@click.option("--displayname",)
 def org_update(orgname, **kwargs):
     client = AccountClient()
     org = client.get_org(orgname)
@@ -105,6 +105,19 @@ def org_update(orgname, **kwargs):
     return click.secho(
         "The organization %s has been successfully updated." % orgname, fg="green",
     )
+
+
+@cli.command("destroy", short_help="Destroy a organization")
+@click.argument("orgname")
+def account_destroy(orgname):
+    client = AccountClient()
+    click.confirm(
+        "Are you sure you want to delete organization account?\n"
+        "Warning! All linked data will be permanently removed and can not be restored.",
+        abort=True,
+    )
+    client.destroy_org(orgname)
+    return click.secho("Organization %s has been destroyed." % orgname, fg="green",)
 
 
 @cli.command("add", short_help="Add a new owner to organization")

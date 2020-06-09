@@ -178,6 +178,22 @@ def account_update(current_password, **kwargs):
     return click.secho("Please re-login.", fg="yellow")
 
 
+@cli.command("destroy", short_help="Destroy account")
+def account_destroy():
+    client = AccountClient()
+    click.confirm(
+        "Are you sure you want to delete user account?\n"
+        "Warning! All linked data will be permanently removed and can not be restored.",
+        abort=True,
+    )
+    client.destroy_account()
+    try:
+        client.logout()
+    except AccountNotAuthorized:
+        pass
+    return click.secho("User account has been destroyed.", fg="green",)
+
+
 @cli.command("show", short_help="PIO Account information")
 @click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
