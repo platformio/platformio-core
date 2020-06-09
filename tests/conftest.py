@@ -90,7 +90,7 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
                     continue
                 server.dele(index + 1)
                 result = get_body(msg).decode()
-            if time.time() - start_time > 60:
+            if time.time() - start_time > 120:
                 break
             server.quit()
         return result
