@@ -78,7 +78,6 @@ def AddCustomTarget(env, *args, **kwargs):
 
 
 def DumpTargets(env):
-    print("DumpTargets", id(env))
     targets = env.get("__PIO_TARGETS") or {}
     # pre-fill default system targets
     if (
