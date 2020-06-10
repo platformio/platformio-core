@@ -30,7 +30,7 @@ jobs:
         env:
           TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
           TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
-          TEST_EMAIL_POP3_SERVER: ${{ secrets.TEST_EMAIL_POP3_SERVER }}
+          TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
         run: |
           tox -e testcore
 

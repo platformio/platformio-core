@@ -14,7 +14,7 @@
 
 import json
 import os
-import time
+import random
 
 import pytest
 import requests
@@ -28,7 +28,7 @@ from platformio.commands.org import cli as cmd_org
     reason="requires TEST_EMAIL_LOGIN, TEST_EMAIL_PASSWORD environ variables",
 )  # pylint:disable=too-many-arguments
 def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
-    username = "test-piocore-%s" % str(int(time.time() * 1000))
+    username = "test-piocore-%s" % str(random.randint(0, 100000))
     splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
     email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
     firstname = "Test"
@@ -71,7 +71,7 @@ def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
     result = clirunner.invoke(cmd_account, ["login", "-u", username, "-p", password],)
     validate_cliresult(result)
 
-    orgname = "testorg-piocore-%s" % str(int(time.time() * 1000))
+    orgname = "testorg-piocore-%s" % str(random.randint(0, 100000))
     display_name = "Test Org for PIO Core"
     second_username = "ivankravets"
     try:
@@ -114,7 +114,7 @@ def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
         assert second_username not in result.output
 
         # pio org update
-        new_orgname = "neworg-piocore-%s" % str(int(time.time() * 1000))
+        new_orgname = "neworg-piocore-%s" % str(random.randint(0, 100000))
         new_display_name = "Test Org for PIO Core"
 
         result = clirunner.invoke(
