@@ -275,8 +275,7 @@ def test_account(
         result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)
         validate_cliresult(result)
     finally:
-        result = clirunner.invoke(cmd_account, ["destroy"], "y")
-        validate_cliresult(result)
+        clirunner.invoke(cmd_account, ["destroy"], "y")
 
 
 @pytest.mark.skipif(
@@ -413,10 +412,8 @@ def test_org(clirunner, validate_cliresult, receive_email, isolated_pio_home):
         )
         validate_cliresult(result)
     finally:
-        result = clirunner.invoke(cmd_org, ["destroy", orgname], "y")
-        validate_cliresult(result)
-        result = clirunner.invoke(cmd_account, ["destroy"], "y")
-        validate_cliresult(result)
+        clirunner.invoke(cmd_org, ["destroy", orgname], "y")
+        clirunner.invoke(cmd_account, ["destroy"], "y")
 
 
 @pytest.mark.skipif(
@@ -560,11 +557,6 @@ def test_team(clirunner, validate_cliresult, receive_email, isolated_pio_home):
         )
         validate_cliresult(result)
     finally:
-        result = clirunner.invoke(
-            cmd_team, ["destroy", "%s:%s" % (orgname, teamname)], "y"
-        )
-        validate_cliresult(result)
-        result = clirunner.invoke(cmd_org, ["destroy", orgname], "y")
-        validate_cliresult(result)
-        result = clirunner.invoke(cmd_account, ["destroy"], "y")
-        validate_cliresult(result)
+        clirunner.invoke(cmd_team, ["destroy", "%s:%s" % (orgname, teamname)], "y")
+        clirunner.invoke(cmd_org, ["destroy", orgname], "y")
+        clirunner.invoke(cmd_account, ["destroy"], "y")
