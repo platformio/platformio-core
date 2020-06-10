@@ -40,7 +40,7 @@ password = "Qwerty123!"
 
 orgname = "testorg-piocore-%s" % str(random.randint(0, 100000))
 display_name = "Test Org for PIO Core"
-second_username = "rustam"
+second_username = "ivankravets"
 
 teamname = "test-" + str(random.randint(0, 100000))
 team_description = "team for CI test"
