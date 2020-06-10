@@ -47,21 +47,21 @@ def PioClean(env, clean_dir):
     env.Exit(0)
 
 
-def _add_pio_target(  # pylint: disable=too-many-arguments
+def AddTarget(  # pylint: disable=too-many-arguments
     env,
-    scope,
     name,
     dependencies,
     actions,
     title=None,
     description=None,
+    group="Generic",
     always_build=True,
 ):
     if "__PIO_TARGETS" not in env:
         env["__PIO_TARGETS"] = {}
     assert name not in env["__PIO_TARGETS"]
     env["__PIO_TARGETS"][name] = dict(
-        name=name, scope=scope, title=title, description=description
+        name=name, title=title, description=description, group=group
     )
     target = env.Alias(name, dependencies, actions)
     if always_build:
@@ -69,29 +69,28 @@ def _add_pio_target(  # pylint: disable=too-many-arguments
     return target
 
 
-def AddSystemTarget(env, *args, **kwargs):
-    return _add_pio_target(env, "system", *args, **kwargs)
+def AddPlatformTarget(env, *args, **kwargs):
+    return env.AddTarget(group="Platform", *args, **kwargs)
 
 
 def AddCustomTarget(env, *args, **kwargs):
-    return _add_pio_target(env, "custom", *args, **kwargs)
+    return env.AddTarget(group="Custom", *args, **kwargs)
 
 
 def DumpTargets(env):
     targets = env.get("__PIO_TARGETS") or {}
-    # pre-fill default system targets
-    if (
-        not any(t["scope"] == "system" for t in targets.values())
-        and env.PioPlatform().is_embedded()
+    # pre-fill default targets if embedded dev-platform
+    if env.PioPlatform().is_embedded() and not any(
+        t["group"] == "Platform" for t in targets.values()
     ):
-        targets["upload"] = dict(name="upload", scope="system", title="Upload")
+        targets["upload"] = dict(name="upload", group="Platform", title="Upload")
     targets["compiledb"] = dict(
         name="compiledb",
-        scope="system",
         title="Compilation database",
         description="Generate compilation database `compile_commands.json`",
+        group="Advanced",
     )
-    targets["clean"] = dict(name="clean", scope="system", title="Clean")
+    targets["clean"] = dict(name="clean", title="Clean", group="Generic")
     return list(targets.values())
 
 
@@ -102,7 +101,8 @@ def exists(_):
 def generate(env):
     env.AddMethod(VerboseAction)
     env.AddMethod(PioClean)
-    env.AddMethod(AddSystemTarget)
+    env.AddMethod(AddTarget)
+    env.AddMethod(AddPlatformTarget)
     env.AddMethod(AddCustomTarget)
     env.AddMethod(DumpTargets)
     return env
