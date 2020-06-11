@@ -86,7 +86,7 @@ def DumpTargets(env):
         targets["upload"] = dict(name="upload", group="Platform", title="Upload")
     targets["compiledb"] = dict(
         name="compiledb",
-        title="Compilation database",
+        title="Compilation Database",
         description="Generate compilation database `compile_commands.json`",
         group="Advanced",
     )
