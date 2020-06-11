@@ -24,7 +24,7 @@ from platformio.proc import get_pythonexe_path
 from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
-    "contrib-piohome": "~3.2.1",
+    "contrib-piohome": "~3.2.3",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-unity": "~1.20500.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30102.0",
