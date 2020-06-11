@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import atexit
-from os import remove
+from os import remove, listdir
 from os.path import isdir, isfile, join
 from string import Template
 
@@ -194,24 +194,29 @@ class TestProcessorBase(object):
             ]
         )
 
-        def delete_tmptest_file(file_):
-            try:
-                remove(file_)
-            except:  # pylint: disable=bare-except
-                if isfile(file_):
-                    click.secho(
-                        "Warning: Could not remove temporary file '%s'. "
-                        "Please remove it manually." % file_,
-                        fg="yellow",
-                    )
+        tmp_file_prefix = "tmp_pio_test_transport"
+
+        def delete_tmptest_files(test_dir):
+            for item in listdir(test_dir):
+                if item.startswith(tmp_file_prefix) and isfile(join(test_dir, item)):
+                    try:
+                        remove(join(test_dir, item))
+                    except:  # pylint: disable=bare-except
+                        click.secho(
+                            "Warning: Could not remove temporary file '%s'. "
+                            "Please remove it manually." % join(test_dir, item),
+                            fg="yellow",
+                        )
 
         transport_options = TRANSPORT_OPTIONS[self.get_transport()]
         tpl = Template(file_tpl).substitute(transport_options)
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
+
+        delete_tmptest_files(test_dir)
         tmp_file = join(
-            test_dir, "output_export." + transport_options.get("language", "c")
+            test_dir, "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c"))
         )
         with open(tmp_file, "w") as fp:
             fp.write(data)
 
-        atexit.register(delete_tmptest_file, tmp_file)
+        atexit.register(delete_tmptest_files, test_dir)
