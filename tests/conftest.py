@@ -79,7 +79,9 @@ def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
             server.select("INBOX")
             _, mails = server.search(None, "ALL")
             for index in mails[0].split():
-                _, data = server.fetch(index, "(RFC822)")
+                status, data = server.fetch(index, "(RFC822)")
+                if status != "OK" or not data or not isinstance(data[0], tuple):
+                    continue
                 msg = email.message_from_string(
                     data[0][1].decode("ASCII", errors="surrogateescape")
                 )
