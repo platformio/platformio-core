@@ -31,19 +31,36 @@ pytestmark = pytest.mark.skipif(
     reason="requires TEST_EMAIL_LOGIN, TEST_EMAIL_PASSWORD environ variables",
 )
 
-username = "test-piocore-%s" % str(random.randint(0, 100000))
-splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
-email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
-firstname = "Test"
-lastname = "User"
-password = "Qwerty123!"
+username = None
+email = None
+firstname = None
+lastname = None
+password = None
 
-orgname = "testorg-piocore-%s" % str(random.randint(0, 100000))
-display_name = "Test Org for PIO Core"
-second_username = "ivankravets"
+orgname = None
+display_name = None
+second_username = None
 
-teamname = "test-" + str(random.randint(0, 100000))
-team_description = "team for CI test"
+teamname = None
+team_description = None
+
+
+def test_prepare():
+    global username, splited_email, email, firstname, lastname, password, orgname, display_name, second_username, teamname, team_description
+
+    username = "test-piocore-%s" % str(random.randint(0, 100000))
+    splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
+    email = "%s+%s@%s" % (splited_email[0], username, splited_email[1])
+    firstname = "Test"
+    lastname = "User"
+    password = "Qwerty123!"
+
+    orgname = "testorg-piocore-%s" % str(random.randint(0, 100000))
+    display_name = "Test Org for PIO Core"
+    second_username = "ivankravets"
+
+    teamname = "test-" + str(random.randint(0, 100000))
+    team_description = "team for CI test"
 
 
 def test_account_register(
