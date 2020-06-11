@@ -46,7 +46,8 @@ team_description = None
 
 
 def test_prepare():
-    global username, splited_email, email, firstname, lastname, password, orgname, display_name, second_username, teamname, team_description
+    global username, splited_email, email, firstname, lastname
+    global password, orgname, display_name, second_username, teamname, team_description
 
     username = "test-piocore-%s" % str(random.randint(0, 100000))
     splited_email = os.environ.get("TEST_EMAIL_LOGIN").split("@")
