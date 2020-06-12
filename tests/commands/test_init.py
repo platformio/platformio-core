@@ -62,29 +62,50 @@ def test_init_ide_without_board(clirunner, tmpdir):
         assert isinstance(result.exception, ProjectEnvsNotAvailableError)
 
 
-def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
+def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(
-            cmd_init, ["--ide", "atom", "-b", "uno", "-b", "teensy31"]
+            cmd_init, ["--ide", "vscode", "-b", "uno", "-b", "teensy31"]
         )
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert all(
-            [tmpdir.join(f).check() for f in (".clang_complete", ".gcc-flags.json")]
+            [
+                tmpdir.join(".vscode").join(f).check()
+                for f in ("c_cpp_properties.json", "launch.json")
+            ]
         )
-        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
+        assert (
+            "framework-arduino-avr"
+            in tmpdir.join(".vscode").join("c_cpp_properties.json").read()
+        )
 
         # switch to NodeMCU
-        result = clirunner.invoke(cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
+        result = clirunner.invoke(cmd_init, ["--ide", "vscode", "-b", "nodemcuv2"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert "arduinoespressif" in tmpdir.join(".clang_complete").read()
+        assert (
+            "framework-arduinoespressif8266"
+            in tmpdir.join(".vscode").join("c_cpp_properties.json").read()
+        )
+
+        # switch to teensy31 via env name
+        result = clirunner.invoke(cmd_init, ["--ide", "vscode", "-e", "teensy31"])
+        validate_cliresult(result)
+        validate_pioproject(str(tmpdir))
+        assert (
+            "framework-arduinoteensy"
+            in tmpdir.join(".vscode").join("c_cpp_properties.json").read()
+        )
 
         # switch to the first board
-        result = clirunner.invoke(cmd_init, ["--ide", "atom"])
+        result = clirunner.invoke(cmd_init, ["--ide", "vscode"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
+        assert (
+            "framework-arduino-avr"
+            in tmpdir.join(".vscode").join("c_cpp_properties.json").read()
+        )
 
 
 def test_init_ide_eclipse(clirunner, validate_cliresult):

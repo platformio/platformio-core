@@ -93,6 +93,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 )
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
+@click.option("-e", "--environment", help="Update using existing environment")
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
@@ -102,6 +103,7 @@ def project_init(
     project_dir,
     board,
     ide,
+    environment,
     project_option,
     env_prefix,
     silent,
@@ -139,7 +141,11 @@ def project_init(
         )
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide, board)
+        config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
+        config.validate()
+        pg = ProjectGenerator(
+            config, environment or get_best_envname(config, board), ide
+        )
         pg.generate()
 
     if is_new_project:
@@ -444,3 +450,23 @@ def _install_dependent_platforms(ctx, platforms):
     ctx.invoke(
         cli_platform_install, platforms=list(set(platforms) - set(installed_platforms))
     )
+
+
+def get_best_envname(config, board_ids=None):
+    envname = None
+    default_envs = config.default_envs()
+    if default_envs:
+        envname = default_envs[0]
+        if not board_ids:
+            return envname
+
+    for env in config.envs():
+        if not board_ids:
+            return env
+        if not envname:
+            envname = env
+        items = config.items(env=env, as_dict=True)
+        if "board" in items and items.get("board") in board_ids:
+            return env
+
+    return envname
