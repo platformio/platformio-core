@@ -9,13 +9,20 @@ PlatformIO Core 4
 4.4.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__ (preview)
+* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__
 
   - Manage own organizations
   - Manage organization teams
   - Manage resource access
 
-* Added support for `custom targets <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-targets>`__ (user cases: command shortcuts, pre/post processing based on dependencies, custom command launcher with options, etc.)
+* New `Custom Targets <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-targets>`__
+
+  - Pre/Post processing based on a dependent sources (other target, source file, etc.)
+  - Command launcher with own arguments
+  - Launch command with custom options declared in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+  - Python callback as a target (use the power of Python interpreter and PlatformIO Build API)
+
+
 * Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
 * Added a new ``-e, --environment`` option to `platformio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
 * Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
