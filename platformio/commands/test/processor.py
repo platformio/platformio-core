@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import atexit
-from os import remove, listdir
+from os import listdir, remove
 from os.path import isdir, isfile, join
 from string import Template
 
@@ -214,7 +214,8 @@ class TestProcessorBase(object):
 
         delete_tmptest_files(test_dir)
         tmp_file = join(
-            test_dir, "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c"))
+            test_dir,
+            "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c")),
         )
         with open(tmp_file, "w") as fp:
             fp.write(data)
