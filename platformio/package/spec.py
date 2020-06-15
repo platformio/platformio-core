@@ -43,7 +43,7 @@ class PackageType(object):
     def from_archive(cls, path):
         assert path.endswith("tar.gz")
         manifest_map = cls.get_manifest_map()
-        with tarfile.open(path, mode="r|gz") as tf:
+        with tarfile.open(path, mode="r:gz") as tf:
             for t in sorted(cls.items().values()):
                 for manifest in manifest_map[t]:
                     try:

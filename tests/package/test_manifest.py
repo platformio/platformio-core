@@ -14,6 +14,7 @@
 
 import os
 import re
+import tarfile
 
 import jsondiff
 import pytest
@@ -788,6 +789,21 @@ def test_examples_from_dir(tmpdir_factory):
             ),
         },
     )
+
+
+def test_parser_from_archive(tmpdir_factory):
+    pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join("package.json").write('{"name": "package.json"}')
+    pkg_dir.join("library.json").write('{"name": "library.json"}')
+    pkg_dir.join("library.properties").write("name=library.properties")
+
+    archive_path = os.path.join(str(pkg_dir), "package.tar.gz")
+    with tarfile.open(archive_path, mode="w|gz") as tf:
+        for item in os.listdir(str(pkg_dir)):
+            tf.add(os.path.join(str(pkg_dir), item), item)
+
+    data = parser.ManifestParserFactory.new_from_archive(archive_path).as_dict()
+    assert data["name"] == "library.json"
 
 
 def test_broken_schemas():

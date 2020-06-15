@@ -17,6 +17,7 @@ import io
 import json
 import os
 import re
+import tarfile
 
 import requests
 
@@ -108,6 +109,17 @@ class ManifestParserFactory(object):
             ManifestFileType.from_uri(remote_url) or ManifestFileType.LIBRARY_JSON,
             remote_url,
         )
+
+    @staticmethod
+    def new_from_archive(path):
+        assert path.endswith("tar.gz")
+        with tarfile.open(path, mode="r:gz") as tf:
+            for t in sorted(ManifestFileType.items().values()):
+                try:
+                    return ManifestParserFactory.new(tf.extractfile(t).read(), t)
+                except KeyError:
+                    pass
+        raise UnknownManifestError("Unknown manifest file type in %s archive" % path)
 
     @staticmethod
     def new(  # pylint: disable=redefined-builtin
