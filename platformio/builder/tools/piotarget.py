@@ -20,7 +20,7 @@ from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 
-from platformio import fs
+from platformio import compat, fs
 
 
 def VerboseAction(_, act, actstr):
@@ -30,17 +30,24 @@ def VerboseAction(_, act, actstr):
 
 
 def PioClean(env, clean_dir):
+    def _relpath(path):
+        if compat.WINDOWS:
+            prefix = os.getcwd()[:2].lower()
+            if ":" not in prefix or not path.lower().startswith(prefix):
+                return path
+        return os.path.relpath(path)
+
     if not os.path.isdir(clean_dir):
         print("Build environment is clean")
         env.Exit(0)
-    clean_rel_path = os.path.relpath(clean_dir)
+    clean_rel_path = _relpath(clean_dir)
     for root, _, files in os.walk(clean_dir):
         for f in files:
             dst = os.path.join(root, f)
             os.remove(dst)
             print(
                 "Removed %s"
-                % (dst if clean_rel_path.startswith(".") else os.path.relpath(dst))
+                % (dst if not clean_rel_path.startswith(".") else _relpath(dst))
             )
     print("Done cleaning")
     fs.rmtree(clean_dir)
