@@ -283,36 +283,36 @@ def test_account_update(
     validate_cliresult(result)
 
 
-def test_account_destroy_with_linked_resources(
-    clirunner, validate_cliresult, receive_email, isolated_pio_home, tmpdir_factory
-):
-    package_url = "https://github.com/bblanchon/ArduinoJson/archive/v6.11.0.tar.gz"
-
-    tmp_dir = tmpdir_factory.mktemp("package")
-    fd = FileDownloader(package_url, str(tmp_dir))
-    pkg_dir = tmp_dir.mkdir("raw_package")
-    fd.start(with_progress=False, silent=True)
-    with FileUnpacker(fd.get_filepath()) as unpacker:
-        unpacker.unpack(str(pkg_dir), with_progress=False, silent=True)
-
-    result = clirunner.invoke(cmd_package, ["publish", str(pkg_dir)],)
-    validate_cliresult(result)
-    try:
-        result = receive_email(email)
-        assert "Congrats" in result
-        assert "was published" in result
-    except:  # pylint:disable=bare-except
-        pass
-
-    result = clirunner.invoke(cmd_account, ["destroy"], "y")
-    assert result.exit_code != 0
-    assert (
-        "We can not destroy the %s account due to 1 linked resources from registry"
-        % username
-    )
-
-    result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)
-    validate_cliresult(result)
+# def test_account_destroy_with_linked_resources(
+#     clirunner, validate_cliresult, receive_email, isolated_pio_home, tmpdir_factory
+# ):
+#     package_url = "https://github.com/bblanchon/ArduinoJson/archive/v6.11.0.tar.gz"
+#
+#     tmp_dir = tmpdir_factory.mktemp("package")
+#     fd = FileDownloader(package_url, str(tmp_dir))
+#     pkg_dir = tmp_dir.mkdir("raw_package")
+#     fd.start(with_progress=False, silent=True)
+#     with FileUnpacker(fd.get_filepath()) as unpacker:
+#         unpacker.unpack(str(pkg_dir), with_progress=False, silent=True)
+#
+#     result = clirunner.invoke(cmd_package, ["publish", str(pkg_dir)],)
+#     validate_cliresult(result)
+#     try:
+#         result = receive_email(email)
+#         assert "Congrats" in result
+#         assert "was published" in result
+#     except:  # pylint:disable=bare-except
+#         pass
+#
+#     result = clirunner.invoke(cmd_account, ["destroy"], "y")
+#     assert result.exit_code != 0
+#     assert (
+#         "We can not destroy the %s account due to 1 linked resources from registry"
+#         % username
+#     )
+#
+#     result = clirunner.invoke(cmd_package, ["unpublish", "ArduinoJson"],)
+#     validate_cliresult(result)
 
 
 def test_org_create(clirunner, validate_cliresult, isolated_pio_home):
