@@ -40,7 +40,7 @@ def cli():
 
 def validate_urn(value):
     value = str(value).strip()
-    if not re.match(r"^reg:pkg:(\d+)$", value, flags=re.I):
+    if not re.match(r"^reg:pkg:(\d+):(\w+)$", value, flags=re.I):
         raise click.BadParameter("Invalid URN format.")
     return value
 
@@ -49,7 +49,7 @@ def validate_urn(value):
 @click.argument(
     "urn", callback=lambda _, __, value: validate_urn(value),
 )
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_public(urn, urn_type):
     client = RegistryClient()
     client.update_resource(urn=urn, private=0)
@@ -62,7 +62,7 @@ def access_public(urn, urn_type):
 @click.argument(
     "urn", callback=lambda _, __, value: validate_urn(value),
 )
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_private(urn, urn_type):
     client = RegistryClient()
     client.update_resource(urn=urn, private=1)
@@ -81,7 +81,7 @@ def access_private(urn, urn_type):
 @click.argument(
     "urn", callback=lambda _, __, value: validate_urn(value),
 )
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_grant(level, client, urn, urn_type):
     reg_client = RegistryClient()
     reg_client.grant_access_for_resource(urn=urn, client=client, level=level)
@@ -99,7 +99,7 @@ def access_grant(level, client, urn, urn_type):
 @click.argument(
     "urn", callback=lambda _, __, value: validate_urn(value),
 )
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_revoke(client, urn, urn_type):
     reg_client = RegistryClient()
     reg_client.revoke_access_from_resource(urn=urn, client=client)
@@ -110,7 +110,7 @@ def access_revoke(client, urn, urn_type):
 
 @cli.command("list", short_help="List resources")
 @click.argument("owner", required=False)
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="prn:reg:pkg")
 @click.option("--json-output", is_flag=True)
 def access_list(owner, urn_type, json_output):
     reg_client = RegistryClient()
