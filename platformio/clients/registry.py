@@ -74,3 +74,23 @@ class RegistryClient(RESTClient):
             "delete", path, params={"undo": 1 if undo else 0},
         )
         return response
+
+    def update_resource(self, urn, private):
+        return self.send_auth_request(
+            "put", "/v3/resources/%s" % urn, data={"private": int(private)},
+        )
+
+    def grant_access_for_resource(self, urn, client, level):
+        return self.send_auth_request(
+            "put",
+            "/v3/resources/%s/access" % urn,
+            data={"client": client, "level": level},
+        )
+
+    def revoke_access_from_resource(self, urn, client):
+        return self.send_auth_request(
+            "delete", "/v3/resources/%s/access" % urn, data={"client": client},
+        )
+
+    def list_own_resources(self):
+        return self.send_auth_request("get", "/v3/resources",)
