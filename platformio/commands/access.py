@@ -109,14 +109,12 @@ def access_revoke(client, urn, urn_type):
 
 
 @cli.command("list", short_help="List resources")
-@click.argument("orgname", required=False)
+@click.argument("owner", required=False)
 @click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="urn:reg:pkg")
 @click.option("--json-output", is_flag=True)
-def access_list(orgname, urn_type, json_output):
+def access_list(owner, urn_type, json_output):
     reg_client = RegistryClient()
-    resources = reg_client.list_own_resources()
-    if orgname:
-        resources = [res for res in resources if res.get("owner") == orgname]
+    resources = reg_client.list_own_resources(owner=owner)
     if json_output:
         return click.echo(json.dumps(resources))
     if not resources:
