@@ -92,7 +92,7 @@ class RegistryClient(RESTClient):
             "delete", "/v3/resources/%s/access" % urn, data={"client": client},
         )
 
-    def list_own_resources(self, owner):
+    def list_resources(self, owner):
         return self.send_auth_request(
             "get", "/v3/resources", params={"owner": owner} if owner else None
         )

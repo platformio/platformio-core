@@ -114,7 +114,7 @@ def access_revoke(client, urn, urn_type):
 @click.option("--json-output", is_flag=True)
 def access_list(owner, urn_type, json_output):
     reg_client = RegistryClient()
-    resources = reg_client.list_own_resources(owner=owner)
+    resources = reg_client.list_resources(owner=owner)
     if json_output:
         return click.echo(json.dumps(resources))
     if not resources:
