@@ -40,7 +40,7 @@ def cli():
 
 def validate_urn(value):
     value = str(value).strip()
-    if not re.match(r"^reg:pkg:(\d+):(\w+)$", value, flags=re.I):
+    if not re.match(r"^prn:reg:pkg:(\d+):(\w+)$", value, flags=re.I):
         raise click.BadParameter("Invalid URN format.")
     return value
 
@@ -110,7 +110,7 @@ def access_revoke(client, urn, urn_type):
 
 @cli.command("list", short_help="List resources")
 @click.argument("owner", required=False)
-@click.option("--urn-type", type=click.Choice(["urn:reg:pkg"]), default="prn:reg:pkg")
+@click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 @click.option("--json-output", is_flag=True)
 def access_list(owner, urn_type, json_output):
     reg_client = RegistryClient()
