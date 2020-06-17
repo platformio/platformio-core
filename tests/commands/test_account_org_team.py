@@ -21,10 +21,7 @@ import requests
 
 from platformio.commands.account import cli as cmd_account
 from platformio.commands.org import cli as cmd_org
-from platformio.commands.package import cli as cmd_package
 from platformio.commands.team import cli as cmd_team
-from platformio.downloader import FileDownloader
-from platformio.unpacker import FileUnpacker
 
 pytestmark = pytest.mark.skipif(
     not (os.environ.get("TEST_EMAIL_LOGIN") and os.environ.get("TEST_EMAIL_PASSWORD")),
