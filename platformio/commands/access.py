@@ -41,7 +41,7 @@ def cli():
 def validate_urn(value):
     value = str(value).strip()
     if not re.match(r"^reg:pkg:(\d+):(\w+)$", value, flags=re.I):
-        raise click.BadParameter("Invalid urn format.")
+        raise click.BadParameter("Invalid URN format.")
     return value
 
 
