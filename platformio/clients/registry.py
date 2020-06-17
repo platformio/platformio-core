@@ -75,21 +75,21 @@ class RegistryClient(RESTClient):
         )
         return response
 
-    def update_resource(self, urn, private):
+    def update_resource(self, prn, private):
         return self.send_auth_request(
-            "put", "/v3/resources/%s" % urn, data={"private": int(private)},
+            "put", "/v3/resources/%s" % prn, data={"private": int(private)},
         )
 
-    def grant_access_for_resource(self, urn, client, level):
+    def grant_access_for_resource(self, prn, client, level):
         return self.send_auth_request(
             "put",
-            "/v3/resources/%s/access" % urn,
+            "/v3/resources/%s/access" % prn,
             data={"client": client, "level": level},
         )
 
-    def revoke_access_from_resource(self, urn, client):
+    def revoke_access_from_resource(self, prn, client):
         return self.send_auth_request(
-            "delete", "/v3/resources/%s/access" % urn, data={"client": client},
+            "delete", "/v3/resources/%s/access" % prn, data={"client": client},
         )
 
     def list_resources(self, owner):
