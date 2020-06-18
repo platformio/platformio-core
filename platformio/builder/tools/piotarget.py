@@ -33,7 +33,11 @@ def PioClean(env, clean_dir):
     def _relpath(path):
         if compat.WINDOWS:
             prefix = os.getcwd()[:2].lower()
-            if ":" not in prefix or not path.lower().startswith(prefix):
+            if (
+                ":" not in prefix
+                or not path.lower().startswith(prefix)
+                or os.path.relpath(path).startswith("..")
+            ):
                 return path
         return os.path.relpath(path)
 
