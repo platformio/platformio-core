@@ -17,13 +17,15 @@ __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "A new generation ecosystem for embedded development. "
+    "A new generation collaborative platform for embedded development. "
     "Cross-platform IDE and Unified Debugger. "
     "Static Code Analyzer and Remote Unit Testing. "
     "Multi-platform and Multi-architecture Build System. "
     "Firmware File Explorer and Memory Inspection. "
-    "Arduino, ARM mbed, Espressif (ESP8266/ESP32), STM32, PIC32, nRF51/nRF52, "
-    "RISC-V, FPGA, CMSIS, SPL, AVR, Samsung ARTIK, libOpenCM3"
+    "Professional development environment for Embedded, IoT, Arduino, CMSIS, ESP-IDF, "
+    "FreeRTOS, libOpenCM3, mbedOS, Pulp OS, SPL, STM32Cube, Zephyr RTOS, ARM, AVR, "
+    "Espressif (ESP8266/ESP32), FPGA, MCS-51 (8051), MSP430, Nordic (nRF51/nRF52), "
+    "NXP i.MX RT, PIC32, RISC-V, STMicroelectronics (STM8/STM32), Teensy"
 )
 __url__ = "https://platformio.org"
 

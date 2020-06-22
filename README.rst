@@ -37,7 +37,7 @@ PlatformIO
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-ide-laptop.png
     :target: https://platformio.org?utm_source=github&utm_medium=core
 
-`PlatformIO <https://platformio.org?utm_source=github&utm_medium=core>`_ a new generation ecosystem for embedded development
+`PlatformIO <https://platformio.org?utm_source=github&utm_medium=core>`_ a new generation collaborative platform for embedded development
 
 **A place where Developers and Teams have true Freedom! No more vendor lock-in!**
 
