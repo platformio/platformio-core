@@ -12,22 +12,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import json
+import platform
 import subprocess
+import sys
 
 import click
+from tabulate import tabulate
 
-from platformio import proc
+from platformio import __version__, proc, util
 from platformio.commands.system.completion import (
     get_completion_install_path,
     install_completion_code,
     uninstall_completion_code,
 )
+from platformio.managers.lib import LibraryManager
+from platformio.managers.package import PackageManager
+from platformio.managers.platform import PlatformManager
+from platformio.project.config import ProjectConfig
 
 
 @click.group("system", short_help="Miscellaneous system commands")
 def cli():
     pass
+
+
+@cli.command("info", short_help="Display system-wide information")
+@click.option("--json-output", is_flag=True)
+def system_info(json_output):
+    project_config = ProjectConfig()
+    data = {}
+    data["core_version"] = {"title": "PlatformIO Core", "value": __version__}
+    data["python_version"] = {
+        "title": "Python",
+        "value": "{0}.{1}.{2}-{3}.{4}".format(*list(sys.version_info)),
+    }
+    data["system"] = {"title": "System Type", "value": util.get_systype()}
+    data["platform"] = {"title": "Platform", "value": platform.platform(terse=True)}
+    data["core_dir"] = {
+        "title": "PlatformIO Core Directory",
+        "value": project_config.get_optional_dir("core"),
+    }
+    data["global_lib_nums"] = {
+        "title": "Global Libraries",
+        "value": len(LibraryManager().get_installed()),
+    }
+    data["dev_platform_nums"] = {
+        "title": "Development Platforms",
+        "value": len(PlatformManager().get_installed()),
+    }
+    data["package_tool_nums"] = {
+        "title": "Package Tools",
+        "value": len(
+            PackageManager(project_config.get_optional_dir("packages")).get_installed()
+        ),
+    }
+
+    click.echo(
+        json.dumps(data)
+        if json_output
+        else tabulate([(item["title"], item["value"]) for item in data.values()])
+    )
 
 
 @cli.group("completion", short_help="Shell completion support")
