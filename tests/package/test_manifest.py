@@ -841,3 +841,7 @@ def test_broken_schemas():
                 version="1.2.3",
             )
         )
+
+    # invalid package name
+    with pytest.raises(ManifestValidationError, match=("are not allowed")):
+        ManifestSchema().load_manifest(dict(name="C/C++ :library", version="1.2.3"))

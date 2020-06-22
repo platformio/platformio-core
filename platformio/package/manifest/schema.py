@@ -149,7 +149,13 @@ class ExampleSchema(StrictSchema):
 
 class ManifestSchema(BaseSchema):
     # Required fields
-    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
+    name = fields.Str(
+        required=True,
+        validate=[
+            validate.Length(min=1, max=100),
+            validate.Regexp(r"^[^:/]+$", error="The next chars [:/] are not allowed"),
+        ],
+    )
     version = fields.Str(required=True, validate=validate.Length(min=1, max=50))
 
     # Optional fields
