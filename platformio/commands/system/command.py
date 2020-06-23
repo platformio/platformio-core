@@ -53,6 +53,16 @@ def system_info(json_output):
         "title": "PlatformIO Core Directory",
         "value": project_config.get_optional_dir("core"),
     }
+    data["platformio_exe"] = {
+        "title": "PlatformIO Core Executable",
+        "value": proc.where_is_program(
+            "platformio.exe" if proc.WINDOWS else "platformio"
+        ),
+    }
+    data["python_exe"] = {
+        "title": "Python Executable",
+        "value": proc.get_pythonexe_path(),
+    }
     data["global_lib_nums"] = {
         "title": "Global Libraries",
         "value": len(LibraryManager().get_installed()),
