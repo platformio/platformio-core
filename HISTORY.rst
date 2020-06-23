@@ -9,6 +9,8 @@ PlatformIO Core 4
 4.4.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+**A professional collaborative platform for embedded development**
+
 * New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__
 
   - Manage own organizations
@@ -21,7 +23,6 @@ PlatformIO Core 4
   - Command launcher with own arguments
   - Launch command with custom options declared in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
   - Python callback as a target (use the power of Python interpreter and PlatformIO Build API)
-
 
 * Display system-wide information using `platformio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
 * List available project targets (including dev-platform specific and custom targets) with a new `platformio run --list-targets <https://docs.platformio.org/page/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
