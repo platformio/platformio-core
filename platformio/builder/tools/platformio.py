@@ -20,7 +20,6 @@ import sys
 
 from SCons import Builder, Util  # pylint: disable=import-error
 from SCons.Node import FS  # pylint: disable=import-error
-from SCons.Node import NodeList  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
@@ -283,20 +282,21 @@ def CollectBuildFiles(
         if fs.path_endswith_ext(item, SRC_BUILD_EXT):
             sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
-    for callback, pattern in env.get("__PIO_BUILD_MIDDLEWARES", []):
-        tmp = []
-        for node in sources:
-            if isinstance(node, NodeList):
-                node = node[0]
-            if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
-                tmp.append(node)
-                continue
-            n = callback(node)
-            if n:
-                tmp.append(n)
-        sources = tmp
+    middlewares = env.get("__PIO_BUILD_MIDDLEWARES")
+    if not middlewares:
+        return sources
 
-    return sources
+    new_sources = []
+    for node in sources:
+        new_node = node
+        for callback, pattern in middlewares:
+            if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
+                continue
+            new_node = callback(new_node)
+        if new_node:
+            new_sources.append(new_node)
+
+    return new_sources
 
 
 def AddBuildMiddleware(env, callback, pattern=None):
