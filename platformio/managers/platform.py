@@ -865,7 +865,7 @@ class PlatformBoardConfig(object):
         return self._manifest
 
     def get_brief_data(self):
-        return {
+        result = {
             "id": self.id,
             "name": self._manifest["name"],
             "platform": self._manifest.get("platform"),
@@ -881,12 +881,16 @@ class PlatformBoardConfig(object):
             ),
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
-            "connectivity": self._manifest.get("connectivity"),
             "frameworks": self._manifest.get("frameworks"),
-            "debug": self.get_debug_data(),
             "vendor": self._manifest["vendor"],
             "url": self._manifest["url"],
         }
+        if self._manifest.get("connectivity"):
+            result["connectivity"] = self._manifest.get("connectivity")
+        debug = self.get_debug_data()
+        if debug:
+            result["debug"] = debug
+        return result
 
     def get_debug_data(self):
         if not self._manifest.get("debug", {}).get("tools"):
@@ -895,7 +899,7 @@ class PlatformBoardConfig(object):
         for name, options in self._manifest["debug"]["tools"].items():
             tools[name] = {}
             for key, value in options.items():
-                if key in ("default", "onboard"):
+                if key in ("default", "onboard") and value:
                     tools[name][key] = value
         return {"tools": tools}
 
