@@ -608,14 +608,6 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         return self._manifest.get("homepage")
 
     @property
-    def vendor_url(self):
-        return self._manifest.get("homepage")
-
-    @property
-    def docs_url(self):
-        return self._manifest.get("docs")
-
-    @property
     def repository_url(self):
         return self._manifest.get("repository", {}).get("url")
 

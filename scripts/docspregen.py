@@ -316,7 +316,7 @@ def generate_platform(name, rst_dir):
     lines.append(p.description)
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
-                 campaign_url(p.vendor_url))
+                 campaign_url(p.homepage))
     lines.append("""
 .. contents:: Contents
     :local:
