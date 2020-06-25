@@ -609,7 +609,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     @property
     def vendor_url(self):
-        return self._manifest.get("url")
+        return self._manifest.get("homepage")
 
     @property
     def docs_url(self):

@@ -88,12 +88,12 @@ def generate_boards_table(boards, skip_columns=None):
         lines.append(prefix + name)
 
     for data in sorted(boards, key=lambda item: item['name']):
-        has_onboard_debug = (data['debug'] and any(
+        has_onboard_debug = (data.get('debug') and any(
             t.get("onboard") for (_, t) in data['debug']['tools'].items()))
         debug = "No"
         if has_onboard_debug:
             debug = "On-board"
-        elif data['debug']:
+        elif data.get('debug'):
             debug = "External"
 
         variables = dict(id=data['id'],
@@ -170,11 +170,11 @@ def generate_debug_contents(boards, skip_board_columns=None, extra_rst=None):
     skip_board_columns.append("Debug")
     lines = []
     onboard_debug = [
-        b for b in boards if b['debug'] and any(
+        b for b in boards if b.get('debug') and any(
             t.get("onboard") for (_, t) in b['debug']['tools'].items())
     ]
     external_debug = [
-        b for b in boards if b['debug'] and b not in onboard_debug
+        b for b in boards if b.get('debug') and b not in onboard_debug
     ]
     if not onboard_debug and not external_debug:
         return lines
@@ -723,7 +723,7 @@ You can change upload protocol using :ref:`projectconf_upload_protocol` option:
     #
     lines.append("Debugging")
     lines.append("---------")
-    if not board['debug']:
+    if not board.get('debug'):
         lines.append(
             ":ref:`piodebug` currently does not support {name} board.".format(
                 **variables))
@@ -781,7 +781,7 @@ def update_debugging():
     platforms = []
     frameworks = []
     for data in BOARDS:
-        if not data['debug']:
+        if not data.get('debug'):
             continue
 
         for tool in data['debug']['tools']:
