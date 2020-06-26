@@ -160,6 +160,21 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
+    def str_to_list(value, sep=",", lowercase=True):
+        if isinstance(value, string_types):
+            value = value.split(sep)
+        assert isinstance(value, list)
+        result = []
+        for item in value:
+            item = item.strip()
+            if not item:
+                continue
+            if lowercase:
+                item = item.lower()
+            result.append(item)
+        return result
+
+    @staticmethod
     def normalize_author(author):
         assert isinstance(author, dict)
         if author.get("email"):
@@ -296,7 +311,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[str, list] fields
         for k in ("keywords", "platforms", "frameworks"):
             if k in data:
-                data[k] = self._str_to_list(data[k], sep=",")
+                data[k] = self.str_to_list(data[k], sep=",")
 
         if "authors" in data:
             data["authors"] = self._parse_authors(data["authors"])
@@ -308,21 +323,6 @@ class LibraryJsonManifestParser(BaseManifestParser):
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
 
         return data
-
-    @staticmethod
-    def _str_to_list(value, sep=",", lowercase=True):
-        if isinstance(value, string_types):
-            value = value.split(sep)
-        assert isinstance(value, list)
-        result = []
-        for item in value:
-            item = item.strip()
-            if not item:
-                continue
-            if lowercase:
-                item = item.lower()
-            result.append(item)
-        return result
 
     @staticmethod
     def _process_renamed_fields(data):
@@ -617,6 +617,8 @@ class PlatformJsonManifestParser(BaseManifestParser):
 
     def parse(self, contents):
         data = json.loads(contents)
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         if "frameworks" in data:
             data["frameworks"] = self._parse_frameworks(data["frameworks"])
         if "packages" in data:

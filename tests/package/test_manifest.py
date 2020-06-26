@@ -544,8 +544,8 @@ def test_platform_json_schema():
   "name": "atmelavr",
   "title": "Atmel AVR",
   "description": "Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.",
-  "url": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
-  "homepage": "http://platformio.org/platforms/atmelavr",
+  "keywords": "arduino, atmel, avr",
+  "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
   "license": "Apache-2.0",
   "engines": {
     "platformio": "<5"
@@ -603,7 +603,8 @@ def test_platform_json_schema():
                 "on the industrys most code-efficient architecture for C and "
                 "assembly programming."
             ),
-            "homepage": "http://platformio.org/platforms/atmelavr",
+            "keywords": ["arduino", "atmel", "avr"],
+            "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
             "license": "Apache-2.0",
             "repository": {
                 "url": "https://github.com/platformio/platform-atmelavr.git",
