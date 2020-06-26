@@ -20,7 +20,7 @@ import sys
 import click
 from tabulate import tabulate
 
-from platformio import __version__, proc, util
+from platformio import __version__, compat, proc, util
 from platformio.commands.system.completion import (
     get_completion_install_path,
     install_completion_code,
@@ -49,6 +49,14 @@ def system_info(json_output):
     }
     data["system"] = {"title": "System Type", "value": util.get_systype()}
     data["platform"] = {"title": "Platform", "value": platform.platform(terse=True)}
+    data["filesystem_encoding"] = {
+        "title": "File System Encoding",
+        "value": compat.get_filesystem_encoding(),
+    }
+    data["locale_encoding"] = {
+        "title": "Locale Encoding",
+        "value": compat.get_locale_encoding(),
+    }
     data["core_dir"] = {
         "title": "PlatformIO Core Directory",
         "value": project_config.get_optional_dir("core"),
