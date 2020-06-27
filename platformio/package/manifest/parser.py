@@ -384,8 +384,6 @@ class LibraryJsonManifestParser(BaseManifestParser):
                     for k, v in dependency.items():
                         if k not in ("platforms", "frameworks", "authors"):
                             continue
-                        if "*" in v:
-                            del raw[i][k]
                         raw[i][k] = util.items_to_list(v)
                 else:
                     raw[i] = {"name": dependency}
