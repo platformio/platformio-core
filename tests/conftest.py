@@ -57,10 +57,10 @@ def isolated_pio_core(request, tmpdir_factory):
 
     def fin():
         for key, item in backup_env_vars.items():
-            if item["old"] is None:
-                del os.environ[key]
-            else:
+            if item["old"] is not None:
                 os.environ[key] = item["old"]
+            elif key in os.environ:
+                del os.environ[key]
 
     request.addfinalizer(fin)
     return core_dir
