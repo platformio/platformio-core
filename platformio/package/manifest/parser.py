@@ -641,6 +641,8 @@ class PackageJsonManifestParser(BaseManifestParser):
 
     def parse(self, contents):
         data = json.loads(contents)
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         data = self._parse_system(data)
         data = self._parse_homepage(data)
         return data
