@@ -20,7 +20,7 @@ from platformio import util
 from platformio.commands.test.command import cli as cmd_test
 
 
-def test_local_env():
+def test_local_env(isolated_pio_core):
     result = util.exec_command(
         [
             "platformio",
@@ -38,7 +38,7 @@ def test_local_env():
     ]
 
 
-def test_multiple_env_build(clirunner, validate_cliresult, tmpdir):
+def test_multiple_env_build(clirunner, validate_cliresult, isolated_pio_core, tmpdir):
 
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(
@@ -80,7 +80,9 @@ int main() {
     assert "Multiple ways to build" not in result.output
 
 
-def test_setup_teardown_are_compilable(clirunner, validate_cliresult, tmpdir):
+def test_setup_teardown_are_compilable(
+    clirunner, validate_cliresult, isolated_pio_core, tmpdir
+):
 
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(

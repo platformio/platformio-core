@@ -34,7 +34,7 @@ def test_search(clirunner, validate_cliresult):
     assert int(match.group(1)) > 1
 
 
-def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_home):
+def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_lib,
         [
@@ -54,7 +54,7 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_hom
     assert result.exit_code != 0
     assert isinstance(result.exception, exception.LibNotFound)
 
-    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "ArduinoJson_ID64",
         "ArduinoJson_ID64@5.10.1",
@@ -68,7 +68,7 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_hom
     assert set(items1) == set(items2)
 
 
-def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_home):
+def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_lib,
         [
@@ -93,12 +93,12 @@ def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_home
     )
     assert result.exit_code != 0
 
-    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = ["ArduinoJson", "SomeLib_ID54", "OneWire_ID1", "ESP32WebServer"]
     assert set(items1) >= set(items2)
 
 
-def test_global_install_repository(clirunner, validate_cliresult, isolated_pio_home):
+def test_global_install_repository(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_lib,
         [
@@ -114,7 +114,7 @@ def test_global_install_repository(clirunner, validate_cliresult, isolated_pio_h
         ],
     )
     validate_cliresult(result)
-    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "PJON",
         "PJON@src-79de467ebe19de18287becff0a1fb42d",
@@ -260,7 +260,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert isinstance(result.exception, exception.UnknownPackage)
 
 
-def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_home):
+def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     # uninstall using package directory
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     validate_cliresult(result)
@@ -284,7 +284,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_home):
     )
     validate_cliresult(result)
 
-    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "rs485-nodeproto",
         "platformio-libmirror",

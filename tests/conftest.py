@@ -42,15 +42,28 @@ def clirunner():
 
 
 @pytest.fixture(scope="module")
-def isolated_pio_home(request, tmpdir_factory):
-    home_dir = tmpdir_factory.mktemp(".platformio")
-    os.environ["PLATFORMIO_CORE_DIR"] = str(home_dir)
+def isolated_pio_core(request, tmpdir_factory):
+    core_dir = tmpdir_factory.mktemp(".platformio")
+    backup_env_vars = {
+        "PLATFORMIO_CORE_DIR": {"new": str(core_dir)},
+        "PLATFORMIO_WORKSPACE_DIR": {"new": None},
+    }
+    for key, item in backup_env_vars.items():
+        backup_env_vars[key]["old"] = os.environ.get(key)
+        if item["new"] is not None:
+            os.environ[key] = item["new"]
+        elif key in os.environ:
+            del os.environ[key]
 
     def fin():
-        del os.environ["PLATFORMIO_CORE_DIR"]
+        for key, item in backup_env_vars.items():
+            if item["old"] is None:
+                del os.environ[key]
+            else:
+                os.environ[key] = item["old"]
 
     request.addfinalizer(fin)
-    return home_dir
+    return core_dir
 
 
 @pytest.fixture(scope="function")

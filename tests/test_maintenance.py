@@ -22,7 +22,7 @@ from platformio.commands import upgrade as cmd_upgrade
 from platformio.managers.platform import PlatformManager
 
 
-def test_check_pio_upgrade(clirunner, isolated_pio_home, validate_cliresult):
+def test_check_pio_upgrade(clirunner, isolated_pio_core, validate_cliresult):
     def _patch_pio_version(version):
         maintenance.__version__ = version
         cmd_upgrade.VERSION = version.split(".", 3)
@@ -51,7 +51,7 @@ def test_check_pio_upgrade(clirunner, isolated_pio_home, validate_cliresult):
     _patch_pio_version(origin_version)
 
 
-def test_check_lib_updates(clirunner, isolated_pio_home, validate_cliresult):
+def test_check_lib_updates(clirunner, isolated_pio_core, validate_cliresult):
     # install obsolete library
     result = clirunner.invoke(cli_pio, ["lib", "-g", "install", "ArduinoJson@<6.13"])
     validate_cliresult(result)
@@ -66,7 +66,7 @@ def test_check_lib_updates(clirunner, isolated_pio_home, validate_cliresult):
     assert "There are the new updates for libraries (ArduinoJson)" in result.output
 
 
-def test_check_and_update_libraries(clirunner, isolated_pio_home, validate_cliresult):
+def test_check_and_update_libraries(clirunner, isolated_pio_core, validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_libraries", "Yes"]
@@ -96,11 +96,11 @@ def test_check_and_update_libraries(clirunner, isolated_pio_home, validate_clire
     assert prev_data[0]["version"] != json.loads(result.output)[0]["version"]
 
 
-def test_check_platform_updates(clirunner, isolated_pio_home, validate_cliresult):
+def test_check_platform_updates(clirunner, isolated_pio_core, validate_cliresult):
     # install obsolete platform
     result = clirunner.invoke(cli_pio, ["platform", "install", "native"])
     validate_cliresult(result)
-    manifest_path = isolated_pio_home.join("platforms", "native", "platform.json")
+    manifest_path = isolated_pio_core.join("platforms", "native", "platform.json")
     manifest = json.loads(manifest_path.read())
     manifest["version"] = "0.0.0"
     manifest_path.write(json.dumps(manifest))
@@ -117,7 +117,7 @@ def test_check_platform_updates(clirunner, isolated_pio_home, validate_cliresult
     assert "There are the new updates for platforms (native)" in result.output
 
 
-def test_check_and_update_platforms(clirunner, isolated_pio_home, validate_cliresult):
+def test_check_and_update_platforms(clirunner, isolated_pio_core, validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_platforms", "Yes"]

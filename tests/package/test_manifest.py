@@ -83,7 +83,7 @@ def test_library_json_parser():
     },
     "dependencies": [
         {"name": "deps1", "version": "1.0.0"},
-        {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino, espidf"},
+        {"name": "@owner/deps2", "version": "1.0.0", "platforms": "atmelavr, espressif32", "frameworks": "arduino, espidf"},
         {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
     ]
 }
@@ -101,6 +101,7 @@ def test_library_json_parser():
                 {
                     "name": "@owner/deps2",
                     "version": "1.0.0",
+                    "platforms": ["atmelavr", "espressif32"],
                     "frameworks": ["arduino", "espidf"],
                 },
                 {"name": "deps1", "version": "1.0.0"},

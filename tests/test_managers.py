@@ -165,7 +165,7 @@ def test_pkg_input_parser():
             assert PackageManager.parse_pkg_uri(params) == result
 
 
-def test_install_packages(isolated_pio_home, tmpdir):
+def test_install_packages(isolated_pio_core, tmpdir):
     packages = [
         dict(id=1, name="name_1", version="shasum"),
         dict(id=1, name="name_1", version="2.0.0"),
@@ -198,7 +198,7 @@ def test_install_packages(isolated_pio_home, tmpdir):
         "name_2@src-f863b537ab00f4c7b5011fc44b120e1f",
     ]
     assert set(
-        [p.basename for p in isolated_pio_home.join("packages").listdir()]
+        [p.basename for p in isolated_pio_core.join("packages").listdir()]
     ) == set(pkg_dirnames)
 
 

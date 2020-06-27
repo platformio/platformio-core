@@ -18,7 +18,7 @@ from platformio import exception
 from platformio.commands import platform as cli_platform
 
 
-def test_search_json_output(clirunner, validate_cliresult, isolated_pio_home):
+def test_search_json_output(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_search, ["arduino", "--json-output"]
     )
@@ -48,7 +48,7 @@ def test_install_unknown_from_registry(clirunner):
     assert isinstance(result.exception, exception.UnknownPackage)
 
 
-def test_install_known_version(clirunner, validate_cliresult, isolated_pio_home):
+def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
         ["atmelavr@1.2.0", "--skip-default-package", "--with-package", "tool-avrdude"],
@@ -56,10 +56,10 @@ def test_install_known_version(clirunner, validate_cliresult, isolated_pio_home)
     validate_cliresult(result)
     assert "atmelavr @ 1.2.0" in result.output
     assert "Installing tool-avrdude @" in result.output
-    assert len(isolated_pio_home.join("packages").listdir()) == 1
+    assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
-def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_home):
+def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
         [
@@ -69,7 +69,7 @@ def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_home):
     )
     validate_cliresult(result)
     assert "espressif8266" in result.output
-    assert len(isolated_pio_home.join("packages").listdir()) == 1
+    assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
 def test_list_json_output(clirunner, validate_cliresult):
@@ -88,7 +88,7 @@ def test_list_raw_output(clirunner, validate_cliresult):
     assert all([s in result.output for s in ("atmelavr", "espressif8266")])
 
 
-def test_update_check(clirunner, validate_cliresult, isolated_pio_home):
+def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_update, ["--only-check", "--json-output"]
     )
@@ -96,20 +96,20 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_home):
     output = json.loads(result.output)
     assert len(output) == 1
     assert output[0]["name"] == "atmelavr"
-    assert len(isolated_pio_home.join("packages").listdir()) == 1
+    assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
-def test_update_raw(clirunner, validate_cliresult, isolated_pio_home):
+def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cli_platform.platform_update)
     validate_cliresult(result)
     assert "Uninstalling atmelavr @ 1.2.0:" in result.output
     assert "PlatformManager: Installing atmelavr @" in result.output
-    assert len(isolated_pio_home.join("packages").listdir()) == 1
+    assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
-def test_uninstall(clirunner, validate_cliresult, isolated_pio_home):
+def test_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_uninstall, ["atmelavr", "espressif8266"]
     )
     validate_cliresult(result)
-    assert not isolated_pio_home.join("platforms").listdir()
+    assert not isolated_pio_core.join("platforms").listdir()

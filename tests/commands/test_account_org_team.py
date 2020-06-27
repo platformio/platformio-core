@@ -62,7 +62,7 @@ def test_prepare():
 
 
 def test_account_register(
-    clirunner, validate_cliresult, receive_email, isolated_pio_home
+    clirunner, validate_cliresult, receive_email, isolated_pio_core
 ):
     result = clirunner.invoke(
         cmd_account,
@@ -97,14 +97,14 @@ def test_account_register(
 
 
 def test_account_login(
-    clirunner, validate_cliresult, isolated_pio_home,
+    clirunner, validate_cliresult, isolated_pio_core,
 ):
     result = clirunner.invoke(cmd_account, ["login", "-u", username, "-p", password],)
     validate_cliresult(result)
 
 
 def test_account_summary(
-    clirunner, validate_cliresult, isolated_pio_home,
+    clirunner, validate_cliresult, isolated_pio_core,
 ):
     result = clirunner.invoke(cmd_account, ["show", "--json-output", "--offline"])
     validate_cliresult(result)
@@ -156,7 +156,7 @@ def test_account_summary(
     assert json_result.get("subscriptions") is not None
 
 
-def test_account_token(clirunner, validate_cliresult, isolated_pio_home):
+def test_account_token(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cmd_account, ["token", "--password", password,],)
     validate_cliresult(result)
     assert "Personal Authentication Token:" in result.output
@@ -198,7 +198,7 @@ def test_account_token(clirunner, validate_cliresult, isolated_pio_home):
     validate_cliresult(result)
 
 
-def test_account_change_password(clirunner, validate_cliresult, isolated_pio_home):
+def test_account_change_password(clirunner, validate_cliresult, isolated_pio_core):
     new_password = "Testpassword123"
     result = clirunner.invoke(
         cmd_account,
@@ -222,7 +222,7 @@ def test_account_change_password(clirunner, validate_cliresult, isolated_pio_hom
 
 
 def test_account_update(
-    clirunner, validate_cliresult, receive_email, isolated_pio_home
+    clirunner, validate_cliresult, receive_email, isolated_pio_core
 ):
     global username
     global email
@@ -281,7 +281,7 @@ def test_account_update(
 
 
 # def test_account_destroy_with_linked_resources(
-#     clirunner, validate_cliresult, receive_email, isolated_pio_home, tmpdir_factory
+#     clirunner, validate_cliresult, receive_email, isolated_pio_core, tmpdir_factory
 # ):
 #     package_url = "https://github.com/bblanchon/ArduinoJson/archive/v6.11.0.tar.gz"
 #
@@ -312,14 +312,14 @@ def test_account_update(
 #     validate_cliresult(result)
 
 
-def test_org_create(clirunner, validate_cliresult, isolated_pio_home):
+def test_org_create(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_org, ["create", "--email", email, "--displayname", display_name, orgname],
     )
     validate_cliresult(result)
 
 
-def test_org_list(clirunner, validate_cliresult, isolated_pio_home):
+def test_org_list(clirunner, validate_cliresult, isolated_pio_core):
     # pio org list
     result = clirunner.invoke(cmd_org, ["list", "--json-output"])
     validate_cliresult(result)
@@ -336,7 +336,7 @@ def test_org_list(clirunner, validate_cliresult, isolated_pio_home):
     ]
 
 
-def test_org_add_owner(clirunner, validate_cliresult, isolated_pio_home):
+def test_org_add_owner(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cmd_org, ["add", orgname, second_username])
     validate_cliresult(result)
 
@@ -345,7 +345,7 @@ def test_org_add_owner(clirunner, validate_cliresult, isolated_pio_home):
     assert second_username in result.output
 
 
-def test_org_remove_owner(clirunner, validate_cliresult, isolated_pio_home):
+def test_org_remove_owner(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cmd_org, ["remove", orgname, second_username])
     validate_cliresult(result)
 
@@ -354,7 +354,7 @@ def test_org_remove_owner(clirunner, validate_cliresult, isolated_pio_home):
     assert second_username not in result.output
 
 
-def test_org_update(clirunner, validate_cliresult, isolated_pio_home):
+def test_org_update(clirunner, validate_cliresult, isolated_pio_core):
     new_orgname = "neworg-piocore-%s" % str(random.randint(0, 100000))
     new_display_name = "Test Org for PIO Core"
 
@@ -399,7 +399,7 @@ def test_org_update(clirunner, validate_cliresult, isolated_pio_home):
     validate_cliresult(result)
 
 
-def test_team_create(clirunner, validate_cliresult, isolated_pio_home):
+def test_team_create(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_team,
         ["create", "%s:%s" % (orgname, teamname), "--description", team_description,],
@@ -407,7 +407,7 @@ def test_team_create(clirunner, validate_cliresult, isolated_pio_home):
     validate_cliresult(result)
 
 
-def test_team_list(clirunner, validate_cliresult, isolated_pio_home):
+def test_team_list(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cmd_team, ["list", "%s" % orgname, "--json-output"],)
     validate_cliresult(result)
     json_result = json.loads(result.output.strip())
@@ -418,7 +418,7 @@ def test_team_list(clirunner, validate_cliresult, isolated_pio_home):
     ]
 
 
-def test_team_add_member(clirunner, validate_cliresult, isolated_pio_home):
+def test_team_add_member(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_team, ["add", "%s:%s" % (orgname, teamname), second_username],
     )
@@ -429,7 +429,7 @@ def test_team_add_member(clirunner, validate_cliresult, isolated_pio_home):
     assert second_username in result.output
 
 
-def test_team_remove(clirunner, validate_cliresult, isolated_pio_home):
+def test_team_remove(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cmd_team, ["remove", "%s:%s" % (orgname, teamname), second_username],
     )
@@ -440,7 +440,7 @@ def test_team_remove(clirunner, validate_cliresult, isolated_pio_home):
     assert second_username not in result.output
 
 
-def test_team_update(clirunner, validate_cliresult, receive_email, isolated_pio_home):
+def test_team_update(clirunner, validate_cliresult, receive_email, isolated_pio_core):
     new_teamname = "new-" + str(random.randint(0, 100000))
     newteam_description = "Updated Description"
     result = clirunner.invoke(
@@ -479,7 +479,7 @@ def test_team_update(clirunner, validate_cliresult, receive_email, isolated_pio_
     validate_cliresult(result)
 
 
-def test_cleanup(clirunner, validate_cliresult, receive_email, isolated_pio_home):
+def test_cleanup(clirunner, validate_cliresult, receive_email, isolated_pio_core):
     result = clirunner.invoke(cmd_team, ["destroy", "%s:%s" % (orgname, teamname)], "y")
     validate_cliresult(result)
     result = clirunner.invoke(cmd_org, ["destroy", orgname], "y")

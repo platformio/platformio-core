@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-arguments,too-many-locals, too-many-branches
+# pylint: disable=too-many-arguments,too-many-locals,too-many-branches,line-too-long
 
 import os
 
@@ -238,7 +238,6 @@ https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
 
 
 def init_lib_readme(lib_dir):
-    # pylint: disable=line-too-long
     with open(os.path.join(lib_dir, "README"), "w") as fp:
         fp.write(
             """

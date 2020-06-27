@@ -15,7 +15,7 @@
 from platformio.commands.run.command import cli as cmd_run
 
 
-def test_build_flags(clirunner, validate_cliresult, tmpdir):
+def test_build_flags(clirunner, isolated_pio_core, validate_cliresult, tmpdir):
     build_flags = [
         ("-D TEST_INT=13", "-DTEST_INT=13"),
         ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
