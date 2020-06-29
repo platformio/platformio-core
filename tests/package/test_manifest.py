@@ -628,7 +628,8 @@ def test_package_json_schema():
     "name": "tool-scons",
     "description": "SCons software construction tool",
     "keywords": "SCons, build",
-    "url": "http://www.scons.org",
+    "homepage": "http://www.scons.org",
+    "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l"],
     "version": "3.30101.0"
 }
 """
@@ -645,6 +646,7 @@ def test_package_json_schema():
             "description": "SCons software construction tool",
             "keywords": ["scons", "build"],
             "homepage": "http://www.scons.org",
+            "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l"],
             "version": "3.30101.0",
         },
     )
