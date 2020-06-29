@@ -45,7 +45,7 @@ def test_multiple_env_build(clirunner, validate_cliresult, isolated_pio_core, tm
         """
 [env:teensy31]
 platform = teensy
-framework = mbed
+framework = arduino
 board = teensy31
 
 [env:native]

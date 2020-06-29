@@ -412,7 +412,7 @@ int main() {
 """
     )
 
-    frameworks = ["arduino", "mbed", "stm32cube"]
+    frameworks = ["arduino", "stm32cube"]
     if sys.version_info[0] == 3:
         # Zephyr only supports Python 3
         frameworks.append("zephyr")
