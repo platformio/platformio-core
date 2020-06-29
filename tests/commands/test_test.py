@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import join
+import os
+import sys
 
 import pytest
 
 from platformio import util
 from platformio.commands.test.command import cli as cmd_test
+from platformio.compat import WINDOWS
 
 
 def test_local_env(isolated_pio_core):
@@ -26,7 +28,7 @@ def test_local_env(isolated_pio_core):
             "platformio",
             "test",
             "-d",
-            join("examples", "unit-testing", "calculator"),
+            os.path.join("examples", "unit-testing", "calculator"),
             "-e",
             "native",
         ]
@@ -51,24 +53,27 @@ board = teensy31
 [env:native]
 platform = native
 
-[env:espressif32]
-platform = espressif32
+[env:espressif8266]
+platform = espressif8266
 framework = arduino
-board = esp32dev
+board = nodemcuv2
 """
     )
 
     project_dir.mkdir("test").join("test_main.cpp").write(
         """
+#include <unity.h>
 #ifdef ARDUINO
-void setup() {}
-void loop() {}
+void setup()
 #else
-int main() {
+int main()
+#endif
+{
     UNITY_BEGIN();
     UNITY_END();
+
 }
-#endif
+void loop() {}
 """
     )
 
