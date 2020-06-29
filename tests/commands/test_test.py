@@ -13,16 +13,14 @@
 # limitations under the License.
 
 import os
-import sys
 
 import pytest
 
 from platformio import util
 from platformio.commands.test.command import cli as cmd_test
-from platformio.compat import WINDOWS
 
 
-def test_local_env(isolated_pio_core):
+def test_local_env():
     result = util.exec_command(
         [
             "platformio",
@@ -40,7 +38,7 @@ def test_local_env(isolated_pio_core):
     ]
 
 
-def test_multiple_env_build(clirunner, validate_cliresult, isolated_pio_core, tmpdir):
+def test_multiple_env_build(clirunner, validate_cliresult, tmpdir):
 
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(
@@ -85,9 +83,7 @@ void loop() {}
     assert "Multiple ways to build" not in result.output
 
 
-def test_setup_teardown_are_compilable(
-    clirunner, validate_cliresult, isolated_pio_core, tmpdir
-):
+def test_setup_teardown_are_compilable(clirunner, validate_cliresult, tmpdir):
 
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(

@@ -31,12 +31,12 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize("piotest_dir", test_dirs)
 
 
-def test_example(clirunner, isolated_pio_core, validate_cliresult, piotest_dir):
+def test_example(clirunner, validate_cliresult, piotest_dir):
     result = clirunner.invoke(cmd_ci, [piotest_dir, "-b", "uno"])
     validate_cliresult(result)
 
 
-def test_warning_line(clirunner, isolated_pio_core, validate_cliresult):
+def test_warning_line(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_ci, [join(INOTEST_DIR, "basic"), "-b", "uno"])
     validate_cliresult(result)
     assert 'basic.ino:16:14: warning: #warning "Line number is 16"' in result.output

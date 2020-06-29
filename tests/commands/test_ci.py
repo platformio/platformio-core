@@ -24,7 +24,7 @@ def test_ci_empty(clirunner):
     assert "Invalid value: Missing argument 'src'" in result.output
 
 
-def test_ci_boards(clirunner, validate_cliresult, isolated_pio_core):
+def test_ci_boards(clirunner, validate_cliresult):
     result = clirunner.invoke(
         cmd_ci,
         [
@@ -38,7 +38,7 @@ def test_ci_boards(clirunner, validate_cliresult, isolated_pio_core):
     validate_cliresult(result)
 
 
-def test_ci_build_dir(clirunner, tmpdir_factory, validate_cliresult, isolated_pio_core):
+def test_ci_build_dir(clirunner, tmpdir_factory, validate_cliresult):
     build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
     result = clirunner.invoke(
         cmd_ci,
@@ -54,9 +54,7 @@ def test_ci_build_dir(clirunner, tmpdir_factory, validate_cliresult, isolated_pi
     assert not isfile(join(build_dir, "platformio.ini"))
 
 
-def test_ci_keep_build_dir(
-    clirunner, tmpdir_factory, validate_cliresult, isolated_pio_core
-):
+def test_ci_keep_build_dir(clirunner, tmpdir_factory, validate_cliresult):
     build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
     result = clirunner.invoke(
         cmd_ci,
@@ -90,7 +88,7 @@ def test_ci_keep_build_dir(
     assert "board: metro" in result.output
 
 
-def test_ci_project_conf(clirunner, validate_cliresult, isolated_pio_core):
+def test_ci_project_conf(clirunner, validate_cliresult):
     project_dir = join("examples", "wiring-blink")
     result = clirunner.invoke(
         cmd_ci,
@@ -104,9 +102,7 @@ def test_ci_project_conf(clirunner, validate_cliresult, isolated_pio_core):
     assert "uno" in result.output
 
 
-def test_ci_lib_and_board(
-    clirunner, tmpdir_factory, validate_cliresult, isolated_pio_core
-):
+def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
     storage_dir = str(tmpdir_factory.mktemp("lib"))
     result = clirunner.invoke(
         cmd_lib, ["--storage-dir", storage_dir, "install", "1@2.3.2"]
