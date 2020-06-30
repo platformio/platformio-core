@@ -68,7 +68,7 @@ class ManifestParserFactory(object):
                     return fp.read()
             except UnicodeDecodeError as e:
                 last_err = e
-        raise last_err
+        raise last_err  # pylint: disable=raising-bad-type
 
     @classmethod
     def new_from_file(cls, path, remote_url=False):
