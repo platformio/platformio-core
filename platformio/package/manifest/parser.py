@@ -61,8 +61,14 @@ class ManifestFileType(object):
 class ManifestParserFactory(object):
     @staticmethod
     def read_manifest_contents(path):
-        with io.open(path, encoding="utf-8") as fp:
-            return fp.read()
+        last_err = None
+        for encoding in ("utf-8", "latin-1"):
+            try:
+                with io.open(path, encoding=encoding) as fp:
+                    return fp.read()
+            except UnicodeDecodeError as e:
+                last_err = e
+        raise last_err
 
     @classmethod
     def new_from_file(cls, path, remote_url=False):
