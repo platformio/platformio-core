@@ -55,7 +55,7 @@ class PackagePacker(object):
 
             manifest = self.load_manifest(src)
             filename = re.sub(
-                r"[^\da-zA-Z\-\._]+",
+                r"[^\da-zA-Z\-\._\+]+",
                 "",
                 "{name}{system}-{version}.tar.gz".format(
                     name=manifest["name"],
