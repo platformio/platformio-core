@@ -153,7 +153,9 @@ class ManifestSchema(BaseSchema):
         required=True,
         validate=[
             validate.Length(min=1, max=100),
-            validate.Regexp(r"^[^:/]+$", error="The next chars [:/] are not allowed"),
+            validate.Regexp(
+                r"^[^:;/,@\<\>]+$", error="The next chars [:;/,@<>] are not allowed"
+            ),
         ],
     )
     version = fields.Str(required=True, validate=validate.Length(min=1, max=50))
