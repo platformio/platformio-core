@@ -40,6 +40,16 @@ class PackagePacker(object):
         self.package = package
         self.manifest_uri = manifest_uri
 
+    @staticmethod
+    def get_archive_name(name, version, system=None):
+        return re.sub(
+            r"[^\da-zA-Z\-\._\+]+",
+            "",
+            "{name}{system}-{version}.tar.gz".format(
+                name=name, system=("-" + system) if system else "", version=version,
+            ),
+        )
+
     def pack(self, dst=None):
         tmp_dir = tempfile.mkdtemp()
         try:
@@ -54,14 +64,10 @@ class PackagePacker(object):
             src = self.find_source_root(src)
 
             manifest = self.load_manifest(src)
-            filename = re.sub(
-                r"[^\da-zA-Z\-\._\+]+",
-                "",
-                "{name}{system}-{version}.tar.gz".format(
-                    name=manifest["name"],
-                    system="-" + manifest["system"][0] if "system" in manifest else "",
-                    version=manifest["version"],
-                ),
+            filename = self.get_archive_name(
+                manifest["name"],
+                manifest["version"],
+                manifest["system"][0] if "system" in manifest else None,
             )
 
             if not dst:
