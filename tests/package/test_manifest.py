@@ -279,7 +279,7 @@ ignore_empty_field=
     # Author + Maintainer
     data = parser.LibraryPropertiesManifestParser(
         """
-author=Rocket Scream Electronics
+author=Rocket Scream Electronics <broken-email.com>
 maintainer=Rocket Scream Electronics
 """
     ).as_dict()

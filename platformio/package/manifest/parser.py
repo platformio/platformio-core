@@ -185,6 +185,8 @@ class BaseManifestParser(object):
         assert isinstance(author, dict)
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
+            if "@" not in author["email"]:
+                author["email"] = None
         for key in list(author.keys()):
             if author[key] is None:
                 del author[key]
