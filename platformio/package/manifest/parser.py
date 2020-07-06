@@ -482,6 +482,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             if line.startswith("#"):
                 continue
             key, value = line.split("=", 1)
+            if not value.strip():
+                continue
             data[key.strip()] = value.strip()
         return data
 

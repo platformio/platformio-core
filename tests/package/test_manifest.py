@@ -202,6 +202,7 @@ author=SomeAuthor <info AT author.com>
 sentence=This is Arduino library
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
+ignore_empty_field=
 """
     raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
     raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
