@@ -445,7 +445,7 @@ def lib_show(library, json_output):
     for author in lib.get("authors", []):
         _data = []
         for key in ("name", "email", "url", "maintainer"):
-            if not author[key]:
+            if not author.get(key):
                 continue
             if key == "email":
                 _data.append("<%s>" % author[key])
