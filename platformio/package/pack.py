@@ -28,11 +28,13 @@ from platformio.unpacker import FileUnpacker
 class PackagePacker(object):
     EXCLUDE_DEFAULT = [
         "._*",
+        "__*",
         ".DS_Store",
-        ".git",
-        ".hg",
-        ".svn",
-        ".pio",
+        ".git/",
+        ".hg/",
+        ".svn/",
+        ".pio/",
+        "**/.pio/",
     ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
