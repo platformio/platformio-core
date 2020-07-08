@@ -39,9 +39,12 @@ def cli():
 
 @cli.command("pack", short_help="Create a tarball from a package")
 @click.argument("package", required=True, metavar="<source directory, tar.gz or zip>")
-def package_pack(package):
+@click.option(
+    "-o", "--output", help="A destination path (folder or a full path to file)"
+)
+def package_pack(package, output):
     p = PackagePacker(package)
-    archive_path = p.pack()
+    archive_path = p.pack(output)
     click.secho('Wrote a tarball to "%s"' % archive_path, fg="green")
 
 
