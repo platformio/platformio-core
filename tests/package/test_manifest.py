@@ -198,7 +198,7 @@ def test_library_properties_parser():
     contents = """
 name=TestPackage
 version=1.2.3
-author=SomeAuthor <info AT author.com>
+author=SomeAuthor <info AT author.com>, Another Author (nickname) <www.example.com>
 sentence=This is Arduino library
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
@@ -218,7 +218,10 @@ ignore_empty_field=
             "export": {
                 "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
-            "authors": [{"email": "info@author.com", "name": "SomeAuthor"}],
+            "authors": [
+                {"email": "info@author.com", "name": "SomeAuthor"},
+                {"name": "Another Author"},
+            ],
             "keywords": ["uncategorized"],
             "customField": "Custom Value",
             "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",

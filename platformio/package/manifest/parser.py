@@ -198,10 +198,13 @@ class BaseManifestParser(object):
             return (None, None)
         name = raw
         email = None
-        for ldel, rdel in [("<", ">"), ("(", ")")]:
-            if ldel in raw and rdel in raw:
-                name = raw[: raw.index(ldel)]
-                email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
+        ldel = "<"
+        rdel = ">"
+        if ldel in raw and rdel in raw:
+            name = raw[: raw.index(ldel)]
+            email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
+        if "(" in name:
+            name = name.split("(")[0]
         return (name.strip(), email.strip() if email else None)
 
     @staticmethod
