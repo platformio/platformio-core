@@ -357,7 +357,7 @@ int main() {
     assert low_result.exit_code != 0
 
 
-def test_check_pvs_studio_free_license(clirunner, isolated_pio_core, tmpdir):
+def test_check_pvs_studio_free_license(clirunner, tmpdir):
     config = """
 [env:test]
 platform = teensy

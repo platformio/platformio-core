@@ -114,13 +114,13 @@ def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
         [
             join(
                 storage_dir,
-                "OneWire_ID1",
+                "OneWire",
                 "examples",
                 "DS2408_Switch",
                 "DS2408_Switch.pde",
             ),
             "-l",
-            join(storage_dir, "OneWire_ID1"),
+            join(storage_dir, "OneWire"),
             "-b",
             "uno",
         ],

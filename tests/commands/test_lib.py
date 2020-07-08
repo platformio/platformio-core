@@ -56,14 +56,14 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_cor
 
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
-        "ArduinoJson_ID64",
-        "ArduinoJson_ID64@5.10.1",
-        "NeoPixelBus_ID547",
-        "AsyncMqttClient_ID346",
-        "ESPAsyncTCP_ID305",
-        "AsyncTCP_ID1826",
-        "Adafruit PN532_ID29",
-        "Adafruit BusIO_ID6214",
+        "ArduinoJson",
+        "ArduinoJson@5.10.1",
+        "NeoPixelBus",
+        "AsyncMqttClient",
+        "ESPAsyncTCP",
+        "AsyncTCP",
+        "Adafruit PN532",
+        "Adafruit BusIO",
     ]
     assert set(items1) == set(items2)
 
@@ -94,7 +94,7 @@ def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_core
     assert result.exit_code != 0
 
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
-    items2 = ["ArduinoJson", "SomeLib_ID54", "OneWire_ID1", "ESP32WebServer"]
+    items2 = ["ArduinoJson", "SomeLib_ID54", "OneWire", "ESP32WebServer"]
     assert set(items1) >= set(items2)
 
 
@@ -132,11 +132,6 @@ def test_install_duplicates(clirunner, validate_cliresult, without_internet):
         cmd_lib,
         ["-g", "install", "http://dl.platformio.org/libraries/archives/0/9540.tar.gz"],
     )
-    validate_cliresult(result)
-    assert "is already installed" in result.output
-
-    # by ID
-    result = clirunner.invoke(cmd_lib, ["-g", "install", "29"])
     validate_cliresult(result)
     assert "is already installed" in result.output
 
@@ -276,7 +271,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
         [
             "-g",
             "uninstall",
-            "1",
+            "OneWire",
             "https://github.com/bblanchon/ArduinoJson.git",
             "ArduinoJson@!=5.6.7",
             "Adafruit PN532",
@@ -290,15 +285,15 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
         "platformio-libmirror",
         "PubSubClient",
         "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
-        "ESPAsyncTCP_ID305",
+        "ESPAsyncTCP",
         "ESP32WebServer",
-        "NeoPixelBus_ID547",
+        "NeoPixelBus",
         "PJON",
-        "AsyncMqttClient_ID346",
-        "ArduinoJson_ID64",
+        "AsyncMqttClient",
+        "ArduinoJson",
         "SomeLib_ID54",
         "PJON@src-79de467ebe19de18287becff0a1fb42d",
-        "AsyncTCP_ID1826",
+        "AsyncTCP",
     ]
     assert set(items1) == set(items2)
 
