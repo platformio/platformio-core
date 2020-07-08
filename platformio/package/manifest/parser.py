@@ -181,7 +181,7 @@ class BaseManifestParser(object):
         return result
 
     @staticmethod
-    def normalize_author(author):
+    def cleanup_author(author):
         assert isinstance(author, dict)
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
@@ -357,7 +357,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[dict, list] fields
         if not isinstance(raw, list):
             raw = [raw]
-        return [self.normalize_author(author) for author in raw]
+        return [self.cleanup_author(author) for author in raw]
 
     @staticmethod
     def _parse_platforms(raw):
@@ -430,7 +430,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            result.append(self.normalize_author(dict(name=name, email=email)))
+            result.append(self.cleanup_author(dict(name=name, email=email)))
         return result
 
     @staticmethod
@@ -471,7 +471,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         )
         if "author" in data:
             data["authors"] = self._parse_authors(data)
-            del data["author"]
+            for key in ("author", "maintainer"):
+                if key in data:
+                    del data[key]
         if "depends" in data:
             data["dependencies"] = self._parse_dependencies(data["depends"])
         return data
@@ -544,7 +546,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            authors.append(self.normalize_author(dict(name=name, email=email)))
+            authors.append(self.cleanup_author(dict(name=name, email=email)))
         for author in properties.get("maintainer", "").split(","):
             name, email = self.parse_author_name_and_email(author)
             if not name:
@@ -555,11 +557,11 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     continue
                 found = True
                 item["maintainer"] = True
-                if not item.get("email") and email:
+                if not item.get("email") and email and "@" in email:
                     item["email"] = email
             if not found:
                 authors.append(
-                    self.normalize_author(dict(name=name, email=email, maintainer=True))
+                    self.cleanup_author(dict(name=name, email=email, maintainer=True))
                 )
         return authors
 
