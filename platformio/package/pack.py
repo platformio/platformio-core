@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import re
 import shutil
@@ -77,12 +78,7 @@ class PackagePacker(object):
             elif os.path.isdir(dst):
                 dst = os.path.join(dst, filename)
 
-            return self._create_tarball(
-                src,
-                dst,
-                include=manifest.get("export", {}).get("include"),
-                exclude=manifest.get("export", {}).get("exclude"),
-            )
+            return self._create_tarball(src, dst, manifest)
         finally:
             shutil.rmtree(tmp_dir)
 
@@ -114,7 +110,9 @@ class PackagePacker(object):
 
         return src
 
-    def _create_tarball(self, src, dst, include=None, exclude=None):
+    def _create_tarball(self, src, dst, manifest):
+        include = manifest.get("export", {}).get("include")
+        exclude = manifest.get("export", {}).get("exclude")
         # remap root
         if (
             include
@@ -122,6 +120,10 @@ class PackagePacker(object):
             and os.path.isdir(os.path.join(src, include[0]))
         ):
             src = os.path.join(src, include[0])
+            with open(os.path.join(src, "library.json"), "w") as fp:
+                manifest_updated = manifest.copy()
+                del manifest_updated["export"]["include"]
+                json.dump(manifest_updated, fp, indent=2, ensure_ascii=False)
             include = None
 
         src_filters = self.compute_src_filters(include, exclude)
