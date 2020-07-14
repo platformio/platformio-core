@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import tarfile
 
-from platformio.compat import get_object_members
+from platformio.compat import get_object_members, string_types
 from platformio.package.manifest.parser import ManifestFileType
 
 
@@ -55,29 +56,114 @@ class PackageType(object):
 
 
 class PackageSpec(object):
-    def __init__(self, raw=None, organization=None, name=None, version=None):
-        if raw is not None:
-            organization, name, version = self.parse(raw)
-
-        self.organization = organization
+    def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
+        self, raw=None, ownername=None, id=None, name=None, requirements=None, url=None
+    ):
+        self.ownername = ownername
+        self.id = id
         self.name = name
-        self.version = version
+        self.requirements = requirements
+        self.url = url
+
+        self._parse(raw)
+
+    def __repr__(self):
+        return (
+            "PackageSpec <ownername={ownername} id={id} name={name} "
+            "requirements={requirements} url={url}>".format(
+                ownername=self.ownername,
+                id=self.id,
+                name=self.name,
+                requirements=self.requirements,
+                url=self.url,
+            )
+        )
+
+    def __eq__(self, other):
+        return all(
+            [
+                self.ownername == other.ownername,
+                self.id == other.id,
+                self.name == other.name,
+                self.requirements == other.requirements,
+                self.url == other.url,
+            ]
+        )
+
+    def _parse(self, raw):
+        if raw is None:
+            return
+        if not isinstance(raw, string_types):
+            raw = str(raw)
+        raw = raw.strip()
+
+        parsers = (
+            self._parse_requirements,
+            self._parse_fixed_name,
+            self._parse_id,
+            self._parse_ownername,
+            self._parse_url,
+        )
+        for parser in parsers:
+            if raw is None:
+                break
+            raw = parser(raw)
+
+        # if name is not fixed, parse it from URL
+        if not self.name and self.url:
+            self.name = self._parse_name_from_url(self.url)
+        elif raw:
+            # the leftover is a package name
+            self.name = raw
+
+    def _parse_requirements(self, raw):
+        if "@" not in raw:
+            return raw
+        tokens = raw.rsplit("@", 1)
+        if any(s in tokens[1] for s in (":", "/")):
+            return raw
+        self.requirements = tokens[1].strip()
+        return tokens[0].strip()
+
+    def _parse_fixed_name(self, raw):
+        if "=" not in raw or raw.startswith("id="):
+            return raw
+        tokens = raw.split("=", 1)
+        if "/" in tokens[0]:
+            return raw
+        self.name = tokens[0].strip()
+        return tokens[1].strip()
+
+    def _parse_id(self, raw):
+        if raw.isdigit():
+            self.id = int(raw)
+            return None
+        if raw.startswith("id="):
+            return self._parse_id(raw[3:])
+        return raw
+
+    def _parse_ownername(self, raw):
+        if raw.count("/") != 1 or "@" in raw:
+            return raw
+        tokens = raw.split("/", 1)
+        self.ownername = tokens[0].strip()
+        self.name = tokens[1].strip()
+        return None
+
+    def _parse_url(self, raw):
+        if not any(s in raw for s in ("@", ":", "/")):
+            return raw
+        self.url = raw.strip()
+        return None
 
     @staticmethod
-    def parse(raw):
-        organization = None
-        name = None
-        version = None
-        raw = raw.strip()
-        if raw.startswith("@") and "/" in raw:
-            tokens = raw[1:].split("/", 1)
-            organization = tokens[0].strip()
-            raw = tokens[1]
-        if "@" in raw:
-            name, version = raw.split("@", 1)
-            name = name.strip()
-            version = version.strip()
-        else:
-            name = raw.strip()
-
-        return organization, name, version
+    def _parse_name_from_url(url):
+        if url.endswith("/"):
+            url = url[:-1]
+        for c in ("#", "?"):
+            if c in url:
+                url = url[: url.index(c)]
+        name = os.path.basename(url)
+        if "." in name:
+            return name.split(".", 1)[0].strip()
+        return name

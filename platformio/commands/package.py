@@ -78,7 +78,7 @@ def package_publish(package, owner, released_at, private, notify):
 
 @cli.command("unpublish", short_help="Remove a pushed package from the registry")
 @click.argument(
-    "package", required=True, metavar="[<@organization>/]<pkgname>[@<version>]"
+    "package", required=True, metavar="[<organization>/]<pkgname>[@<version>]"
 )
 @click.option(
     "--type",
@@ -96,8 +96,8 @@ def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
     response = RegistryClient().unpublish_package(
         type=type,
         name=spec.name,
-        owner=spec.organization,
-        version=spec.version,
+        owner=spec.ownername,
+        version=spec.requirements,
         undo=undo,
     )
     click.secho(response.get("message"), fg="green")
