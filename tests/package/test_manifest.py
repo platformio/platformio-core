@@ -172,7 +172,7 @@ def test_module_json_parser():
             "name": "YottaLibrary",
             "description": "This is Yotta library",
             "homepage": "https://yottabuild.org",
-            "keywords": ["mbed", "Yotta"],
+            "keywords": ["mbed", "yotta"],
             "license": "Apache-2.0",
             "platforms": ["*"],
             "frameworks": ["mbed"],

@@ -422,6 +422,8 @@ class ModuleJsonManifestParser(BaseManifestParser):
             del data["licenses"]
         if "dependencies" in data:
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         return data
 
     def _parse_authors(self, raw):
