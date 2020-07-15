@@ -495,7 +495,7 @@ def lib_show(library, json_output):
 
 @cli.command("register", short_help="Deprecated")
 @click.argument("config_url")
-def lib_register(config_url):
+def lib_register(config_url):  # pylint: disable=unused-argument
     raise exception.UserSideException(
         "This command is deprecated. Please use `pio package publish` command."
     )
