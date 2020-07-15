@@ -14,6 +14,7 @@
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches,line-too-long
 
+import json
 import os
 
 import click
@@ -25,7 +26,7 @@ from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
-from platformio.project.helpers import is_platformio_project
+from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
 @click.group(short_help="Project Manager")
@@ -38,9 +39,7 @@ def cli():
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
 )
 @click.option("--json-output", is_flag=True)
 def project_config(project_dir, json_output):
@@ -54,7 +53,6 @@ def project_config(project_dir, json_output):
         "Computed project configuration for %s" % click.style(project_dir, fg="cyan")
     )
     for section, options in config.as_tuple():
-        click.echo()
         click.secho(section, fg="cyan")
         click.echo("-" * len(section))
         click.echo(
@@ -66,6 +64,46 @@ def project_config(project_dir, json_output):
                 tablefmt="plain",
             )
         )
+        click.echo()
+    return None
+
+
+@cli.command("idedata", short_help="Dump data intended for IDE extensions/plugins")
+@click.option(
+    "-d",
+    "--project-dir",
+    default=os.getcwd,
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+)
+@click.option("-e", "--environment", multiple=True)
+@click.option("--json-output", is_flag=True)
+def project_idedata(project_dir, environment, json_output):
+    if not is_platformio_project(project_dir):
+        raise NotPlatformIOProjectError(project_dir)
+    with fs.cd(project_dir):
+        config = ProjectConfig.get_instance()
+        config.validate(environment)
+        environment = list(environment or config.envs())
+
+    if json_output:
+        return click.echo(json.dumps(load_project_ide_data(project_dir, environment)))
+
+    for envname in environment:
+        click.echo("Environment: " + click.style(envname, fg="cyan", bold=True))
+        click.echo("=" * (13 + len(envname)))
+        click.echo(
+            tabulate(
+                [
+                    (click.style(name, bold=True), "=", json.dumps(value, indent=2))
+                    for name, value in load_project_ide_data(
+                        project_dir, envname
+                    ).items()
+                ],
+                tablefmt="plain",
+            )
+        )
+        click.echo()
+
     return None
 
 
