@@ -38,7 +38,12 @@ def cli():
 
 
 @cli.command("pack", short_help="Create a tarball from a package")
-@click.argument("package", required=True, metavar="<source directory, tar.gz or zip>")
+@click.argument(
+    "package",
+    required=True,
+    default=os.getcwd,
+    metavar="<source directory, tar.gz or zip>",
+)
 @click.option(
     "-o", "--output", help="A destination path (folder or a full path to file)"
 )
@@ -49,7 +54,12 @@ def package_pack(package, output):
 
 
 @cli.command("publish", short_help="Publish a package to the registry")
-@click.argument("package", required=True, metavar="<source directory, tar.gz or zip>")
+@click.argument(
+    "package",
+    required=True,
+    default=os.getcwd,
+    metavar="<source directory, tar.gz or zip>",
+)
 @click.option(
     "--owner",
     help="PIO Account username (can be organization username). "

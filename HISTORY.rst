@@ -17,6 +17,11 @@ PlatformIO Core 4
   - Manage organization teams
   - Manage resource access
 
+* Registry Package Management
+
+  - Publish a personal or organization package using `platformio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command
+  - Remove a pushed package from the registry using `platformio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ command
+
 * New `Custom Targets <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-targets>`__
 
   - Pre/Post processing based on a dependent sources (other target, source file, etc.)

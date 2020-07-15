@@ -25,8 +25,6 @@ from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
-from platformio.package.manifest.parser import ManifestParserFactory
-from platformio.package.manifest.schema import ManifestSchema
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import InvalidProjectConfError
@@ -495,23 +493,12 @@ def lib_show(library, json_output):
     return True
 
 
-@cli.command("register", short_help="Register a new library")
+@cli.command("register", short_help="Deprecated")
 @click.argument("config_url")
 def lib_register(config_url):
-    if not config_url.startswith("http://") and not config_url.startswith("https://"):
-        raise exception.InvalidLibConfURL(config_url)
-
-    # Validate manifest
-    ManifestSchema().load_manifest(
-        ManifestParserFactory.new_from_url(config_url).as_dict()
+    raise exception.UserSideException(
+        "This command is deprecated. Please use `pio package publish` command."
     )
-
-    result = util.get_api_result("/lib/register", data=dict(config_url=config_url))
-    if "message" in result and result["message"]:
-        click.secho(
-            result["message"],
-            fg="green" if "successed" in result and result["successed"] else "red",
-        )
 
 
 @cli.command("stats", short_help="Library Registry Statistics")
