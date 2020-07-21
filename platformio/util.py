@@ -377,8 +377,10 @@ def _internet_on():
     socket.setdefaulttimeout(timeout)
     for host in PING_REMOTE_HOSTS:
         try:
-            if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
+            for proxy in ["http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY"]:
+                if os.getenv(proxy):
+                    requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
+                    break
             else:
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
             return True
