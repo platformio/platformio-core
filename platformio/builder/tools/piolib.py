@@ -507,6 +507,26 @@ class ArduinoLibBuilder(LibBuilderBase):
                 src_filter.append("+<utility%s*.%s>" % (sep, ext))
         return src_filter
 
+    @property
+    def dependencies(self):
+        # do not include automatically all libraries for build
+        # chain+ will decide later
+        return None
+
+    @property
+    def lib_ldf_mode(self):
+        if not self._manifest.get("dependencies"):
+            return LibBuilderBase.lib_ldf_mode.fget(self)
+        missing = object()
+        global_value = self.env.GetProjectConfig().getraw(
+            "env:" + self.env["PIOENV"], "lib_ldf_mode", missing
+        )
+        if global_value != missing:
+            return LibBuilderBase.lib_ldf_mode.fget(self)
+        # automatically enable C++ Preprocessing in runtime
+        # (Arduino IDE has this behavior)
+        return "chain+"
+
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["arduino", "energia"])
 
