@@ -14,9 +14,6 @@
 
 # pylint: disable=keyword-arg-before-vararg,arguments-differ,signature-differs
 
-import os
-import socket
-
 import requests
 from twisted.internet import defer  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
@@ -52,18 +49,3 @@ def get_core_fullpath():
     return where_is_program(
         "platformio" + (".exe" if "windows" in util.get_systype() else "")
     )
-
-
-@util.memoized(expire="10s")
-def is_twitter_blocked():
-    ip = "104.244.42.1"
-    timeout = 2
-    try:
-        if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-            requests.get("http://%s" % ip, allow_redirects=False, timeout=timeout)
-        else:
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
-        return False
-    except:  # pylint: disable=bare-except
-        pass
-    return True
