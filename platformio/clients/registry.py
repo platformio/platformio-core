@@ -43,7 +43,7 @@ class RegistryClient(RESTClient):
         with open(archive_path, "rb") as fp:
             response = self.send_auth_request(
                 "post",
-                "/v3/package/%s/%s" % (owner, PackageType.from_archive(archive_path)),
+                "/v3/packages/%s/%s" % (owner, PackageType.from_archive(archive_path)),
                 params={
                     "private": 1 if private else 0,
                     "notify": 1 if notify else 0,
@@ -67,7 +67,7 @@ class RegistryClient(RESTClient):
             owner = (
                 account.get_account_info(offline=True).get("profile").get("username")
             )
-        path = "/v3/package/%s/%s/%s" % (owner, type, name)
+        path = "/v3/packages/%s/%s/%s" % (owner, type, name)
         if version:
             path = path + "/version/" + version
         response = self.send_auth_request(
