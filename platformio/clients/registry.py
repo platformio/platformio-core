@@ -69,7 +69,7 @@ class RegistryClient(RESTClient):
             )
         path = "/v3/packages/%s/%s/%s" % (owner, type, name)
         if version:
-            path = path + "/version/" + version
+            path += "/" + version
         response = self.send_auth_request(
             "delete", path, params={"undo": 1 if undo else 0},
         )
