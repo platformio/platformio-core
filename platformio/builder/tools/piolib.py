@@ -531,10 +531,7 @@ class ArduinoLibBuilder(LibBuilderBase):
         return util.items_in_list(frameworks, ["arduino", "energia"])
 
     def is_platforms_compatible(self, platforms):
-        items = self._manifest.get("platforms", [])
-        if not items:
-            return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return util.items_in_list(platforms, items)
+        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -768,16 +765,10 @@ class PlatformIOLibBuilder(LibBuilderBase):
         )
 
     def is_platforms_compatible(self, platforms):
-        items = self._manifest.get("platforms")
-        if not items:
-            return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return util.items_in_list(platforms, items)
+        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
 
     def is_frameworks_compatible(self, frameworks):
-        items = self._manifest.get("frameworks")
-        if not items:
-            return LibBuilderBase.is_frameworks_compatible(self, frameworks)
-        return util.items_in_list(frameworks, items)
+        return util.items_in_list(frameworks, self._manifest.get("frameworks") or ["*"])
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
