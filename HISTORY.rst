@@ -36,6 +36,8 @@ PlatformIO Core 4
 * Dump data intended for IDE extensions/plugins using a new `platformio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
 * Do not generate ".travis.yml" for a new project, let the user have a choice
 * Automatically enable LDF dependency `chain+ mode (evaluates C/C++ Preprocessor conditional syntax) <https://docs.platformio.org/page/librarymanager/ldf.html#dependency-finder-mode>`__ for Arduino library when "library.property" has "depends" field (`issue #3607 <https://github.com/platformio/platformio-core/issues/3607>`_)
+* Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
+* Do not escape compiler arguments in VSCode template on Windows
 * Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
 * Fixed an issue with improper processing of source files added via multiple Build Middlewares (`issue #3531 <https://github.com/platformio/platformio-core/issues/3531>`_)
 * Fixed an issue with ``clean`` target on Windows when project and build directories are located on different logical drives (`issue #3542 <https://github.com/platformio/platformio-core/issues/3542>`_)
