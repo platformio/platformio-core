@@ -33,8 +33,14 @@ TRANSPORT_OPTIONS = {
     },
     "mbed": {
         "include": "#include <mbed.h>",
-        "object": "#if MBED_MAJOR_VERSION == 6\nUnbufferedSerial pc(USBTX, USBRX);\n#else\nRawSerial pc(USBTX, USBRX);\n#endif",
-        "putchar": "#if MBED_MAJOR_VERSION == 6\npc.write(&c, 1);\n#else\npc.putc(c);\n#endif",
+        "object": (
+            "#if MBED_MAJOR_VERSION == 6\nUnbufferedSerial pc(USBTX, USBRX);\n"
+            "#else\nRawSerial pc(USBTX, USBRX);\n#endif"
+        ),
+        "putchar": (
+            "#if MBED_MAJOR_VERSION == 6\npc.write(&c, 1);\n"
+            "#else\npc.putc(c);\n#endif"
+        ),
         "flush": "",
         "begin": "pc.baud($baudrate);",
         "end": "",
