@@ -10,10 +10,6 @@
 %   return to_unix_path(text).replace('"', '\\"')
 % end
 %
-% def _escape_required(flag):
-%   return " " in flag and systype == "windows"
-% end
-%
 % def split_args(args_string):
 %   return click.parser.split_arg_string(to_unix_path(args_string))
 % end
@@ -53,10 +49,7 @@
 % def _find_forced_includes(flags, inc_paths):
 %   result = []
 %   include_args = ("-include", "-imacros")
-%   for f in flags:
-%     if not f.startswith(include_args):
-%       continue
-%     end
+%   for f in filter_args(flags, include_args):
 %     for arg in include_args:
 %       inc = ""
 %       if f.startswith(arg) and f.split(arg)[1].strip():
@@ -66,6 +59,7 @@
 %       end
 %       if inc:
 %         result.append(_find_abs_path(inc, inc_paths))
+%         break
 %       end
 %     end
 %   end
@@ -134,8 +128,7 @@
             "compilerPath": "{{ cc_path }}",
             "compilerArgs": [
 % for flag in [
-%     '"%s"' % _escape(f) if _escape_required(f) else f
-%     for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include", "-imacros"])
+%     f for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include", "-imacros"])
 % ]:
                 "{{ flag }}",
 % end
