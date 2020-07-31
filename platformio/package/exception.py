@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.exception import PlatformioException
+from platformio import util
+from platformio.exception import PlatformioException, UserSideException
 
 
 class PackageException(PlatformioException):
@@ -44,3 +45,16 @@ class ManifestValidationError(ManifestException):
             "https://docs.platformio.org/page/librarymanager/config.html"
             % self.messages
         )
+
+
+class MissingPackageManifestError(ManifestException):
+
+    MESSAGE = "Could not find one of '{0}' manifest files in the package"
+
+
+class UnknownPackageError(UserSideException):
+
+    MESSAGE = (
+        "Could not find a package with '{0}' requirements for your system '%s'"
+        % util.get_systype()
+    )

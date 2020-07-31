@@ -19,10 +19,19 @@ from zipfile import ZipFile
 
 import click
 
-from platformio import exception, util
+from platformio import util
+from platformio.package.exception import PackageException
 
 
-class ArchiveBase(object):
+class ExtractArchiveItemError(PackageException):
+
+    MESSAGE = (
+        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
+        "tool or check this solution -> http://bit.ly/faq-package-manager"
+    )
+
+
+class BaseArchiver(object):
     def __init__(self, arhfileobj):
         self._afo = arhfileobj
 
@@ -46,9 +55,9 @@ class ArchiveBase(object):
         self._afo.close()
 
 
-class TARArchive(ArchiveBase):
+class TARArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(TARArchive, self).__init__(tarfile_open(archpath))
+        super(TARArchiver, self).__init__(tarfile_open(archpath))
 
     def get_items(self):
         return self._afo.getmembers()
@@ -79,7 +88,7 @@ class TARArchive(ArchiveBase):
             self.is_link(item) and self.is_bad_link(item, dest_dir),
         ]
         if not any(bad_conds):
-            super(TARArchive, self).extract_item(item, dest_dir)
+            super(TARArchiver, self).extract_item(item, dest_dir)
         else:
             click.secho(
                 "Blocked insecure item `%s` from TAR archive" % item.name,
@@ -88,9 +97,9 @@ class TARArchive(ArchiveBase):
             )
 
 
-class ZIPArchive(ArchiveBase):
+class ZIPArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(ZIPArchive, self).__init__(ZipFile(archpath))
+        super(ZIPArchiver, self).__init__(ZipFile(archpath))
 
     @staticmethod
     def preserve_permissions(item, dest_dir):
@@ -121,48 +130,59 @@ class ZIPArchive(ArchiveBase):
 
 
 class FileUnpacker(object):
-    def __init__(self, archpath):
-        self.archpath = archpath
-        self._unpacker = None
+    def __init__(self, path):
+        self.path = path
+        self._archiver = None
+
+    def _init_archiver(self):
+        magic_map = {
+            b"\x1f\x8b\x08": TARArchiver,
+            b"\x42\x5a\x68": TARArchiver,
+            b"\x50\x4b\x03\x04": ZIPArchiver,
+        }
+        magic_len = max(len(k) for k in magic_map)
+        with open(self.path, "rb") as fp:
+            data = fp.read(magic_len)
+            for magic, archiver in magic_map.items():
+                if data.startswith(magic):
+                    return archiver(self.path)
+        raise PackageException("Unknown archive type '%s'" % self.path)
 
     def __enter__(self):
-        if self.archpath.lower().endswith((".gz", ".bz2", ".tar")):
-            self._unpacker = TARArchive(self.archpath)
-        elif self.archpath.lower().endswith(".zip"):
-            self._unpacker = ZIPArchive(self.archpath)
-        if not self._unpacker:
-            raise exception.UnsupportedArchiveType(self.archpath)
+        self._archiver = self._init_archiver()
         return self
 
     def __exit__(self, *args):
-        if self._unpacker:
-            self._unpacker.close()
+        if self._archiver:
+            self._archiver.close()
 
     def unpack(
-        self, dest_dir=".", with_progress=True, check_unpacked=True, silent=False
+        self, dest_dir=None, with_progress=True, check_unpacked=True, silent=False
     ):
-        assert self._unpacker
+        assert self._archiver
+        if not dest_dir:
+            dest_dir = os.getcwd()
         if not with_progress or silent:
             if not silent:
                 click.echo("Unpacking...")
-            for item in self._unpacker.get_items():
-                self._unpacker.extract_item(item, dest_dir)
+            for item in self._archiver.get_items():
+                self._archiver.extract_item(item, dest_dir)
         else:
-            items = self._unpacker.get_items()
+            items = self._archiver.get_items()
             with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
-                    self._unpacker.extract_item(item, dest_dir)
+                    self._archiver.extract_item(item, dest_dir)
 
         if not check_unpacked:
             return True
 
         # check on disk
-        for item in self._unpacker.get_items():
-            filename = self._unpacker.get_item_filename(item)
+        for item in self._archiver.get_items():
+            filename = self._archiver.get_item_filename(item)
             item_path = os.path.join(dest_dir, filename)
             try:
-                if not self._unpacker.is_link(item) and not os.path.exists(item_path):
-                    raise exception.ExtractArchiveItemError(filename, dest_dir)
+                if not self._archiver.is_link(item) and not os.path.exists(item_path):
+                    raise ExtractArchiveItemError(filename, dest_dir)
             except NotImplementedError:
                 pass
         return True

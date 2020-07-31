@@ -16,7 +16,7 @@ import os
 import time
 
 from platformio import __accounts_api__, app
-from platformio.clients.rest import RESTClient
+from platformio.clients.http import HTTPClient
 from platformio.exception import PlatformioException
 
 
@@ -35,7 +35,7 @@ class AccountAlreadyAuthorized(AccountError):
     MESSAGE = "You are already authorized with {0} account."
 
 
-class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
+class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
 
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
@@ -67,7 +67,7 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
             token = self.fetch_authentication_token()
             headers["Authorization"] = "Bearer %s" % token
         kwargs["headers"] = headers
-        return self.send_request(*args, **kwargs)
+        return self.request_json_data(*args, **kwargs)
 
     def login(self, username, password):
         try:
@@ -79,11 +79,11 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        result = self.send_request(
+        data = self.request_json_data(
             "post", "/v1/login", data={"username": username, "password": password},
         )
-        app.set_state_item("account", result)
-        return result
+        app.set_state_item("account", data)
+        return data
 
     def login_with_code(self, client_id, code, redirect_uri):
         try:
@@ -95,7 +95,7 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        result = self.send_request(
+        result = self.request_json_data(
             "post",
             "/v1/login/code",
             data={"client_id": client_id, "code": code, "redirect_uri": redirect_uri},
@@ -107,7 +107,7 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         refresh_token = self.get_refresh_token()
         self.delete_local_session()
         try:
-            self.send_request(
+            self.request_json_data(
                 "post", "/v1/logout", data={"refresh_token": refresh_token},
             )
         except AccountError:
@@ -133,7 +133,7 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        return self.send_request(
+        return self.request_json_data(
             "post",
             "/v1/registration",
             data={
@@ -153,7 +153,9 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
         ).get("auth_token")
 
     def forgot_password(self, username):
-        return self.send_request("post", "/v1/forgot", data={"username": username},)
+        return self.request_json_data(
+            "post", "/v1/forgot", data={"username": username},
+        )
 
     def get_profile(self):
         return self.send_auth_request("get", "/v1/profile",)
@@ -276,15 +278,15 @@ class AccountClient(RESTClient):  # pylint:disable=too-many-public-methods
                 return auth.get("access_token")
             if auth.get("refresh_token"):
                 try:
-                    result = self.send_request(
+                    data = self.request_json_data(
                         "post",
                         "/v1/login",
                         headers={
                             "Authorization": "Bearer %s" % auth.get("refresh_token")
                         },
                     )
-                    app.set_state_item("account", result)
-                    return result.get("auth").get("access_token")
+                    app.set_state_item("account", data)
+                    return data.get("auth").get("access_token")
                 except AccountError:
                     self.delete_local_session()
         raise AccountNotAuthorized()

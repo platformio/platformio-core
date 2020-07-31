@@ -26,12 +26,12 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, util
 from platformio.compat import hashlib_encode_data
-from platformio.downloader import FileDownloader
-from platformio.lockfile import LockFile
+from platformio.package.download import FileDownloader
 from platformio.package.exception import ManifestException
+from platformio.package.lockfile import LockFile
 from platformio.package.manifest.parser import ManifestParserFactory
-from platformio.unpacker import FileUnpacker
-from platformio.vcsclient import VCSClientFactory
+from platformio.package.unpack import FileUnpacker
+from platformio.package.vcsclient import VCSClientFactory
 
 # pylint: disable=too-many-arguments, too-many-return-statements
 

@@ -119,39 +119,6 @@ class PackageInstallError(PlatformIOPackageException):
     )
 
 
-class ExtractArchiveItemError(PlatformIOPackageException):
-
-    MESSAGE = (
-        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
-        "tool or check this solution -> http://bit.ly/faq-package-manager"
-    )
-
-
-class UnsupportedArchiveType(PlatformIOPackageException):
-
-    MESSAGE = "Can not unpack file '{0}'"
-
-
-class FDUnrecognizedStatusCode(PlatformIOPackageException):
-
-    MESSAGE = "Got an unrecognized status code '{0}' when downloaded {1}"
-
-
-class FDSizeMismatch(PlatformIOPackageException):
-
-    MESSAGE = (
-        "The size ({0:d} bytes) of downloaded file '{1}' "
-        "is not equal to remote size ({2:d} bytes)"
-    )
-
-
-class FDSHASumMismatch(PlatformIOPackageException):
-
-    MESSAGE = (
-        "The 'sha1' sum '{0}' of downloaded file '{1}' is not equal to remote '{2}'"
-    )
-
-
 #
 # Library
 #

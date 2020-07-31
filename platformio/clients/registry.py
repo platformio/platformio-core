@@ -14,13 +14,18 @@
 
 from platformio import __registry_api__, fs
 from platformio.clients.account import AccountClient
-from platformio.clients.rest import RESTClient
-from platformio.package.spec import PackageType
+from platformio.clients.http import HTTPClient
+from platformio.package.meta import PackageType
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 # pylint: disable=too-many-arguments
 
 
-class RegistryClient(RESTClient):
+class RegistryClient(HTTPClient):
     def __init__(self):
         super(RegistryClient, self).__init__(base_url=__registry_api__)
 
@@ -30,7 +35,7 @@ class RegistryClient(RESTClient):
             token = AccountClient().fetch_authentication_token()
             headers["Authorization"] = "Bearer %s" % token
         kwargs["headers"] = headers
-        return self.send_request(*args, **kwargs)
+        return self.request_json_data(*args, **kwargs)
 
     def publish_package(
         self, archive_path, owner=None, released_at=None, private=False, notify=True
@@ -41,7 +46,7 @@ class RegistryClient(RESTClient):
                 account.get_account_info(offline=True).get("profile").get("username")
             )
         with open(archive_path, "rb") as fp:
-            response = self.send_auth_request(
+            return self.send_auth_request(
                 "post",
                 "/v3/packages/%s/%s" % (owner, PackageType.from_archive(archive_path)),
                 params={
@@ -57,7 +62,6 @@ class RegistryClient(RESTClient):
                 },
                 data=fp,
             )
-            return response
 
     def unpublish_package(  # pylint: disable=redefined-builtin
         self, type, name, owner=None, version=None, undo=False
@@ -70,10 +74,9 @@ class RegistryClient(RESTClient):
         path = "/v3/packages/%s/%s/%s" % (owner, type, name)
         if version:
             path += "/" + version
-        response = self.send_auth_request(
+        return self.send_auth_request(
             "delete", path, params={"undo": 1 if undo else 0},
         )
-        return response
 
     def update_resource(self, urn, private):
         return self.send_auth_request(
@@ -95,4 +98,41 @@ class RegistryClient(RESTClient):
     def list_resources(self, owner):
         return self.send_auth_request(
             "get", "/v3/resources", params={"owner": owner} if owner else None
+        )
+
+    def list_packages(self, query=None, filters=None, page=None):
+        assert query or filters
+        search_query = []
+        if filters:
+            valid_filters = (
+                "authors",
+                "keywords",
+                "frameworks",
+                "platforms",
+                "headers",
+                "ids",
+                "names",
+                "owners",
+                "types",
+            )
+            assert set(filters.keys()) <= set(valid_filters)
+            for name, values in filters.items():
+                for value in set(
+                    values if isinstance(values, (list, tuple)) else [values]
+                ):
+                    search_query.append("%s:%s" % (name[:-1], value))
+        if query:
+            search_query.append(query)
+        params = dict(query=quote(" ".join(search_query)))
+        if page:
+            params["page"] = int(page)
+        return self.request_json_data("get", "/v3/packages", params=params)
+
+    def get_package(self, type_, owner, name, version=None):
+        return self.request_json_data(
+            "get",
+            "/v3/packages/{owner}/{type}/{name}".format(
+                type=type_, owner=owner, name=quote(name)
+            ),
+            params=dict(version=version) if version else None,
         )
