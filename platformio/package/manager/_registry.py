@@ -64,6 +64,10 @@ class RegistryFileMirrorsIterator(object):
             response.headers.get("X-PIO-Content-SHA256"),
         )
 
+    def next(self):
+        """ For Python 2 compatibility """
+        return self.__next__()
+
     def get_http_client(self):
         if self._base_url not in RegistryFileMirrorsIterator.HTTP_CLIENT_INSTANCES:
             RegistryFileMirrorsIterator.HTTP_CLIENT_INSTANCES[

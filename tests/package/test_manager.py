@@ -71,7 +71,7 @@ def test_find_pkg_root(isolated_pio_core, tmpdir_factory):
     # library manager should create "library.json"
     lm = LibraryPackageManager()
     spec = PackageSpec("custom-name@1.0.0")
-    pkg_root = lm.find_pkg_root(pkg_dir, spec)
+    pkg_root = lm.find_pkg_root(str(pkg_dir), spec)
     manifest_path = os.path.join(pkg_root, "library.json")
     assert os.path.realpath(str(root_dir)) == os.path.realpath(pkg_root)
     assert os.path.isfile(manifest_path)

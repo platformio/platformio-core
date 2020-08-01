@@ -61,7 +61,7 @@ class PackageManagerDownloadMixin(object):
             return dl_path
 
         with_progress = not silent and not app.is_disabled_progressbar()
-        tmp_path = tempfile.mkstemp(dir=self.get_download_dir())[1]
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=self.get_download_dir())
         try:
             with LockFile(dl_path):
                 try:
@@ -86,9 +86,11 @@ class PackageManagerDownloadMixin(object):
                         raise e
             if checksum:
                 fd.verify(checksum)
-            shutil.copyfile(tmp_path, dl_path)
+            os.close(tmp_fd)
+            os.rename(tmp_path, dl_path)
         finally:
             if os.path.isfile(tmp_path):
+                os.close(tmp_fd)
                 os.remove(tmp_path)
 
         assert os.path.isfile(dl_path)
