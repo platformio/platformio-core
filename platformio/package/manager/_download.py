@@ -14,7 +14,6 @@
 
 import hashlib
 import os
-import shutil
 import tempfile
 import time
 
