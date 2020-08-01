@@ -14,6 +14,7 @@
 
 import hashlib
 import os
+import shutil
 import tempfile
 import time
 
@@ -85,7 +86,7 @@ class PackageManagerDownloadMixin(object):
                         raise e
             if checksum:
                 fd.verify(checksum)
-            os.rename(tmp_path, dl_path)
+            shutil.copyfile(tmp_path, dl_path)
         finally:
             if os.path.isfile(tmp_path):
                 os.remove(tmp_path)

@@ -16,10 +16,11 @@ import json
 import os
 import re
 import tarfile
+from binascii import crc32
 
 import semantic_version
 
-from platformio.compat import get_object_members, string_types
+from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
 
 try:
@@ -87,6 +88,14 @@ class PackageSpec(object):
                 self.requirements == other.requirements,
                 self.url == other.url,
             ]
+        )
+
+    def __hash__(self):
+        return crc32(
+            hashlib_encode_data(
+                "%s-%s-%s-%s-%s"
+                % (self.owner, self.id, self.name, self.requirements, self.url)
+            )
         )
 
     def __repr__(self):

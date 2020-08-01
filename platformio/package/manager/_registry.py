@@ -37,7 +37,7 @@ class RegistryFileMirrorsIterator(object):
         self._base_url = "%s://%s" % (self._url_parts.scheme, self._url_parts.netloc)
         self._visited_mirrors = []
 
-    def __iter__(self):
+    def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
 
     def __next__(self):

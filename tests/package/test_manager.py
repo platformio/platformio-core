@@ -202,6 +202,21 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     assert util.get_systype() in manifest.get("system", [])
 
 
+def test_install_force(isolated_pio_core, tmpdir_factory):
+    lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
+    # install #64 ArduinoJson
+    pkg = lm.install("64 @ ^5", silent=True)
+    assert pkg.metadata.version.major == 5
+    # try install the latest without specification
+    pkg = lm.install("64", silent=True)
+    assert pkg.metadata.version.major == 5
+    assert len(lm.get_installed()) == 1
+    # re-install the latest
+    pkg = lm.install(64, silent=True, force=True)
+    assert len(lm.get_installed()) == 1
+    assert pkg.metadata.version.major > 5
+
+
 def test_get_installed(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
@@ -276,7 +291,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     # foo @ 1.0.0
     pkg_dir = tmp_dir.join("foo").mkdir()
     pkg_dir.join("library.json").write('{"name": "foo", "version": "1.0.0"}')
-    lm.install_from_url("file://%s" % pkg_dir, "foo")
+    foo_1_0_0_pkg = lm.install_from_url("file://%s" % pkg_dir, "foo")
     # foo @ 1.3.0
     pkg_dir = tmp_dir.join("foo-1.3.0").mkdir()
     pkg_dir.join("library.json").write('{"name": "foo", "version": "1.3.0"}')
@@ -284,7 +299,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     # bar
     pkg_dir = tmp_dir.join("bar").mkdir()
     pkg_dir.join("library.json").write('{"name": "bar", "version": "1.0.0"}')
-    lm.install("file://%s" % pkg_dir, silent=True)
+    bar_pkg = lm.install("file://%s" % pkg_dir, silent=True)
 
     assert len(lm.get_installed()) == 3
     assert os.path.isdir(os.path.join(str(storage_dir), "foo"))
@@ -297,7 +312,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     assert not os.path.isdir(os.path.join(str(storage_dir), "foo@1.0.0"))
 
     # uninstall the rest
-    assert lm.uninstall("foo", silent=True)
-    assert lm.uninstall("bar", silent=True)
+    assert lm.uninstall(foo_1_0_0_pkg.path, silent=True)
+    assert lm.uninstall(bar_pkg, silent=True)
 
     assert len(lm.get_installed()) == 0

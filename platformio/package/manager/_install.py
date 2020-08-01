@@ -21,7 +21,6 @@ import click
 
 from platformio import app, compat, fs, util
 from platformio.package.exception import PackageException, UnknownPackageError
-from platformio.package.lockfile import LockFile
 from platformio.package.meta import PackageSourceItem, PackageSpec
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
@@ -43,25 +42,33 @@ class PackageManagerInstallMixin(object):
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 
-    def install(self, spec, silent=False):
-        with LockFile(self.package_dir):
-            pkg = self._install(spec, silent=silent)
+    def install(self, spec, silent=False, force=False):
+        try:
+            self.lock()
+            pkg = self._install(spec, silent=silent, force=force)
             self.memcache_reset()
             self.cleanup_expired_downloads()
             return pkg
+        finally:
+            self.unlock()
 
-    def _install(self, spec, search_filters=None, silent=False):
+    def _install(self, spec, search_filters=None, silent=False, force=False):
         spec = self.ensure_spec(spec)
 
         # avoid circle dependencies
         if not self.INSTALL_HISTORY:
-            self.INSTALL_HISTORY = []
+            self.INSTALL_HISTORY = {}
         if spec in self.INSTALL_HISTORY:
-            return None
-        self.INSTALL_HISTORY.append(spec)
+            return self.INSTALL_HISTORY[spec]
 
         # check if package is already installed
         pkg = self.get_package(spec)
+
+        # if a forced installation
+        if pkg and force:
+            self.uninstall(pkg, silent=silent)
+            pkg = None
+
         if pkg:
             if not silent:
                 click.secho(
@@ -99,6 +106,7 @@ class PackageManagerInstallMixin(object):
 
         self.memcache_reset()
         self.install_dependencies(pkg, silent)
+        self.INSTALL_HISTORY[spec] = pkg
         return pkg
 
     def install_dependencies(self, pkg, silent=False):
@@ -240,15 +248,18 @@ class PackageManagerInstallMixin(object):
         shutil.move(tmp_pkg.path, dst_pkg.path)
         return PackageSourceItem(dst_pkg.path)
 
-    def uninstall(self, path_or_spec, silent=False):
-        with LockFile(self.package_dir):
-            pkg = (
-                PackageSourceItem(path_or_spec)
-                if os.path.isdir(path_or_spec)
-                else self.get_package(path_or_spec)
-            )
+    def uninstall(self, pkg, silent=False):
+        try:
+            self.lock()
+
+            if not isinstance(pkg, PackageSourceItem):
+                pkg = (
+                    PackageSourceItem(pkg)
+                    if os.path.isdir(pkg)
+                    else self.get_package(pkg)
+                )
             if not pkg or not pkg.metadata:
-                raise UnknownPackageError(path_or_spec)
+                raise UnknownPackageError(pkg)
 
             if not silent:
                 self.print_message(
@@ -276,7 +287,10 @@ class PackageManagerInstallMixin(object):
                     os.path.join(self.package_dir, detached_pkg.get_safe_dirname()),
                 )
                 self.memcache_reset()
+        finally:
+            self.unlock()
 
-            if not silent:
-                click.echo("[%s]" % click.style("OK", fg="green"))
+        if not silent:
+            click.echo("[%s]" % click.style("OK", fg="green"))
+
         return True

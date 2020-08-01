@@ -21,6 +21,7 @@ import semantic_version
 from platformio import fs, util
 from platformio.commands import PlatformioCLI
 from platformio.package.exception import ManifestException, MissingPackageManifestError
+from platformio.package.lockfile import LockFile
 from platformio.package.manager._download import PackageManagerDownloadMixin
 from platformio.package.manager._install import PackageManagerInstallMixin
 from platformio.package.manager._registry import PackageManageRegistryMixin
@@ -34,7 +35,7 @@ from platformio.package.meta import (
 from platformio.project.helpers import get_project_cache_dir
 
 
-class BasePackageManager(
+class BasePackageManager(  # pylint: disable=too-many-public-methods
     PackageManagerDownloadMixin, PackageManageRegistryMixin, PackageManagerInstallMixin
 ):
     MEMORY_CACHE = {}
@@ -43,9 +44,25 @@ class BasePackageManager(
         self.pkg_type = pkg_type
         self.package_dir = self.ensure_dir_exists(package_dir)
         self.MEMORY_CACHE = {}
+
+        self._lockfile = None
         self._download_dir = None
         self._tmp_dir = None
         self._registry_client = None
+
+    def lock(self):
+        if self._lockfile:
+            return
+        self._lockfile = LockFile(self.package_dir)
+        self._lockfile.acquire()
+
+    def unlock(self):
+        if hasattr(self, "_lockfile") and self._lockfile:
+            self._lockfile.release()
+            self._lockfile = None
+
+    def __del__(self):
+        self.unlock()
 
     def memcache_get(self, key, default=None):
         return self.MEMORY_CACHE.get(key, default)
