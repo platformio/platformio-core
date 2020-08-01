@@ -14,7 +14,7 @@
 
 from platformio import __registry_api__, fs
 from platformio.clients.account import AccountClient
-from platformio.clients.http import HTTPClient
+from platformio.clients.http import HTTPClient, HTTPClientError
 from platformio.package.meta import PackageType
 
 try:
@@ -120,7 +120,7 @@ class RegistryClient(HTTPClient):
                 for value in set(
                     values if isinstance(values, (list, tuple)) else [values]
                 ):
-                    search_query.append("%s:%s" % (name[:-1], value))
+                    search_query.append('%s:"%s"' % (name[:-1], value))
         if query:
             search_query.append(query)
         params = dict(query=quote(" ".join(search_query)))
@@ -129,10 +129,15 @@ class RegistryClient(HTTPClient):
         return self.request_json_data("get", "/v3/packages", params=params)
 
     def get_package(self, type_, owner, name, version=None):
-        return self.request_json_data(
-            "get",
-            "/v3/packages/{owner}/{type}/{name}".format(
-                type=type_, owner=owner, name=quote(name)
-            ),
-            params=dict(version=version) if version else None,
-        )
+        try:
+            return self.request_json_data(
+                "get",
+                "/v3/packages/{owner}/{type}/{name}".format(
+                    type=type_, owner=owner.lower(), name=quote(name.lower())
+                ),
+                params=dict(version=version) if version else None,
+            )
+        except HTTPClientError as e:
+            if e.response.status_code == 404:
+                return None
+            raise e

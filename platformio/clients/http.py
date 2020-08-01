@@ -69,4 +69,6 @@ class HTTPClient(object):
             message = response.json()["message"]
         except (KeyError, ValueError):
             message = response.text
-        raise HTTPClientError(message)
+        exc = HTTPClientError(message)
+        exc.response = response
+        raise exc
