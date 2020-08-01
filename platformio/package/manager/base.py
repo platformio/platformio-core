@@ -25,6 +25,7 @@ from platformio.package.lockfile import LockFile
 from platformio.package.manager._download import PackageManagerDownloadMixin
 from platformio.package.manager._install import PackageManagerInstallMixin
 from platformio.package.manager._registry import PackageManageRegistryMixin
+from platformio.package.manager._uninstall import PackageManagerUninstallMixin
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import (
     PackageMetaData,
@@ -36,14 +37,17 @@ from platformio.project.helpers import get_project_cache_dir
 
 
 class BasePackageManager(  # pylint: disable=too-many-public-methods
-    PackageManagerDownloadMixin, PackageManageRegistryMixin, PackageManagerInstallMixin
+    PackageManagerDownloadMixin,
+    PackageManageRegistryMixin,
+    PackageManagerInstallMixin,
+    PackageManagerUninstallMixin,
 ):
-    MEMORY_CACHE = {}
+    _MEMORY_CACHE = {}
 
     def __init__(self, pkg_type, package_dir):
         self.pkg_type = pkg_type
         self.package_dir = self.ensure_dir_exists(package_dir)
-        self.MEMORY_CACHE = {}
+        self._MEMORY_CACHE = {}
 
         self._lockfile = None
         self._download_dir = None
@@ -65,13 +69,13 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         self.unlock()
 
     def memcache_get(self, key, default=None):
-        return self.MEMORY_CACHE.get(key, default)
+        return self._MEMORY_CACHE.get(key, default)
 
     def memcache_set(self, key, value):
-        self.MEMORY_CACHE[key] = value
+        self._MEMORY_CACHE[key] = value
 
     def memcache_reset(self):
-        self.MEMORY_CACHE.clear()
+        self._MEMORY_CACHE.clear()
 
     @staticmethod
     def is_system_compatible(value):

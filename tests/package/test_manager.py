@@ -18,7 +18,10 @@ import time
 import pytest
 
 from platformio import fs, util
-from platformio.package.exception import MissingPackageManifestError
+from platformio.package.exception import (
+    MissingPackageManifestError,
+    UnknownPackageError,
+)
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -193,13 +196,23 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     # mbed library
     assert lm.install("wolfSSL", silent=True)
     assert len(lm.get_installed()) == 4
+    # case sensitive author name
+    assert lm.install("DallasTemperature", silent=True)
+    assert lm.get_package("OneWire").metadata.version.major >= 2
+    assert len(lm.get_installed()) == 6
 
     # Tools
     tm = ToolPackageManager(str(tmpdir_factory.mktemp("tool-storage")))
-    pkg = tm.install("tool-stlink @ ~1.10400.0", silent=True)
+    pkg = tm.install("platformio/tool-stlink @ ~1.10400.0", silent=True)
     manifest = tm.load_manifest(pkg)
     assert tm.is_system_compatible(manifest.get("system"))
     assert util.get_systype() in manifest.get("system", [])
+
+    # Test unknown
+    with pytest.raises(UnknownPackageError):
+        tm.install("unknown-package-tool @ 9.1.1", silent=True)
+    with pytest.raises(UnknownPackageError):
+        tm.install("owner/unknown-package-tool", silent=True)
 
 
 def test_install_force(isolated_pio_core, tmpdir_factory):
@@ -315,4 +328,15 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     assert lm.uninstall(foo_1_0_0_pkg.path, silent=True)
     assert lm.uninstall(bar_pkg, silent=True)
 
+    assert len(lm.get_installed()) == 0
+
+    # test uninstall dependencies
+    assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
+    assert len(lm.get_installed()) == 3
+    assert lm.uninstall("AsyncMqttClient-esphome", silent=True, skip_dependencies=True)
+    assert len(lm.get_installed()) == 2
+
+    lm = LibraryPackageManager(str(storage_dir))
+    assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
+    assert lm.uninstall("AsyncMqttClient-esphome", silent=True)
     assert len(lm.get_installed()) == 0

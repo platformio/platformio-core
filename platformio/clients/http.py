@@ -20,7 +20,13 @@ from platformio.exception import PlatformioException
 
 
 class HTTPClientError(PlatformioException):
-    pass
+    def __init__(self, message, response=None):
+        super(HTTPClientError, self).__init__()
+        self.message = message
+        self.response = response
+
+    def __str__(self):  # pragma: no cover
+        return self.message
 
 
 class HTTPClient(object):
@@ -52,7 +58,7 @@ class HTTPClient(object):
         try:
             return getattr(self._session, method)(self.base_url + path, **kwargs)
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            raise HTTPClientError(e)
+            raise HTTPClientError(str(e))
 
     def request_json_data(self, *args, **kwargs):
         response = self.send_request(*args, **kwargs)
@@ -69,6 +75,4 @@ class HTTPClient(object):
             message = response.json()["message"]
         except (KeyError, ValueError):
             message = response.text
-        exc = HTTPClientError(message)
-        exc.response = response
-        raise exc
+        raise HTTPClientError(message, response)

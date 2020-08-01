@@ -78,12 +78,19 @@ class RegistryFileMirrorsIterator(object):
 
 class PackageManageRegistryMixin(object):
     def install_from_registry(self, spec, search_filters=None, silent=False):
-        packages = self.search_registry_packages(spec, search_filters)
-        if not packages:
-            raise UnknownPackageError(spec.humanize())
-        if len(packages) > 1 and not silent:
-            self.print_multi_package_issue(packages, spec)
-        package, version = self.find_best_registry_version(packages, spec)
+        if spec.owner and spec.name and not search_filters:
+            package = self.fetch_registry_package(spec.owner, spec.name)
+            if not package:
+                raise UnknownPackageError(spec.humanize())
+            version = self._pick_best_pkg_version(package["versions"], spec)
+        else:
+            packages = self.search_registry_packages(spec, search_filters)
+            if not packages:
+                raise UnknownPackageError(spec.humanize())
+            if len(packages) > 1 and not silent:
+                self.print_multi_package_issue(packages, spec)
+            package, version = self.find_best_registry_version(packages, spec)
+
         pkgfile = self._pick_compatible_pkg_file(version["files"]) if version else None
         if not pkgfile:
             raise UnknownPackageError(spec.humanize())
@@ -117,17 +124,17 @@ class PackageManageRegistryMixin(object):
             filters["ids"] = str(spec.id)
         else:
             filters["types"] = self.pkg_type
-            filters["names"] = '"%s"' % spec.name.lower()
+            filters["names"] = spec.name.lower()
             if spec.owner:
                 filters["owners"] = spec.owner.lower()
         return self.get_registry_client_instance().list_packages(filters=filters)[
             "items"
         ]
 
-    def fetch_registry_package_versions(self, owner, name):
+    def fetch_registry_package(self, owner, name):
         return self.get_registry_client_instance().get_package(
             self.pkg_type, owner, name
-        )["versions"]
+        )
 
     @staticmethod
     def print_multi_package_issue(packages, spec):
@@ -163,9 +170,9 @@ class PackageManageRegistryMixin(object):
         # if the custom version requirements, check ALL package versions
         for package in packages:
             version = self._pick_best_pkg_version(
-                self.fetch_registry_package_versions(
+                self.fetch_registry_package(
                     package["owner"]["username"], package["name"]
-                ),
+                ).get("versions"),
                 spec,
             )
             if version:

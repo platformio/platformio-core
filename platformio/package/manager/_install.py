@@ -20,7 +20,7 @@ import tempfile
 import click
 
 from platformio import app, compat, fs, util
-from platformio.package.exception import PackageException, UnknownPackageError
+from platformio.package.exception import PackageException
 from platformio.package.meta import PackageSourceItem, PackageSpec
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
@@ -28,7 +28,7 @@ from platformio.package.vcsclient import VCSClientFactory
 
 class PackageManagerInstallMixin(object):
 
-    INSTALL_HISTORY = None  # avoid circle dependencies
+    _INSTALL_HISTORY = None  # avoid circle dependencies
 
     @staticmethod
     def unpack(src, dst):
@@ -56,10 +56,10 @@ class PackageManagerInstallMixin(object):
         spec = self.ensure_spec(spec)
 
         # avoid circle dependencies
-        if not self.INSTALL_HISTORY:
-            self.INSTALL_HISTORY = {}
-        if spec in self.INSTALL_HISTORY:
-            return self.INSTALL_HISTORY[spec]
+        if not self._INSTALL_HISTORY:
+            self._INSTALL_HISTORY = {}
+        if spec in self._INSTALL_HISTORY:
+            return self._INSTALL_HISTORY[spec]
 
         # check if package is already installed
         pkg = self.get_package(spec)
@@ -105,11 +105,11 @@ class PackageManagerInstallMixin(object):
             )
 
         self.memcache_reset()
-        self.install_dependencies(pkg, silent)
-        self.INSTALL_HISTORY[spec] = pkg
+        self._install_dependencies(pkg, silent)
+        self._INSTALL_HISTORY[spec] = pkg
         return pkg
 
-    def install_dependencies(self, pkg, silent=False):
+    def _install_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageSourceItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):
@@ -117,14 +117,14 @@ class PackageManagerInstallMixin(object):
         if not silent:
             self.print_message(click.style("Installing dependencies...", fg="yellow"))
         for dependency in manifest.get("dependencies"):
-            if not self.install_dependency(dependency, silent) and not silent:
+            if not self._install_dependency(dependency, silent) and not silent:
                 click.secho(
                     "Warning! Could not install dependency %s for package '%s'"
                     % (dependency, pkg.metadata.name),
                     fg="yellow",
                 )
 
-    def install_dependency(self, dependency, silent=False):
+    def _install_dependency(self, dependency, silent=False):
         spec = PackageSpec(
             name=dependency.get("name"), requirements=dependency.get("version")
         )
@@ -247,50 +247,3 @@ class PackageManagerInstallMixin(object):
         _cleanup_dir(dst_pkg.path)
         shutil.move(tmp_pkg.path, dst_pkg.path)
         return PackageSourceItem(dst_pkg.path)
-
-    def uninstall(self, pkg, silent=False):
-        try:
-            self.lock()
-
-            if not isinstance(pkg, PackageSourceItem):
-                pkg = (
-                    PackageSourceItem(pkg)
-                    if os.path.isdir(pkg)
-                    else self.get_package(pkg)
-                )
-            if not pkg or not pkg.metadata:
-                raise UnknownPackageError(pkg)
-
-            if not silent:
-                self.print_message(
-                    "Uninstalling %s @ %s: \t"
-                    % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version),
-                    nl=False,
-                )
-            if os.path.islink(pkg.path):
-                os.unlink(pkg.path)
-            else:
-                fs.rmtree(pkg.path)
-            self.memcache_reset()
-
-            # unfix detached-package with the same name
-            detached_pkg = self.get_package(PackageSpec(name=pkg.metadata.name))
-            if (
-                detached_pkg
-                and "@" in detached_pkg.path
-                and not os.path.isdir(
-                    os.path.join(self.package_dir, detached_pkg.get_safe_dirname())
-                )
-            ):
-                shutil.move(
-                    detached_pkg.path,
-                    os.path.join(self.package_dir, detached_pkg.get_safe_dirname()),
-                )
-                self.memcache_reset()
-        finally:
-            self.unlock()
-
-        if not silent:
-            click.echo("[%s]" % click.style("OK", fg="green"))
-
-        return True
