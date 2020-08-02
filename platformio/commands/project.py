@@ -131,7 +131,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 )
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("-e", "--environment", help="Update using existing environment")
+@click.option("-e", "--environment", help="Update using existing environment(s)", multiple=True)
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
@@ -182,7 +182,7 @@ def project_init(
         config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
         config.validate()
         pg = ProjectGenerator(
-            config, environment or get_best_envname(config, board), ide
+            config, list(environment or config.envs()), ide
         )
         pg.generate()
 

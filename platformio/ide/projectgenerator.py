@@ -24,10 +24,13 @@ from platformio.project.helpers import load_project_ide_data
 
 
 class ProjectGenerator(object):
-    def __init__(self, config, env_name, ide):
+    def __init__(self, config, env_or_envs, ide):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
-        self.env_name = str(env_name)
+        if not isinstance(env_or_envs, list):
+            self.env_list = [env_or_envs]
+        else:
+            self.env_list = env_or_envs
         self.ide = str(ide)
 
     @staticmethod
@@ -61,7 +64,8 @@ class ProjectGenerator(object):
             "systype": util.get_systype(),
             "project_name": os.path.basename(self.project_dir),
             "project_dir": self.project_dir,
-            "env_name": self.env_name,
+            "env_name": self.env_list[0],
+            "env_list": self.env_list,
             "user_home_dir": os.path.realpath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
             if os.path.isfile(sys.argv[0])
@@ -70,20 +74,42 @@ class ProjectGenerator(object):
             "env_pathsep": os.pathsep,
         }
 
-        # default env configuration
-        tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
-        # build data
-        tpl_vars.update(load_project_ide_data(self.project_dir, self.env_name) or {})
+        if self.ide == "vscode":
+            for env in self.env_list:
+                # default env configuration
+                tpl_vars.update({env: self.config.items(env=env, as_dict=True)})
+                tpl_vars.update(
+                    {
+                        env: {
+                            "project_libdeps_dir": os.path.join(
+                                self.config.get_optional_dir("libdeps"), self.env_list[0]
+                            )
+                        }
+                    }
+                )
+            # build data
+            tpl_vars.update(load_project_ide_data(self.project_dir, self.env_list) or {})
+            tpl_vars.update(
+                {
+                    "prog_path": tpl_vars[self.env_list[0]]["prog_path"],
+                    "gdb_path": tpl_vars[self.env_list[0]]["gdb_path"],
+                    "svd_path": tpl_vars[self.env_list[0]]["svd_path"],
+                    "project_libdeps_dir": os.path.join(
+                        self.config.get_optional_dir("libdeps"), self.env_list[0]
+                    )
+                }
+            )
+        else:
+            tpl_vars.update(self.config.items(env=self.env_list[0], as_dict=True))
+            # build data
+            tpl_vars.update(load_project_ide_data(self.project_dir, self.env_list[0]) or {})
 
         with fs.cd(self.project_dir):
             tpl_vars.update(
                 {
                     "src_files": self.get_src_files(),
                     "project_src_dir": self.config.get_optional_dir("src"),
-                    "project_lib_dir": self.config.get_optional_dir("lib"),
-                    "project_libdeps_dir": os.path.join(
-                        self.config.get_optional_dir("libdeps"), self.env_name
-                    ),
+                    "project_lib_dir": self.config.get_optional_dir("lib")
                 }
             )
 

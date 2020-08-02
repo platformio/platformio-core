@@ -66,28 +66,36 @@
 %   return result
 % end
 %
-% cleaned_includes = filter_includes(includes, ["toolchain"])
 %
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
-% cc_stds = STD_RE.findall(cc_flags)
-% cxx_stds = STD_RE.findall(cxx_flags)
-% cc_m_flags = split_args(cc_flags)
-% forced_includes = _find_forced_includes(
-%   filter_args(cc_m_flags, ["-include", "-imacros"]), cleaned_includes)
 %
 {
     "configurations": [
         {
             "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
         },
+% for env in env_list:
+%   cleaned_includes = filter_includes(locals()[env]["includes"], ["toolchain"])
+%   cc_stds = STD_RE.findall(locals()[env]["cc_flags"])
+%   cxx_stds = STD_RE.findall(locals()[env]["cxx_flags"])
+%   cc_m_flags = split_args(locals()[env]["cc_flags"])
+%   forced_includes = _find_forced_includes(
+%     filter_args(cc_m_flags, ["-include", "-imacros"]), cleaned_includes)
         {
-% if systype == "windows":
+% if len(env_list) == 1:
+%   if systype == "windows":
             "name": "Win32",
-% elif systype == "darwin":
+%   elif systype == "darwin":
             "name": "Mac",
             "macFrameworkPath": [],
-% else:
+%   else:
             "name": "Linux",
+%   end
+% else:
+            "name": "{{ env }}",
+%   if systype == "darwin":
+            "macFrameworkPath": [],
+%   end
 % end
             "includePath": [
 % for include in cleaned_includes:
@@ -105,17 +113,17 @@
                 ]
             },
             "defines": [
-% for define in defines:
+% for define in locals()[env]["defines"]:
                 "{{! _escape(define) }}",
 % end
                 ""
             ],
             "intelliSenseMode": "clang-x64",
-% if cc_stds:
-            "cStandard": "c{{ cc_stds[-1] }}",
+% if "cc_stds" in locals()[env]:
+            "cStandard": "c{{ locals()[env]["cc_stds"][-1] }}",
 % end
-% if cxx_stds:
-            "cppStandard": "c++{{ cxx_stds[-1] }}",
+% if "cxx_stds" in locals()[env]:
+            "cppStandard": "c++{{ locals()[env]["cxx_stds"][-1] }}",
 % end
 % if forced_includes:
             "forcedInclude": [
@@ -125,7 +133,7 @@
                 ""
             ],
 % end
-            "compilerPath": "{{ cc_path }}",
+            "compilerPath": "{{ locals()[env]["cc_path"] }}",
             "compilerArgs": [
 % for flag in [
 %     f for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include", "-imacros"])
@@ -134,7 +142,12 @@
 % end
                 ""
             ]
+% if env == env_list[-1]:
         }
+% else:
+        },
+% end
+% end
     ],
     "version": 4
 }
