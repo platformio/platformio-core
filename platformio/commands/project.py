@@ -181,8 +181,13 @@ def project_init(
     if ide:
         config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
         config.validate()
+        if not environment:
+            if config.default_envs():
+                environment = config.default_envs()
+            else:
+                environment = get_best_envname(config, board)
         pg = ProjectGenerator(
-            config, list(environment or config.default_envs()), ide
+            config, environment, ide
         )
         pg.generate()
 
