@@ -186,6 +186,8 @@ def project_init(
                 environment = config.default_envs()
             else:
                 environment = get_best_envname(config, board)
+        else:
+            environment = list(environment)
         pg = ProjectGenerator(
             config, environment, ide
         )
