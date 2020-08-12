@@ -78,18 +78,18 @@ class PackageManagerUpdateMixin(object):
             ).version
         )
 
-    def update(self, pkg, spec=None, only_check=False, silent=False):
-        pkg = self.get_package(pkg)
+    def update(self, from_spec, to_spec=None, only_check=False, silent=False):
+        pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
-            raise UnknownPackageError(pkg)
+            raise UnknownPackageError(from_spec)
 
         if not silent:
             click.echo(
                 "{} {:<45} {:<30}".format(
                     "Checking" if only_check else "Updating",
                     click.style(pkg.metadata.spec.humanize(), fg="cyan"),
-                    "%s (%s)" % (pkg.metadata.version, spec.requirements)
-                    if spec and spec.requirements
+                    "%s (%s)" % (pkg.metadata.version, to_spec.requirements)
+                    if to_spec and to_spec.requirements
                     else str(pkg.metadata.version),
                 ),
                 nl=False,
@@ -99,7 +99,7 @@ class PackageManagerUpdateMixin(object):
                 click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
             return pkg
 
-        outdated = self.outdated(pkg, spec)
+        outdated = self.outdated(pkg, to_spec)
         if not silent:
             self.print_outdated_state(outdated)
 

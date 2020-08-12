@@ -23,17 +23,17 @@ from platformio.package.meta import PackageSourceItem, PackageSpec
 
 
 class PackageManagerUninstallMixin(object):
-    def uninstall(self, pkg, silent=False, skip_dependencies=False):
+    def uninstall(self, spec, silent=False, skip_dependencies=False):
         try:
             self.lock()
-            return self._uninstall(pkg, silent, skip_dependencies)
+            return self._uninstall(spec, silent, skip_dependencies)
         finally:
             self.unlock()
 
-    def _uninstall(self, pkg, silent=False, skip_dependencies=False):
-        pkg = self.get_package(pkg)
+    def _uninstall(self, spec, silent=False, skip_dependencies=False):
+        pkg = self.get_package(spec)
         if not pkg or not pkg.metadata:
-            raise UnknownPackageError(pkg)
+            raise UnknownPackageError(spec)
 
         if not silent:
             self.print_message(
@@ -78,7 +78,7 @@ class PackageManagerUninstallMixin(object):
         if not manifest.get("dependencies"):
             return
         if not silent:
-            self.print_message(click.style("Removing dependencies...", fg="yellow"))
+            self.print_message("Removing dependencies...", fg="yellow")
         for dependency in manifest.get("dependencies"):
             pkg = self.get_package(
                 PackageSpec(

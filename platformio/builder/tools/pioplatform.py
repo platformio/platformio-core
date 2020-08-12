@@ -139,7 +139,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         )
 
     def _get_plaform_data():
-        data = ["PLATFORM: %s %s" % (platform.title, platform.version)]
+        data = ["PLATFORM: %s (%s)" % (platform.title, platform.version)]
         if platform.src_version:
             data.append("#" + platform.src_version)
         if int(ARGUMENTS.get("PIOVERBOSE", 0)) and platform.src_url:

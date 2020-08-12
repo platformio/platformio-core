@@ -20,7 +20,7 @@ import tempfile
 import click
 
 from platformio import app, compat, fs, util
-from platformio.package.exception import MissingPackageManifestError, PackageException
+from platformio.package.exception import PackageException
 from platformio.package.meta import PackageSourceItem, PackageSpec
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
@@ -71,7 +71,7 @@ class PackageManagerInstallMixin(object):
 
         if pkg:
             if not silent:
-                click.secho(
+                self.print_message(
                     "{name} @ {version} is already installed".format(
                         **pkg.metadata.as_dict()
                     ),
@@ -80,8 +80,9 @@ class PackageManagerInstallMixin(object):
             return pkg
 
         if not silent:
-            msg = "Installing %s" % click.style(spec.humanize(), fg="cyan")
-            self.print_message(msg)
+            self.print_message(
+                "Installing %s" % click.style(spec.humanize(), fg="cyan")
+            )
 
         if spec.external:
             pkg = self.install_from_url(spec.url, spec, silent=silent)
@@ -96,12 +97,10 @@ class PackageManagerInstallMixin(object):
 
         if not silent:
             self.print_message(
-                click.style(
-                    "{name} @ {version} has been successfully installed!".format(
-                        **pkg.metadata.as_dict()
-                    ),
-                    fg="green",
-                )
+                "{name} @ {version} has been successfully installed!".format(
+                    **pkg.metadata.as_dict()
+                ),
+                fg="green",
             )
 
         self.memcache_reset()
@@ -115,10 +114,10 @@ class PackageManagerInstallMixin(object):
         if not manifest.get("dependencies"):
             return
         if not silent:
-            self.print_message(click.style("Installing dependencies...", fg="yellow"))
+            self.print_message("Installing dependencies...")
         for dependency in manifest.get("dependencies"):
             if not self._install_dependency(dependency, silent) and not silent:
-                click.secho(
+                self.print_message(
                     "Warning! Could not install dependency %s for package '%s'"
                     % (dependency, pkg.metadata.name),
                     fg="yellow",
@@ -255,20 +254,3 @@ class PackageManagerInstallMixin(object):
         _cleanup_dir(dst_pkg.path)
         shutil.move(tmp_pkg.path, dst_pkg.path)
         return PackageSourceItem(dst_pkg.path)
-
-    def get_installed(self):
-        result = []
-        for name in os.listdir(self.package_dir):
-            pkg_dir = os.path.join(self.package_dir, name)
-            if not os.path.isdir(pkg_dir):
-                continue
-            pkg = PackageSourceItem(pkg_dir)
-            if not pkg.metadata:
-                try:
-                    spec = self.build_legacy_spec(pkg_dir)
-                    pkg.metadata = self.build_metadata(pkg_dir, spec)
-                except MissingPackageManifestError:
-                    pass
-            if pkg.metadata:
-                result.append(pkg)
-        return result

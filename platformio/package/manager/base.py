@@ -103,8 +103,11 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     def manifest_names(self):
         raise NotImplementedError
 
-    def print_message(self, message, nl=True):
-        click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
+    def print_message(self, message, **kwargs):
+        click.echo(
+            "%s: " % str(self.__class__.__name__).replace("Package", " "), nl=False
+        )
+        click.secho(message, **kwargs)
 
     def get_download_dir(self):
         if not self._download_dir:
@@ -160,7 +163,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 return result
             except ManifestException as e:
                 if not PlatformioCLI.in_silence():
-                    click.secho(str(e), fg="yellow")
+                    self.print_message(str(e), fg="yellow")
         raise MissingPackageManifestError(", ".join(self.manifest_names))
 
     @staticmethod
@@ -186,37 +189,63 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
             metadata.version = self.generate_rand_version()
         return metadata
 
+    def get_installed(self):
+        result = []
+        for name in os.listdir(self.package_dir):
+            pkg_dir = os.path.join(self.package_dir, name)
+            if not os.path.isdir(pkg_dir):
+                continue
+            pkg = PackageSourceItem(pkg_dir)
+            if not pkg.metadata:
+                try:
+                    spec = self.build_legacy_spec(pkg_dir)
+                    pkg.metadata = self.build_metadata(pkg_dir, spec)
+                except MissingPackageManifestError:
+                    pass
+            if pkg.metadata:
+                result.append(pkg)
+        return result
+
     def get_package(self, spec):
         if isinstance(spec, PackageSourceItem):
             return spec
-
-        if not isinstance(spec, PackageSpec) and os.path.isdir(spec):
-            for pkg in self.get_installed():
-                if spec == pkg.path:
-                    return pkg
-            return None
-
         spec = self.ensure_spec(spec)
         best = None
         for pkg in self.get_installed():
-            skip_conditions = [
-                spec.owner
-                and not ci_strings_are_equal(spec.owner, pkg.metadata.spec.owner),
-                spec.external and spec.url != pkg.metadata.spec.url,
-                spec.id and spec.id != pkg.metadata.spec.id,
-                not spec.id
-                and not spec.external
-                and not ci_strings_are_equal(spec.name, pkg.metadata.name),
-            ]
-            if any(skip_conditions):
+            if not self._test_pkg_with_spec(pkg, spec):
                 continue
-            if self.pkg_type == PackageType.TOOL:
-                # TODO: check "system" for pkg
-                pass
-
             assert isinstance(pkg.metadata.version, semantic_version.Version)
             if spec.requirements and pkg.metadata.version not in spec.requirements:
                 continue
             if not best or (pkg.metadata.version > best.metadata.version):
                 best = pkg
         return best
+
+    def _test_pkg_with_spec(self, pkg, spec):
+        # "id" mismatch
+        if spec.id and spec.id != pkg.metadata.spec.id:
+            return False
+
+        # "owner" mismatch
+        if spec.owner and not ci_strings_are_equal(spec.owner, pkg.metadata.spec.owner):
+            return False
+
+        # external "URL" mismatch
+        if spec.external:
+            # local folder mismatch
+            if spec.url == pkg.path or (
+                spec.url.startswith("file://") and pkg.path == spec.url[7:]
+            ):
+                return True
+            if spec.url != pkg.metadata.spec.url:
+                return False
+
+        # "name" mismatch
+        elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):
+            return False
+
+        if self.pkg_type == PackageType.TOOL:
+            # TODO: check "system" for pkg
+            pass
+
+        return True

@@ -1022,6 +1022,8 @@ def ConfigureProjectLibBuilder(env):
             pkg = PackageSourceItem(lb.path)
             if pkg.metadata:
                 title += " %s" % pkg.metadata.version
+            elif lb.version:
+                title += " %s" % lb.version
             click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 if pkg.metadata and pkg.metadata.spec.external:

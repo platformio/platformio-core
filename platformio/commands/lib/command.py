@@ -283,12 +283,14 @@ def lib_update(  # pylint: disable=too-many-arguments
             json_result[storage_dir] = result
         else:
             for library in _libraries:
-                spec = (
+                to_spec = (
                     None
                     if isinstance(library, PackageSourceItem)
                     else PackageSpec(library)
                 )
-                lm.update(library, spec=spec, only_check=only_check, silent=silent)
+                lm.update(
+                    library, to_spec=to_spec, only_check=only_check, silent=silent
+                )
 
     if json_output:
         return click.echo(

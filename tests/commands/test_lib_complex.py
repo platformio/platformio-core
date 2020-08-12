@@ -15,7 +15,6 @@
 import json
 import re
 
-from platformio import exception
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import cli as cmd_lib
 from platformio.package.exception import UnknownPackageError

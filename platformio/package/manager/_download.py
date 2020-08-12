@@ -17,8 +17,6 @@ import os
 import tempfile
 import time
 
-import click
-
 from platformio import app, compat
 from platformio.package.download import FileDownloader
 from platformio.package.lockfile import LockFile
@@ -77,7 +75,7 @@ class PackageManagerDownloadMixin(object):
                         except IOError:
                             raise_error = True
                     if raise_error:
-                        click.secho(
+                        self.print_message(
                             "Error: Please read http://bit.ly/package-manager-ioerror",
                             fg="red",
                             err=True,

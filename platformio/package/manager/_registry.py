@@ -108,8 +108,8 @@ class PackageManageRegistryMixin(object):
                     silent=silent,
                 )
             except Exception as e:  # pylint: disable=broad-except
-                click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for another mirror...", fg="yellow")
+                self.print_message("Warning! Package Mirror: %s" % e, fg="yellow")
+                self.print_message("Looking for another mirror...", fg="yellow")
 
         return None
 
@@ -159,9 +159,8 @@ class PackageManageRegistryMixin(object):
             click.echo("")
         return packages[0]["id"]
 
-    @staticmethod
-    def print_multi_package_issue(packages, spec):
-        click.secho(
+    def print_multi_package_issue(self, packages, spec):
+        self.print_message(
             "Warning! More than one package has been found by ", fg="yellow", nl=False
         )
         click.secho(spec.humanize(), fg="cyan", nl=False)
@@ -174,9 +173,9 @@ class PackageManageRegistryMixin(object):
                     version=item["version"]["name"],
                 )
             )
-        click.secho(
+        self.print_message(
             "Please specify detailed REQUIREMENTS using package owner and version "
-            "(showed above) to avoid project compatibility issues.",
+            "(showed above) to avoid name conflicts",
             fg="yellow",
         )
 
