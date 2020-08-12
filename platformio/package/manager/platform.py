@@ -17,7 +17,7 @@ from platformio.package.meta import PackageType
 from platformio.project.config import ProjectConfig
 
 
-class PlatformPackageManager(BasePackageManager):
+class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
         self.config = ProjectConfig.get_instance()
         super(PlatformPackageManager, self).__init__(

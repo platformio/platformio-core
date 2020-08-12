@@ -65,7 +65,44 @@ class PackageType(object):
         return None
 
 
-class PackageSpec(object):
+class PackageOutdatedResult(object):
+    def __init__(self, current, latest=None, wanted=None, detached=False):
+        self.current = current
+        self.latest = latest
+        self.wanted = wanted
+        self.detached = detached
+
+    def __repr__(self):
+        return (
+            "PackageOutdatedResult <current={current} latest={latest} wanted={wanted} "
+            "detached={detached}>".format(
+                current=self.current,
+                latest=self.latest,
+                wanted=self.wanted,
+                detached=self.detached,
+            )
+        )
+
+    def __setattr__(self, name, value):
+        if (
+            value
+            and name in ("current", "latest", "wanted")
+            and not isinstance(value, semantic_version.Version)
+        ):
+            value = semantic_version.Version(str(value))
+        return super(PackageOutdatedResult, self).__setattr__(name, value)
+
+    def is_outdated(self, allow_incompatible=False):
+        if self.detached or not self.latest or self.current == self.latest:
+            return False
+        if allow_incompatible:
+            return self.current != self.latest
+        if self.wanted:
+            return self.current != self.wanted
+        return True
+
+
+class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
         self, raw=None, owner=None, id=None, name=None, requirements=None, url=None
     ):
@@ -74,6 +111,7 @@ class PackageSpec(object):
         self.name = name
         self._requirements = None
         self.url = url
+        self.raw = raw
         if requirements:
             self.requirements = requirements
         self._name_is_custom = False
@@ -105,6 +143,10 @@ class PackageSpec(object):
         )
 
     @property
+    def external(self):
+        return bool(self.url)
+
+    @property
     def requirements(self):
         return self._requirements
 
@@ -116,24 +158,24 @@ class PackageSpec(object):
         self._requirements = (
             value
             if isinstance(value, semantic_version.SimpleSpec)
-            else semantic_version.SimpleSpec(value)
+            else semantic_version.SimpleSpec(str(value))
         )
 
     def humanize(self):
+        result = ""
         if self.url:
             result = self.url
-        elif self.id:
-            result = "id:%d" % self.id
-        else:
-            result = ""
+        elif self.name:
             if self.owner:
                 result = self.owner + "/"
             result += self.name
+        elif self.id:
+            result = "id:%d" % self.id
         if self.requirements:
             result += " @ " + str(self.requirements)
         return result
 
-    def is_custom_name(self):
+    def has_custom_name(self):
         return self._name_is_custom
 
     def as_dict(self):
@@ -144,6 +186,19 @@ class PackageSpec(object):
             requirements=str(self.requirements) if self.requirements else None,
             url=self.url,
         )
+
+    def as_dependency(self):
+        if self.url:
+            return self.raw or self.url
+        result = ""
+        if self.name:
+            result = "%s/%s" % (self.owner, self.name) if self.owner else self.name
+        elif self.id:
+            result = str(self.id)
+        assert result
+        if self.requirements:
+            result = "%s@%s" % (result, self.requirements)
+        return result
 
     def _parse(self, raw):
         if raw is None:

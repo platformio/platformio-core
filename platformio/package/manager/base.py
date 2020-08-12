@@ -18,14 +18,17 @@ from datetime import datetime
 import click
 import semantic_version
 
-from platformio import fs, util
+from platformio import util
 from platformio.commands import PlatformioCLI
+from platformio.compat import ci_strings_are_equal
 from platformio.package.exception import ManifestException, MissingPackageManifestError
 from platformio.package.lockfile import LockFile
 from platformio.package.manager._download import PackageManagerDownloadMixin
 from platformio.package.manager._install import PackageManagerInstallMixin
+from platformio.package.manager._legacy import PackageManagerLegacyMixin
 from platformio.package.manager._registry import PackageManageRegistryMixin
 from platformio.package.manager._uninstall import PackageManagerUninstallMixin
+from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import (
     PackageMetaData,
@@ -41,6 +44,8 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     PackageManageRegistryMixin,
     PackageManagerInstallMixin,
     PackageManagerUninstallMixin,
+    PackageManagerUpdateMixin,
+    PackageManagerLegacyMixin,
 ):
     _MEMORY_CACHE = {}
 
@@ -82,10 +87,6 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         if not value or "*" in value:
             return True
         return util.items_in_list(value, util.get_systype())
-
-    @staticmethod
-    def generate_rand_version():
-        return datetime.now().strftime("0.0.0+%Y%m%d%H%M%S")
 
     @staticmethod
     def ensure_dir_exists(path):
@@ -162,27 +163,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                     click.secho(str(e), fg="yellow")
         raise MissingPackageManifestError(", ".join(self.manifest_names))
 
-    def build_legacy_spec(self, pkg_dir):
-        # find src manifest
-        src_manifest_name = ".piopkgmanager.json"
-        src_manifest_path = None
-        for name in os.listdir(pkg_dir):
-            if not os.path.isfile(os.path.join(pkg_dir, name, src_manifest_name)):
-                continue
-            src_manifest_path = os.path.join(pkg_dir, name, src_manifest_name)
-            break
-
-        if src_manifest_path:
-            src_manifest = fs.load_json(src_manifest_path)
-            return PackageSpec(
-                name=src_manifest.get("name"),
-                url=src_manifest.get("url"),
-                requirements=src_manifest.get("requirements"),
-            )
-
-        # fall back to a package manifest
-        manifest = self.load_manifest(pkg_dir)
-        return PackageSpec(name=manifest.get("name"))
+    @staticmethod
+    def generate_rand_version():
+        return datetime.now().strftime("0.0.0+%Y%m%d%H%M%S")
 
     def build_metadata(self, pkg_dir, spec, vcs_revision=None):
         manifest = self.load_manifest(pkg_dir)
@@ -192,7 +175,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
             version=manifest.get("version"),
             spec=spec,
         )
-        if not metadata.name or spec.is_custom_name():
+        if not metadata.name or spec.has_custom_name():
             metadata.name = spec.name
         if vcs_revision:
             metadata.version = "%s+sha.%s" % (
@@ -203,42 +186,27 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
             metadata.version = self.generate_rand_version()
         return metadata
 
-    def get_installed(self):
-        result = []
-        for name in os.listdir(self.package_dir):
-            pkg_dir = os.path.join(self.package_dir, name)
-            if not os.path.isdir(pkg_dir):
-                continue
-            pkg = PackageSourceItem(pkg_dir)
-            if not pkg.metadata:
-                try:
-                    spec = self.build_legacy_spec(pkg_dir)
-                    pkg.metadata = self.build_metadata(pkg_dir, spec)
-                except MissingPackageManifestError:
-                    pass
-            if pkg.metadata:
-                result.append(pkg)
-        return result
-
     def get_package(self, spec):
-        def _ci_strings_are_equal(a, b):
-            if a == b:
-                return True
-            if not a or not b:
-                return False
-            return a.strip().lower() == b.strip().lower()
+        if isinstance(spec, PackageSourceItem):
+            return spec
+
+        if not isinstance(spec, PackageSpec) and os.path.isdir(spec):
+            for pkg in self.get_installed():
+                if spec == pkg.path:
+                    return pkg
+            return None
 
         spec = self.ensure_spec(spec)
         best = None
         for pkg in self.get_installed():
             skip_conditions = [
                 spec.owner
-                and not _ci_strings_are_equal(spec.owner, pkg.metadata.spec.owner),
-                spec.url and spec.url != pkg.metadata.spec.url,
+                and not ci_strings_are_equal(spec.owner, pkg.metadata.spec.owner),
+                spec.external and spec.url != pkg.metadata.spec.url,
                 spec.id and spec.id != pkg.metadata.spec.id,
                 not spec.id
-                and not spec.url
-                and not _ci_strings_are_equal(spec.name, pkg.metadata.name),
+                and not spec.external
+                and not ci_strings_are_equal(spec.name, pkg.metadata.name),
             ]
             if any(skip_conditions):
                 continue

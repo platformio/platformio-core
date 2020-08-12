@@ -16,6 +16,7 @@ import os
 import time
 
 import pytest
+import semantic_version
 
 from platformio import fs, util
 from platformio.package.exception import (
@@ -201,6 +202,12 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     assert lm.get_package("OneWire").metadata.version.major >= 2
     assert len(lm.get_installed()) == 6
 
+    # test conflicted names
+    lm = LibraryPackageManager(str(tmpdir_factory.mktemp("conflicted-storage")))
+    lm.install("4@2.6.1", silent=True)
+    lm.install("5357@2.6.1", silent=True)
+    assert len(lm.get_installed()) == 2
+
     # Tools
     tm = ToolPackageManager(str(tmpdir_factory.mktemp("tool-storage")))
     pkg = tm.install("platformio/tool-stlink @ ~1.10400.0", silent=True)
@@ -340,3 +347,81 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
     assert lm.uninstall("AsyncMqttClient-esphome", silent=True)
     assert len(lm.get_installed()) == 0
+
+
+def test_registry(isolated_pio_core):
+    lm = LibraryPackageManager()
+
+    # reveal ID
+    assert lm.reveal_registry_package_id(PackageSpec(id=13)) == 13
+    assert lm.reveal_registry_package_id(PackageSpec(name="OneWire"), silent=True) == 1
+    with pytest.raises(UnknownPackageError):
+        lm.reveal_registry_package_id(PackageSpec(name="/non-existing-package/"))
+
+    # fetch package data
+    assert lm.fetch_registry_package(PackageSpec(id=1))["name"] == "OneWire"
+    assert lm.fetch_registry_package(PackageSpec(name="ArduinoJson"))["id"] == 64
+    assert (
+        lm.fetch_registry_package(
+            PackageSpec(id=13, owner="adafruit", name="Renamed library")
+        )["name"]
+        == "Adafruit GFX Library"
+    )
+    with pytest.raises(UnknownPackageError):
+        lm.fetch_registry_package(
+            PackageSpec(owner="unknown<>owner", name="/non-existing-package/")
+        )
+    with pytest.raises(UnknownPackageError):
+        lm.fetch_registry_package(PackageSpec(name="/non-existing-package/"))
+
+
+def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
+    storage_dir = tmpdir_factory.mktemp("storage")
+    lm = LibraryPackageManager(str(storage_dir))
+    pkg = lm.install("ArduinoJson @ 5.10.1", silent=True)
+
+    # tesy latest
+    outdated = lm.outdated(pkg)
+    assert str(outdated.current) == "5.10.1"
+    assert outdated.wanted is None
+    assert outdated.latest > outdated.current
+    assert outdated.latest > semantic_version.Version("5.99.99")
+
+    # test wanted
+    outdated = lm.outdated(pkg, PackageSpec("ArduinoJson@~5"))
+    assert str(outdated.current) == "5.10.1"
+    assert str(outdated.wanted) == "5.13.4"
+    assert outdated.latest > semantic_version.Version("6.16.0")
+
+    # update to the wanted 5.x
+    new_pkg = lm.update("ArduinoJson@^5", PackageSpec("ArduinoJson@^5"), silent=True)
+    assert str(new_pkg.metadata.version) == "5.13.4"
+    # check that old version is removed
+    assert len(lm.get_installed()) == 1
+
+    # update to the latest
+    lm = LibraryPackageManager(str(storage_dir))
+    pkg = lm.update("ArduinoJson", silent=True)
+    assert pkg.metadata.version == outdated.latest
+
+
+def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
+    storage_dir = tmpdir_factory.mktemp("storage")
+    storage_dir.join("legacy-package").mkdir().join("library.json").write(
+        '{"name": "AsyncMqttClient-esphome", "version": "0.8.2"}'
+    )
+    storage_dir.join("legacy-dep").mkdir().join("library.json").write(
+        '{"name": "AsyncTCP-esphome", "version": "1.1.1"}'
+    )
+    lm = LibraryPackageManager(str(storage_dir))
+    pkg = lm.get_package("AsyncMqttClient-esphome")
+    outdated = lm.outdated(pkg)
+    assert len(lm.get_installed()) == 2
+    assert str(pkg.metadata.version) == "0.8.2"
+    assert outdated.latest > semantic_version.Version("0.8.2")
+
+    # update
+    lm = LibraryPackageManager(str(storage_dir))
+    new_pkg = lm.update(pkg, silent=True)
+    assert len(lm.get_installed()) == 3
+    assert new_pkg.metadata.spec.owner == "ottowinter"

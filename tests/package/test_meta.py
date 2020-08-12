@@ -17,7 +17,27 @@ import os
 import jsondiff
 import semantic_version
 
-from platformio.package.meta import PackageMetaData, PackageSpec, PackageType
+from platformio.package.meta import (
+    PackageMetaData,
+    PackageOutdatedResult,
+    PackageSpec,
+    PackageType,
+)
+
+
+def test_outdated_result():
+    result = PackageOutdatedResult(current="1.2.3", latest="2.0.0")
+    assert result.is_outdated()
+    assert result.is_outdated(allow_incompatible=True)
+    result = PackageOutdatedResult(current="1.2.3", latest="2.0.0", wanted="1.5.4")
+    assert result.is_outdated()
+    assert result.is_outdated(allow_incompatible=True)
+    result = PackageOutdatedResult(current="1.2.3", latest="2.0.0", wanted="1.2.3")
+    assert not result.is_outdated()
+    assert result.is_outdated(allow_incompatible=True)
+    result = PackageOutdatedResult(current="1.2.3", latest="2.0.0", detached=True)
+    assert not result.is_outdated()
+    assert not result.is_outdated(allow_incompatible=True)
 
 
 def test_spec_owner():
@@ -45,9 +65,16 @@ def test_spec_name():
 
 def test_spec_requirements():
     assert PackageSpec("foo@1.2.3") == PackageSpec(name="foo", requirements="1.2.3")
+    assert PackageSpec(
+        name="foo", requirements=semantic_version.Version("1.2.3")
+    ) == PackageSpec(name="foo", requirements="1.2.3")
     assert PackageSpec("bar @ ^1.2.3") == PackageSpec(name="bar", requirements="^1.2.3")
     assert PackageSpec("13 @ ~2.0") == PackageSpec(id=13, requirements="~2.0")
+    assert PackageSpec(
+        name="hello", requirements=semantic_version.SimpleSpec("~1.2.3")
+    ) == PackageSpec(name="hello", requirements="~1.2.3")
     spec = PackageSpec("id=20 @ !=1.2.3,<2.0")
+    assert not spec.external
     assert isinstance(spec.requirements, semantic_version.SimpleSpec)
     assert semantic_version.Version("1.3.0-beta.1") in spec.requirements
     assert spec == PackageSpec(id=20, requirements="!=1.2.3,<2.0")
@@ -88,7 +115,8 @@ def test_spec_external_urls():
         "Custom-Name="
         "https://github.com/platformio/platformio-core/archive/develop.tar.gz@4.4.0"
     )
-    assert spec.is_custom_name()
+    assert spec.external
+    assert spec.has_custom_name()
     assert spec.name == "Custom-Name"
     assert spec == PackageSpec(
         url="https://github.com/platformio/platformio-core/archive/develop.tar.gz",
@@ -160,6 +188,24 @@ def test_spec_as_dict():
             "requirements": "!=2",
             "url": "https://github.com/platformio/platformio-core/archive/develop.zip?param=value",
         },
+    )
+
+
+def test_spec_as_dependency():
+    assert PackageSpec("owner/pkgname").as_dependency() == "owner/pkgname"
+    assert PackageSpec(owner="owner", name="pkgname").as_dependency() == "owner/pkgname"
+    assert PackageSpec("bob/foo @ ^1.2.3").as_dependency() == "bob/foo@^1.2.3"
+    assert (
+        PackageSpec(
+            "https://github.com/o/r/a/develop.zip?param=value @ !=2"
+        ).as_dependency()
+        == "https://github.com/o/r/a/develop.zip?param=value @ !=2"
+    )
+    assert (
+        PackageSpec(
+            "wolfSSL=https://os.mbed.com/users/wolfSSL/code/wolfSSL/"
+        ).as_dependency()
+        == "wolfSSL=https://os.mbed.com/users/wolfSSL/code/wolfSSL/"
     )
 
 

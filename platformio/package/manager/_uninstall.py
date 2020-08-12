@@ -31,10 +31,7 @@ class PackageManagerUninstallMixin(object):
             self.unlock()
 
     def _uninstall(self, pkg, silent=False, skip_dependencies=False):
-        if not isinstance(pkg, PackageSourceItem):
-            pkg = (
-                PackageSourceItem(pkg) if os.path.isdir(pkg) else self.get_package(pkg)
-            )
+        pkg = self.get_package(pkg)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(pkg)
 
@@ -73,7 +70,7 @@ class PackageManagerUninstallMixin(object):
         if not silent:
             click.echo("[%s]" % click.style("OK", fg="green"))
 
-        return True
+        return pkg
 
     def _uninstall_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageSourceItem)

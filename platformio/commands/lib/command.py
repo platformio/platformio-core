@@ -18,16 +18,21 @@ import os
 import time
 
 import click
-import semantic_version
 from tabulate import tabulate
 
 from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
+from platformio.commands.lib.helpers import (
+    get_builtin_libs,
+    is_builtin_lib,
+    save_project_libdeps,
+)
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
+from platformio.package.exception import UnknownPackageError
+from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.meta import PackageSourceItem, PackageSpec
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
-from platformio.project.exception import InvalidProjectConfError
 from platformio.project.helpers import get_project_dir, is_platformio_project
 
 try:
@@ -124,89 +129,106 @@ def cli(ctx, **options):
 @cli.command("install", short_help="Install library")
 @click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
 @click.option(
-    "--save",
+    "--save/--no-save",
     is_flag=True,
-    help="Save installed libraries into the `platformio.ini` dependency list",
+    default=True,
+    help="Save installed libraries into the `platformio.ini` dependency list"
+    " (enabled by default)",
 )
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option(
-    "--interactive", is_flag=True, help="Allow to make a choice for all prompts"
+    "--interactive",
+    is_flag=True,
+    help="Deprecated! Please use a strict dependency specification (owner/libname)",
 )
 @click.option(
     "-f", "--force", is_flag=True, help="Reinstall/redownload library if exists"
 )
 @click.pass_context
-def lib_install(  # pylint: disable=too-many-arguments
+def lib_install(  # pylint: disable=too-many-arguments,unused-argument
     ctx, libraries, save, silent, interactive, force
 ):
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     storage_libdeps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, [])
 
-    installed_manifests = {}
+    installed_pkgs = {}
     for storage_dir in storage_dirs:
         if not silent and (libraries or storage_dir in storage_libdeps):
             print_storage_header(storage_dirs, storage_dir)
-        lm = LibraryManager(storage_dir)
+        lm = LibraryPackageManager(storage_dir)
+
         if libraries:
-            for library in libraries:
-                pkg_dir = lm.install(
-                    library, silent=silent, interactive=interactive, force=force
-                )
-                installed_manifests[library] = lm.load_manifest(pkg_dir)
+            installed_pkgs = {
+                library: lm.install(library, silent=silent, force=force)
+                for library in libraries
+            }
+
         elif storage_dir in storage_libdeps:
             builtin_lib_storages = None
             for library in storage_libdeps[storage_dir]:
                 try:
-                    pkg_dir = lm.install(
-                        library, silent=silent, interactive=interactive, force=force
-                    )
-                    installed_manifests[library] = lm.load_manifest(pkg_dir)
-                except exception.LibNotFound as e:
+                    lm.install(library, silent=silent, force=force)
+                except UnknownPackageError as e:
                     if builtin_lib_storages is None:
                         builtin_lib_storages = get_builtin_libs()
                     if not silent or not is_builtin_lib(builtin_lib_storages, library):
                         click.secho("Warning! %s" % e, fg="yellow")
 
-    if not save or not libraries:
-        return
+    if save and installed_pkgs:
+        _save_deps(ctx, installed_pkgs)
+
+
+def _save_deps(ctx, pkgs, action="add"):
+    specs = []
+    for library, pkg in pkgs.items():
+        spec = PackageSpec(library)
+        if spec.external:
+            specs.append(spec)
+        else:
+            specs.append(
+                PackageSpec(
+                    owner=pkg.metadata.spec.owner,
+                    name=pkg.metadata.spec.name,
+                    requirements=spec.requirements
+                    or (
+                        ("^%s" % pkg.metadata.version)
+                        if not pkg.metadata.version.build
+                        else pkg.metadata.version
+                    ),
+                )
+            )
 
     input_dirs = ctx.meta.get(CTX_META_INPUT_DIRS_KEY, [])
     project_environments = ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY]
     for input_dir in input_dirs:
-        config = ProjectConfig.get_instance(os.path.join(input_dir, "platformio.ini"))
-        config.validate(project_environments)
-        for env in config.envs():
-            if project_environments and env not in project_environments:
-                continue
-            config.expand_interpolations = False
-            try:
-                lib_deps = config.get("env:" + env, "lib_deps")
-            except InvalidProjectConfError:
-                lib_deps = []
-            for library in libraries:
-                if library in lib_deps:
-                    continue
-                manifest = installed_manifests[library]
-                try:
-                    assert library.lower() == manifest["name"].lower()
-                    assert semantic_version.Version(manifest["version"])
-                    lib_deps.append("{name}@^{version}".format(**manifest))
-                except (AssertionError, ValueError):
-                    lib_deps.append(library)
-            config.set("env:" + env, "lib_deps", lib_deps)
-            config.save()
+        if not is_platformio_project(input_dir):
+            continue
+        save_project_libdeps(input_dir, specs, project_environments, action=action)
 
 
-@cli.command("uninstall", short_help="Uninstall libraries")
+@cli.command("uninstall", short_help="Remove libraries")
 @click.argument("libraries", nargs=-1, metavar="[LIBRARY...]")
+@click.option(
+    "--save/--no-save",
+    is_flag=True,
+    default=True,
+    help="Remove libraries from the `platformio.ini` dependency list and save changes"
+    " (enabled by default)",
+)
+@click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.pass_context
-def lib_uninstall(ctx, libraries):
+def lib_uninstall(ctx, libraries, save, silent):
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
+    uninstalled_pkgs = {}
     for storage_dir in storage_dirs:
         print_storage_header(storage_dirs, storage_dir)
-        lm = LibraryManager(storage_dir)
-        for library in libraries:
-            lm.uninstall(library)
+        lm = LibraryPackageManager(storage_dir)
+        uninstalled_pkgs = {
+            library: lm.uninstall(library, silent=silent) for library in libraries
+        }
+
+    if save and uninstalled_pkgs:
+        _save_deps(ctx, uninstalled_pkgs, action="remove")
 
 
 @cli.command("update", short_help="Update installed libraries")
@@ -220,42 +242,53 @@ def lib_uninstall(ctx, libraries):
 @click.option(
     "--dry-run", is_flag=True, help="Do not update, only check for the new versions"
 )
+@click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option("--json-output", is_flag=True)
 @click.pass_context
-def lib_update(ctx, libraries, only_check, dry_run, json_output):
+def lib_update(  # pylint: disable=too-many-arguments
+    ctx, libraries, only_check, dry_run, silent, json_output
+):
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     only_check = dry_run or only_check
     json_result = {}
     for storage_dir in storage_dirs:
         if not json_output:
             print_storage_header(storage_dirs, storage_dir)
-        lm = LibraryManager(storage_dir)
-
-        _libraries = libraries
-        if not _libraries:
-            _libraries = [manifest["__pkg_dir"] for manifest in lm.get_installed()]
+        lm = LibraryPackageManager(storage_dir)
+        _libraries = libraries or lm.get_installed()
 
         if only_check and json_output:
             result = []
             for library in _libraries:
-                pkg_dir = library if os.path.isdir(library) else None
-                requirements = None
-                url = None
-                if not pkg_dir:
-                    name, requirements, url = lm.parse_pkg_uri(library)
-                    pkg_dir = lm.get_package_dir(name, requirements, url)
-                if not pkg_dir:
+                spec = None
+                pkg = None
+                if isinstance(library, PackageSourceItem):
+                    pkg = library
+                else:
+                    spec = PackageSpec(library)
+                    pkg = lm.get_package(spec)
+                if not pkg:
                     continue
-                latest = lm.outdated(pkg_dir, requirements)
-                if not latest:
+                outdated = lm.outdated(pkg, spec)
+                if not outdated.is_outdated(allow_incompatible=True):
                     continue
-                manifest = lm.load_manifest(pkg_dir)
-                manifest["versionLatest"] = latest
+                manifest = lm.legacy_load_manifest(pkg)
+                manifest["versionWanted"] = (
+                    str(outdated.wanted) if outdated.wanted else None
+                )
+                manifest["versionLatest"] = (
+                    str(outdated.latest) if outdated.latest else None
+                )
                 result.append(manifest)
             json_result[storage_dir] = result
         else:
             for library in _libraries:
-                lm.update(library, only_check=only_check)
+                spec = (
+                    None
+                    if isinstance(library, PackageSourceItem)
+                    else PackageSpec(library)
+                )
+                lm.update(library, spec=spec, only_check=only_check, silent=silent)
 
     if json_output:
         return click.echo(
@@ -276,8 +309,8 @@ def lib_list(ctx, json_output):
     for storage_dir in storage_dirs:
         if not json_output:
             print_storage_header(storage_dirs, storage_dir)
-        lm = LibraryManager(storage_dir)
-        items = lm.get_installed()
+        lm = LibraryPackageManager(storage_dir)
+        items = lm.legacy_get_installed()
         if json_output:
             json_result[storage_dir] = items
         elif items:
@@ -301,6 +334,7 @@ def lib_list(ctx, json_output):
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
 @click.option("--id", multiple=True)
+@click.option("-o", "--owner", multiple=True)
 @click.option("-n", "--name", multiple=True)
 @click.option("-a", "--author", multiple=True)
 @click.option("-k", "--keyword", multiple=True)
@@ -404,12 +438,8 @@ def lib_builtin(storage, json_output):
 @click.argument("library", metavar="[LIBRARY]")
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
-    lm = LibraryManager()
-    name, requirements, _ = lm.parse_pkg_uri(library)
-    lib_id = lm.search_lib_id(
-        {"name": name, "requirements": requirements},
-        silent=json_output,
-        interactive=not json_output,
+    lib_id = LibraryPackageManager().reveal_registry_package_id(
+        library, silent=json_output
     )
     lib = util.get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:

@@ -26,9 +26,9 @@ from platformio.commands.system.completion import (
     install_completion_code,
     uninstall_completion_code,
 )
-from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
 from platformio.managers.platform import PlatformManager
+from platformio.package.manager.library import LibraryPackageManager
 from platformio.project.config import ProjectConfig
 
 
@@ -73,7 +73,7 @@ def system_info(json_output):
     }
     data["global_lib_nums"] = {
         "title": "Global Libraries",
-        "value": len(LibraryManager().get_installed()),
+        "value": len(LibraryPackageManager().get_installed()),
     }
     data["dev_platform_nums"] = {
         "title": "Development Platforms",

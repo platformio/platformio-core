@@ -20,7 +20,7 @@ import tempfile
 import click
 
 from platformio import app, compat, fs, util
-from platformio.package.exception import PackageException
+from platformio.package.exception import MissingPackageManifestError, PackageException
 from platformio.package.meta import PackageSourceItem, PackageSpec
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
@@ -83,7 +83,7 @@ class PackageManagerInstallMixin(object):
             msg = "Installing %s" % click.style(spec.humanize(), fg="cyan")
             self.print_message(msg)
 
-        if spec.url:
+        if spec.external:
             pkg = self.install_from_url(spec.url, spec, silent=silent)
         else:
             pkg = self.install_from_registry(spec, search_filters, silent=silent)
@@ -152,7 +152,7 @@ class PackageManagerInstallMixin(object):
                 assert os.path.isfile(dl_path)
                 self.unpack(dl_path, tmp_dir)
             else:
-                vcs = VCSClientFactory.newClient(tmp_dir, url)
+                vcs = VCSClientFactory.new(tmp_dir, url)
                 assert vcs.export()
 
             root_dir = self.find_pkg_root(tmp_dir, spec)
@@ -189,12 +189,20 @@ class PackageManagerInstallMixin(object):
 
         # what to do with existing package?
         action = "overwrite"
-        if dst_pkg.metadata and dst_pkg.metadata.spec.url:
+        if tmp_pkg.metadata.spec.has_custom_name():
+            action = "overwrite"
+            dst_pkg = PackageSourceItem(
+                os.path.join(self.package_dir, tmp_pkg.metadata.spec.name)
+            )
+        elif dst_pkg.metadata and dst_pkg.metadata.spec.external:
             if dst_pkg.metadata.spec.url != tmp_pkg.metadata.spec.url:
                 action = "detach-existing"
-        elif tmp_pkg.metadata.spec.url:
+        elif tmp_pkg.metadata.spec.external:
             action = "detach-new"
-        elif dst_pkg.metadata and dst_pkg.metadata.version != tmp_pkg.metadata.version:
+        elif dst_pkg.metadata and (
+            dst_pkg.metadata.version != tmp_pkg.metadata.version
+            or dst_pkg.metadata.spec.owner != tmp_pkg.metadata.spec.owner
+        ):
             action = (
                 "detach-existing"
                 if tmp_pkg.metadata.version > dst_pkg.metadata.version
@@ -231,7 +239,7 @@ class PackageManagerInstallMixin(object):
                 tmp_pkg.get_safe_dirname(),
                 tmp_pkg.metadata.version,
             )
-            if tmp_pkg.metadata.spec.url:
+            if tmp_pkg.metadata.spec.external:
                 target_dirname = "%s@src-%s" % (
                     tmp_pkg.get_safe_dirname(),
                     hashlib.md5(
@@ -247,3 +255,20 @@ class PackageManagerInstallMixin(object):
         _cleanup_dir(dst_pkg.path)
         shutil.move(tmp_pkg.path, dst_pkg.path)
         return PackageSourceItem(dst_pkg.path)
+
+    def get_installed(self):
+        result = []
+        for name in os.listdir(self.package_dir):
+            pkg_dir = os.path.join(self.package_dir, name)
+            if not os.path.isdir(pkg_dir):
+                continue
+            pkg = PackageSourceItem(pkg_dir)
+            if not pkg.metadata:
+                try:
+                    spec = self.build_legacy_spec(pkg_dir)
+                    pkg.metadata = self.build_metadata(pkg_dir, spec)
+                except MissingPackageManifestError:
+                    pass
+            if pkg.metadata:
+                result.append(pkg)
+        return result

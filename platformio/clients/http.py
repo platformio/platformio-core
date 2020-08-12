@@ -30,7 +30,9 @@ class HTTPClientError(PlatformioException):
 
 
 class HTTPClient(object):
-    def __init__(self, base_url):
+    def __init__(
+        self, base_url,
+    ):
         if base_url.endswith("/"):
             base_url = base_url[:-1]
         self.base_url = base_url
@@ -51,6 +53,7 @@ class HTTPClient(object):
         self._session.close()
         self._session = None
 
+    @util.throttle(500)
     def send_request(self, method, path, **kwargs):
         # check Internet before and resolve issue with 60 seconds timeout
         # print(self, method, path, kwargs)

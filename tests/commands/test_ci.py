@@ -15,7 +15,7 @@
 from os.path import isfile, join
 
 from platformio.commands.ci import cli as cmd_ci
-from platformio.commands.lib import cli as cmd_lib
+from platformio.commands.lib.command import cli as cmd_lib
 
 
 def test_ci_empty(clirunner):

@@ -79,10 +79,10 @@ class RegistryFileMirrorsIterator(object):
 class PackageManageRegistryMixin(object):
     def install_from_registry(self, spec, search_filters=None, silent=False):
         if spec.owner and spec.name and not search_filters:
-            package = self.fetch_registry_package(spec.owner, spec.name)
+            package = self.fetch_registry_package(spec)
             if not package:
                 raise UnknownPackageError(spec.humanize())
-            version = self._pick_best_pkg_version(package["versions"], spec)
+            version = self.pick_best_registry_version(package["versions"], spec)
         else:
             packages = self.search_registry_packages(spec, search_filters)
             if not packages:
@@ -131,10 +131,33 @@ class PackageManageRegistryMixin(object):
             "items"
         ]
 
-    def fetch_registry_package(self, owner, name):
-        return self.get_registry_client_instance().get_package(
-            self.pkg_type, owner, name
-        )
+    def fetch_registry_package(self, spec):
+        result = None
+        if spec.owner and spec.name:
+            result = self.get_registry_client_instance().get_package(
+                self.pkg_type, spec.owner, spec.name
+            )
+        if not result and (spec.id or (spec.name and not spec.owner)):
+            packages = self.search_registry_packages(spec)
+            if packages:
+                result = self.get_registry_client_instance().get_package(
+                    self.pkg_type, packages[0]["owner"]["username"], packages[0]["name"]
+                )
+        if not result:
+            raise UnknownPackageError(spec.humanize())
+        return result
+
+    def reveal_registry_package_id(self, spec, silent=False):
+        spec = self.ensure_spec(spec)
+        if spec.id:
+            return spec.id
+        packages = self.search_registry_packages(spec)
+        if not packages:
+            raise UnknownPackageError(spec.humanize())
+        if len(packages) > 1 and not silent:
+            self.print_multi_package_issue(packages, spec)
+            click.echo("")
+        return packages[0]["id"]
 
     @staticmethod
     def print_multi_package_issue(packages, spec):
@@ -160,7 +183,7 @@ class PackageManageRegistryMixin(object):
     def find_best_registry_version(self, packages, spec):
         # find compatible version within the latest package versions
         for package in packages:
-            version = self._pick_best_pkg_version([package["version"]], spec)
+            version = self.pick_best_registry_version([package["version"]], spec)
             if version:
                 return (package, version)
 
@@ -169,9 +192,13 @@ class PackageManageRegistryMixin(object):
 
         # if the custom version requirements, check ALL package versions
         for package in packages:
-            version = self._pick_best_pkg_version(
+            version = self.pick_best_registry_version(
                 self.fetch_registry_package(
-                    package["owner"]["username"], package["name"]
+                    PackageSpec(
+                        id=package["id"],
+                        owner=package["owner"]["username"],
+                        name=package["name"],
+                    )
                 ).get("versions"),
                 spec,
             )
@@ -180,11 +207,12 @@ class PackageManageRegistryMixin(object):
             time.sleep(1)
         return None
 
-    def _pick_best_pkg_version(self, versions, spec):
+    def pick_best_registry_version(self, versions, spec=None):
+        assert not spec or isinstance(spec, PackageSpec)
         best = None
         for version in versions:
             semver = PackageMetaData.to_semver(version["name"])
-            if spec.requirements and semver not in spec.requirements:
+            if spec and spec.requirements and semver not in spec.requirements:
                 continue
             if not any(
                 self.is_system_compatible(f.get("system")) for f in version["files"]
