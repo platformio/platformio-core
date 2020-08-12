@@ -23,7 +23,8 @@ from platformio import fs
 from platformio.package.exception import PackageException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
-from platformio.unpacker import FileUnpacker
+from platformio.package.meta import PackageSourceItem
+from platformio.package.unpack import FileUnpacker
 
 
 class PackagePacker(object):
@@ -36,6 +37,7 @@ class PackagePacker(object):
         ".svn/",
         ".pio/",
         "**/.pio/",
+        PackageSourceItem.METAFILE_NAME,
     ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 

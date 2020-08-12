@@ -18,8 +18,8 @@ from datetime import datetime
 import click
 
 from platformio.clients.registry import RegistryClient
+from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
-from platformio.package.spec import PackageSpec, PackageType
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
@@ -106,7 +106,7 @@ def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
     response = RegistryClient().unpublish_package(
         type=type,
         name=spec.name,
-        owner=spec.ownername,
+        owner=spec.owner,
         version=spec.requirements,
         undo=undo,
     )

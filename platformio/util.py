@@ -371,7 +371,7 @@ PING_REMOTE_HOSTS = [
 ]
 
 
-@memoized(expire="5s")
+@memoized(expire="10s")
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)

@@ -23,11 +23,7 @@ import click
 import requests
 
 from platformio import app, fs, util
-from platformio.exception import (
-    FDSHASumMismatch,
-    FDSizeMismatch,
-    FDUnrecognizedStatusCode,
-)
+from platformio.package.exception import PackageException
 
 
 class FileDownloader(object):
@@ -41,7 +37,11 @@ class FileDownloader(object):
             verify=sys.version_info >= (2, 7, 9),
         )
         if self._request.status_code != 200:
-            raise FDUnrecognizedStatusCode(self._request.status_code, url)
+            raise PackageException(
+                "Got the unrecognized status code '{0}' when downloaded {1}".format(
+                    self._request.status_code, url
+                )
+            )
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
@@ -74,21 +74,21 @@ class FileDownloader(object):
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
-        f = open(self._destination, "wb")
+        fp = open(self._destination, "wb")
         try:
             if not with_progress or self.get_size() == -1:
                 if not silent:
                     click.echo("%s..." % label)
                 for chunk in itercontent:
                     if chunk:
-                        f.write(chunk)
+                        fp.write(chunk)
             else:
                 chunks = int(math.ceil(self.get_size() / float(io.DEFAULT_BUFFER_SIZE)))
                 with click.progressbar(length=chunks, label=label) as pb:
                     for _ in pb:
-                        f.write(next(itercontent))
+                        fp.write(next(itercontent))
         finally:
-            f.close()
+            fp.close()
             self._request.close()
 
         if self.get_lmtime():
@@ -96,15 +96,40 @@ class FileDownloader(object):
 
         return True
 
-    def verify(self, sha1=None):
+    def verify(self, checksum=None):
         _dlsize = getsize(self._destination)
         if self.get_size() != -1 and _dlsize != self.get_size():
-            raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
-        if not sha1:
-            return None
-        checksum = fs.calculate_file_hashsum("sha1", self._destination)
-        if sha1.lower() != checksum.lower():
-            raise FDSHASumMismatch(checksum, self._fname, sha1)
+            raise PackageException(
+                (
+                    "The size ({0:d} bytes) of downloaded file '{1}' "
+                    "is not equal to remote size ({2:d} bytes)"
+                ).format(_dlsize, self._fname, self.get_size())
+            )
+        if not checksum:
+            return True
+
+        checksum_len = len(checksum)
+        hash_algo = None
+        if checksum_len == 32:
+            hash_algo = "md5"
+        elif checksum_len == 40:
+            hash_algo = "sha1"
+        elif checksum_len == 64:
+            hash_algo = "sha256"
+
+        if not hash_algo:
+            raise PackageException(
+                "Could not determine checksum algorithm by %s" % checksum
+            )
+
+        dl_checksum = fs.calculate_file_hashsum(hash_algo, self._destination)
+        if checksum.lower() != dl_checksum.lower():
+            raise PackageException(
+                "The checksum '{0}' of the downloaded file '{1}' "
+                "does not match to the remote '{2}'".format(
+                    dl_checksum, self._fname, checksum
+                )
+            )
         return True
 
     def _preserve_filemtime(self, lmdate):

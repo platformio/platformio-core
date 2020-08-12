@@ -21,13 +21,13 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry, util
 from platformio.commands import PlatformioCLI
-from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
-from platformio.commands.lib import lib_update as cmd_lib_update
+from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
+from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.managers.core import update_core_packages
-from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.manager.library import LibraryPackageManager
 from platformio.proc import is_container
 
 
@@ -240,7 +240,7 @@ def check_platformio_upgrade():
     click.echo("")
 
 
-def check_internal_updates(ctx, what):
+def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     last_check = app.get_state_item("last_check", {})
     interval = int(app.get_setting("check_%s_interval" % what)) * 3600 * 24
     if (time() - interval) < last_check.get(what + "_update", 0):
@@ -251,20 +251,27 @@ def check_internal_updates(ctx, what):
 
     util.internet_on(raise_exception=True)
 
-    pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
-    for manifest in pm.get_installed():
-        if manifest["name"] in outdated_items:
-            continue
-        conds = [
-            pm.outdated(manifest["__pkg_dir"]),
-            what == "platforms"
-            and PlatformFactory.newPlatform(
-                manifest["__pkg_dir"]
-            ).are_outdated_packages(),
-        ]
-        if any(conds):
-            outdated_items.append(manifest["name"])
+    pm = PlatformManager() if what == "platforms" else LibraryPackageManager()
+    if isinstance(pm, PlatformManager):
+        for manifest in pm.get_installed():
+            if manifest["name"] in outdated_items:
+                continue
+            conds = [
+                pm.outdated(manifest["__pkg_dir"]),
+                what == "platforms"
+                and PlatformFactory.newPlatform(
+                    manifest["__pkg_dir"]
+                ).are_outdated_packages(),
+            ]
+            if any(conds):
+                outdated_items.append(manifest["name"])
+    else:
+        for pkg in pm.get_installed():
+            if pkg.metadata.name in outdated_items:
+                continue
+            if pm.outdated(pkg).is_outdated():
+                outdated_items.append(pkg.metadata.name)
 
     if not outdated_items:
         return

@@ -17,7 +17,11 @@ from os.path import join
 from subprocess import CalledProcessError, check_call
 from sys import modules
 
-from platformio.exception import PlatformioException, UserSideException
+from platformio.package.exception import (
+    PackageException,
+    PlatformioException,
+    UserSideException,
+)
 from platformio.proc import exec_command
 
 try:
@@ -26,9 +30,13 @@ except ImportError:
     from urlparse import urlparse
 
 
+class VCSBaseException(PackageException):
+    pass
+
+
 class VCSClientFactory(object):
     @staticmethod
-    def newClient(src_dir, remote_url, silent=False):
+    def new(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
         type_ = result.scheme
         tag = None
@@ -41,12 +49,15 @@ class VCSClientFactory(object):
         if "#" in remote_url:
             remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
-            raise PlatformioException("VCS: Unknown repository type %s" % remote_url)
-        obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, tag, silent
-        )
-        assert isinstance(obj, VCSClientBase)
-        return obj
+            raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
+        try:
+            obj = getattr(modules[__name__], "%sClient" % type_.title())(
+                src_dir, remote_url, tag, silent
+            )
+            assert isinstance(obj, VCSClientBase)
+            return obj
+        except (AttributeError, AssertionError):
+            raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
 
 
 class VCSClientBase(object):
@@ -101,7 +112,7 @@ class VCSClientBase(object):
             check_call(args, **kwargs)
             return True
         except CalledProcessError as e:
-            raise PlatformioException("VCS: Could not process command %s" % e.cmd)
+            raise VCSBaseException("VCS: Could not process command %s" % e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
@@ -110,7 +121,7 @@ class VCSClientBase(object):
         result = exec_command(args, **kwargs)
         if result["returncode"] == 0:
             return result["out"].strip()
-        raise PlatformioException(
+        raise VCSBaseException(
             "VCS: Could not receive an output from `%s` command (%s)" % (args, result)
         )
 
@@ -227,7 +238,6 @@ class SvnClient(VCSClientBase):
         return self.run_cmd(args)
 
     def update(self):
-
         args = ["update"]
         return self.run_cmd(args)
 
@@ -239,4 +249,4 @@ class SvnClient(VCSClientBase):
             line = line.strip()
             if line.startswith("Revision:"):
                 return line.split(":", 1)[1].strip()
-        raise PlatformioException("Could not detect current SVN revision")
+        raise VCSBaseException("Could not detect current SVN revision")
