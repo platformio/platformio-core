@@ -18,7 +18,7 @@ from platformio import app
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
-from platformio.managers.core import update_core_packages
+from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
 
 

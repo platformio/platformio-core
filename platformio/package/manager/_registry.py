@@ -119,6 +119,7 @@ class PackageManageRegistryMixin(object):
         return self._registry_client
 
     def search_registry_packages(self, spec, filters=None):
+        assert isinstance(spec, PackageSpec)
         filters = filters or {}
         if spec.id:
             filters["ids"] = str(spec.id)
@@ -132,6 +133,7 @@ class PackageManageRegistryMixin(object):
         ]
 
     def fetch_registry_package(self, spec):
+        assert isinstance(spec, PackageSpec)
         result = None
         if spec.owner and spec.name:
             result = self.get_registry_client_instance().get_package(

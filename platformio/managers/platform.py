@@ -30,8 +30,8 @@ from platformio.commands.debug.exception import (
     DebugSupportError,
 )
 from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
-from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+from platformio.package.manager.core import get_core_package_dir
 from platformio.project.config import ProjectConfig
 
 try:

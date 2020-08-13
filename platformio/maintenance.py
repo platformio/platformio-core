@@ -25,9 +25,11 @@ from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.managers.core import update_core_packages
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
 from platformio.proc import is_container
 
 
@@ -90,7 +92,8 @@ class Upgrader(object):
         )
 
         self._upgraders = [
-            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms)
+            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms),
+            (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
         ]
 
     def run(self, ctx):
@@ -108,6 +111,22 @@ class Upgrader(object):
     @staticmethod
     def _update_dev_platforms(ctx):
         ctx.invoke(cmd_platform_update)
+        return True
+
+    @staticmethod
+    def _update_pkg_metadata(_):
+        pm = ToolPackageManager()
+        for pkg in pm.get_installed():
+            if not pkg.metadata or pkg.metadata.spec.external or pkg.metadata.spec.id:
+                continue
+            result = pm.search_registry_packages(PackageSpec(name=pkg.metadata.name))
+            if len(result) != 1:
+                continue
+            result = result[0]
+            pkg.metadata.spec = PackageSpec(
+                id=result["id"], owner=result["owner"]["username"], name=result["name"],
+            )
+            pkg.dump_meta()
         return True
 
 
@@ -160,7 +179,6 @@ def after_upgrade(ctx):
             )
         else:
             raise exception.UpgradeError("Auto upgrading...")
-        click.echo("")
 
     # PlatformIO banner
     click.echo("*" * terminal_width)

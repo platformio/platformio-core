@@ -20,7 +20,7 @@ from glob import glob
 from SCons.Defaults import processDefines  # pylint: disable=import-error
 
 from platformio.compat import glob_escape
-from platformio.managers.core import get_core_package_dir
+from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
