@@ -239,7 +239,7 @@ def test_install_force(isolated_pio_core, tmpdir_factory):
 
 def test_get_installed(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
-    lm = LibraryPackageManager(str(storage_dir))
+    pm = ToolPackageManager(str(storage_dir))
 
     # VCS package
     (
@@ -259,7 +259,7 @@ def test_get_installed(isolated_pio_core, tmpdir_factory):
     "requirements": null,
     "url": "git+https://github.com/username/repo.git"
   },
-  "type": "library",
+  "type": "tool",
   "version": "0.0.0+sha.1ea4d5e"
 }
 """
@@ -270,13 +270,13 @@ def test_get_installed(isolated_pio_core, tmpdir_factory):
     (
         storage_dir.join("foo@3.4.5")
         .mkdir()
-        .join("library.json")
+        .join("package.json")
         .write('{"name": "foo", "version": "3.4.5"}')
     )
 
     # package with metadata file
     foo_dir = storage_dir.join("foo").mkdir()
-    foo_dir.join("library.json").write('{"name": "foo", "version": "3.6.0"}')
+    foo_dir.join("package.json").write('{"name": "foo", "version": "3.6.0"}')
     foo_dir.join(".piopm").write(
         """
 {
@@ -286,21 +286,33 @@ def test_get_installed(isolated_pio_core, tmpdir_factory):
     "owner": null,
     "requirements": "^3"
   },
-  "type": "library",
+  "type": "tool",
   "version": "3.6.0"
 }
 """
     )
 
-    # invalid package
-    storage_dir.join("invalid-package").mkdir().join("package.json").write(
-        '{"name": "tool-scons", "version": "4.0.0"}'
+    # test "system"
+    storage_dir.join("pkg-incompatible-system").mkdir().join("package.json").write(
+        '{"name": "check-system", "version": "4.0.0", "system": ["unknown"]}'
+    )
+    storage_dir.join("pkg-compatible-system").mkdir().join("package.json").write(
+        '{"name": "check-system", "version": "3.0.0", "system": "%s"}'
+        % util.get_systype()
     )
 
-    installed = lm.get_installed()
-    assert len(installed) == 3
-    assert set(["pkg-via-vcs", "foo"]) == set(p.metadata.name for p in installed)
-    assert str(lm.get_package("foo").metadata.version) == "3.6.0"
+    # invalid package
+    storage_dir.join("invalid-package").mkdir().join("library.json").write(
+        '{"name": "SomeLib", "version": "4.0.0"}'
+    )
+
+    installed = pm.get_installed()
+    assert len(installed) == 4
+    assert set(["pkg-via-vcs", "foo", "check-system"]) == set(
+        p.metadata.name for p in installed
+    )
+    assert str(pm.get_package("foo").metadata.version) == "3.6.0"
+    assert str(pm.get_package("check-system").metadata.version) == "3.0.0"
 
 
 def test_uninstall(isolated_pio_core, tmpdir_factory):

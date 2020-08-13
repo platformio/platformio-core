@@ -202,8 +202,17 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                     pkg.metadata = self.build_metadata(pkg_dir, spec)
                 except MissingPackageManifestError:
                     pass
-            if pkg.metadata:
-                result.append(pkg)
+            if not pkg.metadata:
+                continue
+            if self.pkg_type == PackageType.TOOL:
+                try:
+                    if not self.is_system_compatible(
+                        self.load_manifest(pkg).get("system")
+                    ):
+                        continue
+                except MissingPackageManifestError:
+                    pass
+            result.append(pkg)
         return result
 
     def get_package(self, spec):
@@ -212,7 +221,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         spec = self.ensure_spec(spec)
         best = None
         for pkg in self.get_installed():
-            if not self._test_pkg_with_spec(pkg, spec):
+            if not self.test_pkg_spec(pkg, spec):
                 continue
             assert isinstance(pkg.metadata.version, semantic_version.Version)
             if spec.requirements and pkg.metadata.version not in spec.requirements:
@@ -221,7 +230,8 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 best = pkg
         return best
 
-    def _test_pkg_with_spec(self, pkg, spec):
+    @staticmethod
+    def test_pkg_spec(pkg, spec):
         # "id" mismatch
         if spec.id and spec.id != pkg.metadata.spec.id:
             return False
@@ -243,9 +253,5 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         # "name" mismatch
         elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):
             return False
-
-        if self.pkg_type == PackageType.TOOL:
-            # TODO: check "system" for pkg
-            pass
 
         return True
