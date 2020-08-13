@@ -638,7 +638,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             name = item
             version = "*"
             if "@" in item:
-                name, version = item.split("@", 2)
+                name, version = item.split("@", 1)
             name = name.strip()
             if name not in packages:
                 packages[name] = {}
