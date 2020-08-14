@@ -21,13 +21,16 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry, util
 from platformio.commands import PlatformioCLI
-from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
-from platformio.commands.lib import lib_update as cmd_lib_update
+from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
+from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.managers.core import update_core_packages
-from platformio.managers.lib import LibraryManager
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.managers.platform import PlatformManager
+from platformio.package.manager.core import update_core_packages
+from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
+from platformio.platform.factory import PlatformFactory
 from platformio.proc import is_container
 
 
@@ -90,7 +93,8 @@ class Upgrader(object):
         )
 
         self._upgraders = [
-            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms)
+            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms),
+            (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
         ]
 
     def run(self, ctx):
@@ -108,6 +112,22 @@ class Upgrader(object):
     @staticmethod
     def _update_dev_platforms(ctx):
         ctx.invoke(cmd_platform_update)
+        return True
+
+    @staticmethod
+    def _update_pkg_metadata(_):
+        pm = ToolPackageManager()
+        for pkg in pm.get_installed():
+            if not pkg.metadata or pkg.metadata.spec.external or pkg.metadata.spec.id:
+                continue
+            result = pm.search_registry_packages(PackageSpec(name=pkg.metadata.name))
+            if len(result) != 1:
+                continue
+            result = result[0]
+            pkg.metadata.spec = PackageSpec(
+                id=result["id"], owner=result["owner"]["username"], name=result["name"],
+            )
+            pkg.dump_meta()
         return True
 
 
@@ -160,7 +180,6 @@ def after_upgrade(ctx):
             )
         else:
             raise exception.UpgradeError("Auto upgrading...")
-        click.echo("")
 
     # PlatformIO banner
     click.echo("*" * terminal_width)
@@ -240,7 +259,7 @@ def check_platformio_upgrade():
     click.echo("")
 
 
-def check_internal_updates(ctx, what):
+def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     last_check = app.get_state_item("last_check", {})
     interval = int(app.get_setting("check_%s_interval" % what)) * 3600 * 24
     if (time() - interval) < last_check.get(what + "_update", 0):
@@ -251,20 +270,25 @@ def check_internal_updates(ctx, what):
 
     util.internet_on(raise_exception=True)
 
-    pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
-    for manifest in pm.get_installed():
-        if manifest["name"] in outdated_items:
-            continue
-        conds = [
-            pm.outdated(manifest["__pkg_dir"]),
-            what == "platforms"
-            and PlatformFactory.newPlatform(
-                manifest["__pkg_dir"]
-            ).are_outdated_packages(),
-        ]
-        if any(conds):
-            outdated_items.append(manifest["name"])
+    pm = PlatformManager() if what == "platforms" else LibraryPackageManager()
+    if isinstance(pm, PlatformManager):
+        for manifest in pm.get_installed():
+            if manifest["name"] in outdated_items:
+                continue
+            conds = [
+                pm.outdated(manifest["__pkg_dir"]),
+                what == "platforms"
+                and PlatformFactory.new(manifest["__pkg_dir"]).are_outdated_packages(),
+            ]
+            if any(conds):
+                outdated_items.append(manifest["name"])
+    else:
+        for pkg in pm.get_installed():
+            if pkg.metadata.name in outdated_items:
+                continue
+            if pm.outdated(pkg).is_outdated():
+                outdated_items.append(pkg.metadata.name)
 
     if not outdated_items:
         return

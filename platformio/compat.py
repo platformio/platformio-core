@@ -50,6 +50,14 @@ def get_object_members(obj, ignore_private=True):
     }
 
 
+def ci_strings_are_equal(a, b):
+    if a == b:
+        return True
+    if not a or not b:
+        return False
+    return a.strip().lower() == b.strip().lower()
+
+
 if PY2:
     import imp
 

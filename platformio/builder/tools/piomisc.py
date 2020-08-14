@@ -25,7 +25,7 @@ import click
 
 from platformio import fs, util
 from platformio.compat import get_filesystem_encoding, get_locale_encoding, glob_escape
-from platformio.managers.core import get_core_package_dir
+from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command
 
 

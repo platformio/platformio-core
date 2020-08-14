@@ -29,7 +29,7 @@ from platformio.commands.device.command import device_monitor as cmd_device_moni
 from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.test.command import cli as cmd_test
 from platformio.compat import PY2
-from platformio.managers.core import inject_contrib_pysite
+from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 
 

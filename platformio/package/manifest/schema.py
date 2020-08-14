@@ -84,7 +84,7 @@ class StrictListField(fields.List):
 
 
 class AuthorSchema(StrictSchema):
-    name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     email = fields.Email(validate=validate.Length(min=1, max=50))
     maintainer = fields.Bool(default=False)
     url = fields.Url(validate=validate.Length(min=1, max=255))
@@ -250,7 +250,7 @@ class ManifestSchema(BaseSchema):
     def load_spdx_licenses():
         r = requests.get(
             "https://raw.githubusercontent.com/spdx/license-list-data"
-            "/v3.9/json/licenses.json"
+            "/v3.10/json/licenses.json"
         )
         r.raise_for_status()
         return r.json()

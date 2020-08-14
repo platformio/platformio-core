@@ -34,11 +34,13 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
-from platformio.managers.lib import LibraryManager
+from platformio.package.exception import UnknownPackageError
+from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
     ManifestParserError,
     ManifestParserFactory,
 )
+from platformio.package.meta import PackageItem
 from platformio.project.options import ProjectOptions
 
 
@@ -851,34 +853,36 @@ class ProjectAsLibBuilder(LibBuilderBase):
         pass
 
     def install_dependencies(self):
-        def _is_builtin(uri):
+        def _is_builtin(spec):
             for lb in self.env.GetLibBuilders():
-                if lb.name == uri:
+                if lb.name == spec:
                     return True
             return False
 
-        not_found_uri = []
-        for uri in self.dependencies:
+        not_found_specs = []
+        for spec in self.dependencies:
             # check if built-in library
-            if _is_builtin(uri):
+            if _is_builtin(spec):
                 continue
 
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
-                lm = LibraryManager(storage_dir)
-                if lm.get_package_dir(*lm.parse_pkg_uri(uri)):
+                lm = LibraryPackageManager(storage_dir)
+                if lm.get_package(spec):
                     found = True
                     break
             if not found:
-                not_found_uri.append(uri)
+                not_found_specs.append(spec)
 
         did_install = False
-        lm = LibraryManager(self.env.subst(join("$PROJECT_LIBDEPS_DIR", "$PIOENV")))
-        for uri in not_found_uri:
+        lm = LibraryPackageManager(
+            self.env.subst(join("$PROJECT_LIBDEPS_DIR", "$PIOENV"))
+        )
+        for spec in not_found_specs:
             try:
-                lm.install(uri)
+                lm.install(spec)
                 did_install = True
-            except (exception.LibNotFound, exception.InternetIsOffline) as e:
+            except (UnknownPackageError, exception.InternetIsOffline) as e:
                 click.secho("Warning! %s" % e, fg="yellow")
 
         # reset cache
@@ -886,17 +890,17 @@ class ProjectAsLibBuilder(LibBuilderBase):
             DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        for uri in self.dependencies:
+        for spec in self.dependencies:
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
                 if found:
                     break
-                lm = LibraryManager(storage_dir)
-                lib_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
-                if not lib_dir:
+                lm = LibraryPackageManager(storage_dir)
+                pkg = lm.get_package(spec)
+                if not pkg:
                     continue
                 for lb in self.env.GetLibBuilders():
-                    if lib_dir != lb.path:
+                    if pkg.path != lb.path:
                         continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)
@@ -908,7 +912,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
             # look for built-in libraries by a name
             # which don't have package manifest
             for lb in self.env.GetLibBuilders():
-                if lb.name != uri:
+                if lb.name != spec:
                     continue
                 if lb not in self.depbuilders:
                     self.depend_recursive(lb)
@@ -1000,10 +1004,6 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def ConfigureProjectLibBuilder(env):
-    def _get_vcs_info(lb):
-        path = LibraryManager.get_src_manifest_path(lb.path)
-        return fs.load_json(path) if path else None
-
     def _correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
@@ -1019,15 +1019,15 @@ def ConfigureProjectLibBuilder(env):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
-            vcs_info = _get_vcs_info(lb)
-            if lb.version:
+            pkg = PackageItem(lb.path)
+            if pkg.metadata:
+                title += " %s" % pkg.metadata.version
+            elif lb.version:
                 title += " %s" % lb.version
-            if vcs_info and vcs_info.get("version"):
-                title += " #%s" % vcs_info.get("version")
             click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                if vcs_info:
-                    click.echo(" [%s]" % vcs_info.get("url"), nl=False)
+                if pkg.metadata and pkg.metadata.spec.external:
+                    click.echo(" [%s]" % pkg.metadata.spec.url, nl=False)
                 click.echo(" (", nl=False)
                 click.echo(lb.path, nl=False)
                 click.echo(")", nl=False)

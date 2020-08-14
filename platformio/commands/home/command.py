@@ -22,7 +22,7 @@ import click
 
 from platformio import exception
 from platformio.compat import WINDOWS
-from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
+from platformio.package.manager.core import get_core_package_dir, inject_contrib_pysite
 
 
 @click.command("home", short_help="PIO Home")

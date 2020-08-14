@@ -11,16 +11,34 @@ PlatformIO Core 4
 
 **A professional collaborative platform for embedded development**
 
-* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__
+* Integration with the new `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__
 
   - Manage own organizations
   - Manage organization teams
   - Manage resource access
 
-* Registry Package Management
+* Integration with the new **PlatformIO Trusted Registry**
 
-  - Publish a personal or organization package using `platformio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command
-  - Remove a pushed package from the registry using `platformio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ command
+  - Enterprise-grade package storage with high availability (multi replicas)
+  - Secure, fast, and reliable global content delivery network (CDN)
+  - Universal support for all embedded packages:
+
+    * Libraries
+    * Development platforms
+    * Toolchains
+
+  - Built-in fine-grained access control (role based, teams, organizations)
+  - Command Line Interface:
+
+    * `platformio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ – publish a personal or organization package
+    * `platformio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ – remove a pushed package from the registry
+    * Grant package access to the team members or maintainers
+
+* New **Package Management System**
+
+  - Integrated PlatformIO Core with the new PlatformIO Trusted Registry
+  - Strict dependency declaration using owner name (resolves name conflicts) (`issue #1824 <https://github.com/platformio/platformio-core/issues/1824>`_)
+  - Automatically save dependencies to `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ when installing using PlatformIO CLI (`issue #2964 <https://github.com/platformio/platformio-core/issues/2964>`_)
 
 * New `Custom Targets <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-targets>`__
 

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import json
 import math
 import os
@@ -196,7 +198,7 @@ def get_mdns_services():
         import zeroconf
     except ImportError:
         from site import addsitedir
-        from platformio.managers.core import get_core_package_dir
+        from platformio.package.manager.core import get_core_package_dir
 
         contrib_pysite_dir = get_core_package_dir("contrib-pysite")
         addsitedir(contrib_pysite_dir)
@@ -371,7 +373,7 @@ PING_REMOTE_HOSTS = [
 ]
 
 
-@memoized(expire="5s")
+@memoized(expire="10s")
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)

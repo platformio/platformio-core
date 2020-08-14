@@ -47,44 +47,6 @@ class AbortedByUser(UserSideException):
     MESSAGE = "Aborted by user"
 
 
-#
-# Development Platform
-#
-
-
-class UnknownPlatform(PlatformioException):
-
-    MESSAGE = "Unknown development platform '{0}'"
-
-
-class IncompatiblePlatform(PlatformioException):
-
-    MESSAGE = "Development platform '{0}' is not compatible with PIO Core v{1}"
-
-
-class PlatformNotInstalledYet(PlatformioException):
-
-    MESSAGE = (
-        "The platform '{0}' has not been installed yet. "
-        "Use `platformio platform install {0}` command"
-    )
-
-
-class UnknownBoard(PlatformioException):
-
-    MESSAGE = "Unknown board ID '{0}'"
-
-
-class InvalidBoardManifest(PlatformioException):
-
-    MESSAGE = "Invalid board JSON manifest '{0}'"
-
-
-class UnknownFramework(PlatformioException):
-
-    MESSAGE = "Unknown framework '{0}'"
-
-
 # Package Manager
 
 
@@ -119,51 +81,9 @@ class PackageInstallError(PlatformIOPackageException):
     )
 
 
-class ExtractArchiveItemError(PlatformIOPackageException):
-
-    MESSAGE = (
-        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
-        "tool or check this solution -> http://bit.ly/faq-package-manager"
-    )
-
-
-class UnsupportedArchiveType(PlatformIOPackageException):
-
-    MESSAGE = "Can not unpack file '{0}'"
-
-
-class FDUnrecognizedStatusCode(PlatformIOPackageException):
-
-    MESSAGE = "Got an unrecognized status code '{0}' when downloaded {1}"
-
-
-class FDSizeMismatch(PlatformIOPackageException):
-
-    MESSAGE = (
-        "The size ({0:d} bytes) of downloaded file '{1}' "
-        "is not equal to remote size ({2:d} bytes)"
-    )
-
-
-class FDSHASumMismatch(PlatformIOPackageException):
-
-    MESSAGE = (
-        "The 'sha1' sum '{0}' of downloaded file '{1}' is not equal to remote '{2}'"
-    )
-
-
 #
 # Library
 #
-
-
-class LibNotFound(PlatformioException):
-
-    MESSAGE = (
-        "Library `{0}` has not been found in PlatformIO Registry.\n"
-        "You can ignore this message, if `{0}` is a built-in library "
-        "(included in framework, SDK). E.g., SPI, Wire, etc."
-    )
 
 
 class NotGlobalLibDir(UserSideException):
@@ -235,11 +155,6 @@ class InternetIsOffline(UserSideException):
         "PlatformIO needs the Internet connection to"
         " download dependent packages or to work with PIO Account."
     )
-
-
-class BuildScriptNotFound(PlatformioException):
-
-    MESSAGE = "Invalid path '{0}' to build script"
 
 
 class InvalidSettingName(UserSideException):

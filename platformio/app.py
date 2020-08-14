@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import codecs
 import getpass
 import hashlib
@@ -25,8 +27,9 @@ from time import time
 
 import requests
 
-from platformio import __version__, exception, fs, lockfile, proc
+from platformio import __version__, exception, fs, proc
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
+from platformio.package.lockfile import LockFile
 from platformio.project.helpers import (
     get_default_projects_dir,
     get_project_cache_dir,
@@ -125,7 +128,7 @@ class State(object):
     def _lock_state_file(self):
         if not self.lock:
             return
-        self._lockfile = lockfile.LockFile(self.path)
+        self._lockfile = LockFile(self.path)
         try:
             self._lockfile.acquire()
         except IOError:
@@ -142,6 +145,9 @@ class State(object):
 
     def as_dict(self):
         return self._storage
+
+    def keys(self):
+        return self._storage.keys()
 
     def get(self, key, default=True):
         return self._storage.get(key, default)
@@ -187,7 +193,7 @@ class ContentCache(object):
     def _lock_dbindex(self):
         if not self.cache_dir:
             os.makedirs(self.cache_dir)
-        self._lockfile = lockfile.LockFile(self.cache_dir)
+        self._lockfile = LockFile(self.cache_dir)
         try:
             self._lockfile.acquire()
         except:  # pylint: disable=bare-except

@@ -27,7 +27,7 @@ clean: clean-docs
 
 profile:
 	# Usage $ > make PIOARGS="boards" profile
-	python -m cProfile -o .tox/.tmp/cprofile.prof $(shell which platformio) ${PIOARGS}
+	python -m cProfile -o .tox/.tmp/cprofile.prof -m platformio ${PIOARGS}
 	snakeviz .tox/.tmp/cprofile.prof
 
 publish:

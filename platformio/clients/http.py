@@ -19,12 +19,20 @@ from platformio import app, util
 from platformio.exception import PlatformioException
 
 
-class RESTClientError(PlatformioException):
-    pass
+class HTTPClientError(PlatformioException):
+    def __init__(self, message, response=None):
+        super(HTTPClientError, self).__init__()
+        self.message = message
+        self.response = response
+
+    def __str__(self):  # pragma: no cover
+        return self.message
 
 
-class RESTClient(object):
-    def __init__(self, base_url):
+class HTTPClient(object):
+    def __init__(
+        self, base_url,
+    ):
         if base_url.endswith("/"):
             base_url = base_url[:-1]
         self.base_url = base_url
@@ -33,19 +41,30 @@ class RESTClient(object):
         retry = Retry(
             total=5,
             backoff_factor=1,
-            method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
-            status_forcelist=[500, 502, 503, 504],
+            # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
+            status_forcelist=[413, 429, 500, 502, 503, 504],
         )
         adapter = requests.adapters.HTTPAdapter(max_retries=retry)
         self._session.mount(base_url, adapter)
 
+    def __del__(self):
+        if not self._session:
+            return
+        self._session.close()
+        self._session = None
+
+    @util.throttle(500)
     def send_request(self, method, path, **kwargs):
-        # check internet before and resolve issue with 60 seconds timeout
+        # check Internet before and resolve issue with 60 seconds timeout
+        # print(self, method, path, kwargs)
         util.internet_on(raise_exception=True)
         try:
-            response = getattr(self._session, method)(self.base_url + path, **kwargs)
+            return getattr(self._session, method)(self.base_url + path, **kwargs)
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            raise RESTClientError(e)
+            raise HTTPClientError(str(e))
+
+    def request_json_data(self, *args, **kwargs):
+        response = self.send_request(*args, **kwargs)
         return self.raise_error_from_response(response)
 
     @staticmethod
@@ -59,4 +78,4 @@ class RESTClient(object):
             message = response.json()["message"]
         except (KeyError, ValueError):
             message = response.text
-        raise RESTClientError(message)
+        raise HTTPClientError(message, response)

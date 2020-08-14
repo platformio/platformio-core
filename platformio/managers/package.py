@@ -26,12 +26,12 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, util
 from platformio.compat import hashlib_encode_data
-from platformio.downloader import FileDownloader
-from platformio.lockfile import LockFile
+from platformio.package.download import FileDownloader
 from platformio.package.exception import ManifestException
+from platformio.package.lockfile import LockFile
 from platformio.package.manifest.parser import ManifestParserFactory
-from platformio.unpacker import FileUnpacker
-from platformio.vcsclient import VCSClientFactory
+from platformio.package.unpack import FileUnpacker
+from platformio.package.vcsclient import VCSClientFactory
 
 # pylint: disable=too-many-arguments, too-many-return-statements
 
@@ -482,7 +482,7 @@ class PkgInstallerMixin(object):
                 self.unpack(dlpath, tmp_dir)
                 os.remove(dlpath)
             else:
-                vcs = VCSClientFactory.newClient(tmp_dir, url)
+                vcs = VCSClientFactory.new(tmp_dir, url)
                 assert vcs.export()
                 src_manifest_dir = vcs.storage_dir
                 src_manifest["version"] = vcs.get_current_revision()
@@ -628,9 +628,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         if "__src_url" in manifest:
             try:
-                vcs = VCSClientFactory.newClient(
-                    pkg_dir, manifest["__src_url"], silent=True
-                )
+                vcs = VCSClientFactory.new(pkg_dir, manifest["__src_url"], silent=True)
             except (AttributeError, exception.PlatformioException):
                 return None
             if not vcs.can_be_updated:
@@ -800,7 +798,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return True
 
         if "__src_url" in manifest:
-            vcs = VCSClientFactory.newClient(pkg_dir, manifest["__src_url"])
+            vcs = VCSClientFactory.new(pkg_dir, manifest["__src_url"])
             assert vcs.update()
             self._update_src_manifest(
                 dict(version=vcs.get_current_revision()), vcs.storage_dir

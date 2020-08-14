@@ -19,7 +19,7 @@ import serial
 
 from platformio import exception, util
 from platformio.commands.test.processor import TestProcessorBase
-from platformio.managers.platform import PlatformFactory
+from platformio.platform.factory import PlatformFactory
 
 
 class EmbeddedTestProcessor(TestProcessorBase):
@@ -108,7 +108,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
             return self.env_options.get("test_port")
 
         assert set(["platform", "board"]) & set(self.env_options.keys())
-        p = PlatformFactory.newPlatform(self.env_options["platform"])
+        p = PlatformFactory.new(self.env_options["platform"])
         board_hwids = p.board_config(self.env_options["board"]).get("build.hwids", [])
         port = None
         elapsed = 0
