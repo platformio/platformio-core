@@ -35,7 +35,7 @@ def pytest_generate_tests(metafunc):
 
     # dev/platforms
     for manifest in PlatformManager().get_installed():
-        p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
+        p = PlatformFactory.new(manifest["__pkg_dir"])
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
         examples_dirs.append(examples_dir)
