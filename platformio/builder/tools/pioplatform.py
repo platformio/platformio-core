@@ -14,15 +14,16 @@
 
 from __future__ import absolute_import
 
+import os
 import sys
-from os.path import isdir, isfile, join
 
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
-from platformio import exception, fs, util
+from platformio import fs, util
 from platformio.compat import WINDOWS
-from platformio.managers.platform import PlatformFactory
+from platformio.platform.exception import UnknownBoard
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectOptions
 
 # pylint: disable=too-many-branches, too-many-locals
@@ -34,7 +35,7 @@ def PioPlatform(env):
     if "framework" in variables:
         # support PIO Core 3.0 dev/platforms
         variables["pioframework"] = variables["framework"]
-    p = PlatformFactory.newPlatform(env["PLATFORM_MANIFEST"])
+    p = PlatformFactory.new(os.path.dirname(env["PLATFORM_MANIFEST"]))
     p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
     return p
 
@@ -46,7 +47,7 @@ def BoardConfig(env, board=None):
             board = board or env.get("BOARD")
             assert board, "BoardConfig: Board is not defined"
             return p.board_config(board)
-        except (AssertionError, exception.UnknownBoard) as e:
+        except (AssertionError, UnknownBoard) as e:
             sys.stderr.write("Error: %s\n" % str(e))
             env.Exit(1)
 
@@ -55,8 +56,8 @@ def GetFrameworkScript(env, framework):
     p = env.PioPlatform()
     assert p.frameworks and framework in p.frameworks
     script_path = env.subst(p.frameworks[framework]["script"])
-    if not isfile(script_path):
-        script_path = join(p.get_dir(), script_path)
+    if not os.path.isfile(script_path):
+        script_path = os.path.join(p.get_dir(), script_path)
     return script_path
 
 
@@ -75,17 +76,24 @@ def LoadPioPlatform(env):
             continue
         pkg_dir = p.get_package_dir(name)
         env.PrependENVPath(
-            "PATH", join(pkg_dir, "bin") if isdir(join(pkg_dir, "bin")) else pkg_dir
+            "PATH",
+            os.path.join(pkg_dir, "bin")
+            if os.path.isdir(os.path.join(pkg_dir, "bin"))
+            else pkg_dir,
         )
-        if not WINDOWS and isdir(join(pkg_dir, "lib")) and type_ != "toolchain":
+        if (
+            not WINDOWS
+            and os.path.isdir(os.path.join(pkg_dir, "lib"))
+            and type_ != "toolchain"
+        ):
             env.PrependENVPath(
                 "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH",
-                join(pkg_dir, "lib"),
+                os.path.join(pkg_dir, "lib"),
             )
 
     # Platform specific LD Scripts
-    if isdir(join(p.get_dir(), "ldscripts")):
-        env.Prepend(LIBPATH=[join(p.get_dir(), "ldscripts")])
+    if os.path.isdir(os.path.join(p.get_dir(), "ldscripts")):
+        env.Prepend(LIBPATH=[os.path.join(p.get_dir(), "ldscripts")])
 
     if "BOARD" not in env:
         return

@@ -20,10 +20,11 @@ import os
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs
+from platformio import fs
 from platformio.commands.platform import platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
+from platformio.platform.exception import UnknownBoard
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
@@ -112,7 +113,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     for id_ in value:
         try:
             pm.board_config(id_)
-        except exception.UnknownBoard:
+        except UnknownBoard:
             raise click.BadParameter(
                 "`%s`. Please search for board ID using `platformio boards` "
                 "command" % id_

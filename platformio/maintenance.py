@@ -25,11 +25,12 @@ from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.managers.platform import PlatformManager
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
+from platformio.platform.factory import PlatformFactory
 from platformio.proc import is_container
 
 
@@ -278,9 +279,7 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
             conds = [
                 pm.outdated(manifest["__pkg_dir"]),
                 what == "platforms"
-                and PlatformFactory.newPlatform(
-                    manifest["__pkg_dir"]
-                ).are_outdated_packages(),
+                and PlatformFactory.new(manifest["__pkg_dir"]).are_outdated_packages(),
             ]
             if any(conds):
                 outdated_items.append(manifest["name"])

@@ -16,10 +16,12 @@ from os.path import dirname, isdir
 
 import click
 
-from platformio import app, exception, util
+from platformio import app, util
 from platformio.commands.boards import print_boards
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.managers.platform import PlatformManager
+from platformio.platform.exception import UnknownPlatform
+from platformio.platform.factory import PlatformFactory
 
 
 @click.group(short_help="Platform Manager")
@@ -64,12 +66,12 @@ def _get_registry_platforms():
 def _get_platform_data(*args, **kwargs):
     try:
         return _get_installed_platform_data(*args, **kwargs)
-    except exception.UnknownPlatform:
+    except UnknownPlatform:
         return _get_registry_platform_data(*args, **kwargs)
 
 
 def _get_installed_platform_data(platform, with_boards=True, expose_packages=True):
-    p = PlatformFactory.newPlatform(platform)
+    p = PlatformFactory.new(platform)
     data = dict(
         name=p.name,
         title=p.title,
@@ -232,7 +234,7 @@ def platform_list(json_output):
 def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     data = _get_platform_data(platform)
     if not data:
-        raise exception.UnknownPlatform(platform)
+        raise UnknownPlatform(platform)
     if json_output:
         return click.echo(dump_json_to_unicode(data))
 
@@ -384,10 +386,7 @@ def platform_update(  # pylint: disable=too-many-locals
             if not pkg_dir:
                 continue
             latest = pm.outdated(pkg_dir, requirements)
-            if (
-                not latest
-                and not PlatformFactory.newPlatform(pkg_dir).are_outdated_packages()
-            ):
+            if not latest and not PlatformFactory.new(pkg_dir).are_outdated_packages():
                 continue
             data = _get_installed_platform_data(
                 pkg_dir, with_boards=False, expose_packages=False
