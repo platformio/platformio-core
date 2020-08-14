@@ -18,17 +18,13 @@ import click
 
 from platformio import util
 from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import (
-    PackageOutdatedResult,
-    PackageSourceItem,
-    PackageSpec,
-)
+from platformio.package.meta import PackageItem, PackageOutdatedResult, PackageSpec
 from platformio.package.vcsclient import VCSBaseException, VCSClientFactory
 
 
 class PackageManagerUpdateMixin(object):
     def outdated(self, pkg, spec=None):
-        assert isinstance(pkg, PackageSourceItem)
+        assert isinstance(pkg, PackageItem)
         assert not spec or isinstance(spec, PackageSpec)
         assert os.path.isdir(pkg.path) and pkg.metadata
 

@@ -21,7 +21,7 @@ import click
 
 from platformio import app, compat, fs, util
 from platformio.package.exception import PackageException
-from platformio.package.meta import PackageSourceItem, PackageSpec
+from platformio.package.meta import PackageItem, PackageSpec
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
 
@@ -109,7 +109,7 @@ class PackageManagerInstallMixin(object):
         return pkg
 
     def _install_dependencies(self, pkg, silent=False):
-        assert isinstance(pkg, PackageSourceItem)
+        assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):
             return
@@ -155,7 +155,7 @@ class PackageManagerInstallMixin(object):
                 assert vcs.export()
 
             root_dir = self.find_pkg_root(tmp_dir, spec)
-            pkg_item = PackageSourceItem(
+            pkg_item = PackageItem(
                 root_dir,
                 self.build_metadata(
                     root_dir, spec, vcs.get_current_revision() if vcs else None
@@ -168,7 +168,7 @@ class PackageManagerInstallMixin(object):
                 fs.rmtree(tmp_dir)
 
     def _install_tmp_pkg(self, tmp_pkg):
-        assert isinstance(tmp_pkg, PackageSourceItem)
+        assert isinstance(tmp_pkg, PackageItem)
         # validate package version and declared requirements
         if (
             tmp_pkg.metadata.spec.requirements
@@ -182,7 +182,7 @@ class PackageManagerInstallMixin(object):
                     tmp_pkg.metadata,
                 )
             )
-        dst_pkg = PackageSourceItem(
+        dst_pkg = PackageItem(
             os.path.join(self.package_dir, tmp_pkg.get_safe_dirname())
         )
 
@@ -190,7 +190,7 @@ class PackageManagerInstallMixin(object):
         action = "overwrite"
         if tmp_pkg.metadata.spec.has_custom_name():
             action = "overwrite"
-            dst_pkg = PackageSourceItem(
+            dst_pkg = PackageItem(
                 os.path.join(self.package_dir, tmp_pkg.metadata.spec.name)
             )
         elif dst_pkg.metadata and dst_pkg.metadata.spec.external:
@@ -231,7 +231,7 @@ class PackageManagerInstallMixin(object):
             # move new source to the destination location
             _cleanup_dir(dst_pkg.path)
             shutil.move(tmp_pkg.path, dst_pkg.path)
-            return PackageSourceItem(dst_pkg.path)
+            return PackageItem(dst_pkg.path)
 
         if action == "detach-new":
             target_dirname = "%s@%s" % (
@@ -248,9 +248,9 @@ class PackageManagerInstallMixin(object):
             pkg_dir = os.path.join(self.package_dir, target_dirname)
             _cleanup_dir(pkg_dir)
             shutil.move(tmp_pkg.path, pkg_dir)
-            return PackageSourceItem(pkg_dir)
+            return PackageItem(pkg_dir)
 
         # otherwise, overwrite existing
         _cleanup_dir(dst_pkg.path)
         shutil.move(tmp_pkg.path, dst_pkg.path)
-        return PackageSourceItem(dst_pkg.path)
+        return PackageItem(dst_pkg.path)

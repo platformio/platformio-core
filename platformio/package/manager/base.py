@@ -31,8 +31,8 @@ from platformio.package.manager._uninstall import PackageManagerUninstallMixin
 from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import (
+    PackageItem,
     PackageMetaData,
-    PackageSourceItem,
     PackageSpec,
     PackageType,
 )
@@ -144,7 +144,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return self.get_manifest_path(pkg_dir)
 
     def load_manifest(self, src):
-        path = src.path if isinstance(src, PackageSourceItem) else src
+        path = src.path if isinstance(src, PackageItem) else src
         cache_key = "load_manifest-%s" % path
         result = self.memcache_get(cache_key)
         if result:
@@ -191,11 +191,11 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
 
     def get_installed(self):
         result = []
-        for name in os.listdir(self.package_dir):
+        for name in sorted(os.listdir(self.package_dir)):
             pkg_dir = os.path.join(self.package_dir, name)
             if not os.path.isdir(pkg_dir):
                 continue
-            pkg = PackageSourceItem(pkg_dir)
+            pkg = PackageItem(pkg_dir)
             if not pkg.metadata:
                 try:
                     spec = self.build_legacy_spec(pkg_dir)
@@ -216,7 +216,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return result
 
     def get_package(self, spec):
-        if isinstance(spec, PackageSourceItem):
+        if isinstance(spec, PackageItem):
             return spec
         spec = self.ensure_spec(spec)
         best = None
@@ -243,8 +243,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         # external "URL" mismatch
         if spec.external:
             # local folder mismatch
-            if spec.url == pkg.path or (
-                spec.url.startswith("file://") and pkg.path == spec.url[7:]
+            if os.path.realpath(spec.url) == os.path.realpath(pkg.path) or (
+                spec.url.startswith("file://")
+                and os.path.realpath(pkg.path) == os.path.realpath(spec.url[7:])
             ):
                 return True
             if spec.url != pkg.metadata.spec.url:

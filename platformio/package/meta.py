@@ -315,7 +315,7 @@ class PackageMetaData(object):
     def __init__(  # pylint: disable=redefined-builtin
         self, type, name, version, spec=None
     ):
-        assert type in PackageType.items().values()
+        # assert type in PackageType.items().values()
         if spec:
             assert isinstance(spec, PackageSpec)
         self.type = type
@@ -395,7 +395,7 @@ class PackageMetaData(object):
             return PackageMetaData(**data)
 
 
-class PackageSourceItem(object):
+class PackageItem(object):
 
     METAFILE_NAME = ".piopm"
 
@@ -406,7 +406,7 @@ class PackageSourceItem(object):
             self.metadata = self.load_meta()
 
     def __repr__(self):
-        return "PackageSourceItem <path={path} metadata={metadata}".format(
+        return "PackageItem <path={path} metadata={metadata}".format(
             path=self.path, metadata=self.metadata
         )
 
