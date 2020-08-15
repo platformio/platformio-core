@@ -26,7 +26,10 @@ class UnknownPlatform(PlatformException):
 
 class IncompatiblePlatform(PlatformException):
 
-    MESSAGE = "Development platform '{0}' is not compatible with PIO Core v{1}"
+    MESSAGE = (
+        "Development platform '{0}' is not compatible with PlatformIO Core v{1} and "
+        "depends on PlatformIO Core {2}.\n"
+    )
 
 
 class UnknownBoard(PlatformException):

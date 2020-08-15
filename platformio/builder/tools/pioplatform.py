@@ -22,6 +22,7 @@ from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import fs, util
 from platformio.compat import WINDOWS
+from platformio.package.meta import PackageItem
 from platformio.platform.exception import UnknownBoard
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectOptions
@@ -63,32 +64,30 @@ def GetFrameworkScript(env, framework):
 
 def LoadPioPlatform(env):
     p = env.PioPlatform()
-    installed_packages = p.get_installed_packages()
 
     # Ensure real platform name
     env["PIOPLATFORM"] = p.name
 
     # Add toolchains and uploaders to $PATH and $*_LIBRARY_PATH
     systype = util.get_systype()
-    for name in installed_packages:
-        type_ = p.get_package_type(name)
+    for pkg in p.get_installed_packages():
+        type_ = p.get_package_type(pkg.metadata.name)
         if type_ not in ("toolchain", "uploader", "debugger"):
             continue
-        pkg_dir = p.get_package_dir(name)
         env.PrependENVPath(
             "PATH",
-            os.path.join(pkg_dir, "bin")
-            if os.path.isdir(os.path.join(pkg_dir, "bin"))
-            else pkg_dir,
+            os.path.join(pkg.path, "bin")
+            if os.path.isdir(os.path.join(pkg.path, "bin"))
+            else pkg.path,
         )
         if (
             not WINDOWS
-            and os.path.isdir(os.path.join(pkg_dir, "lib"))
+            and os.path.isdir(os.path.join(pkg.path, "lib"))
             and type_ != "toolchain"
         ):
             env.PrependENVPath(
                 "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH",
-                os.path.join(pkg_dir, "lib"),
+                os.path.join(pkg.path, "lib"),
             )
 
     # Platform specific LD Scripts
@@ -133,6 +132,7 @@ def LoadPioPlatform(env):
 
 def PrintConfiguration(env):  # pylint: disable=too-many-statements
     platform = env.PioPlatform()
+    pkg_metadata = PackageItem(platform.get_dir()).metadata
     board_config = env.BoardConfig() if "BOARD" in env else None
 
     def _get_configuration_data():
@@ -147,11 +147,12 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         )
 
     def _get_plaform_data():
-        data = ["PLATFORM: %s (%s)" % (platform.title, platform.version)]
-        if platform.src_version:
-            data.append("#" + platform.src_version)
-        if int(ARGUMENTS.get("PIOVERBOSE", 0)) and platform.src_url:
-            data.append("(%s)" % platform.src_url)
+        data = [
+            "PLATFORM: %s (%s)"
+            % (platform.title, pkg_metadata.version or platform.version)
+        ]
+        if int(ARGUMENTS.get("PIOVERBOSE", 0)) and pkg_metadata.spec.external:
+            data.append("(%s)" % pkg_metadata.spec.url)
         if board_config:
             data.extend([">", board_config.get("name")])
         return data

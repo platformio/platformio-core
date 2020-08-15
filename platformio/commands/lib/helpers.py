@@ -15,7 +15,7 @@
 import os
 
 from platformio.compat import ci_strings_are_equal
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
@@ -28,9 +28,9 @@ def get_builtin_libs(storage_names=None):
 
     items = []
     storage_names = storage_names or []
-    pm = PlatformManager()
-    for manifest in pm.get_installed():
-        p = PlatformFactory.new(manifest["__pkg_dir"])
+    pm = PlatformPackageManager()
+    for pkg in pm.get_installed():
+        p = PlatformFactory.new(pkg)
         for storage in p.get_lib_storages():
             if storage_names and storage["name"] not in storage_names:
                 continue

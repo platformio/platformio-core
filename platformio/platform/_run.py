@@ -50,12 +50,14 @@ class PlatformRunMixin(object):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
+        self.ensure_engine_compatible()
+
         options = self.config.items(env=variables["pioenv"], as_dict=True)
         if "framework" in options:
             # support PIO Core 3.0 dev/platforms
             options["pioframework"] = options["framework"]
         self.configure_default_packages(options, targets)
-        self.install_packages(silent=True)
+        self.autoinstall_runtime_packages()
 
         self._report_non_sensitive_data(options, targets)
 
@@ -84,8 +86,6 @@ class PlatformRunMixin(object):
             for item in self.dump_used_packages()
         ]
         topts["platform"] = {"name": self.name, "version": self.version}
-        if self.src_version:
-            topts["platform"]["src_version"] = self.src_version
         telemetry.send_run_environment(topts, targets)
 
     def _run_scons(self, variables, targets, jobs):

@@ -19,11 +19,11 @@ import click
 import semantic_version
 
 from platformio import __version__, fs, proc, util
-from platformio.managers.package import PackageManager
+from platformio.package.manager.tool import ToolPackageManager
 from platformio.platform._packages import PlatformPackagesMixin
 from platformio.platform._run import PlatformRunMixin
 from platformio.platform.board import PlatformBoardConfig
-from platformio.platform.exception import UnknownBoard
+from platformio.platform.exception import IncompatiblePlatform, UnknownBoard
 from platformio.project.config import ProjectConfig
 
 
@@ -44,20 +44,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         self._custom_packages = None
 
         self.config = ProjectConfig.get_instance()
-        self.pm = PackageManager(
-            self.config.get_optional_dir("packages"), self.package_repositories
-        )
-
-        self._src_manifest = None
-        src_manifest_path = self.pm.get_src_manifest_path(self.get_dir())
-        if src_manifest_path:
-            self._src_manifest = fs.load_json(src_manifest_path)
-
-        # if self.engines and "platformio" in self.engines:
-        #     if self.PIO_VERSION not in semantic_version.SimpleSpec(
-        #             self.engines['platformio']):
-        #         raise exception.IncompatiblePlatform(self.name,
-        #                                              str(self.PIO_VERSION))
+        self.pm = ToolPackageManager(self.config.get_optional_dir("packages"))
 
     @property
     def name(self):
@@ -74,14 +61,6 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     @property
     def version(self):
         return self._manifest["version"]
-
-    @property
-    def src_version(self):
-        return self._src_manifest.get("version") if self._src_manifest else None
-
-    @property
-    def src_url(self):
-        return self._src_manifest.get("url") if self._src_manifest else None
 
     @property
     def homepage(self):
@@ -104,30 +83,37 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         return self._manifest.get("engines")
 
     @property
-    def package_repositories(self):
-        return self._manifest.get("packageRepositories")
-
-    @property
     def manifest(self):
         return self._manifest
 
     @property
     def packages(self):
         packages = self._manifest.get("packages", {})
-        for item in self._custom_packages or []:
-            name = item
-            version = "*"
-            if "@" in item:
-                name, version = item.split("@", 2)
-            name = name.strip()
-            if name not in packages:
-                packages[name] = {}
-            packages[name].update({"version": version.strip(), "optional": False})
+        for spec in self._custom_packages or []:
+            spec = self.pm.ensure_spec(spec)
+            if spec.external:
+                version = spec.url
+            else:
+                version = str(spec.requirements) or "*"
+            if spec.name not in packages:
+                packages[spec.name] = {}
+            packages[spec.name].update(
+                {"owner": spec.owner, "version": version, "optional": False}
+            )
         return packages
 
     @property
     def python_packages(self):
         return self._manifest.get("pythonPackages")
+
+    def ensure_engine_compatible(self):
+        if not self.engines or "platformio" not in self.engines:
+            return True
+        if self.PIO_VERSION in semantic_version.SimpleSpec(self.engines["platformio"]):
+            return True
+        raise IncompatiblePlatform(
+            self.name, str(self.PIO_VERSION), self.engines["platformio"]
+        )
 
     def get_dir(self):
         return os.path.dirname(self.manifest_path)
@@ -218,10 +204,10 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         for opts in (self.frameworks or {}).values():
             if "package" not in opts:
                 continue
-            pkg_dir = self.get_package_dir(opts["package"])
-            if not pkg_dir or not os.path.isdir(os.path.join(pkg_dir, "libraries")):
+            pkg = self.get_package(opts["package"])
+            if not pkg or not os.path.isdir(os.path.join(pkg.path, "libraries")):
                 continue
-            libs_dir = os.path.join(pkg_dir, "libraries")
+            libs_dir = os.path.join(pkg.path, "libraries")
             storages[libs_dir] = opts["package"]
             libcores_dir = os.path.join(libs_dir, "__cores__")
             if not os.path.isdir(libcores_dir):

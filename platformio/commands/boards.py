@@ -19,7 +19,7 @@ from tabulate import tabulate
 
 from platformio import fs
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
 
 
 @click.command("boards", short_help="Embedded Board Explorer")
@@ -71,7 +71,7 @@ def print_boards(boards):
 
 
 def _get_boards(installed=False):
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     return pm.get_installed_boards() if installed else pm.get_all_boards()
 
 

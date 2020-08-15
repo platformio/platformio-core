@@ -25,9 +25,9 @@ from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.managers.platform import PlatformManager
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.platform.factory import PlatformFactory
@@ -271,24 +271,16 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     util.internet_on(raise_exception=True)
 
     outdated_items = []
-    pm = PlatformManager() if what == "platforms" else LibraryPackageManager()
-    if isinstance(pm, PlatformManager):
-        for manifest in pm.get_installed():
-            if manifest["name"] in outdated_items:
-                continue
-            conds = [
-                pm.outdated(manifest["__pkg_dir"]),
-                what == "platforms"
-                and PlatformFactory.new(manifest["__pkg_dir"]).are_outdated_packages(),
-            ]
-            if any(conds):
-                outdated_items.append(manifest["name"])
-    else:
-        for pkg in pm.get_installed():
-            if pkg.metadata.name in outdated_items:
-                continue
-            if pm.outdated(pkg).is_outdated():
-                outdated_items.append(pkg.metadata.name)
+    pm = PlatformPackageManager() if what == "platforms" else LibraryPackageManager()
+    for pkg in pm.get_installed():
+        if pkg.metadata.name in outdated_items:
+            continue
+        conds = [
+            pm.outdated(pkg).is_outdated(),
+            what == "platforms" and PlatformFactory.new(pkg).are_outdated_packages(),
+        ]
+        if any(conds):
+            outdated_items.append(pkg.metadata.name)
 
     if not outdated_items:
         return

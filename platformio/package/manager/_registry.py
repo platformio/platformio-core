@@ -91,6 +91,9 @@ class PackageManageRegistryMixin(object):
                 self.print_multi_package_issue(packages, spec)
             package, version = self.find_best_registry_version(packages, spec)
 
+        if not package or not version:
+            raise UnknownPackageError(spec.humanize())
+
         pkgfile = self._pick_compatible_pkg_file(version["files"]) if version else None
         if not pkgfile:
             raise UnknownPackageError(spec.humanize())
@@ -189,7 +192,7 @@ class PackageManageRegistryMixin(object):
                 return (package, version)
 
         if not spec.requirements:
-            return None
+            return (None, None)
 
         # if the custom version requirements, check ALL package versions
         for package in packages:
@@ -206,7 +209,7 @@ class PackageManageRegistryMixin(object):
             if version:
                 return (package, version)
             time.sleep(1)
-        return None
+        return (None, None)
 
     def pick_best_registry_version(self, versions, spec=None):
         assert not spec or isinstance(spec, PackageSpec)

@@ -16,7 +16,7 @@ import os
 import re
 
 from platformio.compat import load_python_module
-from platformio.package.manager.platform import PlatformPackageManager
+from platformio.package.meta import PackageItem
 from platformio.platform.base import PlatformBase
 from platformio.platform.exception import UnknownPlatform
 
@@ -36,9 +36,16 @@ class PlatformFactory(object):
 
     @classmethod
     def new(cls, pkg_or_spec):
-        pkg = PlatformPackageManager().get_package(
-            "file://%s" % pkg_or_spec if os.path.isdir(pkg_or_spec) else pkg_or_spec
-        )
+        if isinstance(pkg_or_spec, PackageItem):
+            pkg = pkg_or_spec
+        else:
+            from platformio.package.manager.platform import (  # pylint: disable=import-outside-toplevel
+                PlatformPackageManager,
+            )
+
+            pkg = PlatformPackageManager().get_package(
+                "file://%s" % pkg_or_spec if os.path.isdir(pkg_or_spec) else pkg_or_spec
+            )
         if not pkg:
             raise UnknownPlatform(pkg_or_spec)
 

@@ -44,7 +44,7 @@ class PackageManagerUninstallMixin(object):
 
         # firstly, remove dependencies
         if not skip_dependencies:
-            self._uninstall_dependencies(pkg, silent)
+            self.uninstall_dependencies(pkg, silent)
 
         if os.path.islink(pkg.path):
             os.unlink(pkg.path)
@@ -72,7 +72,7 @@ class PackageManagerUninstallMixin(object):
 
         return pkg
 
-    def _uninstall_dependencies(self, pkg, silent=False):
+    def uninstall_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):

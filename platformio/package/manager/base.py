@@ -190,6 +190,10 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return metadata
 
     def get_installed(self):
+        cache_key = "get_installed"
+        if self.memcache_get(cache_key):
+            return self.memcache_get(cache_key)
+
         result = []
         for name in sorted(os.listdir(self.package_dir)):
             pkg_dir = os.path.join(self.package_dir, name)
@@ -213,6 +217,8 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 except MissingPackageManifestError:
                     pass
             result.append(pkg)
+
+        self.memcache_set(cache_key, result)
         return result
 
     def get_package(self, spec):

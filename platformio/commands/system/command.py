@@ -26,8 +26,8 @@ from platformio.commands.system.completion import (
     install_completion_code,
     uninstall_completion_code,
 )
-from platformio.managers.platform import PlatformManager
 from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig
 
@@ -77,7 +77,7 @@ def system_info(json_output):
     }
     data["dev_platform_nums"] = {
         "title": "Development Platforms",
-        "value": len(PlatformManager().get_installed()),
+        "value": len(PlatformPackageManager().get_installed()),
     }
     data["package_tool_nums"] = {
         "title": "Tools & Toolchains",

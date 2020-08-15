@@ -42,17 +42,26 @@ class PackageManagerInstallMixin(object):
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 
-    def install(self, spec, silent=False, force=False):
+    def install(self, spec, silent=False, skip_dependencies=False, force=False):
         try:
             self.lock()
-            pkg = self._install(spec, silent=silent, force=force)
+            pkg = self._install(
+                spec, silent=silent, skip_dependencies=skip_dependencies, force=force
+            )
             self.memcache_reset()
             self.cleanup_expired_downloads()
             return pkg
         finally:
             self.unlock()
 
-    def _install(self, spec, search_filters=None, silent=False, force=False):
+    def _install(  # pylint: disable=too-many-arguments
+        self,
+        spec,
+        search_filters=None,
+        silent=False,
+        skip_dependencies=False,
+        force=False,
+    ):
         spec = self.ensure_spec(spec)
 
         # avoid circle dependencies
@@ -104,11 +113,12 @@ class PackageManagerInstallMixin(object):
             )
 
         self.memcache_reset()
-        self._install_dependencies(pkg, silent)
+        if not skip_dependencies:
+            self.install_dependencies(pkg, silent)
         self._INSTALL_HISTORY[spec] = pkg
         return pkg
 
-    def _install_dependencies(self, pkg, silent=False):
+    def install_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):

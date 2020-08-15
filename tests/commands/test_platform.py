@@ -14,8 +14,9 @@
 
 import json
 
-from platformio import exception
 from platformio.commands import platform as cli_platform
+from platformio.package.exception import UnknownPackageError
+from platformio.platform.exception import IncompatiblePlatform
 
 
 def test_search_json_output(clirunner, validate_cliresult, isolated_pio_core):
@@ -39,22 +40,30 @@ def test_search_raw_output(clirunner, validate_cliresult):
 def test_install_unknown_version(clirunner):
     result = clirunner.invoke(cli_platform.platform_install, ["atmelavr@99.99.99"])
     assert result.exit_code != 0
-    assert isinstance(result.exception, exception.UndefinedPackageVersion)
+    assert isinstance(result.exception, UnknownPackageError)
 
 
 def test_install_unknown_from_registry(clirunner):
     result = clirunner.invoke(cli_platform.platform_install, ["unknown-platform"])
     assert result.exit_code != 0
-    assert isinstance(result.exception, exception.UnknownPackage)
+    assert isinstance(result.exception, UnknownPackageError)
+
+
+def test_install_incompatbile(clirunner, validate_cliresult, isolated_pio_core):
+    result = clirunner.invoke(
+        cli_platform.platform_install, ["atmelavr@1.2.0", "--skip-default-package"],
+    )
+    assert result.exit_code != 0
+    assert isinstance(result.exception, IncompatiblePlatform)
 
 
 def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
-        ["atmelavr@1.2.0", "--skip-default-package", "--with-package", "tool-avrdude"],
+        ["atmelavr@2.0.0", "--skip-default-package", "--with-package", "tool-avrdude"],
     )
     validate_cliresult(result)
-    assert "atmelavr @ 1.2.0" in result.output
+    assert "atmelavr @ 2.0.0" in result.output
     assert "Installing tool-avrdude @" in result.output
     assert len(isolated_pio_core.join("packages").listdir()) == 1
 
@@ -63,7 +72,7 @@ def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
         [
-            "https://github.com/platformio/" "platform-espressif8266.git",
+            "https://github.com/platformio/platform-espressif8266.git",
             "--skip-default-package",
         ],
     )
@@ -90,7 +99,7 @@ def test_list_raw_output(clirunner, validate_cliresult):
 
 def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
-        cli_platform.platform_update, ["--only-check", "--json-output"]
+        cli_platform.platform_update, ["--dry-run", "--json-output"]
     )
     validate_cliresult(result)
     output = json.loads(result.output)
@@ -102,9 +111,9 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
 def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cli_platform.platform_update)
     validate_cliresult(result)
-    assert "Uninstalling atmelavr @ 1.2.0:" in result.output
-    assert "PlatformManager: Installing atmelavr @" in result.output
-    assert len(isolated_pio_core.join("packages").listdir()) == 1
+    assert "Removing atmelavr @ 2.0.0:" in result.output
+    assert "Platform Manager: Installing platformio/atmelavr @" in result.output
+    assert len(isolated_pio_core.join("packages").listdir()) == 2
 
 
 def test_uninstall(clirunner, validate_cliresult, isolated_pio_core):
