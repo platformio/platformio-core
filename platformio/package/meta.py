@@ -229,6 +229,8 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
     def _parse_requirements(self, raw):
         if "@" not in raw:
             return raw
+        if raw.startswith("file://") and os.path.exists(raw[7:]):
+            return raw
         tokens = raw.rsplit("@", 1)
         if any(s in tokens[1] for s in (":", "/")):
             return raw
@@ -296,7 +298,10 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
     def _parse_name_from_url(url):
         if url.endswith("/"):
             url = url[:-1]
-        for c in ("#", "?"):
+        stop_chars = ["#", "?"]
+        if url.startswith("file://"):
+            stop_chars.append("@")  # detached path
+        for c in stop_chars:
             if c in url:
                 url = url[: url.index(c)]
 

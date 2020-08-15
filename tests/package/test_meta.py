@@ -80,7 +80,7 @@ def test_spec_requirements():
     assert spec == PackageSpec(id=20, requirements="!=1.2.3,<2.0")
 
 
-def test_spec_local_urls():
+def test_spec_local_urls(tmpdir_factory):
     assert PackageSpec("file:///tmp/foo.tar.gz") == PackageSpec(
         url="file:///tmp/foo.tar.gz", name="foo"
     )
@@ -92,6 +92,11 @@ def test_spec_local_urls():
     )
     assert PackageSpec("file:///tmp/foo.tar.gz@~2.3.0-beta.1") == PackageSpec(
         url="file:///tmp/foo.tar.gz", name="foo", requirements="~2.3.0-beta.1"
+    )
+    # detached folder with "@" symbol
+    pkg_dir = tmpdir_factory.mktemp("storage").join("detached@1.2.3").mkdir()
+    assert PackageSpec("file://%s" % str(pkg_dir)) == PackageSpec(
+        name="detached", url="file://%s" % pkg_dir
     )
 
 
