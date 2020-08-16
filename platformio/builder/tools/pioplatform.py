@@ -149,9 +149,16 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
     def _get_plaform_data():
         data = [
             "PLATFORM: %s (%s)"
-            % (platform.title, pkg_metadata.version or platform.version)
+            % (
+                platform.title,
+                pkg_metadata.version if pkg_metadata else platform.version,
+            )
         ]
-        if int(ARGUMENTS.get("PIOVERBOSE", 0)) and pkg_metadata.spec.external:
+        if (
+            int(ARGUMENTS.get("PIOVERBOSE", 0))
+            and pkg_metadata
+            and pkg_metadata.spec.external
+        ):
             data.append("(%s)" % pkg_metadata.spec.url)
         if board_config:
             data.extend([">", board_config.get("name")])

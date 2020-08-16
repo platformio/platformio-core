@@ -15,6 +15,7 @@
 import os
 import re
 
+from platformio import fs
 from platformio.compat import load_python_module
 from platformio.package.meta import PackageItem
 from platformio.platform.base import PlatformBase
@@ -36,32 +37,47 @@ class PlatformFactory(object):
 
     @classmethod
     def new(cls, pkg_or_spec):
+        platform_dir = None
+        platform_name = None
         if isinstance(pkg_or_spec, PackageItem):
-            pkg = pkg_or_spec
+            platform_dir = pkg_or_spec.path
+            platform_name = pkg_or_spec.metadata.name
+        elif os.path.isdir(pkg_or_spec):
+            platform_dir = pkg_or_spec
         else:
             from platformio.package.manager.platform import (  # pylint: disable=import-outside-toplevel
                 PlatformPackageManager,
             )
 
-            pkg = PlatformPackageManager().get_package(
-                "file://%s" % pkg_or_spec if os.path.isdir(pkg_or_spec) else pkg_or_spec
-            )
-        if not pkg:
+            pkg = PlatformPackageManager().get_package(pkg_or_spec)
+            if not pkg:
+                raise UnknownPlatform(pkg_or_spec)
+            platform_dir = pkg.path
+            platform_name = pkg.metadata.name
+
+        if not platform_dir or not os.path.isfile(
+            os.path.join(platform_dir, "platform.json")
+        ):
             raise UnknownPlatform(pkg_or_spec)
 
+        if not platform_name:
+            platform_name = fs.load_json(os.path.join(platform_dir, "platform.json"))[
+                "name"
+            ]
+
         platform_cls = None
-        if os.path.isfile(os.path.join(pkg.path, "platform.py")):
+        if os.path.isfile(os.path.join(platform_dir, "platform.py")):
             platform_cls = getattr(
                 cls.load_module(
-                    pkg.metadata.name, os.path.join(pkg.path, "platform.py")
+                    platform_name, os.path.join(platform_dir, "platform.py")
                 ),
-                cls.get_clsname(pkg.metadata.name),
+                cls.get_clsname(platform_name),
             )
         else:
             platform_cls = type(
-                str(cls.get_clsname(pkg.metadata.name)), (PlatformBase,), {}
+                str(cls.get_clsname(platform_name)), (PlatformBase,), {}
             )
 
-        _instance = platform_cls(os.path.join(pkg.path, "platform.json"))
+        _instance = platform_cls(os.path.join(platform_dir, "platform.json"))
         assert isinstance(_instance, PlatformBase)
         return _instance
