@@ -29,7 +29,7 @@ from glob import glob
 import click
 import requests
 
-from platformio import __apiurl__, __version__, exception
+from platformio import DEFAULT_REQUESTS_TIMEOUT, __apiurl__, __version__, exception
 from platformio.commands import PlatformioCLI
 from platformio.compat import PY2, WINDOWS
 from platformio.fs import cd  # pylint: disable=unused-import
@@ -303,10 +303,16 @@ def _get_api_result(
                 headers=headers,
                 auth=auth,
                 verify=verify_ssl,
+                timeout=DEFAULT_REQUESTS_TIMEOUT,
             )
         else:
             r = _api_request_session().get(
-                url, params=params, headers=headers, auth=auth, verify=verify_ssl
+                url,
+                params=params,
+                headers=headers,
+                auth=auth,
+                verify=verify_ssl,
+                timeout=DEFAULT_REQUESTS_TIMEOUT,
             )
         result = r.json()
         r.raise_for_status()
@@ -396,6 +402,22 @@ def internet_on(raise_exception=False):
     if raise_exception and not result:
         raise exception.InternetIsOffline()
     return result
+
+
+def fetch_remote_content(*args, **kwargs):
+    # pylint: disable=import-outside-toplevel
+    from platformio.app import get_user_agent
+
+    kwargs["headers"] = kwargs.get("headers", {})
+    if "User-Agent" not in kwargs["headers"]:
+        kwargs["headers"]["User-Agent"] = get_user_agent()
+
+    if "timeout" not in kwargs:
+        kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
+
+    r = requests.get(*args, **kwargs)
+    r.raise_for_status()
+    return r.text
 
 
 def pepver_to_semver(pepver):

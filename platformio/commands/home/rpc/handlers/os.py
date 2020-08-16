@@ -22,7 +22,7 @@ from functools import cmp_to_key
 import click
 from twisted.internet import defer  # pylint: disable=import-error
 
-from platformio import app, fs, util
+from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs, util
 from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
 
@@ -51,9 +51,13 @@ class OSRPC(object):
 
         session = helpers.requests_session()
         if data:
-            r = yield session.post(uri, data=data, headers=headers)
+            r = yield session.post(
+                uri, data=data, headers=headers, timeout=DEFAULT_REQUESTS_TIMEOUT
+            )
         else:
-            r = yield session.get(uri, headers=headers)
+            r = yield session.get(
+                uri, headers=headers, timeout=DEFAULT_REQUESTS_TIMEOUT
+            )
 
         r.raise_for_status()
         result = r.text

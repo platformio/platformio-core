@@ -15,7 +15,7 @@
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
-from platformio import app, util
+from platformio import DEFAULT_REQUESTS_TIMEOUT, app, util
 from platformio.exception import PlatformioException
 
 
@@ -58,6 +58,11 @@ class HTTPClient(object):
         # check Internet before and resolve issue with 60 seconds timeout
         # print(self, method, path, kwargs)
         util.internet_on(raise_exception=True)
+
+        # set default timeout
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
+
         try:
             return getattr(self._session, method)(self.base_url + path, **kwargs)
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:

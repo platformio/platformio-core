@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import re
 from zipfile import ZipFile
 
 import click
-import requests
 
-from platformio import VERSION, __version__, app, exception
+from platformio import VERSION, __version__, app, exception, util
 from platformio.compat import WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
@@ -130,13 +130,11 @@ def get_latest_version():
 
 def get_develop_latest_version():
     version = None
-    r = requests.get(
+    content = util.fetch_remote_content(
         "https://raw.githubusercontent.com/platformio/platformio"
-        "/develop/platformio/__init__.py",
-        headers={"User-Agent": app.get_user_agent()},
+        "/develop/platformio/__init__.py"
     )
-    r.raise_for_status()
-    for line in r.text.split("\n"):
+    for line in content.split("\n"):
         line = line.strip()
         if not line.startswith("VERSION"):
             continue
@@ -152,9 +150,5 @@ def get_develop_latest_version():
 
 
 def get_pypi_latest_version():
-    r = requests.get(
-        "https://pypi.org/pypi/platformio/json",
-        headers={"User-Agent": app.get_user_agent()},
-    )
-    r.raise_for_status()
-    return r.json()["info"]["version"]
+    content = util.fetch_remote_content("https://pypi.org/pypi/platformio/json")
+    return json.loads(content)["info"]["version"]

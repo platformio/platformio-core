@@ -19,8 +19,6 @@ import os
 import re
 import tarfile
 
-import requests
-
 from platformio import util
 from platformio.compat import get_object_members, string_types
 from platformio.package.exception import ManifestParserError, UnknownManifestError
@@ -108,10 +106,9 @@ class ManifestParserFactory(object):
 
     @staticmethod
     def new_from_url(remote_url):
-        r = requests.get(remote_url)
-        r.raise_for_status()
+        content = util.fetch_remote_content(remote_url)
         return ManifestParserFactory.new(
-            r.text,
+            content,
             ManifestFileType.from_uri(remote_url) or ManifestFileType.LIBRARY_JSON,
             remote_url,
         )

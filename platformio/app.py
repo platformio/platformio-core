@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import codecs
 import getpass
 import hashlib
+import json
 import os
 import platform
 import socket
@@ -25,9 +26,7 @@ from os import environ, getenv, listdir, remove
 from os.path import dirname, isdir, isfile, join, realpath
 from time import time
 
-import requests
-
-from platformio import __version__, exception, fs, proc
+from platformio import __version__, exception, fs, proc, util
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.helpers import (
@@ -403,16 +402,14 @@ def get_cid():
         uid = getenv("C9_UID")
     elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
         try:
-            uid = (
-                requests.get(
+            uid = json.loads(
+                util.fetch_remote_content(
                     "{api}/user?token={token}".format(
                         api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
                         token=getenv("USER_TOKEN"),
                     )
                 )
-                .json()
-                .get("id")
-            )
+            ).get("id")
         except:  # pylint: disable=bare-except
             pass
     if not uid:
