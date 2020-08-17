@@ -25,7 +25,7 @@ from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
 from platformio.project.helpers import get_project_dir, is_platformio_project
@@ -105,7 +105,7 @@ class ProjectRPC(object):
             return (os.path.sep).join(path.split(os.path.sep)[-2:])
 
         result = []
-        pm = PlatformManager()
+        pm = PlatformPackageManager()
         for project_dir in AppRPC.load_state()["storage"]["recentProjects"]:
             if not os.path.isdir(project_dir):
                 continue
@@ -148,8 +148,9 @@ class ProjectRPC(object):
     @staticmethod
     def get_project_examples():
         result = []
-        for manifest in PlatformManager().get_installed():
-            examples_dir = os.path.join(manifest["__pkg_dir"], "examples")
+        pm = PlatformPackageManager()
+        for pkg in pm.get_installed():
+            examples_dir = os.path.join(pkg.path, "examples")
             if not os.path.isdir(examples_dir):
                 continue
             items = []
@@ -172,6 +173,7 @@ class ProjectRPC(object):
                         "description": project_description,
                     }
                 )
+            manifest = pm.load_manifest(pkg)
             result.append(
                 {
                     "platform": {

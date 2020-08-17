@@ -66,7 +66,11 @@ def BuildProgram(env):
         env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
 
     # enable "cyclic reference" for linker
-    if env.get("LIBS") and env.GetCompilerType() == "gcc":
+    if (
+        env.get("LIBS")
+        and env.GetCompilerType() == "gcc"
+        and env.PioPlatform().is_embedded()
+    ):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 

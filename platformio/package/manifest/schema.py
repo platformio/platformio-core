@@ -14,11 +14,14 @@
 
 # pylint: disable=too-many-ancestors
 
+import json
+
 import marshmallow
 import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
+from platformio import util
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
@@ -84,7 +87,7 @@ class StrictListField(fields.List):
 
 
 class AuthorSchema(StrictSchema):
-    name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     email = fields.Email(validate=validate.Length(min=1, max=50))
     maintainer = fields.Bool(default=False)
     url = fields.Url(validate=validate.Length(min=1, max=255))
@@ -248,9 +251,9 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        r = requests.get(
+        version = "3.10"
+        spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data"
-            "/v3.10/json/licenses.json"
+            "/v%s/json/licenses.json" % version
         )
-        r.raise_for_status()
-        return r.json()
+        return json.loads(util.fetch_remote_content(spdx_data_url))

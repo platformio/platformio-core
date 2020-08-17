@@ -24,7 +24,7 @@ import click
 from platformio import app, exception, fs, proc, util
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
-from platformio.managers.core import inject_contrib_pysite
+from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data

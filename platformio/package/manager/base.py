@@ -31,8 +31,8 @@ from platformio.package.manager._uninstall import PackageManagerUninstallMixin
 from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import (
+    PackageItem,
     PackageMetaData,
-    PackageSourceItem,
     PackageSpec,
     PackageType,
 )
@@ -144,7 +144,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return self.get_manifest_path(pkg_dir)
 
     def load_manifest(self, src):
-        path = src.path if isinstance(src, PackageSourceItem) else src
+        path = src.path if isinstance(src, PackageItem) else src
         cache_key = "load_manifest-%s" % path
         result = self.memcache_get(cache_key)
         if result:
@@ -190,29 +190,44 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return metadata
 
     def get_installed(self):
+        cache_key = "get_installed"
+        if self.memcache_get(cache_key):
+            return self.memcache_get(cache_key)
+
         result = []
-        for name in os.listdir(self.package_dir):
+        for name in sorted(os.listdir(self.package_dir)):
             pkg_dir = os.path.join(self.package_dir, name)
             if not os.path.isdir(pkg_dir):
                 continue
-            pkg = PackageSourceItem(pkg_dir)
+            pkg = PackageItem(pkg_dir)
             if not pkg.metadata:
                 try:
                     spec = self.build_legacy_spec(pkg_dir)
                     pkg.metadata = self.build_metadata(pkg_dir, spec)
                 except MissingPackageManifestError:
                     pass
-            if pkg.metadata:
-                result.append(pkg)
+            if not pkg.metadata:
+                continue
+            if self.pkg_type == PackageType.TOOL:
+                try:
+                    if not self.is_system_compatible(
+                        self.load_manifest(pkg).get("system")
+                    ):
+                        continue
+                except MissingPackageManifestError:
+                    pass
+            result.append(pkg)
+
+        self.memcache_set(cache_key, result)
         return result
 
     def get_package(self, spec):
-        if isinstance(spec, PackageSourceItem):
+        if isinstance(spec, PackageItem):
             return spec
         spec = self.ensure_spec(spec)
         best = None
         for pkg in self.get_installed():
-            if not self._test_pkg_with_spec(pkg, spec):
+            if not self.test_pkg_spec(pkg, spec):
                 continue
             assert isinstance(pkg.metadata.version, semantic_version.Version)
             if spec.requirements and pkg.metadata.version not in spec.requirements:
@@ -221,7 +236,8 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 best = pkg
         return best
 
-    def _test_pkg_with_spec(self, pkg, spec):
+    @staticmethod
+    def test_pkg_spec(pkg, spec):
         # "id" mismatch
         if spec.id and spec.id != pkg.metadata.spec.id:
             return False
@@ -233,8 +249,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         # external "URL" mismatch
         if spec.external:
             # local folder mismatch
-            if spec.url == pkg.path or (
-                spec.url.startswith("file://") and pkg.path == spec.url[7:]
+            if os.path.realpath(spec.url) == os.path.realpath(pkg.path) or (
+                spec.url.startswith("file://")
+                and os.path.realpath(pkg.path) == os.path.realpath(spec.url[7:])
             ):
                 return True
             if spec.url != pkg.metadata.spec.url:
@@ -243,9 +260,5 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         # "name" mismatch
         elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):
             return False
-
-        if self.pkg_type == PackageType.TOOL:
-            # TODO: check "system" for pkg
-            pass
 
         return True

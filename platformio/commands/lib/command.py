@@ -30,7 +30,7 @@ from platformio.commands.lib.helpers import (
 from platformio.compat import dump_json_to_unicode
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
-from platformio.package.meta import PackageSourceItem, PackageSpec
+from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
@@ -262,7 +262,7 @@ def lib_update(  # pylint: disable=too-many-arguments
             for library in _libraries:
                 spec = None
                 pkg = None
-                if isinstance(library, PackageSourceItem):
+                if isinstance(library, PackageItem):
                     pkg = library
                 else:
                     spec = PackageSpec(library)
@@ -284,9 +284,7 @@ def lib_update(  # pylint: disable=too-many-arguments
         else:
             for library in _libraries:
                 to_spec = (
-                    None
-                    if isinstance(library, PackageSourceItem)
-                    else PackageSpec(library)
+                    None if isinstance(library, PackageItem) else PackageSpec(library)
                 )
                 lm.update(
                     library, to_spec=to_spec, only_check=only_check, silent=silent

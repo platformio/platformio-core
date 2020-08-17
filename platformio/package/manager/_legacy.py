@@ -15,7 +15,7 @@
 import os
 
 from platformio import fs
-from platformio.package.meta import PackageSourceItem, PackageSpec
+from platformio.package.meta import PackageItem, PackageSpec
 
 
 class PackageManagerLegacyMixin(object):
@@ -42,7 +42,9 @@ class PackageManagerLegacyMixin(object):
         return PackageSpec(name=manifest.get("name"))
 
     def legacy_load_manifest(self, pkg):
-        assert isinstance(pkg, PackageSourceItem)
+        if not isinstance(pkg, PackageItem):
+            assert os.path.isdir(pkg)
+            pkg = PackageItem(pkg)
         manifest = self.load_manifest(pkg)
         manifest["__pkg_dir"] = pkg.path
         for key in ("name", "version"):

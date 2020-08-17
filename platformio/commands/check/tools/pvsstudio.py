@@ -22,7 +22,7 @@ import click
 from platformio import proc, util
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
-from platformio.managers.core import get_core_package_dir
+from platformio.package.manager.core import get_core_package_dir
 
 
 class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-attributes

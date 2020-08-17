@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (4, 4, "0a7")
+import sys
+
+DEFAULT_REQUESTS_TIMEOUT = (10, None)  # (connect, read)
+
+VERSION = (4, 4, "0b1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -40,3 +44,13 @@ __apiurl__ = "https://api.platformio.org"
 __accounts_api__ = "https://api.accounts.platformio.org"
 __registry_api__ = "https://api.registry.platformio.org"
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
+
+__core_packages__ = {
+    "contrib-piohome": "~3.2.3",
+    "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
+    "tool-unity": "~1.20500.0",
+    "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~3.30102.0",
+    "tool-cppcheck": "~1.190.0",
+    "tool-clangtidy": "~1.100000.0",
+    "tool-pvs-studio": "~7.7.0",
+}

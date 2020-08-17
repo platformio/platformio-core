@@ -18,17 +18,13 @@ import click
 
 from platformio import util
 from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import (
-    PackageOutdatedResult,
-    PackageSourceItem,
-    PackageSpec,
-)
+from platformio.package.meta import PackageItem, PackageOutdatedResult, PackageSpec
 from platformio.package.vcsclient import VCSBaseException, VCSClientFactory
 
 
 class PackageManagerUpdateMixin(object):
     def outdated(self, pkg, spec=None):
-        assert isinstance(pkg, PackageSourceItem)
+        assert isinstance(pkg, PackageItem)
         assert not spec or isinstance(spec, PackageSpec)
         assert os.path.isdir(pkg.path) and pkg.metadata
 
@@ -78,17 +74,24 @@ class PackageManagerUpdateMixin(object):
             ).version
         )
 
-    def update(self, from_spec, to_spec=None, only_check=False, silent=False):
+    def update(  # pylint: disable=too-many-arguments
+        self,
+        from_spec,
+        to_spec=None,
+        only_check=False,
+        silent=False,
+        show_incompatible=True,
+    ):
         pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
 
         if not silent:
             click.echo(
-                "{} {:<45} {:<30}".format(
+                "{} {:<45} {:<35}".format(
                     "Checking" if only_check else "Updating",
                     click.style(pkg.metadata.spec.humanize(), fg="cyan"),
-                    "%s (%s)" % (pkg.metadata.version, to_spec.requirements)
+                    "%s @ %s" % (pkg.metadata.version, to_spec.requirements)
                     if to_spec and to_spec.requirements
                     else str(pkg.metadata.version),
                 ),
@@ -101,17 +104,9 @@ class PackageManagerUpdateMixin(object):
 
         outdated = self.outdated(pkg, to_spec)
         if not silent:
-            self.print_outdated_state(outdated)
+            self.print_outdated_state(outdated, show_incompatible)
 
-        up_to_date = any(
-            [
-                outdated.detached,
-                not outdated.latest,
-                outdated.latest and outdated.current == outdated.latest,
-                outdated.wanted and outdated.current == outdated.wanted,
-            ]
-        )
-        if only_check or up_to_date:
+        if only_check or not outdated.is_outdated(allow_incompatible=False):
             return pkg
 
         try:
@@ -121,18 +116,26 @@ class PackageManagerUpdateMixin(object):
             self.unlock()
 
     @staticmethod
-    def print_outdated_state(outdated):
+    def print_outdated_state(outdated, show_incompatible=True):
         if outdated.detached:
             return click.echo("[%s]" % (click.style("Detached", fg="yellow")))
-        if not outdated.latest or outdated.current == outdated.latest:
+        if (
+            not outdated.latest
+            or outdated.current == outdated.latest
+            or (not show_incompatible and outdated.current == outdated.wanted)
+        ):
             return click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
         if outdated.wanted and outdated.current == outdated.wanted:
             return click.echo(
-                "[%s]"
-                % (click.style("Incompatible (%s)" % outdated.latest, fg="yellow"))
+                "[%s]" % (click.style("Incompatible %s" % outdated.latest, fg="yellow"))
             )
         return click.echo(
-            "[%s]" % (click.style(str(outdated.wanted or outdated.latest), fg="red"))
+            "[%s]"
+            % (
+                click.style(
+                    "Outdated %s" % str(outdated.wanted or outdated.latest), fg="red"
+                )
+            )
         )
 
     def _update(self, pkg, outdated, silent=False):
