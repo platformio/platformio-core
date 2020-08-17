@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=redefined-outer-name
+
 import os
 
 import pytest
@@ -345,7 +347,7 @@ board = myboard
             ["check_types", [("float_option", 13.99), ("bool_option", True)]],
         ]
     )
-    config.get("platformio", "extra_configs") == "extra.ini"
+    assert config.get("platformio", "extra_configs") == ["extra.ini"]
     config.remove_section("platformio")
     assert config.as_tuple() == [
         ("env:myenv", [("board", "myboard"), ("framework", ["espidf", "arduino"])]),

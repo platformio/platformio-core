@@ -1,5 +1,6 @@
 lint:
-	pylint --rcfile=./.pylintrc ./platformio
+	pylint -j 6 --rcfile=./.pylintrc ./platformio ./tests
+	pylint -j 6 --rcfile=./.pylintrc ./tests
 
 isort:
 	isort -rc ./platformio

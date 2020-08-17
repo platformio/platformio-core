@@ -21,7 +21,8 @@ import pytest
 
 from platformio import util
 from platformio.compat import PY2
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
@@ -34,8 +35,8 @@ def pytest_generate_tests(metafunc):
     examples_dirs.append(normpath(join(dirname(__file__), "..", "examples")))
 
     # dev/platforms
-    for manifest in PlatformManager().get_installed():
-        p = PlatformFactory.new(manifest["__pkg_dir"])
+    for pkg in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(pkg)
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
         examples_dirs.append(examples_dir)

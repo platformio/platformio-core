@@ -101,8 +101,6 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
             if spec.name not in packages:
                 packages[spec.name] = {}
             packages[spec.name].update(**options)
-
-        print(13, packages)
         return packages
 
     @property

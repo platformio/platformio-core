@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=unused-argument
+
 import pytest
 import requests
 
@@ -21,6 +23,7 @@ from platformio import exception, util
 def test_platformio_cli():
     result = util.exec_command(["pio", "--help"])
     assert result["returncode"] == 0
+    # pylint: disable=unsupported-membership-test
     assert "Usage: pio [OPTIONS] COMMAND [ARGS]..." in result["out"]
 
 

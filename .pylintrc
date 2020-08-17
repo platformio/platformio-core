@@ -1,3 +1,6 @@
+[REPORTS]
+output-format=colorized
+
 [MESSAGES CONTROL]
 disable=
     bad-continuation,
