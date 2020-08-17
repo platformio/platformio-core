@@ -47,44 +47,6 @@ class AbortedByUser(UserSideException):
     MESSAGE = "Aborted by user"
 
 
-#
-# Development Platform
-#
-
-
-class UnknownPlatform(PlatformioException):
-
-    MESSAGE = "Unknown development platform '{0}'"
-
-
-class IncompatiblePlatform(PlatformioException):
-
-    MESSAGE = "Development platform '{0}' is not compatible with PIO Core v{1}"
-
-
-class PlatformNotInstalledYet(PlatformioException):
-
-    MESSAGE = (
-        "The platform '{0}' has not been installed yet. "
-        "Use `platformio platform install {0}` command"
-    )
-
-
-class UnknownBoard(PlatformioException):
-
-    MESSAGE = "Unknown board ID '{0}'"
-
-
-class InvalidBoardManifest(PlatformioException):
-
-    MESSAGE = "Invalid board JSON manifest '{0}'"
-
-
-class UnknownFramework(PlatformioException):
-
-    MESSAGE = "Unknown framework '{0}'"
-
-
 # Package Manager
 
 
@@ -193,11 +155,6 @@ class InternetIsOffline(UserSideException):
         "PlatformIO needs the Internet connection to"
         " download dependent packages or to work with PIO Account."
     )
-
-
-class BuildScriptNotFound(PlatformioException):
-
-    MESSAGE = "Invalid path '{0}' to build script"
 
 
 class InvalidSettingName(UserSideException):

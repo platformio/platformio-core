@@ -20,10 +20,11 @@ import os
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs
+from platformio import fs
 from platformio.commands.platform import platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.exception import UnknownBoard
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
@@ -108,11 +109,11 @@ def project_idedata(project_dir, environment, json_output):
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     for id_ in value:
         try:
             pm.board_config(id_)
-        except exception.UnknownBoard:
+        except UnknownBoard:
             raise click.BadParameter(
                 "`%s`. Please search for board ID using `platformio boards` "
                 "command" % id_
@@ -366,7 +367,7 @@ def fill_project_envs(
         if all(cond):
             used_boards.append(config.get(section, "board"))
 
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     used_platforms = []
     modified = False
     for id_ in board_ids:
@@ -403,7 +404,9 @@ def fill_project_envs(
 
 
 def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = [p["name"] for p in PlatformManager().get_installed()]
+    installed_platforms = [
+        pkg.metadata.name for pkg in PlatformPackageManager().get_installed()
+    ]
     if set(platforms) <= set(installed_platforms):
         return
     ctx.invoke(

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=line-too-long
+
 import json
 import re
 
@@ -129,7 +131,9 @@ def test_global_install_repository(clirunner, validate_cliresult, isolated_pio_c
     assert set(items1) >= set(items2)
 
 
-def test_install_duplicates(clirunner, validate_cliresult, without_internet):
+def test_install_duplicates(  # pylint: disable=unused-argument
+    clirunner, validate_cliresult, without_internet
+):
     # registry
     result = clirunner.invoke(
         cmd_lib,
@@ -231,7 +235,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update", "--dry-run", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["ESPAsyncTCP", "NeoPixelBus"]) == set([lib["name"] for lib in output])
+    assert set(["ESPAsyncTCP", "NeoPixelBus"]) == set(lib["name"] for lib in output)
 
 
 def test_global_lib_update(clirunner, validate_cliresult):

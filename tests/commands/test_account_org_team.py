@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=global-statement,unused-argument
+
 import json
 import os
 import random
@@ -30,6 +32,7 @@ pytestmark = pytest.mark.skipif(
 
 username = None
 email = None
+splited_email = None
 firstname = None
 lastname = None
 password = None
@@ -43,7 +46,7 @@ team_description = None
 
 
 def test_prepare():
-    global username, splited_email, email, firstname, lastname
+    global username, email, splited_email, firstname, lastname
     global password, orgname, display_name, second_username, teamname, team_description
 
     username = "test-piocore-%s" % str(random.randint(0, 100000))

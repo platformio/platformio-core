@@ -22,7 +22,7 @@ from serial.tools import miniterm
 from platformio import exception, fs, util
 from platformio.commands.device import helpers as device_helpers
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformFactory
+from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import NotPlatformIOProjectError
 
 
@@ -192,7 +192,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     platform = None
     if "platform" in project_options:
         with fs.cd(kwargs["project_dir"]):
-            platform = PlatformFactory.newPlatform(project_options["platform"])
+            platform = PlatformFactory.new(project_options["platform"])
             device_helpers.register_platform_filters(
                 platform, kwargs["project_dir"], kwargs["environment"]
             )

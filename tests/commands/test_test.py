@@ -33,6 +33,7 @@ def test_local_env():
     )
     if result["returncode"] != 1:
         pytest.fail(str(result))
+    # pylint: disable=unsupported-membership-test
     assert all([s in result["err"] for s in ("PASSED", "IGNORED", "FAILED")]), result[
         "out"
     ]

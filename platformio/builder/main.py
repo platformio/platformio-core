@@ -30,7 +30,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import compat, fs
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformBase
+from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
 

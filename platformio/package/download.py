@@ -14,7 +14,6 @@
 
 import io
 import math
-import sys
 from email.utils import parsedate_tz
 from os.path import getsize, join
 from time import mktime
@@ -22,7 +21,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import app, fs, util
+from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs, util
 from platformio.package.exception import PackageException
 
 
@@ -34,7 +33,7 @@ class FileDownloader(object):
             url,
             stream=True,
             headers={"User-Agent": app.get_user_agent()},
-            verify=sys.version_info >= (2, 7, 9),
+            timeout=DEFAULT_REQUESTS_TIMEOUT,
         )
         if self._request.status_code != 200:
             raise PackageException(

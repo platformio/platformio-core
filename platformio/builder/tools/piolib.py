@@ -40,7 +40,7 @@ from platformio.package.manifest.parser import (
     ManifestParserError,
     ManifestParserFactory,
 )
-from platformio.package.meta import PackageSourceItem
+from platformio.package.meta import PackageItem
 from platformio.project.options import ProjectOptions
 
 
@@ -1019,7 +1019,7 @@ def ConfigureProjectLibBuilder(env):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
-            pkg = PackageSourceItem(lb.path)
+            pkg = PackageItem(lb.path)
             if pkg.metadata:
                 title += " %s" % pkg.metadata.version
             elif lb.version:

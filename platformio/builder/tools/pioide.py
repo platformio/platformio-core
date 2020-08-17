@@ -20,7 +20,7 @@ from glob import glob
 from SCons.Defaults import processDefines  # pylint: disable=import-error
 
 from platformio.compat import glob_escape
-from platformio.managers.core import get_core_package_dir
+from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
@@ -45,10 +45,10 @@ def _dump_includes(env):
     # includes from toolchains
     p = env.PioPlatform()
     includes["toolchain"] = []
-    for name in p.get_installed_packages():
-        if p.get_package_type(name) != "toolchain":
+    for pkg in p.get_installed_packages():
+        if p.get_package_type(pkg.metadata.name) != "toolchain":
             continue
-        toolchain_dir = glob_escape(p.get_package_dir(name))
+        toolchain_dir = glob_escape(pkg.path)
         toolchain_incglobs = [
             os.path.join(toolchain_dir, "*", "include", "c++", "*"),
             os.path.join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
