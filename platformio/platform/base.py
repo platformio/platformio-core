@@ -89,17 +89,20 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     @property
     def packages(self):
         packages = self._manifest.get("packages", {})
-        for spec in self._custom_packages or []:
-            spec = self.pm.ensure_spec(spec)
-            if spec.external:
-                version = spec.url
-            else:
-                version = str(spec.requirements) or "*"
+        for item in self._custom_packages or []:
+            name = item
+            version = "*"
+            if "@" in item:
+                name, version = item.split("@", 2)
+            spec = self.pm.ensure_spec(name)
+            options = {"version": version.strip(), "optional": False}
+            if spec.owner:
+                options["owner"] = spec.owner
             if spec.name not in packages:
                 packages[spec.name] = {}
-            packages[spec.name].update(
-                {"owner": spec.owner, "version": version, "optional": False}
-            )
+            packages[spec.name].update(**options)
+
+        print(13, packages)
         return packages
 
     @property
