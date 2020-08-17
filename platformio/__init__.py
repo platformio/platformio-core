@@ -16,7 +16,7 @@ import sys
 
 DEFAULT_REQUESTS_TIMEOUT = (10, None)  # (connect, read)
 
-VERSION = (4, 4, "0a8")
+VERSION = (4, 4, "0b1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
