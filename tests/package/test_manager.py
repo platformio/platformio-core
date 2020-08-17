@@ -349,7 +349,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     assert lm.uninstall(foo_1_0_0_pkg.path, silent=True)
     assert lm.uninstall(bar_pkg, silent=True)
 
-    assert len(lm.get_installed()) == 0
+    assert not lm.get_installed()
 
     # test uninstall dependencies
     assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
@@ -360,7 +360,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     lm = LibraryPackageManager(str(storage_dir))
     assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
     assert lm.uninstall("AsyncMqttClient-esphome", silent=True)
-    assert len(lm.get_installed()) == 0
+    assert not lm.get_installed()
 
 
 def test_registry(isolated_pio_core):
