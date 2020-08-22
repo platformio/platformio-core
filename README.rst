@@ -147,7 +147,6 @@ Share minimal diagnostics and usage information to help us make PlatformIO bette
 It is enabled by default. For more information see:
 
 * `Telemetry Setting <https://docs.platformio.org/page/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-telemetry>`_
-* `SSL Setting <https://docs.platformio.org/page/userguide/cmd_settings.html?utm_source=github&utm_medium=core#strict-ssl>`_
 
 License
 -------

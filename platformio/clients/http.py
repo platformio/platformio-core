@@ -20,8 +20,8 @@ import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
 from platformio import DEFAULT_REQUESTS_TIMEOUT, app, util
+from platformio.cache import ContentCache
 from platformio.exception import PlatformioException, UserSideException
-
 
 PING_REMOTE_HOSTS = [
     "140.82.118.3",  # Github.com
@@ -90,16 +90,20 @@ class HTTPClient(object):
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
             raise HTTPClientError(str(e))
 
-    def fetch_json_data(self, *args, **kwargs):
+    def fetch_json_data(self, method, path, **kwargs):
         cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None
         if not cache_valid:
-            return self.raise_error_from_response(self.send_request(*args, **kwargs))
-        cache_key = app.ContentCache.key_from_args(*args, kwargs)
-        with app.ContentCache() as cc:
+            return self.raise_error_from_response(
+                self.send_request(method, path, **kwargs)
+            )
+        cache_key = ContentCache.key_from_args(
+            method, path, kwargs.get("params"), kwargs.get("data")
+        )
+        with ContentCache("http") as cc:
             result = cc.get(cache_key)
             if result is not None:
                 return json.loads(result)
-            response = self.send_request(*args, **kwargs)
+            response = self.send_request(method, path, **kwargs)
             cc.set(cache_key, response.text, cache_valid)
             return self.raise_error_from_response(response)
 

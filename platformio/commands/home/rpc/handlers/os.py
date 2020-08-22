@@ -22,7 +22,8 @@ from functools import cmp_to_key
 import click
 from twisted.internet import defer  # pylint: disable=import-error
 
-from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs, util
+from platformio import DEFAULT_REQUESTS_TIMEOUT, fs, util
+from platformio.cache import ContentCache
 from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
@@ -40,8 +41,8 @@ class OSRPC(object):
                     "Safari/603.3.8"
                 )
             }
-        cache_key = app.ContentCache.key_from_args(uri, data) if cache_valid else None
-        with app.ContentCache() as cc:
+        cache_key = ContentCache.key_from_args(uri, data) if cache_valid else None
+        with ContentCache() as cc:
             if cache_key:
                 result = cc.get(cache_key)
                 if result is not None:
@@ -63,7 +64,7 @@ class OSRPC(object):
         r.raise_for_status()
         result = r.text
         if cache_valid:
-            with app.ContentCache() as cc:
+            with ContentCache() as cc:
                 cc.set(cache_key, result, cache_valid)
         defer.returnValue(result)
 

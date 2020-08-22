@@ -20,6 +20,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry, util
+from platformio.cache import cleanup_content_cache
 from platformio.clients import http
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
@@ -160,7 +161,7 @@ def after_upgrade(ctx):
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         try:
-            app.clean_cache()
+            cleanup_content_cache("http")
         except:  # pylint: disable=bare-except
             pass
 

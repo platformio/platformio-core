@@ -14,7 +14,7 @@
 
 import click
 
-from platformio import app
+from platformio.cache import cleanup_content_cache
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
@@ -38,7 +38,7 @@ from platformio.package.manager.library import LibraryPackageManager
 @click.pass_context
 def cli(ctx, core_packages, only_check, dry_run):
     # cleanup lib search results, cached board and platform lists
-    app.clean_cache()
+    cleanup_content_cache("http")
 
     only_check = dry_run or only_check
 

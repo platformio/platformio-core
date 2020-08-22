@@ -17,7 +17,7 @@ import os
 import subprocess
 import sys
 
-from platformio import __core_packages__, fs, exception, util
+from platformio import __core_packages__, exception, fs, util
 from platformio.compat import PY2
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec

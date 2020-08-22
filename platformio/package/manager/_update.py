@@ -16,10 +16,10 @@ import os
 
 import click
 
+from platformio.clients.http import ensure_internet_on
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageItem, PackageOutdatedResult, PackageSpec
 from platformio.package.vcsclient import VCSBaseException, VCSClientFactory
-from platformio.clients.http import ensure_internet_on
 
 
 class PackageManagerUpdateMixin(object):

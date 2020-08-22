@@ -27,7 +27,7 @@ class PackageManagerDownloadMixin(object):
     DOWNLOAD_CACHE_EXPIRE = 86400 * 30  # keep package in a local cache for 1 month
 
     def compute_download_path(self, *args):
-        request_hash = hashlib.new("sha256")
+        request_hash = hashlib.new("sha1")
         for arg in args:
             request_hash.update(compat.hashlib_encode_data(arg))
         dl_path = os.path.join(self.get_download_dir(), request_hash.hexdigest())

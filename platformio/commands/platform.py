@@ -16,7 +16,8 @@ import os
 
 import click
 
-from platformio import app, util
+from platformio import util
+from platformio.cache import cleanup_content_cache
 from platformio.commands.boards import print_boards
 from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
@@ -191,7 +192,9 @@ def platform_search(query, json_output):
 def platform_frameworks(query, json_output):
     regclient = PlatformPackageManager().get_registry_client_instance()
     frameworks = []
-    for framework in regclient.fetch_json_data("get", "/v2/frameworks", cache_valid="1d"):
+    for framework in regclient.fetch_json_data(
+        "get", "/v2/frameworks", cache_valid="1d"
+    ):
         if query == "all":
             query = ""
         search_data = dump_json_to_unicode(framework)
@@ -401,7 +404,8 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
         return click.echo(dump_json_to_unicode(result))
 
     # cleanup cached board and platform lists
-    app.clean_cache()
+    cleanup_content_cache("http")
+
     for platform in platforms:
         click.echo(
             "Platform %s"

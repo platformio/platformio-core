@@ -153,9 +153,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         ).get("auth_token")
 
     def forgot_password(self, username):
-        return self.fetch_json_data(
-            "post", "/v1/forgot", data={"username": username},
-        )
+        return self.fetch_json_data("post", "/v1/forgot", data={"username": username},)
 
     def get_profile(self):
         return self.send_auth_request("get", "/v1/profile",)

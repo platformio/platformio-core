@@ -123,9 +123,7 @@ class MeasurementProtocol(TelemetryBase):
 
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
-        self["cd4"] = (
-            1 if (not is_ci() and (caller_id or not is_container())) else 0
-        )
+        self["cd4"] = 1 if (not is_ci() and (caller_id or not is_container())) else 0
         if caller_id:
             self["cd5"] = caller_id.lower()
 
