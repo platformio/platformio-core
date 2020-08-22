@@ -347,6 +347,7 @@ def lib_list(ctx, json_output):
     help="Do not prompt, automatically paginate with delay",
 )
 def lib_search(query, json_output, page, noninteractive, **filters):
+    regclient = LibraryPackageManager().get_registry_client_instance()
     if not query:
         query = []
     if not isinstance(query, list):
@@ -356,8 +357,11 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         for value in values:
             query.append('%s:"%s"' % (key, value))
 
-    result = util.get_api_result(
-        "/v2/lib/search", dict(query=" ".join(query), page=page), cache_valid="1d"
+    result = regclient.fetch_json_data(
+        "get",
+        "/v2/lib/search",
+        params=dict(query=" ".join(query), page=page),
+        cache_valid="1d",
     )
 
     if json_output:
@@ -406,9 +410,10 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             time.sleep(5)
         elif not click.confirm("Show next libraries?"):
             break
-        result = util.get_api_result(
+        result = regclient.fetch_json_data(
+            "get",
             "/v2/lib/search",
-            {"query": " ".join(query), "page": int(result["page"]) + 1},
+            params=dict(query=" ".join(query), page=int(result["page"]) + 1),
             cache_valid="1d",
         )
 
@@ -438,10 +443,10 @@ def lib_builtin(storage, json_output):
 @click.argument("library", metavar="[LIBRARY]")
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
-    lib_id = LibraryPackageManager().reveal_registry_package_id(
-        library, silent=json_output
-    )
-    lib = util.get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
+    lm = LibraryPackageManager()
+    lib_id = lm.reveal_registry_package_id(library, silent=json_output)
+    regclient = lm.get_registry_client_instance()
+    lib = regclient.fetch_json_data("get", "/v2/lib/info/%d" % lib_id, cache_valid="1h")
     if json_output:
         return click.echo(dump_json_to_unicode(lib))
 
@@ -534,7 +539,8 @@ def lib_register(config_url):  # pylint: disable=unused-argument
 @cli.command("stats", short_help="Library Registry Statistics")
 @click.option("--json-output", is_flag=True)
 def lib_stats(json_output):
-    result = util.get_api_result("/lib/stats", cache_valid="1h")
+    regclient = LibraryPackageManager().get_registry_client_instance()
+    result = regclient.fetch_json_data("get", "/v2/lib/stats", cache_valid="1h")
 
     if json_output:
         return click.echo(dump_json_to_unicode(result))

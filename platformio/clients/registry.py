@@ -17,11 +17,6 @@ from platformio.clients.account import AccountClient
 from platformio.clients.http import HTTPClient, HTTPClientError
 from platformio.package.meta import PackageType
 
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
-
 # pylint: disable=too-many-arguments
 
 
@@ -35,7 +30,7 @@ class RegistryClient(HTTPClient):
             token = AccountClient().fetch_authentication_token()
             headers["Authorization"] = "Bearer %s" % token
         kwargs["headers"] = headers
-        return self.request_json_data(*args, **kwargs)
+        return self.fetch_json_data(*args, **kwargs)
 
     def publish_package(
         self, archive_path, owner=None, released_at=None, private=False, notify=True
@@ -123,17 +118,17 @@ class RegistryClient(HTTPClient):
                     search_query.append('%s:"%s"' % (name[:-1], value))
         if query:
             search_query.append(query)
-        params = dict(query=quote(" ".join(search_query)))
+        params = dict(query=" ".join(search_query))
         if page:
             params["page"] = int(page)
-        return self.request_json_data("get", "/v3/packages", params=params)
+        return self.fetch_json_data("get", "/v3/packages", params=params)
 
     def get_package(self, type_, owner, name, version=None):
         try:
-            return self.request_json_data(
+            return self.fetch_json_data(
                 "get",
                 "/v3/packages/{owner}/{type}/{name}".format(
-                    type=type_, owner=owner.lower(), name=quote(name.lower())
+                    type=type_, owner=owner.lower(), name=name.lower()
                 ),
                 params=dict(version=version) if version else None,
             )

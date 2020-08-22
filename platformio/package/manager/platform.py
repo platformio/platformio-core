@@ -164,9 +164,10 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
                     boards.append(board)
         return boards
 
-    @staticmethod
-    def get_registered_boards():
-        return util.get_api_result("/boards", cache_valid="7d")
+    def get_registered_boards(self):
+        return self.get_registry_client_instance().fetch_json_data(
+            "get", "/v2/boards", cache_valid="1d"
+        )
 
     def get_all_boards(self):
         boards = self.get_installed_boards()
