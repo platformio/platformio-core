@@ -66,7 +66,7 @@ class EndpointSession(requests.Session):
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
     ):
-        print(self.base_url, method, url, args, kwargs)
+        # print(self.base_url, method, url, args, kwargs)
         return super(EndpointSession, self).request(
             method, urljoin(self.base_url, url), *args, **kwargs
         )
