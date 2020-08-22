@@ -46,20 +46,26 @@ PlatformIO Core 4
   - Command launcher with own arguments
   - Launch command with custom options declared in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
   - Python callback as a target (use the power of Python interpreter and PlatformIO Build API)
+  - List available project targets (including dev-platform specific and custom targets) with a new `platformio run --list-targets <https://docs.platformio.org/page/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
 
-* Display system-wide information using a new `platformio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
-* List available project targets (including dev-platform specific and custom targets) with a new `platformio run --list-targets <https://docs.platformio.org/page/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
-* Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
-* Added a new ``-e, --environment`` option to `platformio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
-* Dump data intended for IDE extensions/plugins using a new `platformio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
-* Do not generate ".travis.yml" for a new project, let the user have a choice
-* Automatically enable LDF dependency `chain+ mode (evaluates C/C++ Preprocessor conditional syntax) <https://docs.platformio.org/page/librarymanager/ldf.html#dependency-finder-mode>`__ for Arduino library when "library.property" has "depends" field (`issue #3607 <https://github.com/platformio/platformio-core/issues/3607>`_)
-* Enable "cyclic reference" for GCC linker only for the embedded dev-platforms (`issue #3570 <https://github.com/platformio/platformio-core/issues/3570>`_)
-* Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
-* Do not escape compiler arguments in VSCode template on Windows
-* Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
-* Fixed an issue with improper processing of source files added via multiple Build Middlewares (`issue #3531 <https://github.com/platformio/platformio-core/issues/3531>`_)
-* Fixed an issue with ``clean`` target on Windows when project and build directories are located on different logical drives (`issue #3542 <https://github.com/platformio/platformio-core/issues/3542>`_)
+* **PlatformIO Build System**
+
+  - Upgraded to `SCons 4.0 - a next-generation software construction tool <https://scons.org/>`__
+  - Enable "cyclic reference" for GCC linker only for the embedded dev-platforms (`issue #3570 <https://github.com/platformio/platformio-core/issues/3570>`_)
+  - Automatically enable LDF dependency `chain+ mode (evaluates C/C++ Preprocessor conditional syntax) <https://docs.platformio.org/page/librarymanager/ldf.html#dependency-finder-mode>`__ for Arduino library when "library.property" has "depends" field (`issue #3607 <https://github.com/platformio/platformio-core/issues/3607>`_)
+  - Fixed an issue with improper processing of source files added via multiple Build Middlewares (`issue #3531 <https://github.com/platformio/platformio-core/issues/3531>`_)
+  - Fixed an issue with ``clean`` target on Windows when project and build directories are located on different logical drives (`issue #3542 <https://github.com/platformio/platformio-core/issues/3542>`_)
+
+* **Miscellaneous**
+
+  - Display system-wide information using a new `platformio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
+  - Dump data intended for IDE extensions/plugins using a new `platformio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
+  - Added a new ``-e, --environment`` option to `platformio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
+  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
+  - Do not generate ".travis.yml" for a new project, let the user have a choice
+  - Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
+  - Do not escape compiler arguments in VSCode template on Windows
+  - Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
 
 4.3.4 (2020-05-23)
 ~~~~~~~~~~~~~~~~~~
