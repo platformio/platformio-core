@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from platformio import util
-from platformio.exception import APIRequestError, InternetIsOffline
+from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -176,7 +176,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
                 key = "%s:%s" % (board["platform"], board["id"])
                 if key not in know_boards:
                     boards.append(board)
-        except (APIRequestError, InternetIsOffline):
+        except (HTTPClientError, InternetIsOffline):
             pass
         return sorted(boards, key=lambda b: b["name"])
 

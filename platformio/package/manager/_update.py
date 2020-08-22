@@ -16,10 +16,10 @@ import os
 
 import click
 
-from platformio import util
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageItem, PackageOutdatedResult, PackageSpec
 from platformio.package.vcsclient import VCSBaseException, VCSClientFactory
+from platformio.clients.http import ensure_internet_on
 
 
 class PackageManagerUpdateMixin(object):
@@ -97,7 +97,7 @@ class PackageManagerUpdateMixin(object):
                 ),
                 nl=False,
             )
-        if not util.internet_on():
+        if not ensure_internet_on():
             if not silent:
                 click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
             return pkg

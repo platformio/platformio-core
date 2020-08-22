@@ -26,7 +26,7 @@ from os import environ, getenv, listdir, remove
 from os.path import dirname, isdir, isfile, join, realpath
 from time import time
 
-from platformio import __version__, exception, fs, proc, util
+from platformio import __version__, exception, fs, proc
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.helpers import (
@@ -394,6 +394,9 @@ def is_disabled_progressbar():
 
 
 def get_cid():
+    # pylint: disable=import-outside-toplevel
+    from platformio.clients.http import fetch_remote_content
+
     cid = get_state_item("cid")
     if cid:
         return cid
@@ -403,7 +406,7 @@ def get_cid():
     elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
         try:
             uid = json.loads(
-                util.fetch_remote_content(
+                fetch_remote_content(
                     "{api}/user?token={token}".format(
                         api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
                         token=getenv("USER_TOKEN"),

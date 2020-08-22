@@ -21,7 +21,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs, util
+from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs
 from platformio.package.exception import PackageException
 
 
@@ -134,7 +134,7 @@ class FileDownloader(object):
     def _preserve_filemtime(self, lmdate):
         timedata = parsedate_tz(lmdate)
         lmtime = mktime(timedata[:9])
-        util.change_filemtime(self._destination, lmtime)
+        fs.change_filemtime(self._destination, lmtime)
 
     def __del__(self):
         if self._request:

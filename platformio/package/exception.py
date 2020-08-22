@@ -58,3 +58,14 @@ class UnknownPackageError(UserSideException):
         "Could not find a package with '{0}' requirements for your system '%s'"
         % util.get_systype()
     )
+
+
+class NotGlobalLibDir(UserSideException):
+
+    MESSAGE = (
+        "The `{0}` is not a PlatformIO project.\n\n"
+        "To manage libraries in global storage `{1}`,\n"
+        "please use `platformio lib --global {2}` or specify custom storage "
+        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
+        "Check `platformio lib --help` for details."
+    )

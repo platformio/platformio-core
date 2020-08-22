@@ -23,6 +23,7 @@ import click
 from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs, util
+from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
 
@@ -47,7 +48,7 @@ class OSRPC(object):
                     defer.returnValue(result)
 
         # check internet before and resolve issue with 60 seconds timeout
-        util.internet_on(raise_exception=True)
+        ensure_internet_on(raise_exception=True)
 
         session = helpers.requests_session()
         if data:

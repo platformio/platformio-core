@@ -30,10 +30,6 @@ class ReturnErrorCode(PlatformioException):
     MESSAGE = "{0}"
 
 
-class LockFileTimeoutError(PlatformioException):
-    pass
-
-
 class MinitermException(PlatformioException):
     pass
 
@@ -45,61 +41,6 @@ class UserSideException(PlatformioException):
 class AbortedByUser(UserSideException):
 
     MESSAGE = "Aborted by user"
-
-
-# Package Manager
-
-
-class PlatformIOPackageException(PlatformioException):
-    pass
-
-
-class UnknownPackage(UserSideException):
-
-    MESSAGE = "Detected unknown package '{0}'"
-
-
-class MissingPackageManifest(PlatformIOPackageException):
-
-    MESSAGE = "Could not find one of '{0}' manifest files in the package"
-
-
-class UndefinedPackageVersion(PlatformIOPackageException):
-
-    MESSAGE = (
-        "Could not find a version that satisfies the requirement '{0}'"
-        " for your system '{1}'"
-    )
-
-
-class PackageInstallError(PlatformIOPackageException):
-
-    MESSAGE = (
-        "Could not install '{0}' with version requirements '{1}' "
-        "for your system '{2}'.\n\n"
-        "Please try this solution -> http://bit.ly/faq-package-manager"
-    )
-
-
-#
-# Library
-#
-
-
-class NotGlobalLibDir(UserSideException):
-
-    MESSAGE = (
-        "The `{0}` is not a PlatformIO project.\n\n"
-        "To manage libraries in global storage `{1}`,\n"
-        "please use `platformio lib --global {2}` or specify custom storage "
-        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
-        "Check `platformio lib --help` for details."
-    )
-
-
-class InvalidLibConfURL(UserSideException):
-
-    MESSAGE = "Invalid library config URL '{0}'"
 
 
 #
@@ -141,20 +82,6 @@ class GetSerialPortsError(PlatformioException):
 class GetLatestVersionError(PlatformioException):
 
     MESSAGE = "Can not retrieve the latest PlatformIO version"
-
-
-class APIRequestError(PlatformioException):
-
-    MESSAGE = "[API] {0}"
-
-
-class InternetIsOffline(UserSideException):
-
-    MESSAGE = (
-        "You are not connected to the Internet.\n"
-        "PlatformIO needs the Internet connection to"
-        " download dependent packages or to work with PIO Account."
-    )
 
 
 class InvalidSettingName(UserSideException):

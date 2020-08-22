@@ -67,7 +67,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
             token = self.fetch_authentication_token()
             headers["Authorization"] = "Bearer %s" % token
         kwargs["headers"] = headers
-        return self.request_json_data(*args, **kwargs)
+        return self.fetch_json_data(*args, **kwargs)
 
     def login(self, username, password):
         try:
@@ -79,7 +79,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        data = self.request_json_data(
+        data = self.fetch_json_data(
             "post", "/v1/login", data={"username": username, "password": password},
         )
         app.set_state_item("account", data)
@@ -95,7 +95,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        result = self.request_json_data(
+        result = self.fetch_json_data(
             "post",
             "/v1/login/code",
             data={"client_id": client_id, "code": code, "redirect_uri": redirect_uri},
@@ -107,7 +107,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         refresh_token = self.get_refresh_token()
         self.delete_local_session()
         try:
-            self.request_json_data(
+            self.fetch_json_data(
                 "post", "/v1/logout", data={"refresh_token": refresh_token},
             )
         except AccountError:
@@ -133,7 +133,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                 app.get_state_item("account", {}).get("email", "")
             )
 
-        return self.request_json_data(
+        return self.fetch_json_data(
             "post",
             "/v1/registration",
             data={
@@ -153,7 +153,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         ).get("auth_token")
 
     def forgot_password(self, username):
-        return self.request_json_data(
+        return self.fetch_json_data(
             "post", "/v1/forgot", data={"username": username},
         )
 
@@ -278,7 +278,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                 return auth.get("access_token")
             if auth.get("refresh_token"):
                 try:
-                    data = self.request_json_data(
+                    data = self.fetch_json_data(
                         "post",
                         "/v1/login",
                         headers={

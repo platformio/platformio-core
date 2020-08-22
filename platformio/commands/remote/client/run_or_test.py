@@ -20,7 +20,7 @@ from io import BytesIO
 
 from twisted.spread import pb  # pylint: disable=import-error
 
-from platformio import util
+from platformio import fs
 from platformio.commands.remote.client.async_base import AsyncClientBase
 from platformio.commands.remote.projectsync import PROJECT_SYNC_STAGE, ProjectSync
 from platformio.compat import hashlib_encode_data
@@ -64,7 +64,7 @@ class RunOrTestClient(AsyncClientBase):
         return "%s-%s" % (os.path.basename(path), h.hexdigest())
 
     def add_project_items(self, psync):
-        with util.cd(self.options["project_dir"]):
+        with fs.cd(self.options["project_dir"]):
             cfg = ProjectConfig.get_instance(
                 os.path.join(self.options["project_dir"], "platformio.ini")
             )

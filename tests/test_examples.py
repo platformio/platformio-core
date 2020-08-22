@@ -19,7 +19,7 @@ from os.path import basename, dirname, getsize, isdir, isfile, join, normpath
 
 import pytest
 
-from platformio import util
+from platformio import fs, proc
 from platformio.compat import PY2
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
@@ -64,14 +64,14 @@ def pytest_generate_tests(metafunc):
 
 
 def test_run(pioproject_dir):
-    with util.cd(pioproject_dir):
+    with fs.cd(pioproject_dir):
         config = ProjectConfig()
         build_dir = config.get_optional_dir("build")
         if isdir(build_dir):
-            util.rmtree_(build_dir)
+            fs.rmtree(build_dir)
 
         env_names = config.envs()
-        result = util.exec_command(
+        result = proc.exec_command(
             ["platformio", "run", "-e", random.choice(env_names)]
         )
         if result["returncode"] != 0:

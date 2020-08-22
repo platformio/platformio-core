@@ -21,7 +21,7 @@ from os.path import isfile
 
 import click
 
-from platformio import app, exception, fs, proc, util
+from platformio import app, exception, fs, proc
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.package.manager.core import inject_contrib_pysite
@@ -130,7 +130,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
                 nl=False,
             )
             stream = helpers.GDBMIConsoleStream()
-            with util.capture_std_streams(stream):
+            with proc.capture_std_streams(stream):
                 helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
             stream.close()
         else:

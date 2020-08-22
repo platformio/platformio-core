@@ -15,6 +15,7 @@
 import os
 import subprocess
 import sys
+from contextlib import contextmanager
 from threading import Thread
 
 from platformio import exception
@@ -135,6 +136,17 @@ def exec_command(*args, **kwargs):
             result[k] = result[k].strip()
 
     return result
+
+
+@contextmanager
+def capture_std_streams(stdout, stderr=None):
+    _stdout = sys.stdout
+    _stderr = sys.stderr
+    sys.stdout = stdout
+    sys.stderr = stderr or stdout
+    yield
+    sys.stdout = _stdout
+    sys.stderr = _stderr
 
 
 def is_ci():

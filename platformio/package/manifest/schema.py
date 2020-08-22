@@ -21,7 +21,7 @@ import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
-from platformio import util
+from platformio.clients.http import fetch_remote_content
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
@@ -256,4 +256,4 @@ class ManifestSchema(BaseSchema):
             "https://raw.githubusercontent.com/spdx/license-list-data"
             "/v%s/json/licenses.json" % version
         )
-        return json.loads(util.fetch_remote_content(spdx_data_url))
+        return json.loads(fetch_remote_content(spdx_data_url))

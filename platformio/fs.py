@@ -176,6 +176,10 @@ def expanduser(path):
     return os.environ["USERPROFILE"] + path[1:]
 
 
+def change_filemtime(path, mtime):
+    os.utime(path, (mtime, mtime))
+
+
 def rmtree(path):
     def _onerror(func, path, __):
         try:

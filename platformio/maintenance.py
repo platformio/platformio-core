@@ -20,6 +20,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry, util
+from platformio.clients import http
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
@@ -53,9 +54,9 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
     except (
-        exception.InternetIsOffline,
+        http.HTTPClientError,
+        http.InternetIsOffline,
         exception.GetLatestVersionError,
-        exception.APIRequestError,
     ):
         click.secho(
             "Failed to check for PlatformIO upgrades. "
@@ -221,7 +222,7 @@ def check_platformio_upgrade():
     last_check["platformio_upgrade"] = int(time())
     app.set_state_item("last_check", last_check)
 
-    util.internet_on(raise_exception=True)
+    http.ensure_internet_on(raise_exception=True)
 
     # Update PlatformIO's Core packages
     update_core_packages(silent=True)
@@ -268,7 +269,7 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     last_check[what + "_update"] = int(time())
     app.set_state_item("last_check", last_check)
 
-    util.internet_on(raise_exception=True)
+    http.ensure_internet_on(raise_exception=True)
 
     outdated_items = []
     pm = PlatformPackageManager() if what == "platforms" else LibraryPackageManager()

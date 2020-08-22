@@ -19,26 +19,17 @@ import math
 import os
 import platform
 import re
-import socket
 import sys
 import time
-from contextlib import contextmanager
 from functools import wraps
 from glob import glob
 
 import click
-import requests
 
-from platformio import DEFAULT_REQUESTS_TIMEOUT, __apiurl__, __version__, exception
-from platformio.commands import PlatformioCLI
+from platformio import __version__, exception, proc
 from platformio.compat import PY2, WINDOWS
-from platformio.fs import cd  # pylint: disable=unused-import
 from platformio.fs import load_json  # pylint: disable=unused-import
-from platformio.fs import rmtree as rmtree_  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
-from platformio.proc import is_ci  # pylint: disable=unused-import
-
-# KEEP unused imports for backward compatibility with PIO Core 3.0 API
 
 
 class memoized(object):
@@ -97,33 +88,12 @@ def singleton(cls):
     return get_instance
 
 
-@contextmanager
-def capture_std_streams(stdout, stderr=None):
-    _stdout = sys.stdout
-    _stderr = sys.stderr
-    sys.stdout = stdout
-    sys.stderr = stderr or stdout
-    yield
-    sys.stdout = _stdout
-    sys.stderr = _stderr
-
-
 def get_systype():
     type_ = platform.system().lower()
     arch = platform.machine().lower()
     if type_ == "windows":
         arch = "amd64" if platform.architecture()[0] == "64bit" else "x86"
     return "%s_%s" % (type_, arch) if arch else type_
-
-
-def pioversion_to_intstr():
-    vermatch = re.match(r"^([\d\.]+)", __version__)
-    assert vermatch
-    return [int(i) for i in vermatch.group(1).split(".")[:3]]
-
-
-def change_filemtime(path, mtime):
-    os.utime(path, (mtime, mtime))
 
 
 def get_serial_ports(filter_hwid=False):
@@ -164,7 +134,7 @@ def get_logical_devices():
     items = []
     if WINDOWS:
         try:
-            result = exec_command(
+            result = proc.exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]
             ).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
@@ -177,12 +147,12 @@ def get_logical_devices():
         except WindowsError:  # pylint: disable=undefined-variable
             pass
         # try "fsutil"
-        result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
+        result = proc.exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
         for device in re.findall(r"[A-Z]:\\", result):
             items.append({"path": device, "name": None})
         return items
 
-    result = exec_command(["df"]).get("out")
+    result = proc.exec_command(["df"]).get("out")
     devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
     for line in result.split("\n"):
         match = devicenamere.match(line.strip())
@@ -370,58 +340,25 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
     )
 
 
-PING_REMOTE_HOSTS = [
-    "140.82.118.3",  # Github.com
-    "35.231.145.151",  # Gitlab.com
-    "88.198.170.159",  # platformio.org
-    "github.com",
-    "platformio.org",
-]
-
-
-@memoized(expire="10s")
-def _internet_on():
-    timeout = 2
-    socket.setdefaulttimeout(timeout)
-    for host in PING_REMOTE_HOSTS:
-        try:
-            for var in ("HTTP_PROXY", "HTTPS_PROXY"):
-                if not os.getenv(var, var.lower()):
-                    continue
-                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
-                return True
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
-            return True
-        except:  # pylint: disable=bare-except
-            pass
-    return False
-
-
-def internet_on(raise_exception=False):
-    result = _internet_on()
-    if raise_exception and not result:
-        raise exception.InternetIsOffline()
-    return result
-
-
-def fetch_remote_content(*args, **kwargs):
-    # pylint: disable=import-outside-toplevel
-    from platformio.app import get_user_agent
-
-    kwargs["headers"] = kwargs.get("headers", {})
-    if "User-Agent" not in kwargs["headers"]:
-        kwargs["headers"]["User-Agent"] = get_user_agent()
-
-    if "timeout" not in kwargs:
-        kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
-
-    r = requests.get(*args, **kwargs)
-    r.raise_for_status()
-    return r.text
+def pioversion_to_intstr():
+    vermatch = re.match(r"^([\d\.]+)", __version__)
+    assert vermatch
+    return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
 def pepver_to_semver(pepver):
     return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
+
+
+def get_original_version(version):
+    if version.count(".") != 2:
+        return None
+    _, raw = version.split(".")[:2]
+    if int(raw) <= 99:
+        return None
+    if int(raw) <= 9999:
+        return "%s.%s" % (raw[:-2], int(raw[-2:]))
+    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
 
 
 def items_to_list(items):
@@ -472,14 +409,3 @@ def humanize_duration_time(duration):
         tokens.append(int(round(duration) if multiplier == 1 else fraction))
         duration -= fraction * multiplier
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
-
-
-def get_original_version(version):
-    if version.count(".") != 2:
-        return None
-    _, raw = version.split(".")[:2]
-    if int(raw) <= 99:
-        return None
-    if int(raw) <= 9999:
-        return "%s.%s" % (raw[:-2], int(raw[-2:]))
-    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))

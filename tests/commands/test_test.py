@@ -16,12 +16,12 @@ import os
 
 import pytest
 
-from platformio import util
+from platformio import proc
 from platformio.commands.test.command import cli as cmd_test
 
 
 def test_local_env():
-    result = util.exec_command(
+    result = proc.exec_command(
         [
             "platformio",
             "test",

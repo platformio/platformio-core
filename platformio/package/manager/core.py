@@ -17,7 +17,7 @@ import os
 import subprocess
 import sys
 
-from platformio import __core_packages__, exception, util
+from platformio import __core_packages__, fs, exception, util
 from platformio.compat import PY2
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
@@ -93,7 +93,7 @@ def inject_contrib_pysite(verify_openssl=False):
 
 def build_contrib_pysite_deps(target_dir):
     if os.path.isdir(target_dir):
-        util.rmtree_(target_dir)
+        fs.rmtree(target_dir)
     os.makedirs(target_dir)
     with open(os.path.join(target_dir, "package.json"), "w") as fp:
         json.dump(

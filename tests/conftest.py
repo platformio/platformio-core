@@ -20,7 +20,7 @@ import time
 import pytest
 from click.testing import CliRunner
 
-from platformio import util
+from platformio.clients import http
 
 
 def pytest_configure(config):
@@ -74,7 +74,7 @@ def isolated_pio_core(request, tmpdir_factory):
 
 @pytest.fixture(scope="function")
 def without_internet(monkeypatch):
-    monkeypatch.setattr(util, "_internet_on", lambda: False)
+    monkeypatch.setattr(http, "_internet_on", lambda: False)
 
 
 @pytest.fixture

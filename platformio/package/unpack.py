@@ -19,7 +19,7 @@ from zipfile import ZipFile
 
 import click
 
-from platformio import util
+from platformio import fs
 from platformio.package.exception import PackageException
 
 
@@ -109,7 +109,7 @@ class ZIPArchiver(BaseArchiver):
 
     @staticmethod
     def preserve_mtime(item, dest_dir):
-        util.change_filemtime(
+        fs.change_filemtime(
             os.path.join(dest_dir, item.filename),
             mktime(tuple(item.date_time) + tuple([0, 0, 0])),
         )

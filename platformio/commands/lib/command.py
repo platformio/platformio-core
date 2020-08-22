@@ -28,7 +28,7 @@ from platformio.commands.lib.helpers import (
     save_project_libdeps,
 )
 from platformio.compat import dump_json_to_unicode
-from platformio.package.exception import UnknownPackageError
+from platformio.package.exception import NotGlobalLibDir, UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import is_ci
@@ -97,7 +97,7 @@ def cli(ctx, **options):
             )
 
     if not storage_dirs:
-        raise exception.NotGlobalLibDir(
+        raise NotGlobalLibDir(
             get_project_dir(), get_project_global_lib_dir(), ctx.invoked_subcommand
         )
 

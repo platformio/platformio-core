@@ -389,7 +389,7 @@ check_tool = pvs-studio
     assert style == 0
 
 
-def test_check_embedded_platform_all_tools(clirunner, tmpdir):
+def test_check_embedded_platform_all_tools(clirunner, validate_cliresult, tmpdir):
     config = """
 [env:test]
 platform = ststm32
@@ -422,11 +422,9 @@ int main() {
     for framework in frameworks:
         for tool in ("cppcheck", "clangtidy", "pvs-studio"):
             tmpdir.join("platformio.ini").write(config % (framework, tool))
-
             result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
-
+            validate_cliresult(result)
             defects = sum(count_defects(result.output))
-
             assert result.exit_code == 0 and defects > 0, "Failed %s with %s" % (
                 framework,
                 tool,
