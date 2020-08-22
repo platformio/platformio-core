@@ -121,7 +121,9 @@ class RegistryClient(HTTPClient):
         params = dict(query=" ".join(search_query))
         if page:
             params["page"] = int(page)
-        return self.fetch_json_data("get", "/v3/packages", params=params)
+        return self.fetch_json_data(
+            "get", "/v3/packages", params=params, cache_valid="1h"
+        )
 
     def get_package(self, type_, owner, name, version=None):
         try:
@@ -131,6 +133,7 @@ class RegistryClient(HTTPClient):
                     type=type_, owner=owner.lower(), name=name.lower()
                 ),
                 params=dict(version=version) if version else None,
+                cache_valid="1h",
             )
         except HTTPClientError as e:
             if e.response.status_code == 404:
