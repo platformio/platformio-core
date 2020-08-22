@@ -196,6 +196,8 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
 
         result = []
         for name in sorted(os.listdir(self.package_dir)):
+            if name.startswith("_tmp_installing"):  # legacy tmp folder
+                continue
             pkg_dir = os.path.join(self.package_dir, name)
             if not os.path.isdir(pkg_dir):
                 continue
