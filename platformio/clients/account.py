@@ -40,7 +40,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
     def __init__(self):
-        super(AccountClient, self).__init__(base_url=__accounts_api__)
+        super(AccountClient, self).__init__(__accounts_api__)
 
     @staticmethod
     def get_refresh_token():

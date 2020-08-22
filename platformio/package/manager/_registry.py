@@ -27,18 +27,22 @@ except ImportError:
     from urlparse import urlparse
 
 
-class RegistryFileMirrorsIterator(object):
+class RegistryFileMirrorIterator(object):
 
     HTTP_CLIENT_INSTANCES = {}
 
     def __init__(self, download_url):
         self.download_url = download_url
         self._url_parts = urlparse(download_url)
-        self._base_url = "%s://%s" % (self._url_parts.scheme, self._url_parts.netloc)
+        self._mirror = "%s://%s" % (self._url_parts.scheme, self._url_parts.netloc)
         self._visited_mirrors = []
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
+
+    def next(self):
+        """ For Python 2 compatibility """
+        return self.__next__()
 
     def __next__(self):
         http = self.get_http_client()
@@ -64,16 +68,12 @@ class RegistryFileMirrorsIterator(object):
             response.headers.get("X-PIO-Content-SHA256"),
         )
 
-    def next(self):
-        """ For Python 2 compatibility """
-        return self.__next__()
-
     def get_http_client(self):
-        if self._base_url not in RegistryFileMirrorsIterator.HTTP_CLIENT_INSTANCES:
-            RegistryFileMirrorsIterator.HTTP_CLIENT_INSTANCES[
-                self._base_url
-            ] = HTTPClient(self._base_url)
-        return RegistryFileMirrorsIterator.HTTP_CLIENT_INSTANCES[self._base_url]
+        if self._mirror not in RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES:
+            RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror] = HTTPClient(
+                self._mirror
+            )
+        return RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror]
 
 
 class PackageManageRegistryMixin(object):
@@ -98,7 +98,7 @@ class PackageManageRegistryMixin(object):
         if not pkgfile:
             raise UnknownPackageError(spec.humanize())
 
-        for url, checksum in RegistryFileMirrorsIterator(pkgfile["download_url"]):
+        for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
             try:
                 return self.install_from_url(
                     url,

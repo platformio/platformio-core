@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import math
 import os
 import socket
 
@@ -22,6 +23,12 @@ from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-
 from platformio import DEFAULT_REQUESTS_TIMEOUT, app, util
 from platformio.cache import ContentCache
 from platformio.exception import PlatformioException, UserSideException
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
+
 
 PING_REMOTE_HOSTS = [
     "140.82.118.3",  # Github.com
@@ -51,23 +58,54 @@ class InternetIsOffline(UserSideException):
     )
 
 
-class HTTPClient(object):
-    def __init__(
-        self, base_url,
-    ):
-        if base_url.endswith("/"):
-            base_url = base_url[:-1]
+class EndpointSession(requests.Session):
+    def __init__(self, base_url, *args, **kwargs):
+        super(EndpointSession, self).__init__(*args, **kwargs)
         self.base_url = base_url
-        self._session = requests.Session()
-        self._session.headers.update({"User-Agent": app.get_user_agent()})
-        retry = Retry(
-            total=5,
+
+    def request(  # pylint: disable=signature-differs,arguments-differ
+        self, method, url, *args, **kwargs
+    ):
+        print(self.base_url, method, url, args, kwargs)
+        return super(EndpointSession, self).request(
+            method, urljoin(self.base_url, url), *args, **kwargs
+        )
+
+
+class EndpointSessionIterator(object):
+    def __init__(self, endpoints):
+        if not isinstance(endpoints, list):
+            endpoints = [endpoints]
+        self.endpoints = endpoints
+        self.endpoints_iter = iter(endpoints)
+        self.retry = Retry(
+            total=math.ceil(6 / len(self.endpoints)),
             backoff_factor=1,
             # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
             status_forcelist=[413, 429, 500, 502, 503, 504],
         )
-        adapter = requests.adapters.HTTPAdapter(max_retries=retry)
-        self._session.mount(base_url, adapter)
+
+    def __iter__(self):  # pylint: disable=non-iterator-returned
+        return self
+
+    def next(self):
+        """ For Python 2 compatibility """
+        return self.__next__()
+
+    def __next__(self):
+        base_url = next(self.endpoints_iter)
+        session = EndpointSession(base_url)
+        session.headers.update({"User-Agent": app.get_user_agent()})
+        adapter = requests.adapters.HTTPAdapter(max_retries=self.retry)
+        session.mount(base_url, adapter)
+        return session
+
+
+class HTTPClient(object):
+    def __init__(self, endpoints):
+        self._session_iter = EndpointSessionIterator(endpoints)
+        self._session = None
+        self._next_session()
 
     def __del__(self):
         if not self._session:
@@ -75,20 +113,31 @@ class HTTPClient(object):
         self._session.close()
         self._session = None
 
+    def _next_session(self):
+        if self._session:
+            self._session.close()
+        self._session = next(self._session_iter)
+
     @util.throttle(500)
     def send_request(self, method, path, **kwargs):
         # check Internet before and resolve issue with 60 seconds timeout
-        # print(self, method, path, kwargs)
         ensure_internet_on(raise_exception=True)
 
         # set default timeout
         if "timeout" not in kwargs:
             kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
 
-        try:
-            return getattr(self._session, method)(self.base_url + path, **kwargs)
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            raise HTTPClientError(str(e))
+        while True:
+            try:
+                return getattr(self._session, method)(path, **kwargs)
+            except (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout,
+            ) as e:
+                try:
+                    self._next_session()
+                except:  # pylint: disable=bare-except
+                    raise HTTPClientError(str(e))
 
     def fetch_json_data(self, method, path, **kwargs):
         cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None

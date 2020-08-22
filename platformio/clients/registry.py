@@ -22,7 +22,7 @@ from platformio.package.meta import PackageType
 
 class RegistryClient(HTTPClient):
     def __init__(self):
-        super(RegistryClient, self).__init__(base_url=__registry_api__)
+        super(RegistryClient, self).__init__(__registry_api__)
 
     def send_auth_request(self, *args, **kwargs):
         headers = kwargs.get("headers", {})
