@@ -17,7 +17,7 @@
 import pytest
 import requests
 
-from platformio import proc
+from platformio import __check_internet_hosts__, proc
 from platformio.clients import http
 from platformio.clients.registry import RegistryClient
 
@@ -30,7 +30,7 @@ def test_platformio_cli():
 
 
 def test_ping_internet_ips():
-    for host in http.PING_REMOTE_HOSTS:
+    for host in __check_internet_hosts__:
         requests.get("http://%s" % host, allow_redirects=False, timeout=2)
 
 

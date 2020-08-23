@@ -14,8 +14,6 @@
 
 import sys
 
-DEFAULT_REQUESTS_TIMEOUT = (10, None)  # (connect, read)
-
 VERSION = (4, 4, "0b3")
 __version__ = ".".join([str(s) for s in VERSION])
 
@@ -46,6 +44,8 @@ __registry_api__ = [
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
+__default_requests_timeout__ = (10, None)  # (connect, read)
+
 __core_packages__ = {
     "contrib-piohome": "~3.2.3",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
@@ -55,3 +55,11 @@ __core_packages__ = {
     "tool-clangtidy": "~1.100000.0",
     "tool-pvs-studio": "~7.7.0",
 }
+
+__check_internet_hosts__ = [
+    "140.82.118.3",  # Github.com
+    "35.231.145.151",  # Gitlab.com
+    "88.198.170.159",  # platformio.org
+    "github.com",
+    "platformio.org",
+]

@@ -20,7 +20,7 @@ import socket
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
-from platformio import DEFAULT_REQUESTS_TIMEOUT, app, util
+from platformio import __check_internet_hosts__, __default_requests_timeout__, app, util
 from platformio.cache import ContentCache
 from platformio.exception import PlatformioException, UserSideException
 
@@ -28,15 +28,6 @@ try:
     from urllib.parse import urljoin
 except ImportError:
     from urlparse import urljoin
-
-
-PING_REMOTE_HOSTS = [
-    "140.82.118.3",  # Github.com
-    "35.231.145.151",  # Gitlab.com
-    "88.198.170.159",  # platformio.org
-    "github.com",
-    "platformio.org",
-]
 
 
 class HTTPClientError(PlatformioException):
@@ -125,7 +116,7 @@ class HTTPClient(object):
 
         # set default timeout
         if "timeout" not in kwargs:
-            kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
+            kwargs["timeout"] = __default_requests_timeout__
 
         while True:
             try:
@@ -179,7 +170,7 @@ class HTTPClient(object):
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)
-    for host in PING_REMOTE_HOSTS:
+    for host in __check_internet_hosts__:
         try:
             for var in ("HTTP_PROXY", "HTTPS_PROXY"):
                 if not os.getenv(var) and not os.getenv(var.lower()):
@@ -208,7 +199,7 @@ def fetch_remote_content(*args, **kwargs):
         kwargs["headers"]["User-Agent"] = app.get_user_agent()
 
     if "timeout" not in kwargs:
-        kwargs["timeout"] = DEFAULT_REQUESTS_TIMEOUT
+        kwargs["timeout"] = __default_requests_timeout__
 
     r = requests.get(*args, **kwargs)
     r.raise_for_status()

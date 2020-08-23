@@ -21,7 +21,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import DEFAULT_REQUESTS_TIMEOUT, app, fs
+from platformio import __default_requests_timeout__, app, fs
 from platformio.package.exception import PackageException
 
 
@@ -33,7 +33,7 @@ class FileDownloader(object):
             url,
             stream=True,
             headers={"User-Agent": app.get_user_agent()},
-            timeout=DEFAULT_REQUESTS_TIMEOUT,
+            timeout=__default_requests_timeout__,
         )
         if self._request.status_code != 200:
             raise PackageException(
