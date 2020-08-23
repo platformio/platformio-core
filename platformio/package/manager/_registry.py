@@ -19,7 +19,8 @@ import click
 from platformio.clients.http import HTTPClient
 from platformio.clients.registry import RegistryClient
 from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import PackageMetaData, PackageSpec
+from platformio.package.meta import PackageSpec
+from platformio.package.version import cast_version_to_semver
 
 try:
     from urllib.parse import urlparse
@@ -185,17 +186,13 @@ class PackageManageRegistryMixin(object):
         )
 
     def find_best_registry_version(self, packages, spec):
-        # find compatible version within the latest package versions
         for package in packages:
+            # find compatible version within the latest package versions
             version = self.pick_best_registry_version([package["version"]], spec)
             if version:
                 return (package, version)
 
-        if not spec.requirements:
-            return (None, None)
-
-        # if the custom version requirements, check ALL package versions
-        for package in packages:
+            # if the custom version requirements, check ALL package versions
             version = self.pick_best_registry_version(
                 self.fetch_registry_package(
                     PackageSpec(
@@ -215,14 +212,14 @@ class PackageManageRegistryMixin(object):
         assert not spec or isinstance(spec, PackageSpec)
         best = None
         for version in versions:
-            semver = PackageMetaData.to_semver(version["name"])
+            semver = cast_version_to_semver(version["name"])
             if spec and spec.requirements and semver not in spec.requirements:
                 continue
             if not any(
                 self.is_system_compatible(f.get("system")) for f in version["files"]
             ):
                 continue
-            if not best or (semver > PackageMetaData.to_semver(best["name"])):
+            if not best or (semver > cast_version_to_semver(best["name"])):
                 best = version
         return best
 
