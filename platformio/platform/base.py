@@ -18,8 +18,9 @@ import subprocess
 import click
 import semantic_version
 
-from platformio import __version__, fs, proc, util
+from platformio import __version__, fs, proc
 from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.version import pepver_to_semver
 from platformio.platform._packages import PlatformPackagesMixin
 from platformio.platform._run import PlatformRunMixin
 from platformio.platform.board import PlatformBoardConfig
@@ -31,7 +32,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     PlatformPackagesMixin, PlatformRunMixin
 ):
 
-    PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
+    CORE_SEMVER = pepver_to_semver(__version__)
     _BOARDS_CACHE = {}
 
     def __init__(self, manifest_path):
@@ -110,10 +111,10 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     def ensure_engine_compatible(self):
         if not self.engines or "platformio" not in self.engines:
             return True
-        if self.PIO_VERSION in semantic_version.SimpleSpec(self.engines["platformio"]):
+        if self.CORE_SEMVER in semantic_version.SimpleSpec(self.engines["platformio"]):
             return True
         raise IncompatiblePlatform(
-            self.name, str(self.PIO_VERSION), self.engines["platformio"]
+            self.name, str(self.CORE_SEMVER), self.engines["platformio"]
         )
 
     def get_dir(self):

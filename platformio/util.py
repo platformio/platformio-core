@@ -244,24 +244,10 @@ def get_mdns_services():
 
 
 def pioversion_to_intstr():
+    """ Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
     vermatch = re.match(r"^([\d\.]+)", __version__)
     assert vermatch
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
-
-
-def pepver_to_semver(pepver):
-    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
-
-
-def get_original_version(version):
-    if version.count(".") != 2:
-        return None
-    _, raw = version.split(".")[:2]
-    if int(raw) <= 99:
-        return None
-    if int(raw) <= 9999:
-        return "%s.%s" % (raw[:-2], int(raw[-2:]))
-    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
 
 
 def items_to_list(items):

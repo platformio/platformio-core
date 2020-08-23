@@ -357,27 +357,8 @@ class PackageMetaData(object):
         self._version = (
             value
             if isinstance(value, semantic_version.Version)
-            else self.to_semver(value)
+            else cast_version_to_semver(value)
         )
-
-    @staticmethod
-    def to_semver(value, force=True, raise_exception=False):
-        assert value
-        try:
-            return semantic_version.Version(value)
-        except ValueError:
-            pass
-        if force:
-            try:
-                return semantic_version.Version.coerce(value)
-            except ValueError:
-                pass
-        if raise_exception:
-            raise ValueError("Invalid SemVer version %s" % value)
-        # parse commit hash
-        if re.match(r"^[\da-f]+$", value, flags=re.I):
-            return semantic_version.Version("0.0.0+sha." + value)
-        return semantic_version.Version("0.0.0+" + value)
 
     def as_dict(self):
         return dict(

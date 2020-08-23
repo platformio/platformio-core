@@ -26,9 +26,9 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
-from platformio import fs
+from platformio import __version__, fs
 from platformio.compat import string_types
-from platformio.util import pioversion_to_intstr
+from platformio.package.version import pepver_to_semver
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_ASM_EXT = ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
@@ -94,11 +94,16 @@ def BuildProgram(env):
 
 def ProcessProgramDeps(env):
     def _append_pio_macros():
+        core_version = pepver_to_semver(__version__)
         env.AppendUnique(
             CPPDEFINES=[
                 (
                     "PLATFORMIO",
-                    int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())),
+                    int(
+                        "{0:02d}{1:02d}{2:02d}".format(
+                            core_version.major, core_version.minor, core_version.patch
+                        )
+                    ),
                 )
             ]
         )

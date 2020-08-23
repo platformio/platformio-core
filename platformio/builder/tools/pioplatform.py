@@ -23,6 +23,7 @@ from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from platformio import fs, util
 from platformio.compat import WINDOWS
 from platformio.package.meta import PackageItem
+from platformio.package.version import get_original_version
 from platformio.platform.exception import UnknownBoard
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectOptions
@@ -210,7 +211,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
     def _get_packages_data():
         data = []
         for item in platform.dump_used_packages():
-            original_version = util.get_original_version(item["version"])
+            original_version = get_original_version(item["version"])
             info = "%s %s" % (item["name"], item["version"])
             extra = []
             if original_version:

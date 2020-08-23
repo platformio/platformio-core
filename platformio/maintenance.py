@@ -19,7 +19,7 @@ from time import time
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, fs, telemetry, util
+from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
 from platformio.clients import http
 from platformio.commands import PlatformioCLI
@@ -32,6 +32,7 @@ from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
+from platformio.package.version import pepver_to_semver
 from platformio.platform.factory import PlatformFactory
 from platformio.proc import is_container
 
@@ -87,12 +88,8 @@ def set_caller(caller=None):
 
 class Upgrader(object):
     def __init__(self, from_version, to_version):
-        self.from_version = semantic_version.Version.coerce(
-            util.pepver_to_semver(from_version)
-        )
-        self.to_version = semantic_version.Version.coerce(
-            util.pepver_to_semver(to_version)
-        )
+        self.from_version = pepver_to_semver(from_version)
+        self.to_version = pepver_to_semver(to_version)
 
         self._upgraders = [
             (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms),
@@ -141,9 +138,7 @@ def after_upgrade(ctx):
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
-    elif semantic_version.Version.coerce(
-        util.pepver_to_semver(last_version)
-    ) > semantic_version.Version.coerce(util.pepver_to_semver(__version__)):
+    elif pepver_to_semver(last_version) > pepver_to_semver(__version__):
         click.secho("*" * terminal_width, fg="yellow")
         click.secho(
             "Obsolete PIO Core v%s is used (previous was %s)"
@@ -229,9 +224,7 @@ def check_platformio_upgrade():
     update_core_packages(silent=True)
 
     latest_version = get_latest_version()
-    if semantic_version.Version.coerce(
-        util.pepver_to_semver(latest_version)
-    ) <= semantic_version.Version.coerce(util.pepver_to_semver(__version__)):
+    if pepver_to_semver(latest_version) <= pepver_to_semver(__version__):
         return
 
     terminal_width, _ = click.get_terminal_size()

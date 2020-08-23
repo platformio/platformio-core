@@ -16,12 +16,12 @@ import os
 
 import click
 
-from platformio import util
 from platformio.cache import cleanup_content_cache
 from platformio.commands.boards import print_boards
 from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.version import get_original_version
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 
@@ -121,7 +121,7 @@ def _get_installed_platform_data(platform, with_boards=True, expose_packages=Tru
                     continue
                 item[key] = value
                 if key == "version":
-                    item["originalVersion"] = util.get_original_version(value)
+                    item["originalVersion"] = get_original_version(value)
         data["packages"].append(item)
 
     return data
