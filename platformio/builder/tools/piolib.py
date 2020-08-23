@@ -484,6 +484,7 @@ class ArduinoLibBuilder(LibBuilderBase):
     def src_filter(self):
         src_dir = join(self.path, "src")
         if isdir(src_dir):
+            # pylint: disable=no-member
             src_filter = LibBuilderBase.src_filter.fget(self)
             for root, _, files in os.walk(src_dir, followlinks=True):
                 found = False
@@ -518,6 +519,7 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
+        # pylint: disable=no-member
         if not self._manifest.get("dependencies"):
             return LibBuilderBase.lib_ldf_mode.fget(self)
         missing = object()
@@ -554,7 +556,7 @@ class MbedLibBuilder(LibBuilderBase):
     def src_dir(self):
         if isdir(join(self.path, "source")):
             return join(self.path, "source")
-        return LibBuilderBase.src_dir.fget(self)
+        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
@@ -700,17 +702,18 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if "includeDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("includeDir"))
-        return LibBuilderBase.include_dir.fget(self)
+        return LibBuilderBase.include_dir.fget(self)  # pylint: disable=no-member
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("srcDir"))
-        return LibBuilderBase.src_dir.fget(self)
+        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     @property
     def src_filter(self):
+        # pylint: disable=no-member
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
         if self.env["SRC_FILTER"]:
@@ -723,19 +726,19 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def build_flags(self):
         if "flags" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("flags")
-        return LibBuilderBase.build_flags.fget(self)
+        return LibBuilderBase.build_flags.fget(self)  # pylint: disable=no-member
 
     @property
     def build_unflags(self):
         if "unflags" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("unflags")
-        return LibBuilderBase.build_unflags.fget(self)
+        return LibBuilderBase.build_unflags.fget(self)  # pylint: disable=no-member
 
     @property
     def extra_script(self):
         if "extraScript" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("extraScript")
-        return LibBuilderBase.extra_script.fget(self)
+        return LibBuilderBase.extra_script.fget(self)  # pylint: disable=no-member
 
     @property
     def lib_archive(self):
@@ -747,12 +750,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self.env.GetProjectConfig().get(
                 "env:" + self.env["PIOENV"], "lib_archive"
             )
+        # pylint: disable=no-member
         return self._manifest.get("build", {}).get(
             "libArchive", LibBuilderBase.lib_archive.fget(self)
         )
 
     @property
     def lib_ldf_mode(self):
+        # pylint: disable=no-member
         return self.validate_ldf_mode(
             self._manifest.get("build", {}).get(
                 "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)
@@ -761,6 +766,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_compat_mode(self):
+        # pylint: disable=no-member
         return self.validate_compat_mode(
             self._manifest.get("build", {}).get(
                 "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
@@ -835,7 +841,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
-        mode = LibBuilderBase.lib_ldf_mode.fget(self)
+        mode = LibBuilderBase.lib_ldf_mode.fget(self)  # pylint: disable=no-member
         if not mode.startswith("chain"):
             return mode
         # parse all project files
@@ -843,6 +849,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
+        # pylint: disable=no-member
         return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)
 
     @property
@@ -1037,7 +1044,7 @@ def ConfigureProjectLibBuilder(env):
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
+    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
     click.echo("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
     click.echo(
