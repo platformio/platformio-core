@@ -22,6 +22,7 @@ import semantic_version
 
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
+from platformio.package.version import cast_version_to_semver
 
 try:
     from urllib.parse import urlparse
@@ -89,7 +90,7 @@ class PackageOutdatedResult(object):
             and name in ("current", "latest", "wanted")
             and not isinstance(value, semantic_version.Version)
         ):
-            value = semantic_version.Version(str(value))
+            value = cast_version_to_semver(str(value))
         return super(PackageOutdatedResult, self).__setattr__(name, value)
 
     def is_outdated(self, allow_incompatible=False):

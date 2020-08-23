@@ -392,8 +392,14 @@ def test_registry(isolated_pio_core):
 def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
-    pkg = lm.install("ArduinoJson @ 5.10.1", silent=True)
 
+    # test non SemVer in registry
+    pkg = lm.install("RadioHead @ <1.90", silent=True)
+    outdated = lm.outdated(pkg)
+    assert str(outdated.current) == "1.89.0"
+    assert outdated.latest > semantic_version.Version("1.100.0")
+
+    pkg = lm.install("ArduinoJson @ 5.10.1", silent=True)
     # tesy latest
     outdated = lm.outdated(pkg)
     assert str(outdated.current) == "5.10.1"
@@ -411,7 +417,7 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     new_pkg = lm.update("ArduinoJson@^5", PackageSpec("ArduinoJson@^5"), silent=True)
     assert str(new_pkg.metadata.version) == "5.13.4"
     # check that old version is removed
-    assert len(lm.get_installed()) == 1
+    assert len(lm.get_installed()) == 2
 
     # update to the latest
     lm = LibraryPackageManager(str(storage_dir))
@@ -422,7 +428,7 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
 def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
     storage_dir.join("legacy-package").mkdir().join("library.json").write(
-        '{"name": "AsyncMqttClient-esphome", "version": "0.8.2"}'
+        '{"name": "AsyncMqttClient-esphome", "version": "0.8"}'
     )
     storage_dir.join("legacy-dep").mkdir().join("library.json").write(
         '{"name": "AsyncTCP-esphome", "version": "1.1.1"}'
@@ -431,8 +437,8 @@ def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
     pkg = lm.get_package("AsyncMqttClient-esphome")
     outdated = lm.outdated(pkg)
     assert len(lm.get_installed()) == 2
-    assert str(pkg.metadata.version) == "0.8.2"
-    assert outdated.latest > semantic_version.Version("0.8.2")
+    assert str(pkg.metadata.version) == "0.8.0"
+    assert outdated.latest > semantic_version.Version("0.8.0")
 
     # update
     lm = LibraryPackageManager(str(storage_dir))
