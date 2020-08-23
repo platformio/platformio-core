@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member, no-self-use, unused-argument, too-many-lines
+# pylint: disable=no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 # pylint: disable=assignment-from-no-return
 
@@ -33,6 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
+from platformio.clients.http import InternetIsOffline
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
@@ -882,7 +883,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
             try:
                 lm.install(spec)
                 did_install = True
-            except (UnknownPackageError, exception.InternetIsOffline) as e:
+            except (UnknownPackageError, InternetIsOffline) as e:
                 click.secho("Warning! %s" % e, fg="yellow")
 
         # reset cache
