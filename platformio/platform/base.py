@@ -111,11 +111,13 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     def ensure_engine_compatible(self):
         if not self.engines or "platformio" not in self.engines:
             return True
-        if self.CORE_SEMVER in semantic_version.SimpleSpec(self.engines["platformio"]):
+        core_spec = semantic_version.SimpleSpec(self.engines["platformio"])
+        if self.CORE_SEMVER in core_spec:
             return True
-        raise IncompatiblePlatform(
-            self.name, str(self.CORE_SEMVER), self.engines["platformio"]
-        )
+        # PIO Core 4 is compatible with dev-platforms for PIO Core 2.0 & 3.0
+        if any(semantic_version.Version.coerce(str(v)) in core_spec for v in (2, 3)):
+            return True
+        raise IncompatiblePlatform(self.name, str(self.CORE_SEMVER), str(core_spec))
 
     def get_dir(self):
         return os.path.dirname(self.manifest_path)
