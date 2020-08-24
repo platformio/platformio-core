@@ -34,7 +34,7 @@ def get_core_package_dir(name):
     pkg = pm.get_package(spec)
     if pkg:
         return pkg.path
-    assert pm.install(spec).path
+    assert pm.install(spec)
     _remove_unnecessary_packages()
     return pm.get_package(spec)
 
