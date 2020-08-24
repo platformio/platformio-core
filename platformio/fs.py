@@ -85,6 +85,17 @@ def calculate_file_hashsum(algorithm, path):
     return h.hexdigest()
 
 
+def calculate_folder_size(path):
+    assert os.path.isdir(path)
+    result = 0
+    for root, __, files in os.walk(path):
+        for f in files:
+            file_path = os.path.join(root, f)
+            if not os.path.islink(file_path):
+                result += os.path.getsize(file_path)
+    return result
+
+
 def ensure_udev_rules():
     from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 

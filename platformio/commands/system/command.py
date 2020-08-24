@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -20,7 +21,7 @@ import sys
 import click
 from tabulate import tabulate
 
-from platformio import __version__, compat, proc, util
+from platformio import __version__, compat, fs, proc, util
 from platformio.commands.system.completion import (
     get_completion_install_path,
     install_completion_code,
@@ -30,6 +31,7 @@ from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_cache_dir
 
 
 @click.group("system", short_help="Miscellaneous system commands")
@@ -92,6 +94,27 @@ def system_info(json_output):
         json.dumps(data)
         if json_output
         else tabulate([(item["title"], item["value"]) for item in data.values()])
+    )
+
+
+@cli.command("prune", short_help="Remove unused data")
+@click.option("--force", "-f", is_flag=True, help="Do not prompt for confirmation")
+def system_prune(force):
+    click.secho("WARNING! This will remove:", fg="yellow")
+    click.echo(" - cached API requests")
+    click.echo(" - cached package downloads")
+    click.echo(" - temporary data")
+    if not force:
+        click.confirm("Do you want to continue?", abort=True)
+
+    reclaimed_total = 0
+    cache_dir = get_project_cache_dir()
+    if os.path.isdir(cache_dir):
+        reclaimed_total += fs.calculate_folder_size(cache_dir)
+        fs.rmtree(cache_dir)
+
+    click.secho(
+        "Total reclaimed space: %s" % fs.humanize_file_size(reclaimed_total), fg="green"
     )
 
 

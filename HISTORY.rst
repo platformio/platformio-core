@@ -30,8 +30,8 @@ PlatformIO Core 4
   - Built-in fine-grained access control (role based, teams, organizations)
   - Command Line Interface:
 
-    * `platformio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ – publish a personal or organization package
-    * `platformio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ – remove a pushed package from the registry
+    * `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ – publish a personal or organization package
+    * `pio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ – remove a pushed package from the registry
     * Grant package access to the team members or maintainers
 
 * New **Package Management System**
@@ -46,7 +46,7 @@ PlatformIO Core 4
   - Command launcher with own arguments
   - Launch command with custom options declared in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
   - Python callback as a target (use the power of Python interpreter and PlatformIO Build API)
-  - List available project targets (including dev-platform specific and custom targets) with a new `platformio run --list-targets <https://docs.platformio.org/page/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
+  - List available project targets (including dev-platform specific and custom targets) with a new `pio run --list-targets <https://docs.platformio.org/page/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
 
 * **PlatformIO Build System**
 
@@ -58,12 +58,13 @@ PlatformIO Core 4
 
 * **Miscellaneous**
 
-  - Display system-wide information using a new `platformio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
-  - Dump data intended for IDE extensions/plugins using a new `platformio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
-  - Added a new ``-e, --environment`` option to `platformio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
-  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`platformio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
-  - Do not generate ".travis.yml" for a new project, let the user have a choice
+  - Display system-wide information using a new `pio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
+  - Remove unused data using a new `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
+  - Dump data intended for IDE extensions/plugins using a new `pio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
+  - Added a new ``-e, --environment`` option to `pio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
+  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`pio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
   - Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
+  - Do not generate ".travis.yml" for a new project, let the user have a choice
   - Do not escape compiler arguments in VSCode template on Windows
   - Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
 
