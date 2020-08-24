@@ -59,8 +59,8 @@ def print_boards(boards):
                     click.style(b["id"], fg="cyan"),
                     b["mcu"],
                     "%dMHz" % (b["fcpu"] / 1000000),
-                    fs.format_filesize(b["rom"]),
-                    fs.format_filesize(b["ram"]),
+                    fs.humanize_file_size(b["rom"]),
+                    fs.humanize_file_size(b["ram"]),
                     b["name"],
                 )
                 for b in boards

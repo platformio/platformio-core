@@ -179,7 +179,8 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
         data.append(
-            "%s RAM, %s Flash" % (fs.format_filesize(ram), fs.format_filesize(flash))
+            "%s RAM, %s Flash"
+            % (fs.humanize_file_size(ram), fs.humanize_file_size(flash))
         )
         return data
 

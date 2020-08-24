@@ -57,7 +57,7 @@ def load_json(file_path):
         raise exception.InvalidJSONFile(file_path)
 
 
-def format_filesize(filesize):
+def humanize_file_size(filesize):
     base = 1024
     unit = 0
     suffix = "B"
