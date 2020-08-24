@@ -19,7 +19,7 @@ import click
 
 from platformio import fs
 from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageSpec
 
 
 class PackageManagerUninstallMixin(object):
@@ -73,18 +73,4 @@ class PackageManagerUninstallMixin(object):
         return pkg
 
     def uninstall_dependencies(self, pkg, silent=False):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        if not silent:
-            self.print_message("Removing dependencies...", fg="yellow")
-        for dependency in manifest.get("dependencies"):
-            pkg = self.get_package(
-                PackageSpec(
-                    name=dependency.get("name"), requirements=dependency.get("version")
-                )
-            )
-            if not pkg:
-                continue
-            self._uninstall(pkg, silent=silent)
+        pass

@@ -17,7 +17,7 @@ import os
 
 from platformio.package.exception import MissingPackageManifestError
 from platformio.package.manager.base import BasePackageManager
-from platformio.package.meta import PackageSpec, PackageType
+from platformio.package.meta import PackageItem, PackageSpec, PackageType
 from platformio.project.helpers import get_project_global_lib_dir
 
 
@@ -62,3 +62,46 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                     return os.path.dirname(root)
                 return root
         return path
+
+    def install_dependencies(self, pkg, silent=False):
+        assert isinstance(pkg, PackageItem)
+        manifest = self.load_manifest(pkg)
+        if not manifest.get("dependencies"):
+            return
+        if not silent:
+            self.print_message("Installing dependencies...")
+        for dependency in manifest.get("dependencies"):
+            if not self._install_dependency(dependency, silent) and not silent:
+                self.print_message(
+                    "Warning! Could not install dependency %s for package '%s'"
+                    % (dependency, pkg.metadata.name),
+                    fg="yellow",
+                )
+
+    def _install_dependency(self, dependency, silent=False):
+        spec = PackageSpec(
+            name=dependency.get("name"), requirements=dependency.get("version")
+        )
+        search_filters = {
+            key: value
+            for key, value in dependency.items()
+            if key in ("authors", "platforms", "frameworks")
+        }
+        return self._install(spec, search_filters=search_filters or None, silent=silent)
+
+    def uninstall_dependencies(self, pkg, silent=False):
+        assert isinstance(pkg, PackageItem)
+        manifest = self.load_manifest(pkg)
+        if not manifest.get("dependencies"):
+            return
+        if not silent:
+            self.print_message("Removing dependencies...", fg="yellow")
+        for dependency in manifest.get("dependencies"):
+            pkg = self.get_package(
+                PackageSpec(
+                    name=dependency.get("name"), requirements=dependency.get("version")
+                )
+            )
+            if not pkg:
+                continue
+            self._uninstall(pkg, silent=silent)

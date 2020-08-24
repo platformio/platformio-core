@@ -21,7 +21,7 @@ import click
 
 from platformio import app, compat, fs, util
 from platformio.package.exception import PackageException
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageItem
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
 
@@ -119,30 +119,7 @@ class PackageManagerInstallMixin(object):
         return pkg
 
     def install_dependencies(self, pkg, silent=False):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        if not silent:
-            self.print_message("Installing dependencies...")
-        for dependency in manifest.get("dependencies"):
-            if not self._install_dependency(dependency, silent) and not silent:
-                self.print_message(
-                    "Warning! Could not install dependency %s for package '%s'"
-                    % (dependency, pkg.metadata.name),
-                    fg="yellow",
-                )
-
-    def _install_dependency(self, dependency, silent=False):
-        spec = PackageSpec(
-            name=dependency.get("name"), requirements=dependency.get("version")
-        )
-        search_filters = {
-            key: value
-            for key, value in dependency.items()
-            if key in ("authors", "platforms", "frameworks")
-        }
-        return self._install(spec, search_filters=search_filters or None, silent=silent)
+        pass
 
     def install_from_url(self, url, spec, checksum=None, silent=False):
         spec = self.ensure_spec(spec)
