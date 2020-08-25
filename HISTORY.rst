@@ -67,6 +67,7 @@ PlatformIO Core 4
   - Do not generate ".travis.yml" for a new project, let the user have a choice
   - Do not escape compiler arguments in VSCode template on Windows
   - Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
+  - Fixed an issue with PIO Check when a defect with multiline error message is not reported in verbose mode (`issue #3631 <https://github.com/platformio/platformio-core/issues/3631>`_)
 
 4.3.4 (2020-05-23)
 ~~~~~~~~~~~~~~~~~~
