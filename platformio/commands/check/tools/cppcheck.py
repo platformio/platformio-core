@@ -24,6 +24,8 @@ from platformio.package.manager.core import get_core_package_dir
 
 class CppcheckCheckTool(CheckToolBase):
     def __init__(self, *args, **kwargs):
+        self._field_delimiter = "<&PIO&>"
+        self._buffer = ""
         self.defect_fields = [
             "severity",
             "message",
@@ -55,13 +57,15 @@ class CppcheckCheckTool(CheckToolBase):
         return line
 
     def parse_defect(self, raw_line):
-        if "<&PIO&>" not in raw_line or any(
-            f not in raw_line for f in self.defect_fields
-        ):
+        if self._field_delimiter not in raw_line:
+            return None
+
+        self._buffer += raw_line
+        if any(f not in self._buffer for f in self.defect_fields):
             return None
 
         args = dict()
-        for field in raw_line.split("<&PIO&>"):
+        for field in self._buffer.split(self._field_delimiter):
             field = field.strip().replace('"', "")
             name, value = field.split("=", 1)
             args[name] = value
@@ -94,6 +98,7 @@ class CppcheckCheckTool(CheckToolBase):
                 self._bad_input = True
             return None
 
+        self._buffer = ""
         return DefectItem(**args)
 
     def configure_command(
@@ -103,13 +108,16 @@ class CppcheckCheckTool(CheckToolBase):
 
         cmd = [
             tool_path,
+            "--addon-python=%s" % proc.get_pythonexe_path(),
             "--error-exitcode=1",
             "--verbose" if self.options.get("verbose") else "--quiet",
         ]
 
         cmd.append(
             '--template="%s"'
-            % "<&PIO&>".join(["{0}={{{0}}}".format(f) for f in self.defect_fields])
+            % self._field_delimiter.join(
+                ["{0}={{{0}}}".format(f) for f in self.defect_fields]
+            )
         )
 
         flags = self.get_flags("cppcheck")
