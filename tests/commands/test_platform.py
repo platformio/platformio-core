@@ -18,7 +18,6 @@ import json
 
 from platformio.commands import platform as cli_platform
 from platformio.package.exception import UnknownPackageError
-from platformio.platform.exception import IncompatiblePlatform
 
 
 def test_search_json_output(clirunner, validate_cliresult, isolated_pio_core):

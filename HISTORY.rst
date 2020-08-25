@@ -62,11 +62,11 @@ PlatformIO Core 4
   - Remove unused data using a new `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
   - Dump data intended for IDE extensions/plugins using a new `pio project idedata <https://docs.platformio.org/page/core/userguide/project/cmd_idedata.html>`__ command
   - Added a new ``-e, --environment`` option to `pio project init <https://docs.platformio.org/page/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using existing environment
-  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`pio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required.
-  - Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
+  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`pio ci <https://docs.platformio.org/page/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/page/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/page/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required
+  - Updated PIO Unit Testing support for Mbed framework and added compatibility with Mbed OS 6
   - Do not generate ".travis.yml" for a new project, let the user have a choice
   - Do not escape compiler arguments in VSCode template on Windows
-  - Fixed an issue with Unit Testing engine when running multiple environments (`issue #3523 < https://github.com/platformio/platformio-core/issues/3523>`_)
+  - Fixed an issue with Unit Testing engine when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
   - Fixed an issue when Unit Testing engine fails with a custom project configuration file (`issue #3583 <https://github.com/platformio/platformio-core/issues/3583>`_)
 
 4.3.4 (2020-05-23)
