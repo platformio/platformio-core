@@ -66,7 +66,8 @@ PlatformIO Core 4
   - Updated PIO Unit Testing support for Mbed framework. Added compatibility with Mbed OS 6
   - Do not generate ".travis.yml" for a new project, let the user have a choice
   - Do not escape compiler arguments in VSCode template on Windows
-  - Fixed an issue with PIO Unit Testing when running multiple environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
+  - Fixed an issue with Unit Testing engine when running multiple environments (`issue #3523 < https://github.com/platformio/platformio-core/issues/3523>`_)
+  - Fixed an issue when Unit Testing engine fails with a custom project configuration file (`issue #3583 <https://github.com/platformio/platformio-core/issues/3583>`_)
 
 4.3.4 (2020-05-23)
 ~~~~~~~~~~~~~~~~~~

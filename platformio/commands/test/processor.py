@@ -138,6 +138,7 @@ class TestProcessorBase(object):
             return self.cmd_ctx.invoke(
                 cmd_run,
                 project_dir=self.options["project_dir"],
+                project_conf=self.options["project_config"].path,
                 upload_port=self.options["upload_port"],
                 verbose=self.options["verbose"],
                 silent=self.options["silent"],
