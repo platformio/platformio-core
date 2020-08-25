@@ -83,7 +83,9 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             cmd = "echo | %s -x %s %s %s -dM -E -" % (
                 self.cc_path,
                 language,
-                " ".join([f for f in build_flags if f.startswith(("-m", "-f"))]),
+                " ".join(
+                    [f for f in build_flags if f.startswith(("-m", "-f", "-std"))]
+                ),
                 includes_file,
             )
             result = proc.exec_command(cmd, shell=True)
