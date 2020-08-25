@@ -51,12 +51,19 @@ def test_install_unknown_from_registry(clirunner):
     assert isinstance(result.exception, UnknownPackageError)
 
 
-def test_install_incompatbile(clirunner, validate_cliresult, isolated_pio_core):
+# def test_install_incompatbile(clirunner, validate_cliresult, isolated_pio_core):
+#     result = clirunner.invoke(
+#         cli_platform.platform_install, ["atmelavr@1.2.0", "--skip-default-package"],
+#     )
+#     assert result.exit_code != 0
+#     assert isinstance(result.exception, IncompatiblePlatform)
+
+
+def test_install_core_3_dev_platform(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install, ["atmelavr@1.2.0", "--skip-default-package"],
     )
-    assert result.exit_code != 0
-    assert isinstance(result.exception, IncompatiblePlatform)
+    assert result.exit_code == 0
 
 
 def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core):
@@ -120,7 +127,7 @@ def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
 
 def test_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
-        cli_platform.platform_uninstall, ["atmelavr", "espressif8266"]
+        cli_platform.platform_uninstall, ["atmelavr@1.2.0", "atmelavr", "espressif8266"]
     )
     validate_cliresult(result)
     assert not isolated_pio_core.join("platforms").listdir()
