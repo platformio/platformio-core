@@ -63,10 +63,7 @@ class ClangtidyCheckTool(CheckToolBase):
         for scope in project_files:
             src_files.extend(project_files[scope])
 
-        cmd.extend(flags)
-        cmd.extend(src_files)
-        cmd.append("--")
-
+        cmd.extend(flags + src_files + ["--"])
         cmd.extend(
             ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines["c++"]]
         )
@@ -79,6 +76,6 @@ class ClangtidyCheckTool(CheckToolBase):
                 continue
             includes.append(inc)
 
-        cmd.append("--extra-arg=" + self._long_includes_hook(includes))
+        cmd.extend(["-I%s" % inc for inc in includes])
 
         return cmd
