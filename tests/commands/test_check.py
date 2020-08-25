@@ -114,6 +114,16 @@ def test_check_tool_defines_passed(clirunner, check_dir):
     assert "__GNUC__" in output
 
 
+def test_check_language_standard_definition_passed(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\nbuild_flags = -std=c++17"
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert "__cplusplus=201703L" in result.output
+    assert "--std=c++17" in result.output
+
+
 def test_check_severity_threshold(clirunner, check_dir):
     result = clirunner.invoke(
         cmd_check, ["--project-dir", str(check_dir), "--severity=high"]
@@ -455,3 +465,33 @@ framework = arduino
         for inc in l.split(" "):
             if inc.startswith("-I") and project_path not in inc:
                 pytest.fail("Detected an include path from packages: " + inc)
+
+
+def test_check_multiline_error(clirunner, tmpdir_factory):
+    project_dir = tmpdir_factory.mktemp("project")
+    project_dir.join("platformio.ini").write(DEFAULT_CONFIG)
+
+    project_dir.mkdir("include").join("main.h").write(
+        """
+#error This is a multiline error message \\
+that should be correctly reported \\
+in both default and verbose modes.
+"""
+    )
+
+    project_dir.mkdir("src").join("main.c").write(
+        """
+#include <stdlib.h>
+#include "main.h"
+
+int main() {}
+"""
+    )
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(project_dir)])
+    errors, _, _ = count_defects(result.output)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(project_dir), "-v"])
+    verbose_errors, _, _ = count_defects(result.output)
+
+    assert verbose_errors == errors == 1
