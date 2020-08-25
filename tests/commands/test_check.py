@@ -168,7 +168,9 @@ def test_check_silent_mode(clirunner, validate_cliresult, check_dir):
     assert style == 0
 
 
-def test_check_custom_pattern_absolute_path(clirunner, validate_cliresult, tmpdir_factory):
+def test_check_custom_pattern_absolute_path(
+    clirunner, validate_cliresult, tmpdir_factory
+):
     project_dir = tmpdir_factory.mktemp("project")
     project_dir.join("platformio.ini").write(DEFAULT_CONFIG)
 
@@ -187,7 +189,9 @@ def test_check_custom_pattern_absolute_path(clirunner, validate_cliresult, tmpdi
     assert style == EXPECTED_STYLE
 
 
-def test_check_custom_pattern_relative_path(clirunner, validate_cliresult, tmpdir_factory):
+def test_check_custom_pattern_relative_path(
+    clirunner, validate_cliresult, tmpdir_factory
+):
     tmpdir = tmpdir_factory.mktemp("project")
     tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
 
@@ -268,7 +272,9 @@ def test_check_individual_flags_passed(clirunner, validate_cliresult, tmpdir):
 """
 
     tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.cpp").write(PVS_STUDIO_FREE_LICENSE_HEADER + TEST_CODE)
+    tmpdir.mkdir("src").join("main.cpp").write(
+        PVS_STUDIO_FREE_LICENSE_HEADER + TEST_CODE
+    )
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
     validate_cliresult(result)
 
@@ -414,7 +420,8 @@ check_tool = %s
 """
     # tmpdir.join("platformio.ini").write(config)
     tmpdir.mkdir("src").join("main.c").write(
-        PVS_STUDIO_FREE_LICENSE_HEADER + """
+        PVS_STUDIO_FREE_LICENSE_HEADER
+        + """
 #include <stdlib.h>
 
 void unused_function(int val){
@@ -439,10 +446,7 @@ int main() {
             result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
             validate_cliresult(result)
             defects = sum(count_defects(result.output))
-            assert defects > 0, "Failed %s with %s" % (
-                framework,
-                tool,
-            )
+            assert defects > 0, "Failed %s with %s" % (framework, tool,)
 
 
 def test_check_skip_includes_from_packages(clirunner, validate_cliresult, tmpdir):
