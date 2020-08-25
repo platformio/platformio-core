@@ -69,7 +69,7 @@ def project_config(project_dir, json_output):
     return None
 
 
-@cli.command("idedata", short_help="Dump data intended for IDE extensions/plugins")
+@cli.command("data", short_help="Dump data intended for IDE extensions/plugins")
 @click.option(
     "-d",
     "--project-dir",
@@ -78,7 +78,7 @@ def project_config(project_dir, json_output):
 )
 @click.option("-e", "--environment", multiple=True)
 @click.option("--json-output", is_flag=True)
-def project_idedata(project_dir, environment, json_output):
+def project_data(project_dir, environment, json_output):
     if not is_platformio_project(project_dir):
         raise NotPlatformIOProjectError(project_dir)
     with fs.cd(project_dir):
