@@ -139,14 +139,13 @@ class PackageManageRegistryMixin(object):
     def fetch_registry_package(self, spec):
         assert isinstance(spec, PackageSpec)
         result = None
+        regclient = self.get_registry_client_instance()
         if spec.owner and spec.name:
-            result = self.get_registry_client_instance().get_package(
-                self.pkg_type, spec.owner, spec.name
-            )
+            result = regclient.get_package(self.pkg_type, spec.owner, spec.name)
         if not result and (spec.id or (spec.name and not spec.owner)):
             packages = self.search_registry_packages(spec)
             if packages:
-                result = self.get_registry_client_instance().get_package(
+                result = regclient.get_package(
                     self.pkg_type, packages[0]["owner"]["username"], packages[0]["name"]
                 )
         if not result:

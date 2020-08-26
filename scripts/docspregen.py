@@ -22,7 +22,8 @@ path.append("..")
 import click
 
 from platformio import fs, util
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.factory import PlatformFactory
 
 try:
     from urlparse import ParseResult, urlparse, urlunparse
@@ -41,15 +42,16 @@ RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio
     limitations under the License.
 """
 
-API_PACKAGES = util.get_api_result("/packages")
-API_FRAMEWORKS = util.get_api_result("/frameworks")
-BOARDS = PlatformManager().get_installed_boards()
-PLATFORM_MANIFESTS = PlatformManager().get_installed()
+REGCLIENT = regclient = PlatformPackageManager().get_registry_client_instance()
+API_PACKAGES = regclient.fetch_json_data("get", "/v2/packages")
+API_FRAMEWORKS = regclient.fetch_json_data("get", "/v2/frameworks")
+BOARDS = PlatformPackageManager().get_installed_boards()
+PLATFORM_MANIFESTS = PlatformPackageManager().legacy_get_installed()
 DOCS_ROOT_DIR = realpath(join(dirname(realpath(__file__)), "..", "docs"))
 
 
 def is_compat_platform_and_framework(platform, framework):
-    p = PlatformFactory.newPlatform(platform)
+    p = PlatformFactory.new(platform)
     return framework in (p.frameworks or {}).keys()
 
 
@@ -60,8 +62,10 @@ def campaign_url(url, source="platformio.org", medium="docs"):
         query += "&"
     query += "utm_source=%s&utm_medium=%s" % (source, medium)
     return urlunparse(
-        ParseResult(data.scheme, data.netloc, data.path, data.params, query,
-                    data.fragment))
+        ParseResult(
+            data.scheme, data.netloc, data.path, data.params, query, data.fragment
+        )
+    )
 
 
 def generate_boards_table(boards, skip_columns=None):
@@ -75,10 +79,12 @@ def generate_boards_table(boards, skip_columns=None):
         ("RAM", "{ram}"),
     ]
     lines = []
-    lines.append("""
+    lines.append(
+        """
 .. list-table::
     :header-rows:  1
-""")
+"""
+    )
 
     # add header
     for (name, template) in columns:
@@ -87,23 +93,26 @@ def generate_boards_table(boards, skip_columns=None):
         prefix = "    * - " if name == "Name" else "      - "
         lines.append(prefix + name)
 
-    for data in sorted(boards, key=lambda item: item['name']):
-        has_onboard_debug = (data.get('debug') and any(
-            t.get("onboard") for (_, t) in data['debug']['tools'].items()))
+    for data in sorted(boards, key=lambda item: item["name"]):
+        has_onboard_debug = data.get("debug") and any(
+            t.get("onboard") for (_, t) in data["debug"]["tools"].items()
+        )
         debug = "No"
         if has_onboard_debug:
             debug = "On-board"
-        elif data.get('debug'):
+        elif data.get("debug"):
             debug = "External"
 
-        variables = dict(id=data['id'],
-                         name=data['name'],
-                         platform=data['platform'],
-                         debug=debug,
-                         mcu=data['mcu'].upper(),
-                         f_cpu=int(data['fcpu'] / 1000000.0),
-                         ram=fs.format_filesize(data['ram']),
-                         rom=fs.format_filesize(data['rom']))
+        variables = dict(
+            id=data["id"],
+            name=data["name"],
+            platform=data["platform"],
+            debug=debug,
+            mcu=data["mcu"].upper(),
+            f_cpu=int(data["fcpu"] / 1000000.0),
+            ram=fs.humanize_file_size(data["ram"]),
+            rom=fs.humanize_file_size(data["rom"]),
+        )
 
         for (name, template) in columns:
             if skip_columns and name in skip_columns:
@@ -121,25 +130,30 @@ def generate_frameworks_contents(frameworks):
     if not frameworks:
         return []
     lines = []
-    lines.append("""
+    lines.append(
+        """
 Frameworks
 ----------
 .. list-table::
     :header-rows:  1
 
     * - Name
-      - Description""")
+      - Description"""
+    )
     known = set()
     for framework in API_FRAMEWORKS:
-        known.add(framework['name'])
-        if framework['name'] not in frameworks:
+        known.add(framework["name"])
+        if framework["name"] not in frameworks:
             continue
-        lines.append("""
+        lines.append(
+            """
     * - :ref:`framework_{name}`
-      - {description}""".format(**framework))
+      - {description}""".format(
+                **framework
+            )
+        )
     if set(frameworks) - known:
-        click.secho("Unknown frameworks %s " % (
-        set(frameworks) - known), fg="red")
+        click.secho("Unknown frameworks %s " % (set(frameworks) - known), fg="red")
     return lines
 
 
@@ -147,20 +161,26 @@ def generate_platforms_contents(platforms):
     if not platforms:
         return []
     lines = []
-    lines.append("""
+    lines.append(
+        """
 Platforms
 ---------
 .. list-table::
     :header-rows:  1
 
     * - Name
-      - Description""")
+      - Description"""
+    )
 
     for name in sorted(platforms):
-        p = PlatformFactory.newPlatform(name)
-        lines.append("""
+        p = PlatformFactory.new(name)
+        lines.append(
+            """
     * - :ref:`platform_{name}`
-      - {description}""".format(name=p.name, description=p.description))
+      - {description}""".format(
+                name=p.name, description=p.description
+            )
+        )
     return lines
 
 
@@ -170,16 +190,17 @@ def generate_debug_contents(boards, skip_board_columns=None, extra_rst=None):
     skip_board_columns.append("Debug")
     lines = []
     onboard_debug = [
-        b for b in boards if b.get('debug') and any(
-            t.get("onboard") for (_, t) in b['debug']['tools'].items())
+        b
+        for b in boards
+        if b.get("debug")
+        and any(t.get("onboard") for (_, t) in b["debug"]["tools"].items())
     ]
-    external_debug = [
-        b for b in boards if b.get('debug') and b not in onboard_debug
-    ]
+    external_debug = [b for b in boards if b.get("debug") and b not in onboard_debug]
     if not onboard_debug and not external_debug:
         return lines
 
-    lines.append("""
+    lines.append(
+        """
 Debugging
 ---------
 
@@ -187,11 +208,13 @@ Debugging
 
 .. contents::
     :local:
-""")
+"""
+    )
     if extra_rst:
         lines.append(".. include:: %s" % extra_rst)
 
-    lines.append("""
+    lines.append(
+        """
 Tools & Debug Probes
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -203,31 +226,36 @@ You can switch between debugging :ref:`debugging_tools` using
 .. warning::
     You will need to install debug tool drivers depending on your system.
     Please click on compatible debug tool below for the further instructions.
-""")
+"""
+    )
 
     if onboard_debug:
-        lines.append("""
+        lines.append(
+            """
 On-Board Debug Tools
 ^^^^^^^^^^^^^^^^^^^^
 
 Boards listed below have on-board debug probe and **ARE READY** for debugging!
 You do not need to use/buy external debug probe.
-""")
+"""
+        )
         lines.extend(
-            generate_boards_table(onboard_debug,
-                                  skip_columns=skip_board_columns))
+            generate_boards_table(onboard_debug, skip_columns=skip_board_columns)
+        )
     if external_debug:
-        lines.append("""
+        lines.append(
+            """
 External Debug Tools
 ^^^^^^^^^^^^^^^^^^^^
 
 Boards listed below are compatible with :ref:`piodebug` but **DEPEND ON**
 external debug probe. They **ARE NOT READY** for debugging.
 Please click on board name for the further details.
-""")
+"""
+        )
         lines.extend(
-            generate_boards_table(external_debug,
-                                  skip_columns=skip_board_columns))
+            generate_boards_table(external_debug, skip_columns=skip_board_columns)
+        )
     return lines
 
 
@@ -235,41 +263,56 @@ def generate_packages(platform, packagenames, is_embedded):
     if not packagenames:
         return
     lines = []
-    lines.append("""
+    lines.append(
+        """
 Packages
 --------
-""")
-    lines.append(""".. list-table::
+"""
+    )
+    lines.append(
+        """.. list-table::
     :header-rows:  1
 
     * - Name
-      - Description""")
+      - Description"""
+    )
     for name in sorted(packagenames):
         if name not in API_PACKAGES:
             click.secho("Unknown package `%s`" % name, fg="red")
-            lines.append("""
+            lines.append(
+                """
     * - {name}
       -
-                """.format(name=name))
+                """.format(
+                    name=name
+                )
+            )
         else:
-            lines.append("""
+            lines.append(
+                """
     * - `{name} <{url}>`__
-      - {description}""".format(name=name,
-                                url=campaign_url(API_PACKAGES[name]['url']),
-                                description=API_PACKAGES[name]['description']))
+      - {description}""".format(
+                    name=name,
+                    url=campaign_url(API_PACKAGES[name]["url"]),
+                    description=API_PACKAGES[name]["description"],
+                )
+            )
 
     if is_embedded:
-        lines.append("""
+        lines.append(
+            """
 .. warning::
     **Linux Users**:
 
         * Install "udev" rules :ref:`faq_udev_rules`
         * Raspberry Pi users, please read this article
           `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
-""")
+"""
+        )
 
         if platform == "teensy":
-            lines.append("""
+            lines.append(
+                """
     **Windows Users:**
 
         Teensy programming uses only Windows built-in HID
@@ -278,14 +321,17 @@ Packages
         <http://www.pjrc.com/teensy/serial_install.exe>`_
         is needed to access the COM port your program uses. No special driver
         installation is necessary on Windows 10.
-""")
+"""
+            )
         else:
-            lines.append("""
+            lines.append(
+                """
     **Windows Users:**
 
         Please check that you have a correctly installed USB driver from board
         manufacturer
-""")
+"""
+            )
 
     return "\n".join(lines)
 
@@ -293,14 +339,12 @@ Packages
 def generate_platform(name, rst_dir):
     print("Processing platform: %s" % name)
 
-    compatible_boards = [
-        board for board in BOARDS if name == board['platform']
-    ]
+    compatible_boards = [board for board in BOARDS if name == board["platform"]]
 
     lines = []
 
     lines.append(RST_COPYRIGHT)
-    p = PlatformFactory.newPlatform(name)
+    p = PlatformFactory.new(name)
     assert p.repository_url.endswith(".git")
     github_url = p.repository_url[:-4]
 
@@ -314,14 +358,18 @@ def generate_platform(name, rst_dir):
     lines.append("  :ref:`projectconf_env_platform` = ``%s``" % p.name)
     lines.append("")
     lines.append(p.description)
-    lines.append("""
-For more detailed information please visit `vendor site <%s>`_.""" %
-                 campaign_url(p.homepage))
-    lines.append("""
+    lines.append(
+        """
+For more detailed information please visit `vendor site <%s>`_."""
+        % campaign_url(p.homepage)
+    )
+    lines.append(
+        """
 .. contents:: Contents
     :local:
     :depth: 1
-""")
+"""
+    )
 
     #
     # Extra
@@ -332,12 +380,15 @@ For more detailed information please visit `vendor site <%s>`_.""" %
     #
     # Examples
     #
-    lines.append("""
+    lines.append(
+        """
 Examples
 --------
 
 Examples are listed from `%s development platform repository <%s>`_:
-""" % (p.title, campaign_url("%s/tree/master/examples" % github_url)))
+"""
+        % (p.title, campaign_url("%s/tree/master/examples" % github_url))
+    )
     examples_dir = join(p.get_dir(), "examples")
     if isdir(examples_dir):
         for eitem in os.listdir(examples_dir):
@@ -355,14 +406,17 @@ Examples are listed from `%s development platform repository <%s>`_:
             generate_debug_contents(
                 compatible_boards,
                 skip_board_columns=["Platform"],
-                extra_rst="%s_debug.rst" %
-                name if isfile(join(rst_dir, "%s_debug.rst" %
-                                    name)) else None))
+                extra_rst="%s_debug.rst" % name
+                if isfile(join(rst_dir, "%s_debug.rst" % name))
+                else None,
+            )
+        )
 
     #
     # Development version of dev/platform
     #
-    lines.append("""
+    lines.append(
+        """
 Stable and upstream versions
 ----------------------------
 
@@ -393,13 +447,15 @@ Upstream
     [env:upstream_develop]
     platform = {github_url}.git
     board = ...
-""".format(name=p.name, title=p.title, github_url=github_url))
+""".format(
+            name=p.name, title=p.title, github_url=github_url
+        )
+    )
 
     #
     # Packages
     #
-    _packages_content = generate_packages(name, p.packages.keys(),
-                                          p.is_embedded())
+    _packages_content = generate_packages(name, p.packages.keys(), p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 
@@ -408,8 +464,8 @@ Upstream
     #
     compatible_frameworks = []
     for framework in API_FRAMEWORKS:
-        if is_compat_platform_and_framework(name, framework['name']):
-            compatible_frameworks.append(framework['name'])
+        if is_compat_platform_and_framework(name, framework["name"]):
+            compatible_frameworks.append(framework["name"])
     lines.extend(generate_frameworks_contents(compatible_frameworks))
 
     #
@@ -418,11 +474,12 @@ Upstream
     if compatible_boards:
         vendors = {}
         for board in compatible_boards:
-            if board['vendor'] not in vendors:
-                vendors[board['vendor']] = []
-            vendors[board['vendor']].append(board)
+            if board["vendor"] not in vendors:
+                vendors[board["vendor"]] = []
+            vendors[board["vendor"]].append(board)
 
-        lines.append("""
+        lines.append(
+            """
 Boards
 ------
 
@@ -431,20 +488,20 @@ Boards
       `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll the tables below by
       horizontally.
-""")
+"""
+        )
 
         for vendor, boards in sorted(vendors.items()):
             lines.append(str(vendor))
             lines.append("~" * len(vendor))
-            lines.extend(
-                generate_boards_table(boards, skip_columns=["Platform"]))
+            lines.extend(generate_boards_table(boards, skip_columns=["Platform"]))
 
     return "\n".join(lines)
 
 
 def update_platform_docs():
     for manifest in PLATFORM_MANIFESTS:
-        name = manifest['name']
+        name = manifest["name"]
         platforms_dir = join(DOCS_ROOT_DIR, "platforms")
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
@@ -455,12 +512,11 @@ def generate_framework(type_, data, rst_dir=None):
     print("Processing framework: %s" % type_)
 
     compatible_platforms = [
-        m for m in PLATFORM_MANIFESTS
-        if is_compat_platform_and_framework(m['name'], type_)
+        m
+        for m in PLATFORM_MANIFESTS
+        if is_compat_platform_and_framework(m["name"], type_)
     ]
-    compatible_boards = [
-        board for board in BOARDS if type_ in board['frameworks']
-    ]
+    compatible_boards = [board for board in BOARDS if type_ in board["frameworks"]]
 
     lines = []
 
@@ -468,21 +524,26 @@ def generate_framework(type_, data, rst_dir=None):
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
-    lines.append(data['title'])
-    lines.append("=" * len(data['title']))
+    lines.append(data["title"])
+    lines.append("=" * len(data["title"]))
     lines.append("")
     lines.append(":Configuration:")
     lines.append("  :ref:`projectconf_env_framework` = ``%s``" % type_)
     lines.append("")
-    lines.append(data['description'])
-    lines.append("""
+    lines.append(data["description"])
+    lines.append(
+        """
 For more detailed information please visit `vendor site <%s>`_.
-""" % campaign_url(data['url']))
+"""
+        % campaign_url(data["url"])
+    )
 
-    lines.append("""
+    lines.append(
+        """
 .. contents:: Contents
     :local:
-    :depth: 1""")
+    :depth: 1"""
+    )
 
     # Extra
     if isfile(join(rst_dir, "%s_extra.rst" % type_)):
@@ -495,27 +556,37 @@ For more detailed information please visit `vendor site <%s>`_.
         lines.extend(
             generate_debug_contents(
                 compatible_boards,
-                extra_rst="%s_debug.rst" %
-                type_ if isfile(join(rst_dir, "%s_debug.rst" %
-                                     type_)) else None))
+                extra_rst="%s_debug.rst" % type_
+                if isfile(join(rst_dir, "%s_debug.rst" % type_))
+                else None,
+            )
+        )
 
     if compatible_platforms:
         # examples
-        lines.append("""
+        lines.append(
+            """
 Examples
 --------
-""")
+"""
+        )
         for manifest in compatible_platforms:
-            p = PlatformFactory.newPlatform(manifest['name'])
-            lines.append("* `%s for %s <%s>`_" %
-                         (data['title'], manifest['title'],
-                          campaign_url("%s/tree/master/examples" %
-                                       p.repository_url[:-4])))
+            p = PlatformFactory.new(manifest["name"])
+            lines.append(
+                "* `%s for %s <%s>`_"
+                % (
+                    data["title"],
+                    manifest["title"],
+                    campaign_url("%s/tree/master/examples" % p.repository_url[:-4]),
+                )
+            )
 
         # Platforms
         lines.extend(
             generate_platforms_contents(
-                [manifest['name'] for manifest in compatible_platforms]))
+                [manifest["name"] for manifest in compatible_platforms]
+            )
+        )
 
     #
     # Boards
@@ -523,10 +594,11 @@ Examples
     if compatible_boards:
         vendors = {}
         for board in compatible_boards:
-            if board['vendor'] not in vendors:
-                vendors[board['vendor']] = []
-            vendors[board['vendor']].append(board)
-        lines.append("""
+            if board["vendor"] not in vendors:
+                vendors[board["vendor"]] = []
+            vendors[board["vendor"]].append(board)
+        lines.append(
+            """
 Boards
 ------
 
@@ -534,7 +606,8 @@ Boards
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll the tables below by horizontally.
-""")
+"""
+        )
         for vendor, boards in sorted(vendors.items()):
             lines.append(str(vendor))
             lines.append("~" * len(vendor))
@@ -544,7 +617,7 @@ Boards
 
 def update_framework_docs():
     for framework in API_FRAMEWORKS:
-        name = framework['name']
+        name = framework["name"]
         frameworks_dir = join(DOCS_ROOT_DIR, "frameworks")
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
@@ -561,7 +634,8 @@ def update_boards():
     lines.append("Boards")
     lines.append("======")
 
-    lines.append("""
+    lines.append(
+        """
 Rapid Embedded Development, Continuous and IDE integration in a few
 steps with PlatformIO thanks to built-in project generator for the most
 popular embedded boards and IDE.
@@ -570,25 +644,28 @@ popular embedded boards and IDE.
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
-""")
+"""
+    )
 
     platforms = {}
     for data in BOARDS:
-        platform = data['platform']
+        platform = data["platform"]
         if platform in platforms:
             platforms[platform].append(data)
         else:
             platforms[platform] = [data]
 
     for platform, boards in sorted(platforms.items()):
-        p = PlatformFactory.newPlatform(platform)
+        p = PlatformFactory.new(platform)
         lines.append(p.title)
         lines.append("-" * len(p.title))
-        lines.append("""
+        lines.append(
+            """
 .. toctree::
     :maxdepth: 1
-        """)
-        for board in sorted(boards, key=lambda item: item['name']):
+        """
+        )
+        for board in sorted(boards, key=lambda item: item["name"]):
             lines.append("    %s/%s" % (platform, board["id"]))
         lines.append("")
 
@@ -600,44 +677,48 @@ popular embedded boards and IDE.
     for data in BOARDS:
         # if data['id'] != "m5stack-core-esp32":
         #     continue
-        rst_path = join(DOCS_ROOT_DIR, "boards", data["platform"],
-                        "%s.rst" % data["id"])
+        rst_path = join(
+            DOCS_ROOT_DIR, "boards", data["platform"], "%s.rst" % data["id"]
+        )
         if not isdir(dirname(rst_path)):
             os.makedirs(dirname(rst_path))
         update_embedded_board(rst_path, data)
 
 
 def update_embedded_board(rst_path, board):
-    platform = PlatformFactory.newPlatform(board['platform'])
-    board_config = platform.board_config(board['id'])
+    platform = PlatformFactory.new(board["platform"])
+    board_config = platform.board_config(board["id"])
 
     board_manifest_url = platform.repository_url
     assert board_manifest_url
     if board_manifest_url.endswith(".git"):
         board_manifest_url = board_manifest_url[:-4]
-    board_manifest_url += "/blob/master/boards/%s.json" % board['id']
+    board_manifest_url += "/blob/master/boards/%s.json" % board["id"]
 
-    variables = dict(id=board['id'],
-                     name=board['name'],
-                     platform=board['platform'],
-                     platform_description=platform.description,
-                     url=campaign_url(board['url']),
-                     mcu=board_config.get("build", {}).get("mcu", ""),
-                     mcu_upper=board['mcu'].upper(),
-                     f_cpu=board['fcpu'],
-                     f_cpu_mhz=int(int(board['fcpu']) / 1000000),
-                     ram=fs.format_filesize(board['ram']),
-                     rom=fs.format_filesize(board['rom']),
-                     vendor=board['vendor'],
-                     board_manifest_url=board_manifest_url,
-                     upload_protocol=board_config.get("upload.protocol", ""))
+    variables = dict(
+        id=board["id"],
+        name=board["name"],
+        platform=board["platform"],
+        platform_description=platform.description,
+        url=campaign_url(board["url"]),
+        mcu=board_config.get("build", {}).get("mcu", ""),
+        mcu_upper=board["mcu"].upper(),
+        f_cpu=board["fcpu"],
+        f_cpu_mhz=int(int(board["fcpu"]) / 1000000),
+        ram=fs.humanize_file_size(board["ram"]),
+        rom=fs.humanize_file_size(board["rom"]),
+        vendor=board["vendor"],
+        board_manifest_url=board_manifest_url,
+        upload_protocol=board_config.get("upload.protocol", ""),
+    )
 
     lines = [RST_COPYRIGHT]
     lines.append(".. _board_{platform}_{id}:".format(**variables))
     lines.append("")
-    lines.append(board['name'])
-    lines.append("=" * len(board['name']))
-    lines.append("""
+    lines.append(board["name"])
+    lines.append("=" * len(board["name"]))
+    lines.append(
+        """
 .. contents::
 
 Hardware
@@ -657,12 +738,16 @@ Platform :ref:`platform_{platform}`: {platform_description}
     - {ram}
   * - **Vendor**
     - `{vendor} <{url}>`__
-""".format(**variables))
+""".format(
+            **variables
+        )
+    )
 
     #
     # Configuration
     #
-    lines.append("""
+    lines.append(
+        """
 Configuration
 -------------
 
@@ -690,23 +775,33 @@ board manifest `{id}.json <{board_manifest_url}>`_. For example,
 
   ; change MCU frequency
   board_build.f_cpu = {f_cpu}L
-""".format(**variables))
+""".format(
+            **variables
+        )
+    )
 
     #
     # Uploading
     #
     upload_protocols = board_config.get("upload.protocols", [])
     if len(upload_protocols) > 1:
-        lines.append("""
+        lines.append(
+            """
 Uploading
 ---------
 %s supports the next uploading protocols:
-""" % board['name'])
+"""
+            % board["name"]
+        )
         for protocol in sorted(upload_protocols):
             lines.append("* ``%s``" % protocol)
-        lines.append("""
-Default protocol is ``%s``""" % variables['upload_protocol'])
-        lines.append("""
+        lines.append(
+            """
+Default protocol is ``%s``"""
+            % variables["upload_protocol"]
+        )
+        lines.append(
+            """
 You can change upload protocol using :ref:`projectconf_upload_protocol` option:
 
 .. code-block:: ini
@@ -716,22 +811,29 @@ You can change upload protocol using :ref:`projectconf_upload_protocol` option:
   board = {id}
 
   upload_protocol = {upload_protocol}
-""".format(**variables))
+""".format(
+                **variables
+            )
+        )
 
     #
     # Debugging
     #
     lines.append("Debugging")
     lines.append("---------")
-    if not board.get('debug'):
+    if not board.get("debug"):
         lines.append(
             ":ref:`piodebug` currently does not support {name} board.".format(
-                **variables))
+                **variables
+            )
+        )
     else:
         default_debug_tool = board_config.get_debug_tool_name()
         has_onboard_debug = any(
-            t.get("onboard") for (_, t) in board['debug']['tools'].items())
-        lines.append("""
+            t.get("onboard") for (_, t) in board["debug"]["tools"].items()
+        )
+        lines.append(
+            """
 :ref:`piodebug` - "1-click" solution for debugging with a zero configuration.
 
 .. warning::
@@ -741,34 +843,43 @@ You can change upload protocol using :ref:`projectconf_upload_protocol` option:
 
 You can switch between debugging :ref:`debugging_tools` using
 :ref:`projectconf_debug_tool` option in :ref:`projectconf`.
-""")
+"""
+        )
         if has_onboard_debug:
             lines.append(
                 "{name} has on-board debug probe and **IS READY** for "
-                "debugging. You don't need to use/buy external debug probe.".
-                format(**variables))
+                "debugging. You don't need to use/buy external debug probe.".format(
+                    **variables
+                )
+            )
         else:
             lines.append(
                 "{name} does not have on-board debug probe and **IS NOT "
                 "READY** for debugging. You will need to use/buy one of "
-                "external probe listed below.".format(**variables))
-        lines.append("""
+                "external probe listed below.".format(**variables)
+            )
+        lines.append(
+            """
 .. list-table::
   :header-rows:  1
 
   * - Compatible Tools
     - On-board
-    - Default""")
-        for (tool_name, tool_data) in sorted(board['debug']['tools'].items()):
-            lines.append("""  * - :ref:`debugging_tool_{name}`
+    - Default"""
+        )
+        for (tool_name, tool_data) in sorted(board["debug"]["tools"].items()):
+            lines.append(
+                """  * - :ref:`debugging_tool_{name}`
     - {onboard}
     - {default}""".format(
-                name=tool_name,
-                onboard="Yes" if tool_data.get("onboard") else "",
-                default="Yes" if tool_name == default_debug_tool else ""))
+                    name=tool_name,
+                    onboard="Yes" if tool_data.get("onboard") else "",
+                    default="Yes" if tool_name == default_debug_tool else "",
+                )
+            )
 
-    if board['frameworks']:
-        lines.extend(generate_frameworks_contents(board['frameworks']))
+    if board["frameworks"]:
+        lines.extend(generate_frameworks_contents(board["frameworks"]))
 
     with open(rst_path, "w") as f:
         f.write("\n".join(lines))
@@ -781,21 +892,21 @@ def update_debugging():
     platforms = []
     frameworks = []
     for data in BOARDS:
-        if not data.get('debug'):
+        if not data.get("debug"):
             continue
 
-        for tool in data['debug']['tools']:
+        for tool in data["debug"]["tools"]:
             tool = str(tool)
             if tool not in tool_to_platforms:
                 tool_to_platforms[tool] = []
-            tool_to_platforms[tool].append(data['platform'])
+            tool_to_platforms[tool].append(data["platform"])
             if tool not in tool_to_boards:
                 tool_to_boards[tool] = []
-            tool_to_boards[tool].append(data['id'])
+            tool_to_boards[tool].append(data["id"])
 
-        platforms.append(data['platform'])
-        frameworks.extend(data['frameworks'])
-        vendor = data['vendor']
+        platforms.append(data["platform"])
+        frameworks.extend(data["frameworks"])
+        vendor = data["vendor"]
         if vendor in vendors:
             vendors[vendor].append(data)
         else:
@@ -809,26 +920,30 @@ def update_debugging():
     lines.extend(generate_frameworks_contents(frameworks))
 
     # Boards
-    lines.append("""
+    lines.append(
+        """
 Boards
 ------
 
 .. note::
     For more detailed ``board`` information please scroll tables below by horizontal.
-""")
+"""
+    )
     for vendor, boards in sorted(vendors.items()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
         lines.extend(generate_boards_table(boards))
 
     # save
-    with open(join(fs.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
-              "r+") as fp:
+    with open(
+        join(fs.get_source_dir(), "..", "docs", "plus", "debugging.rst"), "r+"
+    ) as fp:
         content = fp.read()
         fp.seek(0)
         fp.truncate()
-        fp.write(content[:content.index(".. _debugging_platforms:")] +
-                 "\n".join(lines))
+        fp.write(
+            content[: content.index(".. _debugging_platforms:")] + "\n".join(lines)
+        )
 
     # Debug tools
     for tool, platforms in tool_to_platforms.items():
@@ -847,24 +962,27 @@ Boards
                     tool_frameworks.append(framework)
         lines.extend(generate_frameworks_contents(tool_frameworks))
 
-        lines.append("""
+        lines.append(
+            """
 Boards
 ------
 
 .. note::
     For more detailed ``board`` information please scroll tables below by horizontal.
-""")
+"""
+        )
         lines.extend(
             generate_boards_table(
-                [b for b in BOARDS if b['id'] in tool_to_boards[tool]],
-                skip_columns=None))
+                [b for b in BOARDS if b["id"] in tool_to_boards[tool]],
+                skip_columns=None,
+            )
+        )
 
         with open(tool_path, "r+") as fp:
             content = fp.read()
             fp.seek(0)
             fp.truncate()
-            fp.write(content[:content.index(".. begin_platforms")] +
-                     "\n".join(lines))
+            fp.write(content[: content.index(".. begin_platforms")] + "\n".join(lines))
 
 
 def update_project_examples():
@@ -899,7 +1017,7 @@ def update_project_examples():
     desktop = []
 
     for manifest in PLATFORM_MANIFESTS:
-        p = PlatformFactory.newPlatform(manifest['name'])
+        p = PlatformFactory.new(manifest["name"])
         github_url = p.repository_url[:-4]
 
         # Platform README
@@ -922,19 +1040,21 @@ def update_project_examples():
                     name=p.name,
                     title=p.title,
                     description=p.description,
-                    examples="\n".join(examples_md_lines)))
+                    examples="\n".join(examples_md_lines),
+                )
+            )
 
         # Framework README
         for framework in API_FRAMEWORKS:
-            if not is_compat_platform_and_framework(p.name, framework['name']):
+            if not is_compat_platform_and_framework(p.name, framework["name"]):
                 continue
-            if framework['name'] not in framework_examples_md_lines:
-                framework_examples_md_lines[framework['name']] = []
+            if framework["name"] not in framework_examples_md_lines:
+                framework_examples_md_lines[framework["name"]] = []
             lines = []
             lines.append("- [%s](%s)" % (p.title, github_url))
             lines.extend("  %s" % l for l in examples_md_lines)
             lines.append("")
-            framework_examples_md_lines[framework['name']].extend(lines)
+            framework_examples_md_lines[framework["name"]].extend(lines)
 
         # Root README
         line = "* [%s](%s)" % (p.title, "%s/tree/master/examples" % github_url)
@@ -946,27 +1066,29 @@ def update_project_examples():
     # Frameworks
     frameworks = []
     for framework in API_FRAMEWORKS:
-        readme_dir = join(project_examples_dir, "frameworks",
-                          framework['name'])
+        readme_dir = join(project_examples_dir, "frameworks", framework["name"])
         if not isdir(readme_dir):
             os.makedirs(readme_dir)
         with open(join(readme_dir, "README.md"), "w") as fp:
             fp.write(
                 framework_readme_tpl.format(
-                    name=framework['name'],
-                    title=framework['title'],
-                    description=framework['description'],
-                    examples="\n".join(
-                        framework_examples_md_lines[framework['name']])))
+                    name=framework["name"],
+                    title=framework["title"],
+                    description=framework["description"],
+                    examples="\n".join(framework_examples_md_lines[framework["name"]]),
+                )
+            )
         url = campaign_url(
             "https://docs.platformio.org/en/latest/frameworks/%s.html#examples"
-            % framework['name'],
+            % framework["name"],
             source="github",
-            medium="examples")
-        frameworks.append("* [%s](%s)" % (framework['title'], url))
+            medium="examples",
+        )
+        frameworks.append("* [%s](%s)" % (framework["title"], url))
 
     with open(join(project_examples_dir, "README.md"), "w") as fp:
-        fp.write("""# PlatformIO Project Examples
+        fp.write(
+            """# PlatformIO Project Examples
 
 - [Development platforms](#development-platforms):
   - [Embedded](#embedded)
@@ -986,7 +1108,9 @@ def update_project_examples():
 ## Frameworks
 
 %s
-""" % ("\n".join(embedded), "\n".join(desktop), "\n".join(frameworks)))
+"""
+            % ("\n".join(embedded), "\n".join(desktop), "\n".join(frameworks))
+        )
 
 
 def main():
