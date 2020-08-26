@@ -70,6 +70,16 @@ PlatformIO Core 5
   - Fixed an issue when running multiple test environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
   - Fixed an issue when Unit Testing engine fails with a custom project configuration file (`issue #3583 <https://github.com/platformio/platformio-core/issues/3583>`_)
 
+* **Static Code Analysis**
+
+  - Updated analysis tools:
+
+    * ``Cppcheck v2.1`` with a new "soundy" analysis option and improved code parser
+    * ``PVS-Studio v7.08`` with a new file list analysis mode and extended list of diagnostic rules
+
+  - Added Cppcheck package for ARM-based single-board computers (`issue #3559 <https://github.com/platformio/platformio-core/issues/3559>`_)
+  - Fixed an issue with PIO Check when a defect with multiline error message is not reported in verbose mode (`issue #3631 <https://github.com/platformio/platformio-core/issues/3631>`_)
+
 * **Miscellaneous**
 
   - Display system-wide information using a new `pio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
