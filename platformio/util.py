@@ -28,8 +28,8 @@ import click
 
 from platformio import __version__, exception, proc
 from platformio.compat import PY2, WINDOWS
-from platformio.fs import cd  # pylint: disable=unused-import
-from platformio.fs import load_json  # pylint: disable=unused-import
+from platformio.fs import cd, load_json  # pylint: disable=unused-import
+from platformio.package.version import pepver_to_semver  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
 
 

@@ -672,6 +672,20 @@ def test_package_json_schema():
     )
     assert mp.as_dict()["system"] == ["darwin_x86_64"]
 
+    # shortcut repository syntax (npm-style)
+    contents = """
+{
+    "name": "tool-github",
+    "version": "1.2.0",
+    "repository": "github:user/repo"
+}
+"""
+    raw_data = parser.ManifestParserFactory.new(
+        contents, parser.ManifestFileType.PACKAGE_JSON
+    ).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert data["repository"]["url"] == "https://github.com/user/repo.git"
+
 
 def test_parser_from_dir(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")

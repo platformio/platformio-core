@@ -662,6 +662,7 @@ class PackageJsonManifestParser(BaseManifestParser):
             data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         data = self._parse_system(data)
         data = self._parse_homepage(data)
+        data = self._parse_repository(data)
         return data
 
     @staticmethod
@@ -681,4 +682,15 @@ class PackageJsonManifestParser(BaseManifestParser):
         if "url" in data:
             data["homepage"] = data["url"]
             del data["url"]
+        return data
+
+    @staticmethod
+    def _parse_repository(data):
+        if isinstance(data.get("repository", {}), dict):
+            return data
+        data["repository"] = dict(type="git", url=str(data["repository"]))
+        if data["repository"]["url"].startswith(("github:", "gitlab:", "bitbucket:")):
+            data["repository"]["url"] = "https://{0}.com/{1}".format(
+                *(data["repository"]["url"].split(":", 1))
+            )
         return data
