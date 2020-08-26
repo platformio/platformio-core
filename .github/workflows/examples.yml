@@ -49,6 +49,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         env:
           PLATFORMIO_CORE_DIR: C:/pio
+          PLATFORMIO_WORKSPACE_DIR: C:/pio-workspace/$PROJECT_HASH
           PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap"
         run: |
           tox -e testexamples
