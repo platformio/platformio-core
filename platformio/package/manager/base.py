@@ -244,10 +244,6 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         if spec.id and spec.id != pkg.metadata.spec.id:
             return False
 
-        # "owner" mismatch
-        if spec.owner and not ci_strings_are_equal(spec.owner, pkg.metadata.spec.owner):
-            return False
-
         # external "URL" mismatch
         if spec.external:
             # local folder mismatch
@@ -258,6 +254,12 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 return True
             if spec.url != pkg.metadata.spec.url:
                 return False
+
+        # "owner" mismatch
+        elif spec.owner and not ci_strings_are_equal(
+            spec.owner, pkg.metadata.spec.owner
+        ):
+            return False
 
         # "name" mismatch
         elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):
