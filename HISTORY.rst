@@ -91,6 +91,7 @@ PlatformIO Core 5
   - Display system-wide information using a new `pio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
   - Remove unused data using a new `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
   - Do not escape compiler arguments in VSCode template on Windows.
+  - Fixed links to FAQ and sub-section in CLI error message
 
 .. _release_notes_4:
 

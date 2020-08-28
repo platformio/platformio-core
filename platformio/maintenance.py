@@ -148,7 +148,7 @@ def after_upgrade(ctx):
         click.secho("Please remove multiple PIO Cores from a system:", fg="yellow")
         click.secho(
             "https://docs.platformio.org/page/faq.html"
-            "#multiple-pio-cores-in-a-system",
+            "#multiple-platformio-cores-in-a-system",
             fg="cyan",
         )
         click.secho("*" * terminal_width, fg="yellow")

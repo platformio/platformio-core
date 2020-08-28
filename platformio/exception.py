@@ -55,8 +55,8 @@ class InvalidUdevRules(PlatformioException):
 class MissedUdevRules(InvalidUdevRules):
 
     MESSAGE = (
-        "Warning! Please install `99-platformio-udev.rules`. \nMode details: "
-        "https://docs.platformio.org/en/latest/faq.html#platformio-udev-rules"
+        "Warning! Please install `99-platformio-udev.rules`. \nMore details: "
+        "https://docs.platformio.org/page/faq.html#platformio-udev-rules"
     )
 
 
@@ -64,8 +64,8 @@ class OutdatedUdevRules(InvalidUdevRules):
 
     MESSAGE = (
         "Warning! Your `{0}` are outdated. Please update or reinstall them."
-        "\n Mode details: https://docs.platformio.org"
-        "/en/latest/faq.html#platformio-udev-rules"
+        "\nMore details: "
+        "https://docs.platformio.org/page/faq.html#platformio-udev-rules"
     )
 
 
