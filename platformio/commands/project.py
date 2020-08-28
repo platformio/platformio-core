@@ -180,7 +180,10 @@ def project_init(
         )
 
     if ide:
-        config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
+        with fs.cd(project_dir):
+            config = ProjectConfig.get_instance(
+                os.path.join(project_dir, "platformio.ini")
+            )
         config.validate()
         pg = ProjectGenerator(
             config, environment or get_best_envname(config, board), ide
