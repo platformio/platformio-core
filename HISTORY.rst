@@ -31,7 +31,7 @@ PlatformIO Core 5
 
 * Integration with the new **Account Management System**
 
-  - `Manage organizations and owners of an organization <https://docs.platformio.org/page/core/userguide/org/index.html>`__
+  - `Manage organizations <https://docs.platformio.org/page/core/userguide/org/index.html>`__
   - `Manage teams and team memberships <https://docs.platformio.org/page/core/userguide/team/index.html>`__
 
 * New **Package Management System**
