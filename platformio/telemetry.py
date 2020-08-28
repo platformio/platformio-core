@@ -154,7 +154,7 @@ class MeasurementProtocol(TelemetryBase):
             "project",
             "settings",
             "system",
-            "team"
+            "team",
         ):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:

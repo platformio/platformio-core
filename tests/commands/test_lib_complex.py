@@ -98,9 +98,10 @@ def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_core
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "ArduinoJson",
+        "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "SomeLib",
         "OneWire",
-        "ESP32WebServer@src-a1a3c75631882b35702e71966ea694e8",
+        "ESP32WebServer",
     ]
     assert set(items1) >= set(items2)
 
@@ -122,11 +123,11 @@ def test_global_install_repository(clirunner, validate_cliresult, isolated_pio_c
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
-        "PJON@src-1204e8bbd80de05e54e171b3a07bcc3f",
+        "PJON",
         "PJON@src-79de467ebe19de18287becff0a1fb42d",
         "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
-        "platformio-libmirror@src-b7e674cad84244c61b436fcea8f78377",
-        "PubSubClient@src-98ec699a461a31615982e5adaaefadda",
+        "platformio-libmirror",
+        "PubSubClient",
     ]
     assert set(items1) >= set(items2)
 
@@ -293,13 +294,13 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
         "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "AsyncMqttClient",
         "AsyncTCP",
-        "ESP32WebServer@src-a1a3c75631882b35702e71966ea694e8",
+        "ESP32WebServer",
         "ESPAsyncTCP",
         "NeoPixelBus",
-        "PJON@src-1204e8bbd80de05e54e171b3a07bcc3f",
+        "PJON",
         "PJON@src-79de467ebe19de18287becff0a1fb42d",
-        "platformio-libmirror@src-b7e674cad84244c61b436fcea8f78377",
-        "PubSubClient@src-98ec699a461a31615982e5adaaefadda",
+        "platformio-libmirror",
+        "PubSubClient",
         "SomeLib",
     ]
     assert set(items1) == set(items2)

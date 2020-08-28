@@ -180,20 +180,19 @@ class PackageManagerInstallMixin(object):
             dst_pkg = PackageItem(
                 os.path.join(self.package_dir, tmp_pkg.metadata.spec.name)
             )
-        elif dst_pkg.metadata and dst_pkg.metadata.spec.external:
-            if dst_pkg.metadata.spec.url != tmp_pkg.metadata.spec.url:
-                action = "detach-existing"
-        elif tmp_pkg.metadata.spec.external:
-            action = "detach-new"
-        elif dst_pkg.metadata and (
-            dst_pkg.metadata.version != tmp_pkg.metadata.version
-            or dst_pkg.metadata.spec.owner != tmp_pkg.metadata.spec.owner
-        ):
-            action = (
-                "detach-existing"
-                if tmp_pkg.metadata.version > dst_pkg.metadata.version
-                else "detach-new"
-            )
+        elif dst_pkg.metadata:
+            if dst_pkg.metadata.spec.external:
+                if dst_pkg.metadata.spec.url != tmp_pkg.metadata.spec.url:
+                    action = "detach-existing"
+            elif (
+                dst_pkg.metadata.version != tmp_pkg.metadata.version
+                or dst_pkg.metadata.spec.owner != tmp_pkg.metadata.spec.owner
+            ):
+                action = (
+                    "detach-existing"
+                    if tmp_pkg.metadata.version > dst_pkg.metadata.version
+                    else "detach-new"
+                )
 
         def _cleanup_dir(path):
             if os.path.isdir(path):

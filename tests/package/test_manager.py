@@ -186,6 +186,12 @@ version = 5.2.7
     pkg = lm.install_from_url("file://%s" % src_dir, spec)
     assert str(pkg.metadata.version) == "5.2.7"
 
+    # check package folder names
+    lm.memcache_reset()
+    assert ["local-lib-dir", "manifest-lib-name", "wifilib"] == [
+        os.path.basename(pkg.path) for pkg in lm.get_installed()
+    ]
+
 
 def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     # Libraries
