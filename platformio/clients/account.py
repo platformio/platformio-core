@@ -27,7 +27,7 @@ class AccountError(PlatformioException):
 
 class AccountNotAuthorized(AccountError):
 
-    MESSAGE = "You are not authorized! Please log in to PIO Account."
+    MESSAGE = "You are not authorized! Please log in to PlatformIO Account."
 
 
 class AccountAlreadyAuthorized(AccountError):

@@ -24,7 +24,7 @@ from tabulate import tabulate
 from platformio.clients.account import AccountClient, AccountNotAuthorized
 
 
-@click.group("account", short_help="Manage PIO Account")
+@click.group("account", short_help="Manage PlatformIO account")
 def cli():
     pass
 
@@ -60,7 +60,7 @@ def validate_password(value):
     return value
 
 
-@cli.command("register", short_help="Create new PIO Account")
+@cli.command("register", short_help="Create new PlatformIO Account")
 @click.option(
     "-u",
     "--username",
@@ -90,7 +90,7 @@ def account_register(username, email, password, firstname, lastname):
     )
 
 
-@cli.command("login", short_help="Log in to PIO Account")
+@cli.command("login", short_help="Log in to PlatformIO Account")
 @click.option("-u", "--username", prompt="Username or email")
 @click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
@@ -99,7 +99,7 @@ def account_login(username, password):
     return click.secho("Successfully logged in!", fg="green")
 
 
-@cli.command("logout", short_help="Log out of PIO Account")
+@cli.command("logout", short_help="Log out of PlatformIO Account")
 def account_logout():
     client = AccountClient()
     client.logout()
@@ -195,7 +195,7 @@ def account_destroy():
     return click.secho("User account has been destroyed.", fg="green",)
 
 
-@cli.command("show", short_help="PIO Account information")
+@cli.command("show", short_help="PlatformIO Account information")
 @click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_show(offline, json_output):

@@ -26,7 +26,7 @@ from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 
 
-@click.group(short_help="Platform Manager")
+@click.group(short_help="Platform manager")
 def cli():
     pass
 

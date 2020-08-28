@@ -50,7 +50,7 @@ def validate_teamname(value):
     return value
 
 
-@click.group("team", short_help="Manage Teams")
+@click.group("team", short_help="Manage organization teams")
 def cli():
     pass
 
@@ -119,7 +119,9 @@ def team_list(orgname, json_output):
     callback=lambda _, __, value: validate_orgname_teamname(value),
 )
 @click.option(
-    "--name", callback=lambda _, __, value: validate_teamname(value),
+    "--name",
+    callback=lambda _, __, value: validate_teamname(value),
+    help="A new team name",
 )
 @click.option("--description",)
 def team_update(orgname_teamname, **kwargs):
@@ -189,8 +191,8 @@ def team_add_member(orgname_teamname, username):
     metavar="ORGNAME:TEAMNAME",
     callback=lambda _, __, value: validate_orgname_teamname(value),
 )
-@click.argument("username",)
-def org_remove_owner(orgname_teamname, username):
+@click.argument("username")
+def team_remove_owner(orgname_teamname, username):
     orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     client.remove_team_member(orgname, teamname, username)

@@ -50,7 +50,7 @@ def get_project_global_lib_dir():
     return ProjectConfig.get_instance().get_optional_dir("globallib")
 
 
-@click.group(short_help="Library Manager")
+@click.group(short_help="Library manager")
 @click.option(
     "-d",
     "--storage-dir",

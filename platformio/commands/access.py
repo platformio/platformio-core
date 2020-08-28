@@ -33,7 +33,7 @@ def validate_client(value):
     return value
 
 
-@click.group("access", short_help="Manage Resource Access")
+@click.group("access", short_help="Manage resource access")
 def cli():
     pass
 
@@ -75,7 +75,7 @@ def access_private(urn, urn_type):
 @click.argument("level", type=click.Choice(["admin", "maintainer", "guest"]))
 @click.argument(
     "client",
-    metavar="[ORGNAME:TEAMNAME|USERNAME]",
+    metavar="[<ORGNAME:TEAMNAME>|<USERNAME>]",
     callback=lambda _, __, value: validate_client(value),
 )
 @click.argument(
@@ -108,7 +108,7 @@ def access_revoke(client, urn, urn_type):
     )
 
 
-@cli.command("list", short_help="List resources")
+@cli.command("list", short_help="List published resources")
 @click.argument("owner", required=False)
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 @click.option("--json-output", is_flag=True)

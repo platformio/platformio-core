@@ -22,7 +22,7 @@ from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
 
 
-@click.command("boards", short_help="Embedded Board Explorer")
+@click.command("boards", short_help="Embedded board explorer")
 @click.argument("query", required=False)
 @click.option("--installed", is_flag=True)
 @click.option("--json-output", is_flag=True)

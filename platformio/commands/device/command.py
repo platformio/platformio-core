@@ -26,7 +26,7 @@ from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import NotPlatformIOProjectError
 
 
-@click.group(short_help="Monitor device or list existing")
+@click.group(short_help="Device manager & serial/socket monitor")
 def cli():
     pass
 

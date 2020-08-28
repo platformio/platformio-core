@@ -26,7 +26,7 @@ from platformio.proc import get_pythonexe_path
 
 def get_core_package_dir(name):
     if name not in __core_packages__:
-        raise exception.PlatformioException("Please upgrade PIO Core")
+        raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
     spec = PackageSpec(
         owner="platformio", name=name, requirements=__core_packages__[name]

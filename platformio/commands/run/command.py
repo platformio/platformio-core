@@ -36,7 +36,7 @@ except NotImplementedError:
     DEFAULT_JOB_NUMS = 1
 
 
-@click.command("run", short_help="Process project environments")
+@click.command("run", short_help="Run project targets (build, upload, clean, etc.)")
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")

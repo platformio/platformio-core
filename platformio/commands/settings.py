@@ -27,7 +27,7 @@ def format_value(raw):
     return str(raw)
 
 
-@click.group(short_help="Manage PlatformIO settings")
+@click.group(short_help="Manage system settings")
 def cli():
     pass
 

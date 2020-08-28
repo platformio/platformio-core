@@ -45,7 +45,7 @@ class InternetIsOffline(UserSideException):
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "PlatformIO needs the Internet connection to"
-        " download dependent packages or to work with PIO Account."
+        " download dependent packages or to work with PlatformIO Account."
     )
 
 

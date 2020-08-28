@@ -44,7 +44,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
         raise click.BadParameter("Found invalid path: %s" % invalid_path)
 
 
-@click.command("ci", short_help="Continuous Integration")
+@click.command("ci", short_help="Continuous integration")
 @click.argument("src", nargs=-1, callback=validate_path)
 @click.option("-l", "--lib", multiple=True, callback=validate_path, metavar="DIRECTORY")
 @click.option("--exclude", multiple=True)

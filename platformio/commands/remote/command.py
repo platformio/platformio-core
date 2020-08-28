@@ -33,14 +33,15 @@ from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 
 
-@click.group("remote", short_help="PIO Remote")
+@click.group("remote", short_help="Remote development")
 @click.option("-a", "--agent", multiple=True)
 @click.pass_context
 def cli(ctx, agent):
     if PY2:
         raise exception.UserSideException(
-            "PIO Remote requires Python 3.5 or above. \nPlease install the latest "
-            "Python 3 and reinstall PlatformIO Core using installation script:\n"
+            "PlatformIO Remote Development requires Python 3.5 or above. \n"
+            "Please install the latest Python 3 and reinstall PlatformIO Core using "
+            "installation script:\n"
             "https://docs.platformio.org/page/core/installation.html"
         )
     ctx.obj = agent

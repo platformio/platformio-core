@@ -23,7 +23,7 @@ from platformio.clients.account import AccountClient
 from platformio.commands.account import validate_email, validate_username
 
 
-@click.group("org", short_help="Manage Organizations")
+@click.group("org", short_help="Manage organizations")
 def cli():
     pass
 
@@ -44,11 +44,11 @@ def org_create(orgname, email, displayname):
     client = AccountClient()
     client.create_org(orgname, email, displayname)
     return click.secho(
-        "The organization %s has been successfully created." % orgname, fg="green",
+        "The organization `%s` has been successfully created." % orgname, fg="green",
     )
 
 
-@cli.command("list", short_help="List organizations")
+@cli.command("list", short_help="List organizations and their members")
 @click.option("--json-output", is_flag=True)
 def org_list(json_output):
     client = AccountClient()
@@ -56,7 +56,7 @@ def org_list(json_output):
     if json_output:
         return click.echo(json.dumps(orgs))
     if not orgs:
-        return click.echo("You do not have any organizations")
+        return click.echo("You do not have any organization")
     for org in orgs:
         click.echo()
         click.secho(org.get("orgname"), fg="cyan")
@@ -77,15 +77,17 @@ def org_list(json_output):
 
 
 @cli.command("update", short_help="Update organization")
-@click.argument("orgname")
+@click.argument("cur_orgname")
 @click.option(
-    "--new-orgname", callback=lambda _, __, value: validate_orgname(value),
+    "--orgname",
+    callback=lambda _, __, value: validate_orgname(value),
+    help="A new orgname",
 )
 @click.option("--email")
-@click.option("--displayname",)
-def org_update(orgname, **kwargs):
+@click.option("--displayname")
+def org_update(cur_orgname, **kwargs):
     client = AccountClient()
-    org = client.get_org(orgname)
+    org = client.get_org(cur_orgname)
     del org["owners"]
     new_org = org.copy()
     if not any(kwargs.values()):
@@ -101,9 +103,10 @@ def org_update(orgname, **kwargs):
         new_org.update(
             {key.replace("new_", ""): value for key, value in kwargs.items() if value}
         )
-    client.update_org(orgname, new_org)
+    client.update_org(cur_orgname, new_org)
     return click.secho(
-        "The organization %s has been successfully updated." % orgname, fg="green",
+        "The organization `%s` has been successfully updated." % cur_orgname,
+        fg="green",
     )
 
 
@@ -112,13 +115,13 @@ def org_update(orgname, **kwargs):
 def account_destroy(orgname):
     client = AccountClient()
     click.confirm(
-        "Are you sure you want to delete the %s organization account?\n"
+        "Are you sure you want to delete the `%s` organization account?\n"
         "Warning! All linked data will be permanently removed and can not be restored."
         % orgname,
         abort=True,
     )
     client.destroy_org(orgname)
-    return click.secho("Organization %s has been destroyed." % orgname, fg="green",)
+    return click.secho("Organization `%s` has been destroyed." % orgname, fg="green",)
 
 
 @cli.command("add", short_help="Add a new owner to organization")
@@ -128,7 +131,7 @@ def org_add_owner(orgname, username):
     client = AccountClient()
     client.add_org_owner(orgname, username)
     return click.secho(
-        "The new owner %s has been successfully added to the %s organization."
+        "The new owner `%s` has been successfully added to the `%s` organization."
         % (username, orgname),
         fg="green",
     )
@@ -141,7 +144,7 @@ def org_remove_owner(orgname, username):
     client = AccountClient()
     client.remove_org_owner(orgname, username)
     return click.secho(
-        "The %s owner has been successfully removed from the %s organization."
+        "The `%s` owner has been successfully removed from the `%s` organization."
         % (username, orgname),
         fg="green",
     )

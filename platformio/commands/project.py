@@ -30,7 +30,7 @@ from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
-@click.group(short_help="Project Manager")
+@click.group(short_help="Project manager")
 def cli():
     pass
 
@@ -333,7 +333,7 @@ def init_test_readme(test_dir):
     with open(os.path.join(test_dir, "README"), "w") as fp:
         fp.write(
             """
-This directory is intended for PIO Unit Testing and project tests.
+This directory is intended for PlatformIO Unit Testing and project tests.
 
 Unit Testing is a software testing method by which individual units of
 source code, sets of one or more MCU program modules together with associated
@@ -341,7 +341,7 @@ control data, usage procedures, and operating procedures, are tested to
 determine whether they are fit for use. Unit testing finds problems early
 in the development cycle.
 
-More information about PIO Unit Testing:
+More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
 """,
         )

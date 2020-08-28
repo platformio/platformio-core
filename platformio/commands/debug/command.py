@@ -33,7 +33,7 @@ from platformio.project.helpers import is_platformio_project, load_project_ide_d
 @click.command(
     "debug",
     context_settings=dict(ignore_unknown_options=True),
-    short_help="PIO Unified Debugger",
+    short_help="Unified debugger",
 )
 @click.option(
     "-d",

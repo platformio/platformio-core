@@ -32,7 +32,7 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
-@click.group("package", short_help="Package Manager")
+@click.group("package", short_help="Package manager")
 def cli():
     pass
 
