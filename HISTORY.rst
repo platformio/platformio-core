@@ -81,7 +81,7 @@ PlatformIO Core 5
   - Updated analysis tools:
 
     * ``Cppcheck v2.1`` with a new "soundy" analysis option and improved code parser
-    * ``PVS-Studio v7.08`` with a new file list analysis mode and an extended list of diagnostic rules
+    * ``PVS-Studio v7.09`` with a new file list analysis mode and an extended list of analysis diagnostics
 
   - Added Cppcheck package for ARM-based single-board computers (`issue #3559 <https://github.com/platformio/platformio-core/issues/3559>`_)
   - Fixed an issue with PIO Check when a defect with a multiline error message is not reported in verbose mode (`issue #3631 <https://github.com/platformio/platformio-core/issues/3631>`_)

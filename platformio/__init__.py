@@ -53,7 +53,7 @@ __core_packages__ = {
     "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~4.40001.0",
     "tool-cppcheck": "~1.210.0",
     "tool-clangtidy": "~1.100000.0",
-    "tool-pvs-studio": "~7.8.0",
+    "tool-pvs-studio": "~7.9.0",
 }
 
 __check_internet_hosts__ = [
