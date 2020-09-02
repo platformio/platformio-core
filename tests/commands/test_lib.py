@@ -51,15 +51,19 @@ lib_deps =
     validate_cliresult(result)
     aj_pkg_data = regclient.get_package(PackageType.LIBRARY, "bblanchon", "ArduinoJson")
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
-    assert config.get("env:one", "lib_deps") == [
-        "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
-        "knolleary/PubSubClient@~2.7",
-    ]
-    assert config.get("env:two", "lib_deps") == [
-        "CustomLib",
-        "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
-        "knolleary/PubSubClient@~2.7",
-    ]
+    assert sorted(config.get("env:one", "lib_deps")) == sorted(
+        [
+            "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+            "knolleary/PubSubClient@~2.7",
+        ]
+    )
+    assert sorted(config.get("env:two", "lib_deps")) == sorted(
+        [
+            "CustomLib",
+            "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+            "knolleary/PubSubClient@~2.7",
+        ]
+    )
 
     # ensure "build" version without NPM spec
     result = clirunner.invoke(
@@ -71,11 +75,13 @@ lib_deps =
         PackageType.LIBRARY, "mbed-sam-grove", "LinkedList"
     )
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
-    assert config.get("env:one", "lib_deps") == [
-        "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
-        "knolleary/PubSubClient@~2.7",
-        "mbed-sam-grove/LinkedList@%s" % ll_pkg_data["version"]["name"],
-    ]
+    assert sorted(config.get("env:one", "lib_deps")) == sorted(
+        [
+            "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+            "knolleary/PubSubClient@~2.7",
+            "mbed-sam-grove/LinkedList@%s" % ll_pkg_data["version"]["name"],
+        ]
+    )
 
     # check external package via Git repo
     result = clirunner.invoke(

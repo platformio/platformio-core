@@ -147,7 +147,7 @@ def cli(
         command_failed = any(r.get("succeeded") is False for r in results)
 
         if not is_test_running and (command_failed or not silent) and len(results) > 1:
-            print_processing_summary(results)
+            print_processing_summary(results, verbose)
 
         if command_failed:
             raise exception.ReturnErrorCode(1)
@@ -220,7 +220,7 @@ def print_processing_footer(result):
     )
 
 
-def print_processing_summary(results):
+def print_processing_summary(results, verbose=False):
     tabular_data = []
     succeeded_nums = 0
     failed_nums = 0
@@ -232,6 +232,8 @@ def print_processing_summary(results):
             failed_nums += 1
             status_str = click.style("FAILED", fg="red")
         elif result.get("succeeded") is None:
+            if not verbose:
+                continue
             status_str = "IGNORED"
         else:
             succeeded_nums += 1
