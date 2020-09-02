@@ -37,8 +37,9 @@ PlatformIO Core 5
 * New **Package Management System**
 
   - Integrated PlatformIO Core with the new PlatformIO Registry
-  - Strict dependency declaration using owner name (resolves name conflicts) (`issue #1824 <https://github.com/platformio/platformio-core/issues/1824>`_)
+  - Support for owner-based dependency declaration (resolves name conflicts) (`issue #1824 <https://github.com/platformio/platformio-core/issues/1824>`_)
   - Automatically save dependencies to `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ when installing using PlatformIO CLI (`issue #2964 <https://github.com/platformio/platformio-core/issues/2964>`_)
+  - Follow SemVer complaint version constraints when checking library updates `issue #1281 <https://github.com/platformio/platformio-core/issues/1281>`_)
   - Dropped support for "packageRepositories" section in "platform.json" manifest (please publish packages directly to the registry)
 
 * **Build System**

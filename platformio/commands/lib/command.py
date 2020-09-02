@@ -254,8 +254,9 @@ def lib_update(  # pylint: disable=too-many-arguments
     for storage_dir in storage_dirs:
         if not json_output:
             print_storage_header(storage_dirs, storage_dir)
+        lib_deps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, {}).get(storage_dir, [])
         lm = LibraryPackageManager(storage_dir)
-        _libraries = libraries or lm.get_installed()
+        _libraries = libraries or lib_deps or lm.get_installed()
 
         if only_check and json_output:
             result = []
@@ -286,9 +287,13 @@ def lib_update(  # pylint: disable=too-many-arguments
                 to_spec = (
                     None if isinstance(library, PackageItem) else PackageSpec(library)
                 )
-                lm.update(
-                    library, to_spec=to_spec, only_check=only_check, silent=silent
-                )
+                try:
+                    lm.update(
+                        library, to_spec=to_spec, only_check=only_check, silent=silent
+                    )
+                except UnknownPackageError as e:
+                    if library not in lib_deps:
+                        raise e
 
     if json_output:
         return click.echo(
