@@ -53,6 +53,8 @@ class PackageManagerLegacyMixin(object):
         if pkg.metadata and pkg.metadata.spec and pkg.metadata.spec.external:
             manifest["__src_url"] = pkg.metadata.spec.url
             manifest["version"] = str(pkg.metadata.version)
+        if pkg.metadata and pkg.metadata.spec.owner:
+            manifest["ownername"] = pkg.metadata.spec.owner
         return manifest
 
     def legacy_get_installed(self):

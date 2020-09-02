@@ -87,5 +87,8 @@ def save_project_libdeps(project_dir, specs, environments=None, action="add"):
             pass
         if action == "add":
             lib_deps.extend(spec.as_dependency() for spec in specs)
-        config.set("env:" + env, "lib_deps", lib_deps)
+        if lib_deps:
+            config.set("env:" + env, "lib_deps", lib_deps)
+        elif config.has_option("env:" + env, "lib_deps"):
+            config.remove_option("env:" + env, "lib_deps")
     config.save()

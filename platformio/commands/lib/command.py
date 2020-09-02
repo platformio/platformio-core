@@ -450,12 +450,13 @@ def lib_show(library, json_output):
     if json_output:
         return click.echo(dump_json_to_unicode(lib))
 
-    click.secho(lib["name"], fg="cyan")
-    click.echo("=" * len(lib["name"]))
-    click.secho("#ID: %d" % lib["id"], bold=True)
+    title = "{ownername}/{name}".format(**lib)
+    click.secho(title, fg="cyan")
+    click.echo("=" * len(title))
     click.echo(lib["description"])
     click.echo()
 
+    click.secho("ID: %d" % lib["id"])
     click.echo(
         "Version: %s, released %s"
         % (

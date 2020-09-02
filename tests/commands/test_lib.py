@@ -44,16 +44,21 @@ lib_deps =
     ArduinoJson @ 5.10.1
 """
     )
-    result = clirunner.invoke(cmd_lib, ["-d", str(project_dir), "install", "64"])
+    result = clirunner.invoke(
+        cmd_lib,
+        ["-d", str(project_dir), "install", "64", "knolleary/PubSubClient@~2.7"],
+    )
     validate_cliresult(result)
     aj_pkg_data = regclient.get_package(PackageType.LIBRARY, "bblanchon", "ArduinoJson")
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
     assert config.get("env:one", "lib_deps") == [
-        "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"]
+        "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+        "knolleary/PubSubClient@~2.7",
     ]
     assert config.get("env:two", "lib_deps") == [
         "CustomLib",
         "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+        "knolleary/PubSubClient@~2.7",
     ]
 
     # ensure "build" version without NPM spec
@@ -68,6 +73,7 @@ lib_deps =
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
     assert config.get("env:one", "lib_deps") == [
         "bblanchon/ArduinoJson@^%s" % aj_pkg_data["version"]["name"],
+        "knolleary/PubSubClient@~2.7",
         "mbed-sam-grove/LinkedList@%s" % ll_pkg_data["version"]["name"],
     ]
 
@@ -85,22 +91,40 @@ lib_deps =
     )
     validate_cliresult(result)
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
-    assert len(config.get("env:one", "lib_deps")) == 3
-    assert config.get("env:one", "lib_deps")[2] == (
+    assert len(config.get("env:one", "lib_deps")) == 4
+    assert config.get("env:one", "lib_deps")[3] == (
         "https://github.com/OttoWinter/async-mqtt-client.git#v0.8.3 @ 0.8.3"
     )
 
     # test uninstalling
+    # from all envs
     result = clirunner.invoke(
         cmd_lib, ["-d", str(project_dir), "uninstall", "ArduinoJson"]
     )
     validate_cliresult(result)
+    # from "one" env
+    result = clirunner.invoke(
+        cmd_lib,
+        [
+            "-d",
+            str(project_dir),
+            "-e",
+            "one",
+            "uninstall",
+            "knolleary/PubSubClient@~2.7",
+        ],
+    )
+    validate_cliresult(result)
     config = ProjectConfig(os.path.join(str(project_dir), "platformio.ini"))
     assert len(config.get("env:one", "lib_deps")) == 2
-    assert len(config.get("env:two", "lib_deps")) == 1
+    assert len(config.get("env:two", "lib_deps")) == 2
     assert config.get("env:one", "lib_deps") == [
         "mbed-sam-grove/LinkedList@%s" % ll_pkg_data["version"]["name"],
         "https://github.com/OttoWinter/async-mqtt-client.git#v0.8.3 @ 0.8.3",
+    ]
+    assert config.get("env:two", "lib_deps") == [
+        "CustomLib",
+        "knolleary/PubSubClient@~2.7",
     ]
 
     # test list
@@ -122,7 +146,8 @@ lib_deps =
         item for item in data["one"] if item["name"] == "AsyncMqttClient-esphome"
     )
     ame_vcs = VCSClientFactory.new(ame_lib["__pkg_dir"], ame_lib["__src_url"])
-    assert data["two"] == []
+    assert len(data["two"]) == 1
+    assert data["two"][0]["name"] == "PubSubClient"
     assert "__pkg_dir" in data["one"][0]
     assert (
         ame_lib["__src_url"]

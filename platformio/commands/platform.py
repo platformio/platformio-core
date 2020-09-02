@@ -140,6 +140,7 @@ def _get_registry_platform_data(  # pylint: disable=unused-argument
         return None
 
     data = dict(
+        ownername=_data.get("ownername"),
         name=_data["name"],
         title=_data["title"],
         description=_data["description"],
@@ -242,12 +243,11 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     if json_output:
         return click.echo(dump_json_to_unicode(data))
 
+    dep = "{ownername}/{name}".format(**data) if "ownername" in data else data["name"]
     click.echo(
-        "{name} ~ {title}".format(
-            name=click.style(data["name"], fg="cyan"), title=data["title"]
-        )
+        "{dep} ~ {title}".format(dep=click.style(dep, fg="cyan"), title=data["title"])
     )
-    click.echo("=" * (3 + len(data["name"] + data["title"])))
+    click.echo("=" * (3 + len(dep + data["title"])))
     click.echo(data["description"])
     click.echo()
     if "version" in data:
