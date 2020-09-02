@@ -37,9 +37,8 @@ class PackageManagerUninstallMixin(object):
 
         if not silent:
             self.print_message(
-                "Removing %s @ %s: \t"
+                "Removing %s @ %s"
                 % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version),
-                nl=False,
             )
 
         # firstly, remove dependencies
@@ -68,7 +67,10 @@ class PackageManagerUninstallMixin(object):
             self.memcache_reset()
 
         if not silent:
-            click.echo("[%s]" % click.style("OK", fg="green"))
+            self.print_message(
+                "{name} @ {version} has been removed!".format(**pkg.metadata.as_dict()),
+                fg="green",
+            )
 
         return pkg
 

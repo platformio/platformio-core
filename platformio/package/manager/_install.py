@@ -106,7 +106,7 @@ class PackageManagerInstallMixin(object):
 
         if not silent:
             self.print_message(
-                "{name} @ {version} has been successfully installed!".format(
+                "{name} @ {version} has been installed!".format(
                     **pkg.metadata.as_dict()
                 ),
                 fg="green",

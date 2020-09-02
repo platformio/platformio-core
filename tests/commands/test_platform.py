@@ -119,7 +119,7 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
 def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cli_platform.platform_update)
     validate_cliresult(result)
-    assert "Removing atmelavr @ 2.0.0:" in result.output
+    assert "Removing atmelavr @ 2.0.0" in result.output
     assert "Platform Manager: Installing platformio/atmelavr @" in result.output
     assert len(isolated_pio_core.join("packages").listdir()) == 2
 
