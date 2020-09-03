@@ -16,19 +16,16 @@ from __future__ import absolute_import
 
 import atexit
 import io
+import os
 import re
 import sys
-from os import environ, remove, walk
-from os.path import basename, isdir, isfile, join, realpath, relpath, sep
 from tempfile import mkstemp
 
 import click
-from SCons.Action import Action  # pylint: disable=import-error
-from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import fs, util
 from platformio.compat import get_filesystem_encoding, get_locale_encoding, glob_escape
-from platformio.managers.core import get_core_package_dir
+from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command
 
 
@@ -126,11 +123,11 @@ class InoToCPPConverter(object):
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
                     out_file, tmp_path
                 ),
-                "Converting " + basename(out_file[:-4]),
+                "Converting " + os.path.basename(out_file[:-4]),
             )
         )
         atexit.register(_delete_file, tmp_path)
-        return isfile(out_file)
+        return os.path.isfile(out_file)
 
     def _join_multiline_strings(self, contents):
         if "\\\n" not in contents:
@@ -233,7 +230,9 @@ class InoToCPPConverter(object):
 
 def ConvertInoToCpp(env):
     src_dir = glob_escape(env.subst("$PROJECT_SRC_DIR"))
-    ino_nodes = env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde"))
+    ino_nodes = env.Glob(os.path.join(src_dir, "*.ino")) + env.Glob(
+        os.path.join(src_dir, "*.pde")
+    )
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
@@ -244,8 +243,8 @@ def ConvertInoToCpp(env):
 
 def _delete_file(path):
     try:
-        if isfile(path):
-            remove(path)
+        if os.path.isfile(path):
+            os.remove(path)
     except:  # pylint: disable=bare-except
         pass
 
@@ -255,7 +254,7 @@ def _get_compiler_type(env):
     if env.subst("$CC").endswith("-gcc"):
         return "gcc"
     try:
-        sysenv = environ.copy()
+        sysenv = os.environ.copy()
         sysenv["PATH"] = str(env["ENV"]["PATH"])
         result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
@@ -277,8 +276,8 @@ def GetCompilerType(env):
 def GetActualLDScript(env):
     def _lookup_in_ldpath(script):
         for d in env.get("LIBPATH", []):
-            path = join(env.subst(d), script)
-            if isfile(path):
+            path = os.path.join(env.subst(d), script)
+            if os.path.isfile(path):
                 return path
         return None
 
@@ -297,7 +296,7 @@ def GetActualLDScript(env):
         else:
             continue
         script = env.subst(raw_script.replace('"', "").strip())
-        if isfile(script):
+        if os.path.isfile(script):
             return script
         path = _lookup_in_ldpath(script)
         if path:
@@ -317,29 +316,6 @@ def GetActualLDScript(env):
 
     sys.stderr.write("Error: Could not find LD script\n")
     env.Exit(1)
-
-
-def VerboseAction(_, act, actstr):
-    if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-        return act
-    return Action(act, actstr)
-
-
-def PioClean(env, clean_dir):
-    if not isdir(clean_dir):
-        print("Build environment is clean")
-        env.Exit(0)
-    clean_rel_path = relpath(clean_dir)
-    for root, _, files in walk(clean_dir):
-        for f in files:
-            dst = join(root, f)
-            remove(dst)
-            print(
-                "Removed %s" % (dst if clean_rel_path.startswith(".") else relpath(dst))
-            )
-    print("Done cleaning")
-    fs.rmtree(clean_dir)
-    env.Exit(0)
 
 
 def ConfigureDebugFlags(env):
@@ -370,16 +346,16 @@ def ConfigureDebugFlags(env):
 def ConfigureTestTarget(env):
     env.Append(
         CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
-        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")],
+        CPPPATH=[os.path.join("$BUILD_DIR", "UnityTestLib")],
     )
     unitylib = env.BuildLibrary(
-        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity")
+        os.path.join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity")
     )
     env.Prepend(LIBS=[unitylib])
 
     src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST_RUNNING_NAME" in env:
-        src_filter.append("+<%s%s>" % (env["PIOTEST_RUNNING_NAME"], sep))
+        src_filter.append("+<%s%s>" % (env["PIOTEST_RUNNING_NAME"], os.path.sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
 
@@ -393,7 +369,7 @@ def GetExtraScripts(env, scope):
     if not items:
         return items
     with fs.cd(env.subst("$PROJECT_DIR")):
-        return [realpath(item) for item in items]
+        return [os.path.realpath(item) for item in items]
 
 
 def exists(_):
@@ -404,8 +380,6 @@ def generate(env):
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
-    env.AddMethod(VerboseAction)
-    env.AddMethod(PioClean)
     env.AddMethod(ConfigureDebugFlags)
     env.AddMethod(ConfigureTestTarget)
     env.AddMethod(GetExtraScripts)

@@ -40,7 +40,7 @@ def test_board_options(clirunner, validate_cliresult):
     validate_cliresult(result)
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
-    assert len(search_result)
+    assert search_result
     platforms = [item["name"] for item in search_result]
 
     result = clirunner.invoke(cmd_boards, ["mbed", "--json-output"])

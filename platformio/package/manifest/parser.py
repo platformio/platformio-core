@@ -17,10 +17,10 @@ import io
 import json
 import os
 import re
-
-import requests
+import tarfile
 
 from platformio import util
+from platformio.clients.http import fetch_remote_content
 from platformio.compat import get_object_members, string_types
 from platformio.package.exception import ManifestParserError, UnknownManifestError
 from platformio.project.helpers import is_platformio_project
@@ -40,7 +40,7 @@ class ManifestFileType(object):
 
     @classmethod
     def items(cls):
-        return get_object_members(ManifestFileType)
+        return get_object_members(cls)
 
     @classmethod
     def from_uri(cls, uri):
@@ -60,8 +60,14 @@ class ManifestFileType(object):
 class ManifestParserFactory(object):
     @staticmethod
     def read_manifest_contents(path):
-        with io.open(path, encoding="utf-8") as fp:
-            return fp.read()
+        last_err = None
+        for encoding in ("utf-8", "latin-1"):
+            try:
+                with io.open(path, encoding=encoding) as fp:
+                    return fp.read()
+            except UnicodeDecodeError as e:
+                last_err = e
+        raise last_err  # pylint: disable=raising-bad-type
 
     @classmethod
     def new_from_file(cls, path, remote_url=False):
@@ -101,13 +107,25 @@ class ManifestParserFactory(object):
 
     @staticmethod
     def new_from_url(remote_url):
-        r = requests.get(remote_url)
-        r.raise_for_status()
+        content = fetch_remote_content(remote_url)
         return ManifestParserFactory.new(
-            r.text,
+            content,
             ManifestFileType.from_uri(remote_url) or ManifestFileType.LIBRARY_JSON,
             remote_url,
         )
+
+    @staticmethod
+    def new_from_archive(path):
+        assert path.endswith("tar.gz")
+        with tarfile.open(path, mode="r:gz") as tf:
+            for t in sorted(ManifestFileType.items().values()):
+                try:
+                    return ManifestParserFactory.new(
+                        tf.extractfile(t).read().decode(), t
+                    )
+                except KeyError:
+                    pass
+        raise UnknownManifestError("Unknown manifest file type in %s archive" % path)
 
     @staticmethod
     def new(  # pylint: disable=redefined-builtin
@@ -148,10 +166,27 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
-    def normalize_author(author):
+    def str_to_list(value, sep=",", lowercase=True):
+        if isinstance(value, string_types):
+            value = value.split(sep)
+        assert isinstance(value, list)
+        result = []
+        for item in value:
+            item = item.strip()
+            if not item:
+                continue
+            if lowercase:
+                item = item.lower()
+            result.append(item)
+        return result
+
+    @staticmethod
+    def cleanup_author(author):
         assert isinstance(author, dict)
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
+            if "@" not in author["email"]:
+                author["email"] = None
         for key in list(author.keys()):
             if author[key] is None:
                 del author[key]
@@ -163,10 +198,13 @@ class BaseManifestParser(object):
             return (None, None)
         name = raw
         email = None
-        for ldel, rdel in [("<", ">"), ("(", ")")]:
-            if ldel in raw and rdel in raw:
-                name = raw[: raw.index(ldel)]
-                email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
+        ldel = "<"
+        rdel = ">"
+        if ldel in raw and rdel in raw:
+            name = raw[: raw.index(ldel)]
+            email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
+        if "(" in name:
+            name = name.split("(")[0]
         return (name.strip(), email.strip() if email else None)
 
     @staticmethod
@@ -284,7 +322,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[str, list] fields
         for k in ("keywords", "platforms", "frameworks"):
             if k in data:
-                data[k] = self._str_to_list(data[k], sep=",")
+                data[k] = self.str_to_list(data[k], sep=",")
 
         if "authors" in data:
             data["authors"] = self._parse_authors(data["authors"])
@@ -296,21 +334,6 @@ class LibraryJsonManifestParser(BaseManifestParser):
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
 
         return data
-
-    @staticmethod
-    def _str_to_list(value, sep=",", lowercase=True):
-        if isinstance(value, string_types):
-            value = value.split(sep)
-        assert isinstance(value, list)
-        result = []
-        for item in value:
-            item = item.strip()
-            if not item:
-                continue
-            if lowercase:
-                item = item.lower()
-            result.append(item)
-        return result
 
     @staticmethod
     def _process_renamed_fields(data):
@@ -334,7 +357,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[dict, list] fields
         if not isinstance(raw, list):
             raw = [raw]
-        return [self.normalize_author(author) for author in raw]
+        return [self.cleanup_author(author) for author in raw]
 
     @staticmethod
     def _parse_platforms(raw):
@@ -372,8 +395,6 @@ class LibraryJsonManifestParser(BaseManifestParser):
                     for k, v in dependency.items():
                         if k not in ("platforms", "frameworks", "authors"):
                             continue
-                        if "*" in v:
-                            del raw[i][k]
                         raw[i][k] = util.items_to_list(v)
                 else:
                     raw[i] = {"name": dependency}
@@ -399,6 +420,8 @@ class ModuleJsonManifestParser(BaseManifestParser):
             del data["licenses"]
         if "dependencies" in data:
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         return data
 
     def _parse_authors(self, raw):
@@ -409,7 +432,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            result.append(self.normalize_author(dict(name=name, email=email)))
+            result.append(self.cleanup_author(dict(name=name, email=email)))
         return result
 
     @staticmethod
@@ -450,7 +473,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         )
         if "author" in data:
             data["authors"] = self._parse_authors(data)
-            del data["author"]
+            for key in ("author", "maintainer"):
+                if key in data:
+                    del data[key]
         if "depends" in data:
             data["dependencies"] = self._parse_dependencies(data["depends"])
         return data
@@ -466,6 +491,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             if line.startswith("#"):
                 continue
             key, value = line.split("=", 1)
+            if not value.strip():
+                continue
             data[key.strip()] = value.strip()
         return data
 
@@ -521,7 +548,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            authors.append(self.normalize_author(dict(name=name, email=email)))
+            authors.append(self.cleanup_author(dict(name=name, email=email)))
         for author in properties.get("maintainer", "").split(","):
             name, email = self.parse_author_name_and_email(author)
             if not name:
@@ -532,11 +559,11 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     continue
                 found = True
                 item["maintainer"] = True
-                if not item.get("email") and email:
+                if not item.get("email") and email and "@" in email:
                     item["email"] = email
             if not found:
                 authors.append(
-                    self.normalize_author(dict(name=name, email=email, maintainer=True))
+                    self.cleanup_author(dict(name=name, email=email, maintainer=True))
                 )
         return authors
 
@@ -605,6 +632,8 @@ class PlatformJsonManifestParser(BaseManifestParser):
 
     def parse(self, contents):
         data = json.loads(contents)
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         if "frameworks" in data:
             data["frameworks"] = self._parse_frameworks(data["frameworks"])
         if "packages" in data:
@@ -629,8 +658,11 @@ class PackageJsonManifestParser(BaseManifestParser):
 
     def parse(self, contents):
         data = json.loads(contents)
+        if "keywords" in data:
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
         data = self._parse_system(data)
         data = self._parse_homepage(data)
+        data = self._parse_repository(data)
         return data
 
     @staticmethod
@@ -650,4 +682,15 @@ class PackageJsonManifestParser(BaseManifestParser):
         if "url" in data:
             data["homepage"] = data["url"]
             del data["url"]
+        return data
+
+    @staticmethod
+    def _parse_repository(data):
+        if isinstance(data.get("repository", {}), dict):
+            return data
+        data["repository"] = dict(type="git", url=str(data["repository"]))
+        if data["repository"]["url"].startswith(("github:", "gitlab:", "bitbucket:")):
+            data["repository"]["url"] = "https://{0}.com/{1}".format(
+                *(data["repository"]["url"].split(":", 1))
+            )
         return data

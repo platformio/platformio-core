@@ -14,7 +14,6 @@
 
 from __future__ import absolute_import
 
-import glob
 import io
 import os
 import shutil
@@ -23,9 +22,11 @@ from functools import cmp_to_key
 import click
 from twisted.internet import defer  # pylint: disable=import-error
 
-from platformio import app, fs, util
+from platformio import __default_requests_timeout__, fs, util
+from platformio.cache import ContentCache
+from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
-from platformio.compat import PY2, get_filesystem_encoding
+from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
 
 
 class OSRPC(object):
@@ -40,26 +41,30 @@ class OSRPC(object):
                     "Safari/603.3.8"
                 )
             }
-        cache_key = app.ContentCache.key_from_args(uri, data) if cache_valid else None
-        with app.ContentCache() as cc:
+        cache_key = ContentCache.key_from_args(uri, data) if cache_valid else None
+        with ContentCache() as cc:
             if cache_key:
                 result = cc.get(cache_key)
                 if result is not None:
                     defer.returnValue(result)
 
         # check internet before and resolve issue with 60 seconds timeout
-        util.internet_on(raise_exception=True)
+        ensure_internet_on(raise_exception=True)
 
         session = helpers.requests_session()
         if data:
-            r = yield session.post(uri, data=data, headers=headers)
+            r = yield session.post(
+                uri, data=data, headers=headers, timeout=__default_requests_timeout__
+            )
         else:
-            r = yield session.get(uri, headers=headers)
+            r = yield session.get(
+                uri, headers=headers, timeout=__default_requests_timeout__
+            )
 
         r.raise_for_status()
         result = r.text
         if cache_valid:
-            with app.ContentCache() as cc:
+            with ContentCache() as cc:
                 cc.set(cache_key, result, cache_valid)
         defer.returnValue(result)
 
@@ -115,7 +120,9 @@ class OSRPC(object):
             pathnames = [pathnames]
         result = set()
         for pathname in pathnames:
-            result |= set(glob.glob(os.path.join(root, pathname) if root else pathname))
+            result |= set(
+                glob_recursive(os.path.join(root, pathname) if root else pathname)
+            )
         return list(result)
 
     @staticmethod

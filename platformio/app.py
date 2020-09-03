@@ -12,27 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import codecs
+from __future__ import absolute_import
+
 import getpass
 import hashlib
+import json
 import os
 import platform
 import socket
 import uuid
-from os import environ, getenv, listdir, remove
 from os.path import dirname, isdir, isfile, join, realpath
-from time import time
 
-import requests
-
-from platformio import __version__, exception, fs, lockfile
+from platformio import __version__, exception, fs, proc
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
-from platformio.proc import is_ci
-from platformio.project.helpers import (
-    get_default_projects_dir,
-    get_project_cache_dir,
-    get_project_core_dir,
-)
+from platformio.package.lockfile import LockFile
+from platformio.project.helpers import get_default_projects_dir, get_project_core_dir
 
 
 def projects_dir_validate(projects_dir):
@@ -62,10 +56,9 @@ DEFAULT_SETTINGS = {
         "value": 7,
     },
     "enable_cache": {
-        "description": "Enable caching for API requests and Library Manager",
+        "description": "Enable caching for HTTP API requests",
         "value": True,
     },
-    "strict_ssl": {"description": "Strict SSL for PlatformIO Services", "value": False},
     "enable_telemetry": {
         "description": ("Telemetry service <http://bit.ly/pio-telemetry> (Yes/No)"),
         "value": True,
@@ -75,7 +68,7 @@ DEFAULT_SETTINGS = {
         "value": False,
     },
     "projects_dir": {
-        "description": "Default location for PlatformIO projects (PIO Home)",
+        "description": "Default location for PlatformIO projects (PlatformIO Home)",
         "value": get_default_projects_dir(),
         "validator": projects_dir_validate,
     },
@@ -126,7 +119,7 @@ class State(object):
     def _lock_state_file(self):
         if not self.lock:
             return
-        self._lockfile = lockfile.LockFile(self.path)
+        self._lockfile = LockFile(self.path)
         try:
             self._lockfile.acquire()
         except IOError:
@@ -143,6 +136,9 @@ class State(object):
 
     def as_dict(self):
         return self._storage
+
+    def keys(self):
+        return self._storage.keys()
 
     def get(self, key, default=True):
         return self._storage.get(key, default)
@@ -167,146 +163,6 @@ class State(object):
 
     def __contains__(self, item):
         return item in self._storage
-
-
-class ContentCache(object):
-    def __init__(self, cache_dir=None):
-        self.cache_dir = None
-        self._db_path = None
-        self._lockfile = None
-
-        self.cache_dir = cache_dir or get_project_cache_dir()
-        self._db_path = join(self.cache_dir, "db.data")
-
-    def __enter__(self):
-        self.delete()
-        return self
-
-    def __exit__(self, type_, value, traceback):
-        pass
-
-    def _lock_dbindex(self):
-        if not self.cache_dir:
-            os.makedirs(self.cache_dir)
-        self._lockfile = lockfile.LockFile(self.cache_dir)
-        try:
-            self._lockfile.acquire()
-        except:  # pylint: disable=bare-except
-            return False
-
-        return True
-
-    def _unlock_dbindex(self):
-        if self._lockfile:
-            self._lockfile.release()
-        return True
-
-    def get_cache_path(self, key):
-        assert "/" not in key and "\\" not in key
-        key = str(key)
-        assert len(key) > 3
-        return join(self.cache_dir, key[-2:], key)
-
-    @staticmethod
-    def key_from_args(*args):
-        h = hashlib.md5()
-        for arg in args:
-            if arg:
-                h.update(hashlib_encode_data(arg))
-        return h.hexdigest()
-
-    def get(self, key):
-        cache_path = self.get_cache_path(key)
-        if not isfile(cache_path):
-            return None
-        with codecs.open(cache_path, "rb", encoding="utf8") as fp:
-            return fp.read()
-
-    def set(self, key, data, valid):
-        if not get_setting("enable_cache"):
-            return False
-        cache_path = self.get_cache_path(key)
-        if isfile(cache_path):
-            self.delete(key)
-        if not data:
-            return False
-        if not isdir(self.cache_dir):
-            os.makedirs(self.cache_dir)
-        tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
-        assert valid.endswith(tuple(tdmap))
-        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
-
-        if not self._lock_dbindex():
-            return False
-
-        if not isdir(dirname(cache_path)):
-            os.makedirs(dirname(cache_path))
-        try:
-            with codecs.open(cache_path, "wb", encoding="utf8") as fp:
-                fp.write(data)
-            with open(self._db_path, "a") as fp:
-                fp.write("%s=%s\n" % (str(expire_time), cache_path))
-        except UnicodeError:
-            if isfile(cache_path):
-                try:
-                    remove(cache_path)
-                except OSError:
-                    pass
-
-        return self._unlock_dbindex()
-
-    def delete(self, keys=None):
-        """ Keys=None, delete expired items """
-        if not isfile(self._db_path):
-            return None
-        if not keys:
-            keys = []
-        if not isinstance(keys, list):
-            keys = [keys]
-        paths_for_delete = [self.get_cache_path(k) for k in keys]
-        found = False
-        newlines = []
-        with open(self._db_path) as fp:
-            for line in fp.readlines():
-                line = line.strip()
-                if "=" not in line:
-                    continue
-                expire, path = line.split("=")
-                try:
-                    if (
-                        time() < int(expire)
-                        and isfile(path)
-                        and path not in paths_for_delete
-                    ):
-                        newlines.append(line)
-                        continue
-                except ValueError:
-                    pass
-                found = True
-                if isfile(path):
-                    try:
-                        remove(path)
-                        if not listdir(dirname(path)):
-                            fs.rmtree(dirname(path))
-                    except OSError:
-                        pass
-
-        if found and self._lock_dbindex():
-            with open(self._db_path, "w") as fp:
-                fp.write("\n".join(newlines) + "\n")
-            self._unlock_dbindex()
-
-        return True
-
-    def clean(self):
-        if not self.cache_dir or not isdir(self.cache_dir):
-            return
-        fs.rmtree(self.cache_dir)
-
-
-def clean_cache():
-    with ContentCache() as cc:
-        cc.clean()
 
 
 def sanitize_setting(name, value):
@@ -346,8 +202,8 @@ def delete_state_item(name):
 
 def get_setting(name):
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
-    if _env_name in environ:
-        return sanitize_setting(name, getenv(_env_name))
+    if _env_name in os.environ:
+        return sanitize_setting(name, os.getenv(_env_name))
 
     with State() as state:
         if "settings" in state and name in state["settings"]:
@@ -383,31 +239,32 @@ def is_disabled_progressbar():
     return any(
         [
             get_session_var("force_option"),
-            is_ci(),
-            getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
+            proc.is_ci(),
+            os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
         ]
     )
 
 
 def get_cid():
+    # pylint: disable=import-outside-toplevel
+    from platformio.clients.http import fetch_remote_content
+
     cid = get_state_item("cid")
     if cid:
         return cid
     uid = None
-    if getenv("C9_UID"):
-        uid = getenv("C9_UID")
-    elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+    if os.getenv("C9_UID"):
+        uid = os.getenv("C9_UID")
+    elif os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")):
         try:
-            uid = (
-                requests.get(
+            uid = json.loads(
+                fetch_remote_content(
                     "{api}/user?token={token}".format(
-                        api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
-                        token=getenv("USER_TOKEN"),
+                        api=os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")),
+                        token=os.getenv("USER_TOKEN"),
                     )
                 )
-                .json()
-                .get("id")
-            )
+            ).get("id")
         except:  # pylint: disable=bare-except
             pass
     if not uid:
@@ -420,7 +277,11 @@ def get_cid():
 
 
 def get_user_agent():
-    data = ["PlatformIO/%s" % __version__, "CI/%d" % int(is_ci())]
+    data = [
+        "PlatformIO/%s" % __version__,
+        "CI/%d" % int(proc.is_ci()),
+        "Container/%d" % int(proc.is_container()),
+    ]
     if get_session_var("caller_id"):
         data.append("Caller/%s" % get_session_var("caller_id"))
     if os.getenv("PLATFORMIO_IDE"):

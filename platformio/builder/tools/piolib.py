@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member, no-self-use, unused-argument, too-many-lines
+# pylint: disable=no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 # pylint: disable=assignment-from-no-return
 
@@ -23,7 +23,6 @@ import io
 import os
 import re
 import sys
-from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
 
 import click
 import SCons.Scanner  # pylint: disable=import-error
@@ -33,12 +32,15 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
+from platformio.clients.http import InternetIsOffline
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
-from platformio.managers.lib import LibraryManager
+from platformio.package.exception import UnknownPackageError
+from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
     ManifestParserError,
     ManifestParserFactory,
 )
+from platformio.package.meta import PackageItem
 from platformio.project.options import ProjectOptions
 
 
@@ -46,7 +48,7 @@ class LibBuilderFactory(object):
     @staticmethod
     def new(env, path, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
         clsname = "UnknownLibBuilder"
-        if isfile(join(path, "library.json")):
+        if os.path.isfile(os.path.join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
         else:
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
@@ -63,12 +65,12 @@ class LibBuilderFactory(object):
     @staticmethod
     def get_used_frameworks(env, path):
         if any(
-            isfile(join(path, fname))
+            os.path.isfile(os.path.join(path, fname))
             for fname in ("library.properties", "keywords.txt")
         ):
             return ["arduino"]
 
-        if isfile(join(path, "module.json")):
+        if os.path.isfile(os.path.join(path, "module.json")):
             return ["mbed"]
 
         include_re = re.compile(
@@ -84,7 +86,7 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                with io.open(join(root, fname), errors="ignore") as fp:
+                with io.open(os.path.join(root, fname), errors="ignore") as fp:
                     content = fp.read()
                 if not content:
                     continue
@@ -111,7 +113,7 @@ class LibBuilderBase(object):
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
         self.envorigin = env.Clone()
-        self.path = realpath(env.subst(path))
+        self.path = os.path.realpath(env.subst(path))
         self.verbose = verbose
 
         try:
@@ -145,11 +147,11 @@ class LibBuilderBase(object):
             p2 = p2.lower()
         if p1 == p2:
             return True
-        return commonprefix((p1 + sep, p2)) == p1 + sep
+        return os.path.commonprefix((p1 + os.path.sep, p2)) == p1 + os.path.sep
 
     @property
     def name(self):
-        return self._manifest.get("name", basename(self.path))
+        return self._manifest.get("name", os.path.basename(self.path))
 
     @property
     def version(self):
@@ -170,13 +172,19 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        if not all(isdir(join(self.path, d)) for d in ("include", "src")):
+        if not all(
+            os.path.isdir(os.path.join(self.path, d)) for d in ("include", "src")
+        ):
             return None
-        return join(self.path, "include")
+        return os.path.join(self.path, "include")
 
     @property
     def src_dir(self):
-        return join(self.path, "src") if isdir(join(self.path, "src")) else self.path
+        return (
+            os.path.join(self.path, "src")
+            if os.path.isdir(os.path.join(self.path, "src"))
+            else self.path
+        )
 
     def get_include_dirs(self):
         items = []
@@ -189,7 +197,9 @@ class LibBuilderBase(object):
     @property
     def build_dir(self):
         lib_hash = hashlib.sha1(hashlib_encode_data(self.path)).hexdigest()[:3]
-        return join("$BUILD_DIR", "lib%s" % lib_hash, basename(self.path))
+        return os.path.join(
+            "$BUILD_DIR", "lib%s" % lib_hash, os.path.basename(self.path)
+        )
 
     @property
     def build_flags(self):
@@ -268,7 +278,7 @@ class LibBuilderBase(object):
             if self.extra_script:
                 self.env.SConscriptChdir(1)
                 self.env.SConscript(
-                    realpath(self.extra_script),
+                    os.path.realpath(self.extra_script),
                     exports={"env": self.env, "pio_lib_builder": self},
                 )
             self.env.ProcessUnFlags(self.build_unflags)
@@ -294,14 +304,14 @@ class LibBuilderBase(object):
 
     def get_search_files(self):
         items = [
-            join(self.src_dir, item)
+            os.path.join(self.src_dir, item)
             for item in self.env.MatchSourceFiles(self.src_dir, self.src_filter)
         ]
         include_dir = self.include_dir
         if include_dir:
             items.extend(
                 [
-                    join(include_dir, item)
+                    os.path.join(include_dir, item)
                     for item in self.env.MatchSourceFiles(include_dir)
                 ]
             )
@@ -370,7 +380,7 @@ class LibBuilderBase(object):
                     continue
                 _f_part = _h_path[: _h_path.rindex(".")]
                 for ext in piotool.SRC_C_EXT + piotool.SRC_CXX_EXT:
-                    if not isfile("%s.%s" % (_f_part, ext)):
+                    if not os.path.isfile("%s.%s" % (_f_part, ext)):
                         continue
                     _c_path = self.env.File("%s.%s" % (_f_part, ext))
                     if _c_path not in result:
@@ -464,23 +474,24 @@ class UnknownLibBuilder(LibBuilderBase):
 
 class ArduinoLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        manifest_path = join(self.path, "library.properties")
-        if not isfile(manifest_path):
+        manifest_path = os.path.join(self.path, "library.properties")
+        if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
-        if isdir(join(self.path, "src")):
+        if os.path.isdir(os.path.join(self.path, "src")):
             return include_dirs
-        if isdir(join(self.path, "utility")):
-            include_dirs.append(join(self.path, "utility"))
+        if os.path.isdir(os.path.join(self.path, "utility")):
+            include_dirs.append(os.path.join(self.path, "utility"))
         return include_dirs
 
     @property
     def src_filter(self):
-        src_dir = join(self.path, "src")
-        if isdir(src_dir):
+        src_dir = os.path.join(self.path, "src")
+        if os.path.isdir(src_dir):
+            # pylint: disable=no-member
             src_filter = LibBuilderBase.src_filter.fget(self)
             for root, _, files in os.walk(src_dir, followlinks=True):
                 found = False
@@ -491,50 +502,68 @@ class ArduinoLibBuilder(LibBuilderBase):
                 if not found:
                     continue
                 rel_path = root.replace(src_dir, "")
-                if rel_path.startswith(sep):
-                    rel_path = rel_path[1:] + sep
+                if rel_path.startswith(os.path.sep):
+                    rel_path = rel_path[1:] + os.path.sep
                 src_filter.append("-<%s*.[aA][sS][mM]>" % rel_path)
             return src_filter
 
         src_filter = []
-        is_utility = isdir(join(self.path, "utility"))
+        is_utility = os.path.isdir(os.path.join(self.path, "utility"))
         for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT:
             # arduino ide ignores files with .asm or .ASM extensions
             if ext.lower() == "asm":
                 continue
             src_filter.append("+<*.%s>" % ext)
             if is_utility:
-                src_filter.append("+<utility%s*.%s>" % (sep, ext))
+                src_filter.append("+<utility%s*.%s>" % (os.path.sep, ext))
         return src_filter
+
+    @property
+    def dependencies(self):
+        # do not include automatically all libraries for build
+        # chain+ will decide later
+        return None
+
+    @property
+    def lib_ldf_mode(self):
+        # pylint: disable=no-member
+        if not self._manifest.get("dependencies"):
+            return LibBuilderBase.lib_ldf_mode.fget(self)
+        missing = object()
+        global_value = self.env.GetProjectConfig().getraw(
+            "env:" + self.env["PIOENV"], "lib_ldf_mode", missing
+        )
+        if global_value != missing:
+            return LibBuilderBase.lib_ldf_mode.fget(self)
+        # automatically enable C++ Preprocessing in runtime
+        # (Arduino IDE has this behavior)
+        return "chain+"
 
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["arduino", "energia"])
 
     def is_platforms_compatible(self, platforms):
-        items = self._manifest.get("platforms", [])
-        if not items:
-            return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return util.items_in_list(platforms, items)
+        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
 
 
 class MbedLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        manifest_path = join(self.path, "module.json")
-        if not isfile(manifest_path):
+        manifest_path = os.path.join(self.path, "module.json")
+        if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
     @property
     def include_dir(self):
-        if isdir(join(self.path, "include")):
-            return join(self.path, "include")
+        if os.path.isdir(os.path.join(self.path, "include")):
+            return os.path.join(self.path, "include")
         return None
 
     @property
     def src_dir(self):
-        if isdir(join(self.path, "source")):
-            return join(self.path, "source")
-        return LibBuilderBase.src_dir.fget(self)
+        if os.path.isdir(os.path.join(self.path, "source")):
+            return os.path.join(self.path, "source")
+        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
@@ -543,13 +572,13 @@ class MbedLibBuilder(LibBuilderBase):
 
         # library with module.json
         for p in self._manifest.get("extraIncludes", []):
-            include_dirs.append(join(self.path, p))
+            include_dirs.append(os.path.join(self.path, p))
 
         # old mbed library without manifest, add to CPPPATH all folders
         if not self._manifest:
             for root, _, __ in os.walk(self.path):
                 part = root.replace(self.path, "").lower()
-                if any(s in part for s in ("%s." % sep, "test", "example")):
+                if any(s in part for s in ("%s." % os.path.sep, "test", "example")):
                     continue
                 if root not in include_dirs:
                     include_dirs.append(root)
@@ -565,7 +594,7 @@ class MbedLibBuilder(LibBuilderBase):
 
     def _process_mbed_lib_confs(self):
         mbed_lib_paths = [
-            join(root, "mbed_lib.json")
+            os.path.join(root, "mbed_lib.json")
             for root, _, files in os.walk(self.path)
             if "mbed_lib.json" in files
         ]
@@ -574,8 +603,8 @@ class MbedLibBuilder(LibBuilderBase):
 
         mbed_config_path = None
         for p in self.env.get("CPPPATH"):
-            mbed_config_path = join(self.env.subst(p), "mbed_config.h")
-            if isfile(mbed_config_path):
+            mbed_config_path = os.path.join(self.env.subst(p), "mbed_config.h")
+            if os.path.isfile(mbed_config_path):
                 break
             mbed_config_path = None
         if not mbed_config_path:
@@ -667,30 +696,31 @@ class MbedLibBuilder(LibBuilderBase):
 
 class PlatformIOLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        manifest_path = join(self.path, "library.json")
-        if not isfile(manifest_path):
+        manifest_path = os.path.join(self.path, "library.json")
+        if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
     def _has_arduino_manifest(self):
-        return isfile(join(self.path, "library.properties"))
+        return os.path.isfile(os.path.join(self.path, "library.properties"))
 
     @property
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return realpath(self._manifest.get("build").get("includeDir"))
-        return LibBuilderBase.include_dir.fget(self)
+                return os.path.realpath(self._manifest.get("build").get("includeDir"))
+        return LibBuilderBase.include_dir.fget(self)  # pylint: disable=no-member
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return realpath(self._manifest.get("build").get("srcDir"))
-        return LibBuilderBase.src_dir.fget(self)
+                return os.path.realpath(self._manifest.get("build").get("srcDir"))
+        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     @property
     def src_filter(self):
+        # pylint: disable=no-member
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
         if self.env["SRC_FILTER"]:
@@ -703,19 +733,19 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def build_flags(self):
         if "flags" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("flags")
-        return LibBuilderBase.build_flags.fget(self)
+        return LibBuilderBase.build_flags.fget(self)  # pylint: disable=no-member
 
     @property
     def build_unflags(self):
         if "unflags" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("unflags")
-        return LibBuilderBase.build_unflags.fget(self)
+        return LibBuilderBase.build_unflags.fget(self)  # pylint: disable=no-member
 
     @property
     def extra_script(self):
         if "extraScript" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("extraScript")
-        return LibBuilderBase.extra_script.fget(self)
+        return LibBuilderBase.extra_script.fget(self)  # pylint: disable=no-member
 
     @property
     def lib_archive(self):
@@ -727,12 +757,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self.env.GetProjectConfig().get(
                 "env:" + self.env["PIOENV"], "lib_archive"
             )
+        # pylint: disable=no-member
         return self._manifest.get("build", {}).get(
             "libArchive", LibBuilderBase.lib_archive.fget(self)
         )
 
     @property
     def lib_ldf_mode(self):
+        # pylint: disable=no-member
         return self.validate_ldf_mode(
             self._manifest.get("build", {}).get(
                 "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)
@@ -741,6 +773,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_compat_mode(self):
+        # pylint: disable=no-member
         return self.validate_compat_mode(
             self._manifest.get("build", {}).get(
                 "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
@@ -748,16 +781,10 @@ class PlatformIOLibBuilder(LibBuilderBase):
         )
 
     def is_platforms_compatible(self, platforms):
-        items = self._manifest.get("platforms")
-        if not items:
-            return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return util.items_in_list(platforms, items)
+        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
 
     def is_frameworks_compatible(self, frameworks):
-        items = self._manifest.get("frameworks")
-        if not items:
-            return LibBuilderBase.is_frameworks_compatible(self, frameworks)
-        return util.items_in_list(frameworks, items)
+        return util.items_in_list(frameworks, self._manifest.get("frameworks") or ["*"])
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
@@ -766,10 +793,10 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if (
             "build" not in self._manifest
             and self._has_arduino_manifest()
-            and not isdir(join(self.path, "src"))
-            and isdir(join(self.path, "utility"))
+            and not os.path.isdir(os.path.join(self.path, "src"))
+            and os.path.isdir(os.path.join(self.path, "utility"))
         ):
-            include_dirs.append(join(self.path, "utility"))
+            include_dirs.append(os.path.join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
             if path not in self.envorigin.get("CPPPATH", []):
@@ -788,7 +815,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
     @property
     def include_dir(self):
         include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
-        return include_dir if isdir(include_dir) else None
+        return include_dir if os.path.isdir(include_dir) else None
 
     @property
     def src_dir(self):
@@ -797,7 +824,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
     def get_include_dirs(self):
         include_dirs = []
         project_include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
-        if isdir(project_include_dir):
+        if os.path.isdir(project_include_dir):
             include_dirs.append(project_include_dir)
         for include_dir in LibBuilderBase.get_include_dirs(self):
             if include_dir not in include_dirs:
@@ -811,7 +838,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         if "__test" in COMMAND_LINE_TARGETS:
             items.extend(
                 [
-                    join("$PROJECT_TEST_DIR", item)
+                    os.path.join("$PROJECT_TEST_DIR", item)
                     for item in self.env.MatchSourceFiles(
                         "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
                     )
@@ -821,7 +848,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
-        mode = LibBuilderBase.lib_ldf_mode.fget(self)
+        mode = LibBuilderBase.lib_ldf_mode.fget(self)  # pylint: disable=no-member
         if not mode.startswith("chain"):
             return mode
         # parse all project files
@@ -829,6 +856,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
+        # pylint: disable=no-member
         return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)
 
     @property
@@ -840,34 +868,36 @@ class ProjectAsLibBuilder(LibBuilderBase):
         pass
 
     def install_dependencies(self):
-        def _is_builtin(uri):
+        def _is_builtin(spec):
             for lb in self.env.GetLibBuilders():
-                if lb.name == uri:
+                if lb.name == spec:
                     return True
             return False
 
-        not_found_uri = []
-        for uri in self.dependencies:
+        not_found_specs = []
+        for spec in self.dependencies:
             # check if built-in library
-            if _is_builtin(uri):
+            if _is_builtin(spec):
                 continue
 
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
-                lm = LibraryManager(storage_dir)
-                if lm.get_package_dir(*lm.parse_pkg_uri(uri)):
+                lm = LibraryPackageManager(storage_dir)
+                if lm.get_package(spec):
                     found = True
                     break
             if not found:
-                not_found_uri.append(uri)
+                not_found_specs.append(spec)
 
         did_install = False
-        lm = LibraryManager(self.env.subst(join("$PROJECT_LIBDEPS_DIR", "$PIOENV")))
-        for uri in not_found_uri:
+        lm = LibraryPackageManager(
+            self.env.subst(os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"))
+        )
+        for spec in not_found_specs:
             try:
-                lm.install(uri)
+                lm.install(spec)
                 did_install = True
-            except (exception.LibNotFound, exception.InternetIsOffline) as e:
+            except (UnknownPackageError, InternetIsOffline) as e:
                 click.secho("Warning! %s" % e, fg="yellow")
 
         # reset cache
@@ -875,17 +905,17 @@ class ProjectAsLibBuilder(LibBuilderBase):
             DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        for uri in self.dependencies:
+        for spec in self.dependencies:
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
                 if found:
                     break
-                lm = LibraryManager(storage_dir)
-                lib_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
-                if not lib_dir:
+                lm = LibraryPackageManager(storage_dir)
+                pkg = lm.get_package(spec)
+                if not pkg:
                     continue
                 for lb in self.env.GetLibBuilders():
-                    if lib_dir != lb.path:
+                    if pkg.path != lb.path:
                         continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)
@@ -897,7 +927,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
             # look for built-in libraries by a name
             # which don't have package manifest
             for lb in self.env.GetLibBuilders():
-                if lb.name != uri:
+                if lb.name != spec:
                     continue
                 if lb not in self.depbuilders:
                     self.depend_recursive(lb)
@@ -952,12 +982,12 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     found_incompat = False
 
     for storage_dir in env.GetLibSourceDirs():
-        storage_dir = realpath(storage_dir)
-        if not isdir(storage_dir):
+        storage_dir = os.path.realpath(storage_dir)
+        if not os.path.isdir(storage_dir):
             continue
         for item in sorted(os.listdir(storage_dir)):
-            lib_dir = join(storage_dir, item)
-            if item == "__cores__" or not isdir(lib_dir):
+            lib_dir = os.path.join(storage_dir, item)
+            if item == "__cores__" or not os.path.isdir(lib_dir):
                 continue
             try:
                 lb = LibBuilderFactory.new(env, lib_dir)
@@ -989,10 +1019,6 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def ConfigureProjectLibBuilder(env):
-    def _get_vcs_info(lb):
-        path = LibraryManager.get_src_manifest_path(lb.path)
-        return fs.load_json(path) if path else None
-
     def _correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
@@ -1008,15 +1034,15 @@ def ConfigureProjectLibBuilder(env):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
-            vcs_info = _get_vcs_info(lb)
-            if lb.version:
+            pkg = PackageItem(lb.path)
+            if pkg.metadata:
+                title += " %s" % pkg.metadata.version
+            elif lb.version:
                 title += " %s" % lb.version
-            if vcs_info and vcs_info.get("version"):
-                title += " #%s" % vcs_info.get("version")
             click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                if vcs_info:
-                    click.echo(" [%s]" % vcs_info.get("url"), nl=False)
+                if pkg.metadata and pkg.metadata.spec.external:
+                    click.echo(" [%s]" % pkg.metadata.spec.url, nl=False)
                 click.echo(" (", nl=False)
                 click.echo(lb.path, nl=False)
                 click.echo(")", nl=False)
@@ -1025,7 +1051,7 @@ def ConfigureProjectLibBuilder(env):
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
+    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
     click.echo("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
     click.echo(

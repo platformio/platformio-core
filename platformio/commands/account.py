@@ -21,22 +21,23 @@ import re
 import click
 from tabulate import tabulate
 
-from platformio.commands.account import exception
-from platformio.commands.account.client import AccountClient
+from platformio.clients.account import AccountClient, AccountNotAuthorized
 
 
-@click.group("account", short_help="Manage PIO Account")
+@click.group("account", short_help="Manage PlatformIO account")
 def cli():
     pass
 
 
-def validate_username(value):
+def validate_username(value, field="username"):
     value = str(value).strip()
-    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
+    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,37}$", value, flags=re.I):
         raise click.BadParameter(
-            "Invalid username format. "
-            "Username must contain at least 4 characters including single hyphens,"
-            " and cannot begin or end with a hyphen"
+            "Invalid %s format. "
+            "%s must contain only alphanumeric characters "
+            "or single hyphens, cannot begin or end with a hyphen, "
+            "and must not be longer than 38 characters."
+            % (field.lower(), field.capitalize())
         )
     return value
 
@@ -59,7 +60,7 @@ def validate_password(value):
     return value
 
 
-@cli.command("register", short_help="Create new PIO Account")
+@cli.command("register", short_help="Create new PlatformIO Account")
 @click.option(
     "-u",
     "--username",
@@ -89,7 +90,7 @@ def account_register(username, email, password, firstname, lastname):
     )
 
 
-@cli.command("login", short_help="Log in to PIO Account")
+@cli.command("login", short_help="Log in to PlatformIO Account")
 @click.option("-u", "--username", prompt="Username or email")
 @click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
@@ -98,7 +99,7 @@ def account_login(username, password):
     return click.secho("Successfully logged in!", fg="green")
 
 
-@cli.command("logout", short_help="Log out of PIO Account")
+@cli.command("logout", short_help="Log out of PlatformIO Account")
 def account_logout():
     client = AccountClient()
     client.logout()
@@ -167,7 +168,7 @@ def account_update(current_password, **kwargs):
         return None
     try:
         client.logout()
-    except exception.AccountNotAuthorized:
+    except AccountNotAuthorized:
         pass
     if email_changed:
         return click.secho(
@@ -177,7 +178,24 @@ def account_update(current_password, **kwargs):
     return click.secho("Please re-login.", fg="yellow")
 
 
-@cli.command("show", short_help="PIO Account information")
+@cli.command("destroy", short_help="Destroy account")
+def account_destroy():
+    client = AccountClient()
+    click.confirm(
+        "Are you sure you want to delete the %s user account?\n"
+        "Warning! All linked data will be permanently removed and can not be restored."
+        % client.get_account_info().get("profile").get("username"),
+        abort=True,
+    )
+    client.destroy_account()
+    try:
+        client.logout()
+    except AccountNotAuthorized:
+        pass
+    return click.secho("User account has been destroyed.", fg="green",)
+
+
+@cli.command("show", short_help="PlatformIO Account information")
 @click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_show(offline, json_output):

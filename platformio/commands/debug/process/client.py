@@ -26,7 +26,8 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
-from platformio import app, fs, proc, telemetry, util
+from platformio import fs, proc, telemetry, util
+from platformio.cache import ContentCache
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.debug.initcfgs import get_gdb_init_config
@@ -252,7 +253,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def _kill_previous_session(self):
         assert self._session_id
         pid = None
-        with app.ContentCache() as cc:
+        with ContentCache() as cc:
             pid = cc.get(self._session_id)
             cc.delete(self._session_id)
         if not pid:
@@ -269,11 +270,11 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def _lock_session(self, pid):
         if not self._session_id:
             return
-        with app.ContentCache() as cc:
+        with ContentCache() as cc:
             cc.set(self._session_id, str(pid), "1h")
 
     def _unlock_session(self):
         if not self._session_id:
             return
-        with app.ContentCache() as cc:
+        with ContentCache() as cc:
             cc.delete(self._session_id)

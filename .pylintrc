@@ -1,3 +1,6 @@
+[REPORTS]
+output-format=colorized
+
 [MESSAGES CONTROL]
 disable=
     bad-continuation,
@@ -12,4 +15,8 @@ disable=
     useless-object-inheritance,
     useless-import-alias,
     fixme,
-    bad-option-value
+    bad-option-value,
+
+    ; PY2 Compat
+    super-with-arguments,
+    raise-missing-from

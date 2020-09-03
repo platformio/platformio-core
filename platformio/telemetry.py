@@ -123,9 +123,7 @@ class MeasurementProtocol(TelemetryBase):
 
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
-        self["cd4"] = (
-            1 if (not util.is_ci() and (caller_id or not is_container())) else 0
-        )
+        self["cd4"] = 1 if (not is_ci() and (caller_id or not is_container())) else 0
         if caller_id:
             self["cd5"] = caller_id.lower()
 
@@ -146,7 +144,18 @@ class MeasurementProtocol(TelemetryBase):
             return
 
         cmd_path = args[:1]
-        if args[0] in ("account", "device", "platform", "project", "settings",):
+        if args[0] in (
+            "access",
+            "account",
+            "device",
+            "org",
+            "package",
+            "platform",
+            "project",
+            "settings",
+            "system",
+            "team",
+        ):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:
             lib_subcmds = (

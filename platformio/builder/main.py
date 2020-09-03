@@ -30,7 +30,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import compat, fs
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformBase
+from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
 
@@ -55,6 +55,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "c++",
         "link",
         "platformio",
+        "piotarget",
         "pioplatform",
         "pioproject",
         "piomaxlen",
@@ -159,7 +160,7 @@ env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(
-    join("$BUILD_DIR", ".sconsign%d%d.db" % (sys.version_info[0], sys.version_info[1]))
+    join("$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]))
 )
 
 for item in env.GetExtraScripts("pre"):
@@ -217,7 +218,7 @@ if "idedata" in COMMAND_LINE_TARGETS:
     click.echo(
         "\n%s\n"
         % dump_json_to_unicode(
-            projenv.DumpIDEData()  # pylint: disable=undefined-variable
+            projenv.DumpIDEData(env)  # pylint: disable=undefined-variable
         )
     )
     env.Exit(0)

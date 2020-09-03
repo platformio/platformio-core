@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import operator
+import os
 from multiprocessing import cpu_count
-from os import getcwd
-from os.path import isfile
 from time import time
 
 import click
@@ -26,7 +26,7 @@ from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libde
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.commands.test.processor import CTX_META_TEST_IS_RUNNING
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import find_project_dir_above
+from platformio.project.helpers import find_project_dir_above, load_project_ide_data
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 
@@ -36,14 +36,14 @@ except NotImplementedError:
     DEFAULT_JOB_NUMS = 1
 
 
-@click.command("run", short_help="Process project environments")
+@click.command("run", short_help="Run project targets (build, upload, clean, etc.)")
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(
         exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
     ),
@@ -68,6 +68,7 @@ except NotImplementedError:
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
+@click.option("--list-targets", is_flag=True)
 @click.pass_context
 def cli(
     ctx,
@@ -80,11 +81,12 @@ def cli(
     silent,
     verbose,
     disable_auto_clean,
+    list_targets,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
     # find project directory on upper level
-    if isfile(project_dir):
+    if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
@@ -92,6 +94,9 @@ def cli(
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
+
+        if list_targets:
+            return print_target_list(list(environment) or config.envs())
 
         # clean obsolete build dir
         if not disable_auto_clean:
@@ -142,7 +147,7 @@ def cli(
         command_failed = any(r.get("succeeded") is False for r in results)
 
         if not is_test_running and (command_failed or not silent) and len(results) > 1:
-            print_processing_summary(results)
+            print_processing_summary(results, verbose)
 
         if command_failed:
             raise exception.ReturnErrorCode(1)
@@ -215,7 +220,7 @@ def print_processing_footer(result):
     )
 
 
-def print_processing_summary(results):
+def print_processing_summary(results, verbose=False):
     tabular_data = []
     succeeded_nums = 0
     failed_nums = 0
@@ -227,6 +232,8 @@ def print_processing_summary(results):
             failed_nums += 1
             status_str = click.style("FAILED", fg="red")
         elif result.get("succeeded") is None:
+            if not verbose:
+                continue
             status_str = "IGNORED"
         else:
             succeeded_nums += 1
@@ -260,4 +267,34 @@ def print_processing_summary(results):
         ),
         is_error=failed_nums,
         fg="red" if failed_nums else "green",
+    )
+
+
+def print_target_list(envs):
+    tabular_data = []
+    for env, data in load_project_ide_data(os.getcwd(), envs).items():
+        tabular_data.extend(
+            sorted(
+                [
+                    (
+                        click.style(env, fg="cyan"),
+                        t["group"],
+                        click.style(t.get("name"), fg="yellow"),
+                        t["title"],
+                        t.get("description"),
+                    )
+                    for t in data.get("targets", [])
+                ],
+                key=operator.itemgetter(1, 2),
+            )
+        )
+        tabular_data.append((None, None, None, None, None))
+    click.echo(
+        tabulate(
+            tabular_data,
+            headers=[
+                click.style(s, bold=True)
+                for s in ("Environment", "Group", "Name", "Title", "Description")
+            ],
+        ),
     )

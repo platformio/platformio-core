@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import atexit
-from os import remove
+from os import listdir, remove
 from os.path import isdir, isfile, join
 from string import Template
 
@@ -25,33 +25,39 @@ TRANSPORT_OPTIONS = {
     "arduino": {
         "include": "#include <Arduino.h>",
         "object": "",
-        "putchar": "Serial.write(c)",
-        "flush": "Serial.flush()",
-        "begin": "Serial.begin($baudrate)",
-        "end": "Serial.end()",
+        "putchar": "Serial.write(c);",
+        "flush": "Serial.flush();",
+        "begin": "Serial.begin($baudrate);",
+        "end": "Serial.end();",
         "language": "cpp",
     },
     "mbed": {
         "include": "#include <mbed.h>",
-        "object": "Serial pc(USBTX, USBRX);",
-        "putchar": "pc.putc(c)",
+        "object": (
+            "#if MBED_MAJOR_VERSION == 6\nUnbufferedSerial pc(USBTX, USBRX);\n"
+            "#else\nRawSerial pc(USBTX, USBRX);\n#endif"
+        ),
+        "putchar": (
+            "#if MBED_MAJOR_VERSION == 6\npc.write(&c, 1);\n"
+            "#else\npc.putc(c);\n#endif"
+        ),
         "flush": "",
-        "begin": "pc.baud($baudrate)",
+        "begin": "pc.baud($baudrate);",
         "end": "",
         "language": "cpp",
     },
     "espidf": {
         "include": "#include <stdio.h>",
         "object": "",
-        "putchar": "putchar(c)",
-        "flush": "fflush(stdout)",
+        "putchar": "putchar(c);",
+        "flush": "fflush(stdout);",
         "begin": "",
         "end": "",
     },
     "zephyr": {
         "include": "#include <sys/printk.h>",
         "object": "",
-        "putchar": 'printk("%c", c)',
+        "putchar": 'printk("%c", c);',
         "flush": "",
         "begin": "",
         "end": "",
@@ -59,18 +65,18 @@ TRANSPORT_OPTIONS = {
     "native": {
         "include": "#include <stdio.h>",
         "object": "",
-        "putchar": "putchar(c)",
-        "flush": "fflush(stdout)",
+        "putchar": "putchar(c);",
+        "flush": "fflush(stdout);",
         "begin": "",
         "end": "",
     },
     "custom": {
         "include": '#include "unittest_transport.h"',
         "object": "",
-        "putchar": "unittest_uart_putchar(c)",
-        "flush": "unittest_uart_flush()",
-        "begin": "unittest_uart_begin()",
-        "end": "unittest_uart_end()",
+        "putchar": "unittest_uart_putchar(c);",
+        "flush": "unittest_uart_flush();",
+        "begin": "unittest_uart_begin();",
+        "end": "unittest_uart_end();",
         "language": "cpp",
     },
 }
@@ -132,6 +138,7 @@ class TestProcessorBase(object):
             return self.cmd_ctx.invoke(
                 cmd_run,
                 project_dir=self.options["project_dir"],
+                project_conf=self.options["project_config"].path,
                 upload_port=self.options["upload_port"],
                 verbose=self.options["verbose"],
                 silent=self.options["silent"],
@@ -174,44 +181,50 @@ class TestProcessorBase(object):
                 "void output_start(unsigned int baudrate)",
                 "#endif",
                 "{",
-                "    $begin;",
+                "    $begin",
                 "}",
                 "",
                 "void output_char(int c)",
                 "{",
-                "    $putchar;",
+                "    $putchar",
                 "}",
                 "",
                 "void output_flush(void)",
                 "{",
-                "    $flush;",
+                "    $flush",
                 "}",
                 "",
                 "void output_complete(void)",
                 "{",
-                "   $end;",
+                "   $end",
                 "}",
             ]
         )
 
-        def delete_tmptest_file(file_):
-            try:
-                remove(file_)
-            except:  # pylint: disable=bare-except
-                if isfile(file_):
-                    click.secho(
-                        "Warning: Could not remove temporary file '%s'. "
-                        "Please remove it manually." % file_,
-                        fg="yellow",
-                    )
+        tmp_file_prefix = "tmp_pio_test_transport"
+
+        def delete_tmptest_files(test_dir):
+            for item in listdir(test_dir):
+                if item.startswith(tmp_file_prefix) and isfile(join(test_dir, item)):
+                    try:
+                        remove(join(test_dir, item))
+                    except:  # pylint: disable=bare-except
+                        click.secho(
+                            "Warning: Could not remove temporary file '%s'. "
+                            "Please remove it manually." % join(test_dir, item),
+                            fg="yellow",
+                        )
 
         transport_options = TRANSPORT_OPTIONS[self.get_transport()]
         tpl = Template(file_tpl).substitute(transport_options)
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
+
+        delete_tmptest_files(test_dir)
         tmp_file = join(
-            test_dir, "output_export." + transport_options.get("language", "c")
+            test_dir,
+            "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c")),
         )
         with open(tmp_file, "w") as fp:
             fp.write(data)
 
-        atexit.register(delete_tmptest_file, tmp_file)
+        atexit.register(delete_tmptest_files, test_dir)

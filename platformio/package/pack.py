@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import re
 import shutil
@@ -22,23 +23,37 @@ from platformio import fs
 from platformio.package.exception import PackageException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
-from platformio.unpacker import FileUnpacker
+from platformio.package.meta import PackageItem
+from platformio.package.unpack import FileUnpacker
 
 
 class PackagePacker(object):
     EXCLUDE_DEFAULT = [
         "._*",
+        "__*",
         ".DS_Store",
-        ".git",
-        ".hg",
-        ".svn",
-        ".pio",
+        ".git/",
+        ".hg/",
+        ".svn/",
+        ".pio/",
+        "**/.pio/",
+        PackageItem.METAFILE_NAME,
     ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
     def __init__(self, package, manifest_uri=None):
         self.package = package
         self.manifest_uri = manifest_uri
+
+    @staticmethod
+    def get_archive_name(name, version, system=None):
+        return re.sub(
+            r"[^\da-zA-Z\-\._\+]+",
+            "",
+            "{name}{system}-{version}.tar.gz".format(
+                name=name, system=("-" + system) if system else "", version=version,
+            ),
+        )
 
     def pack(self, dst=None):
         tmp_dir = tempfile.mkdtemp()
@@ -54,14 +69,10 @@ class PackagePacker(object):
             src = self.find_source_root(src)
 
             manifest = self.load_manifest(src)
-            filename = re.sub(
-                r"[^\da-zA-Z\-\._]+",
-                "",
-                "{name}{system}-{version}.tar.gz".format(
-                    name=manifest["name"],
-                    system="-" + manifest["system"][0] if "system" in manifest else "",
-                    version=manifest["version"],
-                ),
+            filename = self.get_archive_name(
+                manifest["name"],
+                manifest["version"],
+                manifest["system"][0] if "system" in manifest else None,
             )
 
             if not dst:
@@ -69,12 +80,7 @@ class PackagePacker(object):
             elif os.path.isdir(dst):
                 dst = os.path.join(dst, filename)
 
-            return self._create_tarball(
-                src,
-                dst,
-                include=manifest.get("export", {}).get("include"),
-                exclude=manifest.get("export", {}).get("exclude"),
-            )
+            return self._create_tarball(src, dst, manifest)
         finally:
             shutil.rmtree(tmp_dir)
 
@@ -106,7 +112,9 @@ class PackagePacker(object):
 
         return src
 
-    def _create_tarball(self, src, dst, include=None, exclude=None):
+    def _create_tarball(self, src, dst, manifest):
+        include = manifest.get("export", {}).get("include")
+        exclude = manifest.get("export", {}).get("exclude")
         # remap root
         if (
             include
@@ -114,6 +122,10 @@ class PackagePacker(object):
             and os.path.isdir(os.path.join(src, include[0]))
         ):
             src = os.path.join(src, include[0])
+            with open(os.path.join(src, "library.json"), "w") as fp:
+                manifest_updated = manifest.copy()
+                del manifest_updated["export"]["include"]
+                json.dump(manifest_updated, fp, indent=2, ensure_ascii=False)
             include = None
 
         src_filters = self.compute_src_filters(include, exclude)

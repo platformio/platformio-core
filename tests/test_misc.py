@@ -12,31 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=unused-argument
+
 import pytest
 import requests
 
-from platformio import exception, util
+from platformio import __check_internet_hosts__, proc
+from platformio.clients import http
+from platformio.clients.registry import RegistryClient
 
 
 def test_platformio_cli():
-    result = util.exec_command(["pio", "--help"])
+    result = proc.exec_command(["pio", "--help"])
     assert result["returncode"] == 0
+    # pylint: disable=unsupported-membership-test
     assert "Usage: pio [OPTIONS] COMMAND [ARGS]..." in result["out"]
 
 
 def test_ping_internet_ips():
-    for host in util.PING_REMOTE_HOSTS:
+    for host in __check_internet_hosts__:
         requests.get("http://%s" % host, allow_redirects=False, timeout=2)
 
 
-def test_api_internet_offline(without_internet, isolated_pio_home):
-    with pytest.raises(exception.InternetIsOffline):
-        util.get_api_result("/stats")
+def test_api_internet_offline(without_internet, isolated_pio_core):
+    regclient = RegistryClient()
+    with pytest.raises(http.InternetIsOffline):
+        regclient.fetch_json_data("get", "/v2/stats")
 
 
-def test_api_cache(monkeypatch, isolated_pio_home):
-    api_kwargs = {"url": "/stats", "cache_valid": "10s"}
-    result = util.get_api_result(**api_kwargs)
+def test_api_cache(monkeypatch, isolated_pio_core):
+    regclient = RegistryClient()
+    api_kwargs = {"method": "get", "path": "/v2/stats", "cache_valid": "10s"}
+    result = regclient.fetch_json_data(**api_kwargs)
     assert result and "boards" in result
-    monkeypatch.setattr(util, "_internet_on", lambda: False)
-    assert util.get_api_result(**api_kwargs) == result
+    monkeypatch.setattr(http, "_internet_on", lambda: False)
+    assert regclient.fetch_json_data(**api_kwargs) == result

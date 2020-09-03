@@ -61,7 +61,10 @@ def test_filters(tmpdir_factory):
     )
     p = PackagePacker(str(pkg_dir))
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
-        assert set(tar.getnames()) == set(["util/helpers.cpp", "main.cpp"])
+        assert set(tar.getnames()) == set(
+            ["util/helpers.cpp", "main.cpp", "library.json"]
+        )
+    os.unlink(str(src_dir.join("library.json")))
 
     # test include "src" and "include"
     pkg_dir.join("library.json").write(

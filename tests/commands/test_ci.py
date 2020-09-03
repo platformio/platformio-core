@@ -15,7 +15,7 @@
 from os.path import isfile, join
 
 from platformio.commands.ci import cli as cmd_ci
-from platformio.commands.lib import cli as cmd_lib
+from platformio.commands.lib.command import cli as cmd_lib
 
 
 def test_ci_empty(clirunner):
@@ -114,13 +114,13 @@ def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
         [
             join(
                 storage_dir,
-                "OneWire_ID1",
+                "OneWire",
                 "examples",
                 "DS2408_Switch",
                 "DS2408_Switch.pde",
             ),
             "-l",
-            join(storage_dir, "OneWire_ID1"),
+            join(storage_dir, "OneWire"),
             "-b",
             "uno",
         ],

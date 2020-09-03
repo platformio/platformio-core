@@ -245,7 +245,7 @@ ProjectOptions = OrderedDict(
                 group="directory",
                 name="test_dir",
                 description=(
-                    "A location where PIO Unit Testing engine looks for "
+                    "A location where PlatformIO Unit Testing engine looks for "
                     "test source files"
                 ),
                 sysenvvar="PLATFORMIO_TEST_DIR",
@@ -262,8 +262,8 @@ ProjectOptions = OrderedDict(
                 group="directory",
                 name="shared_dir",
                 description=(
-                    "A location which PIO Remote uses to synchronize extra files "
-                    "between remote machines"
+                    "A location which PlatformIO Remote Development service uses to "
+                    "synchronize extra files between remote machines"
                 ),
                 sysenvvar="PLATFORMIO_SHARED_DIR",
                 default=os.path.join("$PROJECT_DIR", "shared"),

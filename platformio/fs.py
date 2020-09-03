@@ -12,18 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
+import io
 import json
 import os
 import re
 import shutil
 import stat
 import sys
-from glob import glob
 
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS, glob_escape
+from platformio.compat import WINDOWS, glob_escape, glob_recursive
 
 
 class cd(object):
@@ -56,7 +57,7 @@ def load_json(file_path):
         raise exception.InvalidJSONFile(file_path)
 
 
-def format_filesize(filesize):
+def humanize_file_size(filesize):
     base = 1024
     unit = 0
     suffix = "B"
@@ -71,6 +72,28 @@ def format_filesize(filesize):
             return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
     return "%d%sB" % ((base * filesize / unit), suffix)
+
+
+def calculate_file_hashsum(algorithm, path):
+    h = hashlib.new(algorithm)
+    with io.open(path, "rb", buffering=0) as fp:
+        while True:
+            chunk = fp.read(io.DEFAULT_BUFFER_SIZE)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def calculate_folder_size(path):
+    assert os.path.isdir(path)
+    result = 0
+    for root, __, files in os.walk(path):
+        for f in files:
+            file_path = os.path.join(root, f)
+            if not os.path.islink(file_path):
+                result += os.path.getsize(file_path)
+    return result
 
 
 def ensure_udev_rules():
@@ -135,7 +158,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
     for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
         items = set()
-        for item in glob(os.path.join(glob_escape(src_dir), pattern)):
+        for item in glob_recursive(os.path.join(glob_escape(src_dir), pattern)):
             if os.path.isdir(item):
                 for root, _, files in os.walk(item, followlinks=followlinks):
                     for f in files:
@@ -162,6 +185,10 @@ def expanduser(path):
     if not WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
         return os.path.expanduser(path)
     return os.environ["USERPROFILE"] + path[1:]
+
+
+def change_filemtime(path, mtime):
+    os.utime(path, (mtime, mtime))
 
 
 def rmtree(path):

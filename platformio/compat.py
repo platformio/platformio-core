@@ -13,8 +13,9 @@
 # limitations under the License.
 
 # pylint: disable=unused-import, no-name-in-module, import-error,
-# pylint: disable=no-member, undefined-variable
+# pylint: disable=no-member, undefined-variable, unexpected-keyword-arg
 
+import glob
 import inspect
 import json
 import locale
@@ -49,6 +50,14 @@ def get_object_members(obj, ignore_private=True):
     }
 
 
+def ci_strings_are_equal(a, b):
+    if a == b:
+        return True
+    if not a or not b:
+        return False
+    return a.strip().lower() == b.strip().lower()
+
+
 if PY2:
     import imp
 
@@ -80,6 +89,9 @@ if PY2:
 
     _magic_check = re.compile("([*?[])")
     _magic_check_bytes = re.compile(b"([*?[])")
+
+    def glob_recursive(pathname):
+        return glob.glob(pathname)
 
     def glob_escape(pathname):
         """Escape all special characters."""
@@ -121,6 +133,9 @@ else:
         if isinstance(obj, string_types):
             return obj
         return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+
+    def glob_recursive(pathname):
+        return glob.glob(pathname, recursive=True)
 
     def load_python_module(name, pathname):
         spec = importlib.util.spec_from_file_location(name, pathname)

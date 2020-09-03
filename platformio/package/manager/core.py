@@ -17,87 +17,56 @@ import os
 import subprocess
 import sys
 
-from platformio import exception, util
+from platformio import __core_packages__, exception, fs, util
 from platformio.compat import PY2
-from platformio.managers.package import PackageManager
+from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
 from platformio.proc import get_pythonexe_path
-from platformio.project.config import ProjectConfig
-
-CORE_PACKAGES = {
-    "contrib-piohome": "~3.2.1",
-    "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-    "tool-unity": "~1.20500.0",
-    "tool-scons": "~2.20501.7" if PY2 else "~3.30102.0",
-    "tool-cppcheck": "~1.190.0",
-    "tool-clangtidy": "~1.100000.0",
-    "tool-pvs-studio": "~7.7.0",
-}
-
-# pylint: disable=arguments-differ,signature-differs
-
-
-class CorePackageManager(PackageManager):
-    def __init__(self):
-        config = ProjectConfig.get_instance()
-        packages_dir = config.get_optional_dir("packages")
-        super(CorePackageManager, self).__init__(
-            packages_dir,
-            [
-                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "http%s://dl.platformio.org/packages/manifest.json"
-                % ("" if sys.version_info < (2, 7, 9) else "s"),
-            ],
-        )
-
-    def install(  # pylint: disable=keyword-arg-before-vararg
-        self, name, requirements=None, *args, **kwargs
-    ):
-        PackageManager.install(self, name, requirements, *args, **kwargs)
-        self.cleanup_packages()
-        return self.get_package_dir(name, requirements)
-
-    def update(self, *args, **kwargs):
-        result = PackageManager.update(self, *args, **kwargs)
-        self.cleanup_packages()
-        return result
-
-    def cleanup_packages(self):
-        self.cache_reset()
-        best_pkg_versions = {}
-        for name, requirements in CORE_PACKAGES.items():
-            pkg_dir = self.get_package_dir(name, requirements)
-            if not pkg_dir:
-                continue
-            best_pkg_versions[name] = self.load_manifest(pkg_dir)["version"]
-        for manifest in self.get_installed():
-            if manifest["name"] not in best_pkg_versions:
-                continue
-            if manifest["version"] != best_pkg_versions[manifest["name"]]:
-                self.uninstall(manifest["__pkg_dir"], after_update=True)
-        self.cache_reset()
-        return True
 
 
 def get_core_package_dir(name):
-    if name not in CORE_PACKAGES:
-        raise exception.PlatformioException("Please upgrade PIO Core")
-    requirements = CORE_PACKAGES[name]
-    pm = CorePackageManager()
-    pkg_dir = pm.get_package_dir(name, requirements)
-    if pkg_dir:
-        return pkg_dir
-    return pm.install(name, requirements)
+    if name not in __core_packages__:
+        raise exception.PlatformioException("Please upgrade PlatformIO Core")
+    pm = ToolPackageManager()
+    spec = PackageSpec(
+        owner="platformio", name=name, requirements=__core_packages__[name]
+    )
+    pkg = pm.get_package(spec)
+    if pkg:
+        return pkg.path
+    assert pm.install(spec)
+    _remove_unnecessary_packages()
+    return pm.get_package(spec).path
 
 
 def update_core_packages(only_check=False, silent=False):
-    pm = CorePackageManager()
-    for name, requirements in CORE_PACKAGES.items():
-        pkg_dir = pm.get_package_dir(name)
-        if not pkg_dir:
+    pm = ToolPackageManager()
+    for name, requirements in __core_packages__.items():
+        spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
+        pkg = pm.get_package(spec)
+        if not pkg:
             continue
-        if not silent or pm.outdated(pkg_dir, requirements):
-            pm.update(name, requirements, only_check=only_check)
+        if not silent or pm.outdated(pkg, spec).is_outdated():
+            pm.update(pkg, spec, only_check=only_check)
+    if not only_check:
+        _remove_unnecessary_packages()
     return True
+
+
+def _remove_unnecessary_packages():
+    pm = ToolPackageManager()
+    best_pkg_versions = {}
+    for name, requirements in __core_packages__.items():
+        spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
+        pkg = pm.get_package(spec)
+        if not pkg:
+            continue
+        best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
+    for pkg in pm.get_installed():
+        if pkg.metadata.name not in best_pkg_versions:
+            continue
+        if pkg.metadata.version != best_pkg_versions[pkg.metadata.name]:
+            pm.uninstall(pkg)
 
 
 def inject_contrib_pysite(verify_openssl=False):
@@ -124,7 +93,7 @@ def inject_contrib_pysite(verify_openssl=False):
 
 def build_contrib_pysite_deps(target_dir):
     if os.path.isdir(target_dir):
-        util.rmtree_(target_dir)
+        fs.rmtree(target_dir)
     os.makedirs(target_dir)
     with open(os.path.join(target_dir, "package.json"), "w") as fp:
         json.dump(

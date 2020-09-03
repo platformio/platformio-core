@@ -17,15 +17,15 @@ import time
 
 from twisted.internet import defer, reactor  # pylint: disable=import-error
 
-from platformio import app
+from platformio.cache import ContentCache
 from platformio.commands.home.rpc.handlers.os import OSRPC
 
 
 class MiscRPC(object):
     def load_latest_tweets(self, data_url):
-        cache_key = app.ContentCache.key_from_args(data_url, "tweets")
-        cache_valid = "7d"
-        with app.ContentCache() as cc:
+        cache_key = ContentCache.key_from_args(data_url, "tweets")
+        cache_valid = "180d"
+        with ContentCache() as cc:
             cache_data = cc.get(cache_key)
             if cache_data:
                 cache_data = json.loads(cache_data)
@@ -43,7 +43,7 @@ class MiscRPC(object):
     @defer.inlineCallbacks
     def _preload_latest_tweets(data_url, cache_key, cache_valid):
         result = json.loads((yield OSRPC.fetch_content(data_url)))
-        with app.ContentCache() as cc:
+        with ContentCache() as cc:
             cc.set(
                 cache_key,
                 json.dumps({"time": int(time.time()), "result": result}),

@@ -19,15 +19,21 @@ from time import time
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, fs, telemetry, util
+from platformio import __version__, app, exception, fs, telemetry
+from platformio.cache import cleanup_content_cache
+from platformio.clients import http
 from platformio.commands import PlatformioCLI
-from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
-from platformio.commands.lib import lib_update as cmd_lib_update
+from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
+from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.managers.core import update_core_packages
-from platformio.managers.lib import LibraryManager
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.manager.core import update_core_packages
+from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
+from platformio.package.version import pepver_to_semver
+from platformio.platform.factory import PlatformFactory
 from platformio.proc import is_container
 
 
@@ -50,9 +56,9 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
     except (
-        exception.InternetIsOffline,
+        http.HTTPClientError,
+        http.InternetIsOffline,
         exception.GetLatestVersionError,
-        exception.APIRequestError,
     ):
         click.secho(
             "Failed to check for PlatformIO upgrades. "
@@ -66,10 +72,9 @@ def on_platformio_exception(e):
 
 
 def set_caller(caller=None):
+    caller = caller or getenv("PLATFORMIO_CALLER")
     if not caller:
-        if getenv("PLATFORMIO_CALLER"):
-            caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+        if getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
             caller = "vscode"
         elif is_container():
             if getenv("C9_UID"):
@@ -83,15 +88,12 @@ def set_caller(caller=None):
 
 class Upgrader(object):
     def __init__(self, from_version, to_version):
-        self.from_version = semantic_version.Version.coerce(
-            util.pepver_to_semver(from_version)
-        )
-        self.to_version = semantic_version.Version.coerce(
-            util.pepver_to_semver(to_version)
-        )
+        self.from_version = pepver_to_semver(from_version)
+        self.to_version = pepver_to_semver(to_version)
 
         self._upgraders = [
-            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms)
+            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms),
+            (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
         ]
 
     def run(self, ctx):
@@ -111,6 +113,22 @@ class Upgrader(object):
         ctx.invoke(cmd_platform_update)
         return True
 
+    @staticmethod
+    def _update_pkg_metadata(_):
+        pm = ToolPackageManager()
+        for pkg in pm.get_installed():
+            if not pkg.metadata or pkg.metadata.spec.external or pkg.metadata.spec.id:
+                continue
+            result = pm.search_registry_packages(PackageSpec(name=pkg.metadata.name))
+            if len(result) != 1:
+                continue
+            result = result[0]
+            pkg.metadata.spec = PackageSpec(
+                id=result["id"], owner=result["owner"]["username"], name=result["name"],
+            )
+            pkg.dump_meta()
+        return True
+
 
 def after_upgrade(ctx):
     terminal_width, _ = click.get_terminal_size()
@@ -120,9 +138,7 @@ def after_upgrade(ctx):
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
-    elif semantic_version.Version.coerce(
-        util.pepver_to_semver(last_version)
-    ) > semantic_version.Version.coerce(util.pepver_to_semver(__version__)):
+    elif pepver_to_semver(last_version) > pepver_to_semver(__version__):
         click.secho("*" * terminal_width, fg="yellow")
         click.secho(
             "Obsolete PIO Core v%s is used (previous was %s)"
@@ -132,14 +148,17 @@ def after_upgrade(ctx):
         click.secho("Please remove multiple PIO Cores from a system:", fg="yellow")
         click.secho(
             "https://docs.platformio.org/page/faq.html"
-            "#multiple-pio-cores-in-a-system",
+            "#multiple-platformio-cores-in-a-system",
             fg="cyan",
         )
         click.secho("*" * terminal_width, fg="yellow")
         return
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
-        app.clean_cache()
+        try:
+            cleanup_content_cache("http")
+        except:  # pylint: disable=bare-except
+            pass
 
         # Update PlatformIO's Core packages
         update_core_packages(silent=True)
@@ -158,7 +177,6 @@ def after_upgrade(ctx):
             )
         else:
             raise exception.UpgradeError("Auto upgrading...")
-        click.echo("")
 
     # PlatformIO banner
     click.echo("*" * terminal_width)
@@ -200,15 +218,13 @@ def check_platformio_upgrade():
     last_check["platformio_upgrade"] = int(time())
     app.set_state_item("last_check", last_check)
 
-    util.internet_on(raise_exception=True)
+    http.ensure_internet_on(raise_exception=True)
 
     # Update PlatformIO's Core packages
     update_core_packages(silent=True)
 
     latest_version = get_latest_version()
-    if semantic_version.Version.coerce(
-        util.pepver_to_semver(latest_version)
-    ) <= semantic_version.Version.coerce(util.pepver_to_semver(__version__)):
+    if pepver_to_semver(latest_version) <= pepver_to_semver(__version__):
         return
 
     terminal_width, _ = click.get_terminal_size()
@@ -238,7 +254,7 @@ def check_platformio_upgrade():
     click.echo("")
 
 
-def check_internal_updates(ctx, what):
+def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     last_check = app.get_state_item("last_check", {})
     interval = int(app.get_setting("check_%s_interval" % what)) * 3600 * 24
     if (time() - interval) < last_check.get(what + "_update", 0):
@@ -247,22 +263,19 @@ def check_internal_updates(ctx, what):
     last_check[what + "_update"] = int(time())
     app.set_state_item("last_check", last_check)
 
-    util.internet_on(raise_exception=True)
+    http.ensure_internet_on(raise_exception=True)
 
-    pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
-    for manifest in pm.get_installed():
-        if manifest["name"] in outdated_items:
+    pm = PlatformPackageManager() if what == "platforms" else LibraryPackageManager()
+    for pkg in pm.get_installed():
+        if pkg.metadata.name in outdated_items:
             continue
         conds = [
-            pm.outdated(manifest["__pkg_dir"]),
-            what == "platforms"
-            and PlatformFactory.newPlatform(
-                manifest["__pkg_dir"]
-            ).are_outdated_packages(),
+            pm.outdated(pkg).is_outdated(),
+            what == "platforms" and PlatformFactory.new(pkg).are_outdated_packages(),
         ]
         if any(conds):
-            outdated_items.append(manifest["name"])
+            outdated_items.append(pkg.metadata.name)
 
     if not outdated_items:
         return

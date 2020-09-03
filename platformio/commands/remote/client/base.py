@@ -72,7 +72,7 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
 
     def connect(self):
         self.log.info("Name: {name}", name=self.name)
-        self.log.info("Connecting to PIO Remote Cloud")
+        self.log.info("Connecting to PlatformIO Remote Development Cloud")
 
         # pylint: disable=protected-access
         proto, options = endpoints._parse(__pioremote_endpoint__)

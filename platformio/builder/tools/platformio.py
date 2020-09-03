@@ -26,9 +26,9 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
-from platformio import fs
+from platformio import __version__, fs
 from platformio.compat import string_types
-from platformio.util import pioversion_to_intstr
+from platformio.package.version import pepver_to_semver
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_ASM_EXT = ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
@@ -66,7 +66,11 @@ def BuildProgram(env):
         env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
 
     # enable "cyclic reference" for linker
-    if env.get("LIBS") and env.GetCompilerType() == "gcc":
+    if (
+        env.get("LIBS")
+        and env.GetCompilerType() == "gcc"
+        and env.PioPlatform().is_embedded()
+    ):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
@@ -90,11 +94,16 @@ def BuildProgram(env):
 
 def ProcessProgramDeps(env):
     def _append_pio_macros():
+        core_version = pepver_to_semver(__version__)
         env.AppendUnique(
             CPPDEFINES=[
                 (
                     "PLATFORMIO",
-                    int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())),
+                    int(
+                        "{0:02d}{1:02d}{2:02d}".format(
+                            core_version.major, core_version.minor, core_version.patch
+                        )
+                    ),
                 )
             ]
         )
@@ -282,18 +291,21 @@ def CollectBuildFiles(
         if fs.path_endswith_ext(item, SRC_BUILD_EXT):
             sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
-    for callback, pattern in env.get("__PIO_BUILD_MIDDLEWARES", []):
-        tmp = []
-        for node in sources:
-            if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
-                tmp.append(node)
-                continue
-            n = callback(node)
-            if n:
-                tmp.append(n)
-        sources = tmp
+    middlewares = env.get("__PIO_BUILD_MIDDLEWARES")
+    if not middlewares:
+        return sources
 
-    return sources
+    new_sources = []
+    for node in sources:
+        new_node = node
+        for callback, pattern in middlewares:
+            if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
+                continue
+            new_node = callback(new_node)
+        if new_node:
+            new_sources.append(new_node)
+
+    return new_sources
 
 
 def AddBuildMiddleware(env, callback, pattern=None):

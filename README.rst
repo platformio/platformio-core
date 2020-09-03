@@ -37,7 +37,9 @@ PlatformIO
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-ide-laptop.png
     :target: https://platformio.org?utm_source=github&utm_medium=core
 
-`PlatformIO <https://platformio.org?utm_source=github&utm_medium=core>`_ a new generation ecosystem for embedded development
+`PlatformIO <https://platformio.org?utm_source=github&utm_medium=core>`_ is a professional collaborative platform for embedded development
+
+**A place where Developers and Teams have true Freedom! No more vendor lock-in!**
 
 * Open source, maximum permissive Apache 2.0 license
 * Cross-platform IDE and Unified Debugger
@@ -64,10 +66,10 @@ Instruments
 Professional
 ------------
 
-* `PIO Check <https://docs.platformio.org/page/plus/pio-check.html?utm_source=github&utm_medium=core>`_
-* `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
-* `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
-* `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
+* `Debugging <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
+* `Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
+* `Static Code Analysis <https://docs.platformio.org/page/plus/pio-check.html?utm_source=github&utm_medium=core>`_
+* `Remote Development <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
 
 Registry
 --------
@@ -81,6 +83,7 @@ Development Platforms
 ---------------------
 
 * `Aceinna IMU <https://platformio.org/platforms/aceinna_imu?utm_source=github&utm_medium=core>`_
+* `ASR Microelectronics ASR605x <https://platformio.org/platforms/asrmicro650x?utm_source=github&utm_medium=core>`_
 * `Atmel AVR <https://platformio.org/platforms/atmelavr?utm_source=github&utm_medium=core>`_
 * `Atmel SAM <https://platformio.org/platforms/atmelsam?utm_source=github&utm_medium=core>`_
 * `Espressif 32 <https://platformio.org/platforms/espressif32?utm_source=github&utm_medium=core>`_
@@ -144,7 +147,6 @@ Share minimal diagnostics and usage information to help us make PlatformIO bette
 It is enabled by default. For more information see:
 
 * `Telemetry Setting <https://docs.platformio.org/page/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-telemetry>`_
-* `SSL Setting <https://docs.platformio.org/page/userguide/cmd_settings.html?utm_source=github&utm_medium=core#strict-ssl>`_
 
 License
 -------

@@ -12,23 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-arguments,too-many-locals, too-many-branches
+# pylint: disable=too-many-arguments,too-many-locals,too-many-branches,line-too-long
 
+import json
 import os
 
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs
+from platformio import fs
 from platformio.commands.platform import platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.exception import UnknownBoard
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
-from platformio.project.helpers import is_platformio_project
+from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
-@click.group(short_help="Project Manager")
+@click.group(short_help="Project manager")
 def cli():
     pass
 
@@ -38,9 +40,7 @@ def cli():
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
 )
 @click.option("--json-output", is_flag=True)
 def project_config(project_dir, json_output):
@@ -54,7 +54,6 @@ def project_config(project_dir, json_output):
         "Computed project configuration for %s" % click.style(project_dir, fg="cyan")
     )
     for section, options in config.as_tuple():
-        click.echo()
         click.secho(section, fg="cyan")
         click.echo("-" * len(section))
         click.echo(
@@ -66,15 +65,55 @@ def project_config(project_dir, json_output):
                 tablefmt="plain",
             )
         )
+        click.echo()
+    return None
+
+
+@cli.command("data", short_help="Dump data intended for IDE extensions/plugins")
+@click.option(
+    "-d",
+    "--project-dir",
+    default=os.getcwd,
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+)
+@click.option("-e", "--environment", multiple=True)
+@click.option("--json-output", is_flag=True)
+def project_data(project_dir, environment, json_output):
+    if not is_platformio_project(project_dir):
+        raise NotPlatformIOProjectError(project_dir)
+    with fs.cd(project_dir):
+        config = ProjectConfig.get_instance()
+        config.validate(environment)
+        environment = list(environment or config.envs())
+
+    if json_output:
+        return click.echo(json.dumps(load_project_ide_data(project_dir, environment)))
+
+    for envname in environment:
+        click.echo("Environment: " + click.style(envname, fg="cyan", bold=True))
+        click.echo("=" * (13 + len(envname)))
+        click.echo(
+            tabulate(
+                [
+                    (click.style(name, bold=True), "=", json.dumps(value, indent=2))
+                    for name, value in load_project_ide_data(
+                        project_dir, envname
+                    ).items()
+                ],
+                tablefmt="plain",
+            )
+        )
+        click.echo()
+
     return None
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     for id_ in value:
         try:
             pm.board_config(id_)
-        except exception.UnknownBoard:
+        except UnknownBoard:
             raise click.BadParameter(
                 "`%s`. Please search for board ID using `platformio boards` "
                 "command" % id_
@@ -93,6 +132,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 )
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
+@click.option("-e", "--environment", help="Update using existing environment")
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
@@ -102,6 +142,7 @@ def project_init(
     project_dir,
     board,
     ide,
+    environment,
     project_option,
     env_prefix,
     silent,
@@ -139,11 +180,17 @@ def project_init(
         )
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide, board)
+        with fs.cd(project_dir):
+            config = ProjectConfig.get_instance(
+                os.path.join(project_dir, "platformio.ini")
+            )
+        config.validate()
+        pg = ProjectGenerator(
+            config, environment or get_best_envname(config, board), ide
+        )
         pg.generate()
 
     if is_new_project:
-        init_ci_conf(project_dir)
         init_cvs_ignore(project_dir)
 
     if silent:
@@ -233,7 +280,6 @@ https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
 
 
 def init_lib_readme(lib_dir):
-    # pylint: disable=line-too-long
     with open(os.path.join(lib_dir, "README"), "w") as fp:
         fp.write(
             """
@@ -290,7 +336,7 @@ def init_test_readme(test_dir):
     with open(os.path.join(test_dir, "README"), "w") as fp:
         fp.write(
             """
-This directory is intended for PIO Unit Testing and project tests.
+This directory is intended for PlatformIO Unit Testing and project tests.
 
 Unit Testing is a software testing method by which individual units of
 source code, sets of one or more MCU program modules together with associated
@@ -298,85 +344,8 @@ control data, usage procedures, and operating procedures, are tested to
 determine whether they are fit for use. Unit testing finds problems early
 in the development cycle.
 
-More information about PIO Unit Testing:
+More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
-""",
-        )
-
-
-def init_ci_conf(project_dir):
-    conf_path = os.path.join(project_dir, ".travis.yml")
-    if os.path.isfile(conf_path):
-        return
-    with open(conf_path, "w") as fp:
-        fp.write(
-            """# Continuous Integration (CI) is the practice, in software
-# engineering, of merging all developer working copies with a shared mainline
-# several times a day < https://docs.platformio.org/page/ci/index.html >
-#
-# Documentation:
-#
-# * Travis CI Embedded Builds with PlatformIO
-#   < https://docs.travis-ci.com/user/integration/platformio/ >
-#
-# * PlatformIO integration with Travis CI
-#   < https://docs.platformio.org/page/ci/travis.html >
-#
-# * User Guide for `platformio ci` command
-#   < https://docs.platformio.org/page/userguide/cmd_ci.html >
-#
-#
-# Please choose one of the following templates (proposed below) and uncomment
-# it (remove "# " before each line) or use own configuration according to the
-# Travis CI documentation (see above).
-#
-
-
-#
-# Template #1: General project. Test it using existing `platformio.ini`.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# install:
-#     - pip install -U platformio
-#     - platformio update
-#
-# script:
-#     - platformio run
-
-
-#
-# Template #2: The project is intended to be used as a library with examples.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# env:
-#     - PLATFORMIO_CI_SRC=path/to/test/file.c
-#     - PLATFORMIO_CI_SRC=examples/file.ino
-#     - PLATFORMIO_CI_SRC=path/to/test/directory
-#
-# install:
-#     - pip install -U platformio
-#     - platformio update
-#
-# script:
-#     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
 """,
         )
 
@@ -401,7 +370,7 @@ def fill_project_envs(
         if all(cond):
             used_boards.append(config.get(section, "board"))
 
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     used_platforms = []
     modified = False
     for id_ in board_ids:
@@ -438,9 +407,31 @@ def fill_project_envs(
 
 
 def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = [p["name"] for p in PlatformManager().get_installed()]
+    installed_platforms = [
+        pkg.metadata.name for pkg in PlatformPackageManager().get_installed()
+    ]
     if set(platforms) <= set(installed_platforms):
         return
     ctx.invoke(
         cli_platform_install, platforms=list(set(platforms) - set(installed_platforms))
     )
+
+
+def get_best_envname(config, board_ids=None):
+    envname = None
+    default_envs = config.default_envs()
+    if default_envs:
+        envname = default_envs[0]
+        if not board_ids:
+            return envname
+
+    for env in config.envs():
+        if not board_ids:
+            return env
+        if not envname:
+            envname = env
+        items = config.items(env=env, as_dict=True)
+        if "board" in items and items.get("board") in board_ids:
+            return env
+
+    return envname

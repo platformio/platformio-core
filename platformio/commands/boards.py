@@ -19,10 +19,10 @@ from tabulate import tabulate
 
 from platformio import fs
 from platformio.compat import dump_json_to_unicode
-from platformio.managers.platform import PlatformManager
+from platformio.package.manager.platform import PlatformPackageManager
 
 
-@click.command("boards", short_help="Embedded Board Explorer")
+@click.command("boards", short_help="Embedded board explorer")
 @click.argument("query", required=False)
 @click.option("--installed", is_flag=True)
 @click.option("--json-output", is_flag=True)
@@ -59,8 +59,8 @@ def print_boards(boards):
                     click.style(b["id"], fg="cyan"),
                     b["mcu"],
                     "%dMHz" % (b["fcpu"] / 1000000),
-                    fs.format_filesize(b["rom"]),
-                    fs.format_filesize(b["ram"]),
+                    fs.humanize_file_size(b["rom"]),
+                    fs.humanize_file_size(b["ram"]),
                     b["name"],
                 )
                 for b in boards
@@ -71,7 +71,7 @@ def print_boards(boards):
 
 
 def _get_boards(installed=False):
-    pm = PlatformManager()
+    pm = PlatformPackageManager()
     return pm.get_installed_boards() if installed else pm.get_all_boards()
 
 

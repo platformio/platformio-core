@@ -21,10 +21,10 @@ from os.path import isfile
 
 import click
 
-from platformio import app, exception, fs, proc, util
+from platformio import app, exception, fs, proc
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
-from platformio.managers.core import inject_contrib_pysite
+from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
@@ -33,7 +33,7 @@ from platformio.project.helpers import is_platformio_project, load_project_ide_d
 @click.command(
     "debug",
     context_settings=dict(ignore_unknown_options=True),
-    short_help="PIO Unified Debugger",
+    short_help="Unified debugger",
 )
 @click.option(
     "-d",
@@ -130,7 +130,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
                 nl=False,
             )
             stream = helpers.GDBMIConsoleStream()
-            with util.capture_std_streams(stream):
+            with proc.capture_std_streams(stream):
                 helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
             stream.close()
         else:

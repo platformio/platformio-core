@@ -1,6 +1,6 @@
 name: Core
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [2.7, 3.7]
+        python-version: [2.7, 3.7, 3.8]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -28,8 +28,9 @@ jobs:
           tox -e lint
       - name: Integration Tests
         env:
-          PLATFORMIO_TEST_ACCOUNT_LOGIN: ${{ secrets.PLATFORMIO_TEST_ACCOUNT_LOGIN }}
-          PLATFORMIO_TEST_ACCOUNT_PASSWORD: ${{ secrets.PLATFORMIO_TEST_ACCOUNT_PASSWORD }}
+          TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
+          TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
+          TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
         run: |
           tox -e testcore
 

@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.exception import PlatformioException
+from platformio import util
+from platformio.exception import PlatformioException, UserSideException
 
 
 class PackageException(PlatformioException):
@@ -44,3 +45,27 @@ class ManifestValidationError(ManifestException):
             "https://docs.platformio.org/page/librarymanager/config.html"
             % self.messages
         )
+
+
+class MissingPackageManifestError(ManifestException):
+
+    MESSAGE = "Could not find one of '{0}' manifest files in the package"
+
+
+class UnknownPackageError(UserSideException):
+
+    MESSAGE = (
+        "Could not find the package with '{0}' requirements for your system '%s'"
+        % util.get_systype()
+    )
+
+
+class NotGlobalLibDir(UserSideException):
+
+    MESSAGE = (
+        "The `{0}` is not a PlatformIO project.\n\n"
+        "To manage libraries in global storage `{1}`,\n"
+        "please use `platformio lib --global {2}` or specify custom storage "
+        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
+        "Check `platformio lib --help` for details."
+    )

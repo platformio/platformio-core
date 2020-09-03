@@ -28,7 +28,7 @@ from platformio.commands.test.native import NativeTestProcessor
 from platformio.project.config import ProjectConfig
 
 
-@click.command("test", short_help="Unit Testing")
+@click.command("test", short_help="Unit testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
 @click.option(
     "--filter",

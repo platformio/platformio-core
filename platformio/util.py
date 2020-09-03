@@ -12,31 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 import json
 import math
 import os
 import platform
 import re
-import socket
 import sys
 import time
-from contextlib import contextmanager
 from functools import wraps
 from glob import glob
 
 import click
-import requests
 
-from platformio import __apiurl__, __version__, exception
-from platformio.commands import PlatformioCLI
+from platformio import __version__, exception, proc
 from platformio.compat import PY2, WINDOWS
-from platformio.fs import cd  # pylint: disable=unused-import
-from platformio.fs import load_json  # pylint: disable=unused-import
-from platformio.fs import rmtree as rmtree_  # pylint: disable=unused-import
+from platformio.fs import cd, load_json  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
-from platformio.proc import is_ci  # pylint: disable=unused-import
-
-# KEEP unused imports for backward compatibility with PIO Core 3.0 API
 
 
 class memoized(object):
@@ -95,33 +88,12 @@ def singleton(cls):
     return get_instance
 
 
-@contextmanager
-def capture_std_streams(stdout, stderr=None):
-    _stdout = sys.stdout
-    _stderr = sys.stderr
-    sys.stdout = stdout
-    sys.stderr = stderr or stdout
-    yield
-    sys.stdout = _stdout
-    sys.stderr = _stderr
-
-
 def get_systype():
     type_ = platform.system().lower()
     arch = platform.machine().lower()
     if type_ == "windows":
         arch = "amd64" if platform.architecture()[0] == "64bit" else "x86"
     return "%s_%s" % (type_, arch) if arch else type_
-
-
-def pioversion_to_intstr():
-    vermatch = re.match(r"^([\d\.]+)", __version__)
-    assert vermatch
-    return [int(i) for i in vermatch.group(1).split(".")[:3]]
-
-
-def change_filemtime(path, mtime):
-    os.utime(path, (mtime, mtime))
 
 
 def get_serial_ports(filter_hwid=False):
@@ -162,7 +134,7 @@ def get_logical_devices():
     items = []
     if WINDOWS:
         try:
-            result = exec_command(
+            result = proc.exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]
             ).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
@@ -175,12 +147,12 @@ def get_logical_devices():
         except WindowsError:  # pylint: disable=undefined-variable
             pass
         # try "fsutil"
-        result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
+        result = proc.exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
         for device in re.findall(r"[A-Z]:\\", result):
             items.append({"path": device, "name": None})
         return items
 
-    result = exec_command(["df"]).get("out")
+    result = proc.exec_command(["df"]).get("out")
     devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
     for line in result.split("\n"):
         match = devicenamere.match(line.strip())
@@ -196,7 +168,7 @@ def get_mdns_services():
         import zeroconf
     except ImportError:
         from site import addsitedir
-        from platformio.managers.core import get_core_package_dir
+        from platformio.package.manager.core import get_core_package_dir
 
         contrib_pysite_dir = get_core_package_dir("contrib-pysite")
         addsitedir(contrib_pysite_dir)
@@ -270,132 +242,11 @@ def get_mdns_services():
     return items
 
 
-@memoized(expire="60s")
-def _api_request_session():
-    return requests.Session()
-
-
-@throttle(500)
-def _get_api_result(
-    url, params=None, data=None, auth=None  # pylint: disable=too-many-branches
-):
-    # pylint: disable=import-outside-toplevel
-    from platformio.app import get_user_agent, get_setting
-
-    result = {}
-    r = None
-    verify_ssl = sys.version_info >= (2, 7, 9)
-
-    if not url.startswith("http"):
-        url = __apiurl__ + url
-        if not get_setting("strict_ssl"):
-            url = url.replace("https://", "http://")
-
-    headers = {"User-Agent": get_user_agent()}
-    try:
-        if data:
-            r = _api_request_session().post(
-                url,
-                params=params,
-                data=data,
-                headers=headers,
-                auth=auth,
-                verify=verify_ssl,
-            )
-        else:
-            r = _api_request_session().get(
-                url, params=params, headers=headers, auth=auth, verify=verify_ssl
-            )
-        result = r.json()
-        r.raise_for_status()
-        return r.text
-    except requests.exceptions.HTTPError as e:
-        if result and "message" in result:
-            raise exception.APIRequestError(result["message"])
-        if result and "errors" in result:
-            raise exception.APIRequestError(result["errors"][0]["title"])
-        raise exception.APIRequestError(e)
-    except ValueError:
-        raise exception.APIRequestError("Invalid response: %s" % r.text.encode("utf-8"))
-    finally:
-        if r:
-            r.close()
-    return None
-
-
-def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
-    from platformio.app import ContentCache  # pylint: disable=import-outside-toplevel
-
-    total = 0
-    max_retries = 5
-    cache_key = (
-        ContentCache.key_from_args(url, params, data, auth) if cache_valid else None
-    )
-    while total < max_retries:
-        try:
-            with ContentCache() as cc:
-                if cache_key:
-                    result = cc.get(cache_key)
-                    if result is not None:
-                        return json.loads(result)
-
-            # check internet before and resolve issue with 60 seconds timeout
-            internet_on(raise_exception=True)
-
-            result = _get_api_result(url, params, data)
-            if cache_valid:
-                with ContentCache() as cc:
-                    cc.set(cache_key, result, cache_valid)
-            return json.loads(result)
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            total += 1
-            if not PlatformioCLI.in_silence():
-                click.secho(
-                    "[API] ConnectionError: {0} (incremented retry: max={1}, "
-                    "total={2})".format(e, max_retries, total),
-                    fg="yellow",
-                )
-            time.sleep(2 * total)
-
-    raise exception.APIRequestError(
-        "Could not connect to PlatformIO API Service. Please try later."
-    )
-
-
-PING_REMOTE_HOSTS = [
-    "140.82.118.3",  # Github.com
-    "35.231.145.151",  # Gitlab.com
-    "88.198.170.159",  # platformio.org
-    "github.com",
-    "platformio.org",
-]
-
-
-@memoized(expire="5s")
-def _internet_on():
-    timeout = 2
-    socket.setdefaulttimeout(timeout)
-    for host in PING_REMOTE_HOSTS:
-        try:
-            if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
-            else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
-            return True
-        except:  # pylint: disable=bare-except
-            pass
-    return False
-
-
-def internet_on(raise_exception=False):
-    result = _internet_on()
-    if raise_exception and not result:
-        raise exception.InternetIsOffline()
-    return result
-
-
-def pepver_to_semver(pepver):
-    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
+def pioversion_to_intstr():
+    """ Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
+    vermatch = re.match(r"^([\d\.]+)", __version__)
+    assert vermatch
+    return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
 def items_to_list(items):
@@ -446,14 +297,3 @@ def humanize_duration_time(duration):
         tokens.append(int(round(duration) if multiplier == 1 else fraction))
         duration -= fraction * multiplier
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
-
-
-def get_original_version(version):
-    if version.count(".") != 2:
-        return None
-    _, raw = version.split(".")[:2]
-    if int(raw) <= 99:
-        return None
-    if int(raw) <= 9999:
-        return "%s.%s" % (raw[:-2], int(raw[-2:]))
-    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
