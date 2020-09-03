@@ -10,7 +10,7 @@ PlatformIO Core 5
 
 - `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/core/migration.html>`__
 
-5.0.0 (2020-??-??)
+5.0.0 (2020-09-03)
 ~~~~~~~~~~~~~~~~~~
 
 * Integration with the new **PlatformIO Trusted Registry**
