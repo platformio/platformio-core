@@ -66,10 +66,10 @@ Instruments
 Professional
 ------------
 
-* `PIO Check <https://docs.platformio.org/page/plus/pio-check.html?utm_source=github&utm_medium=core>`_
-* `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
-* `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
-* `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
+* `Debugging <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
+* `Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
+* `Static Code Analysis <https://docs.platformio.org/page/plus/pio-check.html?utm_source=github&utm_medium=core>`_
+* `Remote Development <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
 
 Registry
 --------
