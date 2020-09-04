@@ -8,10 +8,15 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-- `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/core/migration.html>`__
+5.0.1 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+- Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/page/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
 
 5.0.0 (2020-09-03)
 ~~~~~~~~~~~~~~~~~~
+
+Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/core/migration.html>`__.
 
 * Integration with the new **PlatformIO Trusted Registry**
 

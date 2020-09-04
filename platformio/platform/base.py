@@ -94,7 +94,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
             name = item
             version = "*"
             if "@" in item:
-                name, version = item.split("@", 2)
+                name, version = item.split("@", 1)
             spec = self.pm.ensure_spec(name)
             options = {"version": version.strip(), "optional": False}
             if spec.owner:
