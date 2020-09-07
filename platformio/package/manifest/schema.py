@@ -242,7 +242,7 @@ class ManifestSchema(BaseSchema):
             raise ValidationError("Could not load SPDX licenses for validation")
         for item in spdx.get("licenses", []):
             if item.get("licenseId") == value:
-                return
+                return True
         raise ValidationError(
             "Invalid SPDX license identifier. See valid identifiers at "
             "https://spdx.org/licenses/"
@@ -251,9 +251,5 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.10"
-        spdx_data_url = (
-            "https://raw.githubusercontent.com/spdx/license-list-data"
-            "/v%s/json/licenses.json" % version
-        )
+        spdx_data_url = "https://dl.bintray.com/platformio/dl-misc/spdx-licenses-3.json"
         return json.loads(fetch_remote_content(spdx_data_url))
