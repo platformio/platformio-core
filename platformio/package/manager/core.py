@@ -16,6 +16,7 @@ import json
 import os
 import subprocess
 import sys
+from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
 from platformio.compat import PY2
@@ -120,7 +121,12 @@ def build_contrib_pysite_deps(target_dir):
         json.dump(
             dict(
                 name="contrib-pysite",
-                version="2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
+                version="2.%d%d.%s"
+                % (
+                    sys.version_info.major,
+                    sys.version_info.minor,
+                    date.today().strftime("%y%m%d"),
+                ),
                 system=util.get_systype(),
             ),
             fp,
@@ -142,7 +148,7 @@ def get_contrib_pysite_deps():
     twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == 20.4.3",
+        "autobahn == %s" % ("19.11.2" if PY2 else "20.4.3"),
         "json-rpc == 1.13.0",
     ]
 
