@@ -90,12 +90,13 @@ def test_spec_local_urls(tmpdir_factory):
     assert PackageSpec("file:///tmp/some-lib/") == PackageSpec(
         url="file:///tmp/some-lib/", name="some-lib"
     )
-    assert PackageSpec("file:///tmp/foo.tar.gz@~2.3.0-beta.1") == PackageSpec(
-        url="file:///tmp/foo.tar.gz", name="foo", requirements="~2.3.0-beta.1"
+    # detached package
+    assert PackageSpec("file:///tmp/some-lib@src-67e1043a673d2") == PackageSpec(
+        url="file:///tmp/some-lib@src-67e1043a673d2", name="some-lib"
     )
-    # detached folder with "@" symbol
+    # detached folder without scheme
     pkg_dir = tmpdir_factory.mktemp("storage").join("detached@1.2.3").mkdir()
-    assert PackageSpec("file://%s" % str(pkg_dir)) == PackageSpec(
+    assert PackageSpec(str(pkg_dir)) == PackageSpec(
         name="detached", url="file://%s" % pkg_dir
     )
 
