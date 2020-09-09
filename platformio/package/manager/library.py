@@ -15,7 +15,10 @@
 import json
 import os
 
-from platformio.package.exception import MissingPackageManifestError
+from platformio.package.exception import (
+    MissingPackageManifestError,
+    UnknownPackageError,
+)
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.meta import PackageItem, PackageSpec, PackageType
 from platformio.project.helpers import get_project_global_lib_dir
@@ -62,6 +65,33 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                     return os.path.dirname(root)
                 return root
         return path
+
+    def _install(  # pylint: disable=too-many-arguments
+        self,
+        spec,
+        search_filters=None,
+        silent=False,
+        skip_dependencies=False,
+        force=False,
+    ):
+        try:
+            return super(LibraryPackageManager, self)._install(
+                spec,
+                search_filters=search_filters,
+                silent=silent,
+                skip_dependencies=skip_dependencies,
+                force=force,
+            )
+        except UnknownPackageError as e:
+            # pylint: disable=import-outside-toplevel
+            from platformio.commands.lib.helpers import is_builtin_lib
+
+            spec = self.ensure_spec(spec)
+            if is_builtin_lib(spec.name):
+                self.print_message("Already installed, built-in library", fg="yellow")
+                return True
+
+            raise e
 
     def install_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageItem)

@@ -45,10 +45,11 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-def is_builtin_lib(storages, name):
-    for storage in storages or []:
-        if any(lib.get("name") == name for lib in storage["items"]):
-            return True
+def is_builtin_lib(name, storages=None):
+    for storage in storages or get_builtin_libs():
+        for lib in storage["items"]:
+            if lib.get("name") == name:
+                return True
     return False
 
 
