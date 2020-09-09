@@ -70,12 +70,16 @@ class RegistryClient(HTTPClient):
         if version:
             path += "/" + version
         return self.send_auth_request(
-            "delete", path, params={"undo": 1 if undo else 0},
+            "delete",
+            path,
+            params={"undo": 1 if undo else 0},
         )
 
     def update_resource(self, urn, private):
         return self.send_auth_request(
-            "put", "/v3/resources/%s" % urn, data={"private": int(private)},
+            "put",
+            "/v3/resources/%s" % urn,
+            data={"private": int(private)},
         )
 
     def grant_access_for_resource(self, urn, client, level):
@@ -87,7 +91,9 @@ class RegistryClient(HTTPClient):
 
     def revoke_access_from_resource(self, urn, client):
         return self.send_auth_request(
-            "delete", "/v3/resources/%s/access" % urn, data={"client": client},
+            "delete",
+            "/v3/resources/%s/access" % urn,
+            data={"client": client},
         )
 
     def list_resources(self, owner):

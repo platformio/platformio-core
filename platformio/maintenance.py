@@ -124,7 +124,9 @@ class Upgrader(object):
                 continue
             result = result[0]
             pkg.metadata.spec = PackageSpec(
-                id=result["id"], owner=result["owner"]["username"], name=result["name"],
+                id=result["id"],
+                owner=result["owner"]["username"],
+                name=result["name"],
             )
             pkg.dump_meta()
         return True

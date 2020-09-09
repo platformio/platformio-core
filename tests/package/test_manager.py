@@ -239,19 +239,19 @@ def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
     root_dir.join("library.json").write(
         """
 {
-    "name": "lib-with-deps",
-    "version": "2.0.0",
-    "dependencies": [
-        {
-            "owner": "bblanchon",
-            "name": "ArduinoJson",
-            "version": "^6.16.1"
-        },
-        {
-            "name": "external-repo",
-            "version": "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#4a0ccc1"
-        }
-    ]
+  "name": "lib-with-deps",
+  "version": "2.0.0",
+  "dependencies": [
+    {
+      "owner": "bblanchon",
+      "name": "ArduinoJson",
+      "version": "^6.16.1"
+    },
+    {
+      "name": "external-repo",
+      "version": "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#4a0ccc1"
+    }
+  ]
 }
 """
     )

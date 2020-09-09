@@ -203,7 +203,9 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
             kwargs["port"] = ports[0]["port"]
         elif "platform" in project_options and "board" in project_options:
             board_hwids = device_helpers.get_board_hwids(
-                kwargs["project_dir"], platform, project_options["board"],
+                kwargs["project_dir"],
+                platform,
+                project_options["board"],
             )
             for item in ports:
                 for hwid in board_hwids:

@@ -77,7 +77,8 @@ void loop() {}
     )
 
     result = clirunner.invoke(
-        cmd_test, ["-d", str(project_dir), "--without-testing", "--without-uploading"],
+        cmd_test,
+        ["-d", str(project_dir), "--without-testing", "--without-uploading"],
     )
 
     validate_cliresult(result)
@@ -127,7 +128,8 @@ int main() {
     )
 
     native_result = clirunner.invoke(
-        cmd_test, ["-d", str(project_dir), "-e", "native"],
+        cmd_test,
+        ["-d", str(project_dir), "-e", "native"],
     )
 
     test_dir.join("unittest_transport.h").write(
