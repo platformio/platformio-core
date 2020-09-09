@@ -1,5 +1,5 @@
 % import re
-% STD_RE = re.compile(r"(\-std=[a-z\+]+\d+)")
+% STD_RE = re.compile(r"(\-std=[a-z\+]+\w+)")
 % cxx_stds = STD_RE.findall(cxx_flags)
 % cxx_std = cxx_stds[-1] if cxx_stds else ""
 %

@@ -6,6 +6,14 @@
 %
 % systype = platform.system().lower()
 %
+% cpp_standards_remap = {
+%   "0x": "11",
+%   "1y": "14",
+%   "1z": "17",
+%   "2a": "20",
+%   "2b": "23"
+% }
+%
 % def _escape(text):
 %   return to_unix_path(text).replace('"', '\\"')
 % end
@@ -68,7 +76,7 @@
 %
 % cleaned_includes = filter_includes(includes, ["toolchain"])
 %
-% STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
+% STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 % cc_m_flags = split_args(cc_flags)
@@ -115,7 +123,7 @@
             "cStandard": "c{{ cc_stds[-1] }}",
 % end
 % if cxx_stds:
-            "cppStandard": "c++{{ cxx_stds[-1] }}",
+            "cppStandard": "c++{{ cpp_standards_remap.get(cxx_stds[-1], cxx_stds[-1]) }}",
 % end
 % if forced_includes:
             "forcedInclude": [
