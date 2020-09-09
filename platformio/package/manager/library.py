@@ -109,11 +109,16 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 )
 
     def _install_dependency(self, dependency, silent=False):
-        spec = PackageSpec(
-            owner=dependency.get("owner"),
-            name=dependency.get("name"),
-            requirements=dependency.get("version"),
-        )
+        if set(["name", "version"]) <= set(dependency.keys()) and any(
+            c in dependency["version"] for c in (":", "/", "@")
+        ):
+            spec = PackageSpec("%s=%s" % (dependency["name"], dependency["version"]))
+        else:
+            spec = PackageSpec(
+                owner=dependency.get("owner"),
+                name=dependency.get("name"),
+                requirements=dependency.get("version"),
+            )
         search_filters = {
             key: value
             for key, value in dependency.items()

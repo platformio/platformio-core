@@ -17,6 +17,7 @@ PlatformIO Core 5
 - Fixed an issue when `pio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
 - Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
 - Fixed an issue with incorrect value for C++ language standard in IDE projects when an in-progress language standard is used (`issue #3653 <https://github.com/platformio/platformio-core/issues/3653>`_)
+- Fixed an issue with "Invalid simple block (semantic_version)" from library dependency that refs to an external source (repository, ZIP/Tar archives) (`issue #3658 <https://github.com/platformio/platformio-core/issues/3658>`_)
 
 5.0.0 (2020-09-03)
 ~~~~~~~~~~~~~~~~~~
