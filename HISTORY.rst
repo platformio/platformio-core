@@ -13,6 +13,7 @@ PlatformIO Core 5
 
 - Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/page/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
 - Fixed an issue with "ImportError: cannot import name '_get_backend' from 'cryptography.hazmat.backends'" when using `Remote Development <https://docs.platformio.org/page/plus/pio-remote.html>`__ on RaspberryPi device (`issue #3652 <https://github.com/platformio/platformio-core/issues/3652>`_)
+- Fixed an issue with incorrect value for C++ language standard in IDE projects when an in-progress language standard is used (`issue #3653 <https://github.com/platformio/platformio-core/issues/3653>`_)
 
 5.0.0 (2020-09-03)
 ~~~~~~~~~~~~~~~~~~

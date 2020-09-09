@@ -1,5 +1,5 @@
 % import re
-% STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
+% STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 %
