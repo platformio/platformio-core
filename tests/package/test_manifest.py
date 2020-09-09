@@ -44,7 +44,7 @@ def test_library_json_parser():
     "dependencies": {
         "deps1": "1.2.0",
         "deps2": "https://github.com/username/package.git",
-        "@owner/deps3": "^2.1.3"
+        "owner/deps3": "^2.1.3"
     },
     "customField": "Custom Value"
 }
@@ -65,9 +65,9 @@ def test_library_json_parser():
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
             "dependencies": [
-                {"name": "@owner/deps3", "version": "^2.1.3"},
                 {"name": "deps1", "version": "1.2.0"},
                 {"name": "deps2", "version": "https://github.com/username/package.git"},
+                {"owner": "owner", "name": "deps3", "version": "^2.1.3"},
             ],
             "customField": "Custom Value",
         },
@@ -83,7 +83,7 @@ def test_library_json_parser():
     },
     "dependencies": [
         {"name": "deps1", "version": "1.0.0"},
-        {"name": "@owner/deps2", "version": "1.0.0", "platforms": "*", "frameworks": "arduino, espidf"},
+        {"owner": "owner", "name": "deps2", "version": "1.0.0", "platforms": "*", "frameworks": "arduino, espidf"},
         {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
     ]
 }
@@ -98,13 +98,14 @@ def test_library_json_parser():
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
             "dependencies": [
+                {"name": "deps1", "version": "1.0.0"},
                 {
-                    "name": "@owner/deps2",
+                    "owner": "owner",
+                    "name": "deps2",
                     "version": "1.0.0",
                     "platforms": ["*"],
                     "frameworks": ["arduino", "espidf"],
                 },
-                {"name": "deps1", "version": "1.0.0"},
                 {
                     "name": "deps3",
                     "version": "1.0.0",
@@ -115,16 +116,16 @@ def test_library_json_parser():
     )
 
     raw_data = parser.LibraryJsonManifestParser(
-        '{"dependencies": ["dep1", "dep2", "@owner/dep3"]}'
+        '{"dependencies": ["dep1", "dep2", "owner/dep3@1.2.3"]}'
     ).as_dict()
     raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
         raw_data,
         {
             "dependencies": [
-                {"name": "@owner/dep3"},
                 {"name": "dep1"},
                 {"name": "dep2"},
+                {"name": "owner/dep3@1.2.3"},
             ],
         },
     )

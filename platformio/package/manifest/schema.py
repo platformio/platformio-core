@@ -106,6 +106,7 @@ class RepositorySchema(StrictSchema):
 
 
 class DependencySchema(StrictSchema):
+    owner = fields.Str(validate=validate.Length(min=1, max=100))
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     version = fields.Str(validate=validate.Length(min=1, max=100))
     authors = StrictListField(fields.Str(validate=validate.Length(min=1, max=50)))

@@ -80,7 +80,9 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
     def _install_dependency(self, dependency, silent=False):
         spec = PackageSpec(
-            name=dependency.get("name"), requirements=dependency.get("version")
+            owner=dependency.get("owner"),
+            name=dependency.get("name"),
+            requirements=dependency.get("version"),
         )
         search_filters = {
             key: value

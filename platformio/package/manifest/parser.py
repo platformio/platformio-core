@@ -388,7 +388,15 @@ class LibraryJsonManifestParser(BaseManifestParser):
             raw = [raw]
 
         if isinstance(raw, dict):
-            return [dict(name=name, version=version) for name, version in raw.items()]
+            result = []
+            for name, version in raw.items():
+                if "/" in name:
+                    owner, name = name.split("/", 1)
+                    result.append(dict(owner=owner, name=name, version=version))
+                else:
+                    result.append(dict(name=name, version=version))
+            return result
+
         if isinstance(raw, list):
             for i, dependency in enumerate(raw):
                 if isinstance(dependency, dict):

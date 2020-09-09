@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.0.1 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Added support for "owner" requirement when declaring ``dependencies`` using `library.json <https://docs.platformio.org/page/librarymanager/config.html#dependencies>`__
 - Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/page/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
 - Fixed an issue with "ImportError: cannot import name '_get_backend' from 'cryptography.hazmat.backends'" when using `Remote Development <https://docs.platformio.org/page/plus/pio-remote.html>`__ on RaspberryPi device (`issue #3652 <https://github.com/platformio/platformio-core/issues/3652>`_)
 - Fixed an issue when `pio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
