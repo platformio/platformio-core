@@ -34,17 +34,21 @@ def validate_orgname(value):
 
 @cli.command("create", short_help="Create a new organization")
 @click.argument(
-    "orgname", callback=lambda _, __, value: validate_orgname(value),
+    "orgname",
+    callback=lambda _, __, value: validate_orgname(value),
 )
 @click.option(
     "--email", callback=lambda _, __, value: validate_email(value) if value else value
 )
-@click.option("--displayname",)
+@click.option(
+    "--displayname",
+)
 def org_create(orgname, email, displayname):
     client = AccountClient()
     client.create_org(orgname, email, displayname)
     return click.secho(
-        "The organization `%s` has been successfully created." % orgname, fg="green",
+        "The organization `%s` has been successfully created." % orgname,
+        fg="green",
     )
 
 
@@ -121,12 +125,19 @@ def account_destroy(orgname):
         abort=True,
     )
     client.destroy_org(orgname)
-    return click.secho("Organization `%s` has been destroyed." % orgname, fg="green",)
+    return click.secho(
+        "Organization `%s` has been destroyed." % orgname,
+        fg="green",
+    )
 
 
 @cli.command("add", short_help="Add a new owner to organization")
-@click.argument("orgname",)
-@click.argument("username",)
+@click.argument(
+    "orgname",
+)
+@click.argument(
+    "username",
+)
 def org_add_owner(orgname, username):
     client = AccountClient()
     client.add_org_owner(orgname, username)
@@ -138,8 +149,12 @@ def org_add_owner(orgname, username):
 
 
 @cli.command("remove", short_help="Remove an owner from organization")
-@click.argument("orgname",)
-@click.argument("username",)
+@click.argument(
+    "orgname",
+)
+@click.argument(
+    "username",
+)
 def org_remove_owner(orgname, username):
     client = AccountClient()
     client.remove_org_owner(orgname, username)

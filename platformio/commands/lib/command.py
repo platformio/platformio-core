@@ -22,11 +22,7 @@ from tabulate import tabulate
 
 from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
-from platformio.commands.lib.helpers import (
-    get_builtin_libs,
-    is_builtin_lib,
-    save_project_libdeps,
-)
+from platformio.commands.lib.helpers import get_builtin_libs, save_project_libdeps
 from platformio.compat import dump_json_to_unicode
 from platformio.package.exception import NotGlobalLibDir, UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
@@ -164,15 +160,8 @@ def lib_install(  # pylint: disable=too-many-arguments,unused-argument
             }
 
         elif storage_dir in storage_libdeps:
-            builtin_lib_storages = None
             for library in storage_libdeps[storage_dir]:
-                try:
-                    lm.install(library, silent=silent, force=force)
-                except UnknownPackageError as e:
-                    if builtin_lib_storages is None:
-                        builtin_lib_storages = get_builtin_libs()
-                    if not silent or not is_builtin_lib(builtin_lib_storages, library):
-                        click.secho("Warning! %s" % e, fg="yellow")
+                lm.install(library, silent=silent, force=force)
 
     if save and installed_pkgs:
         _save_deps(ctx, installed_pkgs)

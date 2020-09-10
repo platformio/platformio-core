@@ -15,7 +15,10 @@
 import json
 import os
 
-from platformio.package.exception import MissingPackageManifestError
+from platformio.package.exception import (
+    MissingPackageManifestError,
+    UnknownPackageError,
+)
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.meta import PackageItem, PackageSpec, PackageType
 from platformio.project.helpers import get_project_global_lib_dir
@@ -43,7 +46,10 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         # automatically generate library manifest
         with open(os.path.join(root_dir, "library.json"), "w") as fp:
             json.dump(
-                dict(name=spec.name, version=self.generate_rand_version(),),
+                dict(
+                    name=spec.name,
+                    version=self.generate_rand_version(),
+                ),
                 fp,
                 indent=2,
             )
@@ -63,6 +69,33 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 return root
         return path
 
+    def _install(  # pylint: disable=too-many-arguments
+        self,
+        spec,
+        search_filters=None,
+        silent=False,
+        skip_dependencies=False,
+        force=False,
+    ):
+        try:
+            return super(LibraryPackageManager, self)._install(
+                spec,
+                search_filters=search_filters,
+                silent=silent,
+                skip_dependencies=skip_dependencies,
+                force=force,
+            )
+        except UnknownPackageError as e:
+            # pylint: disable=import-outside-toplevel
+            from platformio.commands.lib.helpers import is_builtin_lib
+
+            spec = self.ensure_spec(spec)
+            if is_builtin_lib(spec.name):
+                self.print_message("Already installed, built-in library", fg="yellow")
+                return True
+
+            raise e
+
     def install_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
@@ -79,9 +112,16 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 )
 
     def _install_dependency(self, dependency, silent=False):
-        spec = PackageSpec(
-            name=dependency.get("name"), requirements=dependency.get("version")
-        )
+        if set(["name", "version"]) <= set(dependency.keys()) and any(
+            c in dependency["version"] for c in (":", "/", "@")
+        ):
+            spec = PackageSpec("%s=%s" % (dependency["name"], dependency["version"]))
+        else:
+            spec = PackageSpec(
+                owner=dependency.get("owner"),
+                name=dependency.get("name"),
+                requirements=dependency.get("version"),
+            )
         search_filters = {
             key: value
             for key, value in dependency.items()

@@ -80,7 +80,9 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
             )
 
         data = self.fetch_json_data(
-            "post", "/v1/login", data={"username": username, "password": password},
+            "post",
+            "/v1/login",
+            data={"username": username, "password": password},
         )
         app.set_state_item("account", data)
         return data
@@ -108,7 +110,9 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         self.delete_local_session()
         try:
             self.fetch_json_data(
-                "post", "/v1/logout", data={"refresh_token": refresh_token},
+                "post",
+                "/v1/logout",
+                data={"refresh_token": refresh_token},
             )
         except AccountError:
             pass
@@ -153,15 +157,26 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         ).get("auth_token")
 
     def forgot_password(self, username):
-        return self.fetch_json_data("post", "/v1/forgot", data={"username": username},)
+        return self.fetch_json_data(
+            "post",
+            "/v1/forgot",
+            data={"username": username},
+        )
 
     def get_profile(self):
-        return self.send_auth_request("get", "/v1/profile",)
+        return self.send_auth_request(
+            "get",
+            "/v1/profile",
+        )
 
     def update_profile(self, profile, current_password):
         profile["current_password"] = current_password
         self.delete_local_state("summary")
-        response = self.send_auth_request("put", "/v1/profile", data=profile,)
+        response = self.send_auth_request(
+            "put",
+            "/v1/profile",
+            data=profile,
+        )
         return response
 
     def get_account_info(self, offline=False):
@@ -178,7 +193,10 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                     "username": account.get("username"),
                 }
             }
-        result = self.send_auth_request("get", "/v1/summary",)
+        result = self.send_auth_request(
+            "get",
+            "/v1/summary",
+        )
         account["summary"] = dict(
             profile=result.get("profile"),
             packages=result.get("packages"),
@@ -203,7 +221,10 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         return self.send_auth_request("get", "/v1/orgs/%s" % orgname)
 
     def list_orgs(self):
-        return self.send_auth_request("get", "/v1/orgs",)
+        return self.send_auth_request(
+            "get",
+            "/v1/orgs",
+        )
 
     def update_org(self, orgname, data):
         return self.send_auth_request(
@@ -211,19 +232,29 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         )
 
     def destroy_org(self, orgname):
-        return self.send_auth_request("delete", "/v1/orgs/%s" % orgname,)
+        return self.send_auth_request(
+            "delete",
+            "/v1/orgs/%s" % orgname,
+        )
 
     def add_org_owner(self, orgname, username):
         return self.send_auth_request(
-            "post", "/v1/orgs/%s/owners" % orgname, data={"username": username},
+            "post",
+            "/v1/orgs/%s/owners" % orgname,
+            data={"username": username},
         )
 
     def list_org_owners(self, orgname):
-        return self.send_auth_request("get", "/v1/orgs/%s/owners" % orgname,)
+        return self.send_auth_request(
+            "get",
+            "/v1/orgs/%s/owners" % orgname,
+        )
 
     def remove_org_owner(self, orgname, username):
         return self.send_auth_request(
-            "delete", "/v1/orgs/%s/owners" % orgname, data={"username": username},
+            "delete",
+            "/v1/orgs/%s/owners" % orgname,
+            data={"username": username},
         )
 
     def create_team(self, orgname, teamname, description):
@@ -235,16 +266,21 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
 
     def destroy_team(self, orgname, teamname):
         return self.send_auth_request(
-            "delete", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            "delete",
+            "/v1/orgs/%s/teams/%s" % (orgname, teamname),
         )
 
     def get_team(self, orgname, teamname):
         return self.send_auth_request(
-            "get", "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            "get",
+            "/v1/orgs/%s/teams/%s" % (orgname, teamname),
         )
 
     def list_teams(self, orgname):
-        return self.send_auth_request("get", "/v1/orgs/%s/teams" % orgname,)
+        return self.send_auth_request(
+            "get",
+            "/v1/orgs/%s/teams" % orgname,
+        )
 
     def update_team(self, orgname, teamname, data):
         return self.send_auth_request(

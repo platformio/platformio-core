@@ -47,27 +47,31 @@ def validate_urn(value):
 
 @cli.command("public", short_help="Make resource public")
 @click.argument(
-    "urn", callback=lambda _, __, value: validate_urn(value),
+    "urn",
+    callback=lambda _, __, value: validate_urn(value),
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_public(urn, urn_type):
     client = RegistryClient()
     client.update_resource(urn=urn, private=0)
     return click.secho(
-        "The resource %s has been successfully updated." % urn, fg="green",
+        "The resource %s has been successfully updated." % urn,
+        fg="green",
     )
 
 
 @cli.command("private", short_help="Make resource private")
 @click.argument(
-    "urn", callback=lambda _, __, value: validate_urn(value),
+    "urn",
+    callback=lambda _, __, value: validate_urn(value),
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_private(urn, urn_type):
     client = RegistryClient()
     client.update_resource(urn=urn, private=1)
     return click.secho(
-        "The resource %s has been successfully updated." % urn, fg="green",
+        "The resource %s has been successfully updated." % urn,
+        fg="green",
     )
 
 
@@ -79,14 +83,16 @@ def access_private(urn, urn_type):
     callback=lambda _, __, value: validate_client(value),
 )
 @click.argument(
-    "urn", callback=lambda _, __, value: validate_urn(value),
+    "urn",
+    callback=lambda _, __, value: validate_urn(value),
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_grant(level, client, urn, urn_type):
     reg_client = RegistryClient()
     reg_client.grant_access_for_resource(urn=urn, client=client, level=level)
     return click.secho(
-        "Access for resource %s has been granted for %s" % (urn, client), fg="green",
+        "Access for resource %s has been granted for %s" % (urn, client),
+        fg="green",
     )
 
 
@@ -97,14 +103,16 @@ def access_grant(level, client, urn, urn_type):
     callback=lambda _, __, value: validate_client(value),
 )
 @click.argument(
-    "urn", callback=lambda _, __, value: validate_urn(value),
+    "urn",
+    callback=lambda _, __, value: validate_urn(value),
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_revoke(client, urn, urn_type):
     reg_client = RegistryClient()
     reg_client.revoke_access_from_resource(urn=urn, client=client)
     return click.secho(
-        "Access for resource %s has been revoked for %s" % (urn, client), fg="green",
+        "Access for resource %s has been revoked for %s" % (urn, client),
+        fg="green",
     )
 
 

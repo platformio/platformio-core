@@ -339,14 +339,17 @@ def test_lib_stats(clirunner, validate_cliresult):
 
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])
     validate_cliresult(result)
-    assert set(
-        [
-            "dlweek",
-            "added",
-            "updated",
-            "topkeywords",
-            "dlmonth",
-            "dlday",
-            "lastkeywords",
-        ]
-    ) == set(json.loads(result.output).keys())
+    assert (
+        set(
+            [
+                "dlweek",
+                "added",
+                "updated",
+                "topkeywords",
+                "dlmonth",
+                "dlday",
+                "lastkeywords",
+            ]
+        )
+        == set(json.loads(result.output).keys())
+    )

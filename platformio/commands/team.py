@@ -63,13 +63,16 @@ def cli():
         value, teamname_validate=True
     ),
 )
-@click.option("--description",)
+@click.option(
+    "--description",
+)
 def team_create(orgname_teamname, description):
     orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     client.create_team(orgname, teamname, description)
     return click.secho(
-        "The team %s has been successfully created." % teamname, fg="green",
+        "The team %s has been successfully created." % teamname,
+        fg="green",
     )
 
 
@@ -123,7 +126,9 @@ def team_list(orgname, json_output):
     callback=lambda _, __, value: validate_teamname(value),
     help="A new team name",
 )
-@click.option("--description",)
+@click.option(
+    "--description",
+)
 def team_update(orgname_teamname, **kwargs):
     orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
@@ -142,7 +147,8 @@ def team_update(orgname_teamname, **kwargs):
         new_team.update({key: value for key, value in kwargs.items() if value})
     client.update_team(orgname, teamname, new_team)
     return click.secho(
-        "The team %s has been successfully updated." % teamname, fg="green",
+        "The team %s has been successfully updated." % teamname,
+        fg="green",
     )
 
 
@@ -163,7 +169,8 @@ def team_destroy(orgname_teamname):
     client = AccountClient()
     client.destroy_team(orgname, teamname)
     return click.secho(
-        "The team %s has been successfully destroyed." % teamname, fg="green",
+        "The team %s has been successfully destroyed." % teamname,
+        fg="green",
     )
 
 
@@ -173,7 +180,9 @@ def team_destroy(orgname_teamname):
     metavar="ORGNAME:TEAMNAME",
     callback=lambda _, __, value: validate_orgname_teamname(value),
 )
-@click.argument("username",)
+@click.argument(
+    "username",
+)
 def team_add_member(orgname_teamname, username):
     orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()

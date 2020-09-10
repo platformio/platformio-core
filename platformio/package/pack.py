@@ -51,7 +51,9 @@ class PackagePacker(object):
             r"[^\da-zA-Z\-\._\+]+",
             "",
             "{name}{system}-{version}.tar.gz".format(
-                name=name, system=("-" + system) if system else "", version=version,
+                name=name,
+                system=("-" + system) if system else "",
+                version=version,
             ),
         )
 

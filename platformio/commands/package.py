@@ -107,7 +107,7 @@ def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
         type=type,
         name=spec.name,
         owner=spec.owner,
-        version=spec.requirements,
+        version=str(spec.requirements),
         undo=undo,
     )
     click.secho(response.get("message"), fg="green")

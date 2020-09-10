@@ -301,7 +301,11 @@ def on_command():
 def on_exception(e):
     skip_conditions = [
         isinstance(e, cls)
-        for cls in (IOError, exception.ReturnErrorCode, exception.UserSideException,)
+        for cls in (
+            IOError,
+            exception.ReturnErrorCode,
+            exception.UserSideException,
+        )
     ]
     if any(skip_conditions):
         return

@@ -446,7 +446,10 @@ int main() {
             result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
             validate_cliresult(result)
             defects = sum(count_defects(result.output))
-            assert defects > 0, "Failed %s with %s" % (framework, tool,)
+            assert defects > 0, "Failed %s with %s" % (
+                framework,
+                tool,
+            )
 
 
 def test_check_skip_includes_from_packages(clirunner, validate_cliresult, tmpdir):

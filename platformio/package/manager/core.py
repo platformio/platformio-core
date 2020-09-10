@@ -16,11 +16,12 @@ import json
 import os
 import subprocess
 import sys
+from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
 from platformio.compat import PY2
 from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageSpec
+from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import get_pythonexe_path
 
 
@@ -95,16 +96,8 @@ def build_contrib_pysite_deps(target_dir):
     if os.path.isdir(target_dir):
         fs.rmtree(target_dir)
     os.makedirs(target_dir)
-    with open(os.path.join(target_dir, "package.json"), "w") as fp:
-        json.dump(
-            dict(
-                name="contrib-pysite",
-                version="2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-                system=util.get_systype(),
-            ),
-            fp,
-        )
 
+    # build dependencies
     pythonexe = get_pythonexe_path()
     for dep in get_contrib_pysite_deps():
         subprocess.check_call(
@@ -115,11 +108,36 @@ def build_contrib_pysite_deps(target_dir):
                 "install",
                 # "--no-cache-dir",
                 "--no-compile",
+                "--no-binary",
+                ":all:",
                 "-t",
                 target_dir,
                 dep,
             ]
         )
+
+    # build manifests
+    with open(os.path.join(target_dir, "package.json"), "w") as fp:
+        json.dump(
+            dict(
+                name="contrib-pysite",
+                version="2.%d%d.%s"
+                % (
+                    sys.version_info.major,
+                    sys.version_info.minor,
+                    date.today().strftime("%y%m%d"),
+                ),
+                system=util.get_systype(),
+            ),
+            fp,
+        )
+    pm = ToolPackageManager()
+    pkg = PackageItem(target_dir)
+    pkg.metadata = pm.build_metadata(
+        target_dir, PackageSpec(owner="platformio", name="contrib-pysite")
+    )
+    pkg.dump_meta()
+
     return True
 
 
@@ -130,7 +148,7 @@ def get_contrib_pysite_deps():
     twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == 20.4.3",
+        "autobahn == %s" % ("19.11.2" if PY2 else "20.4.3"),
         "json-rpc == 1.13.0",
     ]
 

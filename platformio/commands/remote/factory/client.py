@@ -45,7 +45,10 @@ class RemoteClientFactory(pb.PBClientFactory, protocol.ReconnectingClientFactory
             return d
 
         d = self.login(
-            credentials.UsernamePassword(auth_token.encode(), get_host_id().encode(),),
+            credentials.UsernamePassword(
+                auth_token.encode(),
+                get_host_id().encode(),
+            ),
             client=self.remote_client,
         )
         d.addCallback(self.remote_client.cb_client_authorization_made)

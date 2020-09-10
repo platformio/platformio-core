@@ -192,7 +192,10 @@ def account_destroy():
         client.logout()
     except AccountNotAuthorized:
         pass
-    return click.secho("User account has been destroyed.", fg="green",)
+    return click.secho(
+        "User account has been destroyed.",
+        fg="green",
+    )
 
 
 @cli.command("show", short_help="PlatformIO Account information")

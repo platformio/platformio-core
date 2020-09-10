@@ -8,10 +8,22 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-- `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/core/migration.html>`__
+5.0.1 (2020-09-10)
+~~~~~~~~~~~~~~~~~~
+
+- Added support for "owner" requirement when declaring ``dependencies`` using `library.json <https://docs.platformio.org/page/librarymanager/config.html#dependencies>`__
+- Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/page/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
+- Fixed an issue with "ImportError: cannot import name '_get_backend' from 'cryptography.hazmat.backends'" when using `Remote Development <https://docs.platformio.org/page/plus/pio-remote.html>`__ on RaspberryPi device (`issue #3652 <https://github.com/platformio/platformio-core/issues/3652>`_)
+- Fixed an issue when `pio package unpublish <https://docs.platformio.org/page/core/userguide/package/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
+- Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
+- Fixed an issue with incorrect value for C++ language standard in IDE projects when an in-progress language standard is used (`issue #3653 <https://github.com/platformio/platformio-core/issues/3653>`_)
+- Fixed an issue with "Invalid simple block (semantic_version)" from library dependency that refs to an external source (repository, ZIP/Tar archives) (`issue #3658 <https://github.com/platformio/platformio-core/issues/3658>`_)
+- Fixed an issue when can not remove update or remove external dev-platform using PlatformIO Home (`issue #3663 <https://github.com/platformio/platformio-core/issues/3663>`_)
 
 5.0.0 (2020-09-03)
 ~~~~~~~~~~~~~~~~~~
+
+Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/core/migration.html>`__.
 
 * Integration with the new **PlatformIO Trusted Registry**
 

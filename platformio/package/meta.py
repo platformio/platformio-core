@@ -209,6 +209,7 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         raw = raw.strip()
 
         parsers = (
+            self._parse_local_file,
             self._parse_requirements,
             self._parse_custom_name,
             self._parse_id,
@@ -227,10 +228,16 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
             # the leftover is a package name
             self.name = raw
 
-    def _parse_requirements(self, raw):
-        if "@" not in raw:
+    @staticmethod
+    def _parse_local_file(raw):
+        if raw.startswith("file://") or not any(c in raw for c in ("/", "\\")):
             return raw
-        if raw.startswith("file://") and os.path.exists(raw[7:]):
+        if os.path.exists(raw):
+            return "file://%s" % raw
+        return raw
+
+    def _parse_requirements(self, raw):
+        if "@" not in raw or raw.startswith("file://"):
             return raw
         tokens = raw.rsplit("@", 1)
         if any(s in tokens[1] for s in (":", "/")):

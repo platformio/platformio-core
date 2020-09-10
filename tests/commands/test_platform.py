@@ -60,7 +60,8 @@ def test_install_unknown_from_registry(clirunner):
 
 def test_install_core_3_dev_platform(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
-        cli_platform.platform_install, ["atmelavr@1.2.0", "--skip-default-package"],
+        cli_platform.platform_install,
+        ["atmelavr@1.2.0", "--skip-default-package"],
     )
     assert result.exit_code == 0
 

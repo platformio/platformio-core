@@ -230,6 +230,41 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
         tm.install("owner/unknown-package-tool", silent=True)
 
 
+def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
+    tmp_dir = tmpdir_factory.mktemp("tmp")
+
+    src_dir = tmp_dir.join("lib-with-deps").mkdir()
+    root_dir = src_dir.mkdir("root")
+    root_dir.mkdir("src").join("main.cpp").write("#include <stdio.h>")
+    root_dir.join("library.json").write(
+        """
+{
+  "name": "lib-with-deps",
+  "version": "2.0.0",
+  "dependencies": [
+    {
+      "owner": "bblanchon",
+      "name": "ArduinoJson",
+      "version": "^6.16.1"
+    },
+    {
+      "name": "external-repo",
+      "version": "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#4a0ccc1"
+    }
+  ]
+}
+"""
+    )
+
+    lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
+    lm.install("file://%s" % str(src_dir), silent=True)
+    installed = lm.get_installed()
+    assert len(installed) == 4
+    assert set(["external-repo", "ArduinoJson", "lib-with-deps", "OneWire"]) == set(
+        p.metadata.name for p in installed
+    )
+
+
 def test_install_force(isolated_pio_core, tmpdir_factory):
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
     # install #64 ArduinoJson
