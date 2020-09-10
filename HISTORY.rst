@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.0.1 (2020-??-??)
+5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~
 
 - Added support for "owner" requirement when declaring ``dependencies`` using `library.json <https://docs.platformio.org/page/librarymanager/config.html#dependencies>`__
