@@ -8,6 +8,11 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.0.2 (2020-09-??)
+~~~~~~~~~~~~~~~~~~
+
+- Fixed an issue with "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
+
 5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~
 
