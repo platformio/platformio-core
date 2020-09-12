@@ -11,7 +11,8 @@ PlatformIO Core 5
 5.0.2 (2020-09-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Fixed an issue with "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
+- Fixed a "PermissionError: [WinError 5]" on Windows when external repository is used with `lib_deps <https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option (`issue #3664 <https://github.com/platformio/platformio-core/issues/3664>`_)
+- Fixed a "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
 
 5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~
