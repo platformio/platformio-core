@@ -26,6 +26,7 @@ import sys
 PY2 = sys.version_info[0] == 2
 CYGWIN = sys.platform.startswith("cygwin")
 WINDOWS = sys.platform.startswith("win")
+MACOS = sys.platform.startswith("darwin")
 
 
 def get_filesystem_encoding():

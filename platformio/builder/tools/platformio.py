@@ -27,7 +27,7 @@ from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
 from platformio import __version__, fs
-from platformio.compat import string_types
+from platformio.compat import MACOS, string_types
 from platformio.package.version import pepver_to_semver
 
 SRC_HEADER_EXT = ["h", "hpp"]
@@ -69,7 +69,7 @@ def BuildProgram(env):
     if (
         env.get("LIBS")
         and env.GetCompilerType() == "gcc"
-        and env.PioPlatform().is_embedded()
+        and (env.PioPlatform().is_embedded() or not MACOS)
     ):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
