@@ -51,7 +51,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
 
     def __init__(self, pkg_type, package_dir):
         self.pkg_type = pkg_type
-        self.package_dir = self.ensure_dir_exists(package_dir)
+        self.package_dir = package_dir
         self._MEMORY_CACHE = {}
 
         self._lockfile = None
@@ -62,7 +62,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     def lock(self):
         if self._lockfile:
             return
+        self.ensure_dir_exists(os.path.dirname(self.package_dir))
         self._lockfile = LockFile(self.package_dir)
+        self.ensure_dir_exists(self.package_dir)
         self._lockfile.acquire()
 
     def unlock(self):
@@ -91,10 +93,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     @staticmethod
     def ensure_dir_exists(path):
         if not os.path.isdir(path):
-            try:
-                os.makedirs(path)
-            except:  # pylint: disable=bare-except
-                pass
+            os.makedirs(path)
         assert os.path.isdir(path)
         return path
 
@@ -193,6 +192,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         return metadata
 
     def get_installed(self):
+        if not os.path.isdir(self.package_dir):
+            return []
+
         cache_key = "get_installed"
         if self.memcache_get(cache_key):
             return self.memcache_get(cache_key)
