@@ -57,8 +57,7 @@ __core_packages__ = {
 }
 
 __check_internet_hosts__ = [
-    "140.82.118.3",  # Github.com
-    "35.231.145.151",  # Gitlab.com
+    "185.199.110.153",  # Github.com
     "88.198.170.159",  # platformio.org
     "github.com",
     "platformio.org",
