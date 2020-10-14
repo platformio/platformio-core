@@ -40,7 +40,7 @@ jobs:
       - name: Run on macOS
         if: startsWith(matrix.os, 'macos')
         env:
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,siwigsm,microchippic32,gd32v,nuclei"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,siwigsm,microchippic32,gd32v,nuclei,lattice_ice40"
         run: |
           df -h
           tox -e testexamples
