@@ -16,7 +16,7 @@ PlatformIO
 .. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
-.. image:: https://img.shields.io/badge/PlatformIO-Community-orange.svg
+.. image:: https://img.shields.io/badge/PlatformIO-Labs-orange.svg
    :alt: Community Labs
    :target: https://piolabs.com/?utm_source=github&utm_medium=core
 
@@ -30,7 +30,7 @@ PlatformIO
 **Social:** `LinkedIn <https://www.linkedin.com/company/platformio/>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
-`Community <https://community.platformio.org?utm_source=github&utm_medium=core>`_
+`Community Forums <https://community.platformio.org?utm_source=github&utm_medium=core>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-ide-laptop.png
     :target: https://platformio.org?utm_source=github&utm_medium=core
@@ -59,6 +59,8 @@ Solutions
 * `Library Management <https://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
 * `Desktop IDEs Integration <https://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
 * `Continuous Integration <https://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
+
+**Advanced**
 
 * `Debugging <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
 * `Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
