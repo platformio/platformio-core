@@ -14,12 +14,14 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
 from platformio.compat import PY2
+from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import get_pythonexe_path
@@ -74,9 +76,17 @@ def inject_contrib_pysite(verify_openssl=False):
     # pylint: disable=import-outside-toplevel
     from site import addsitedir
 
-    contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+    try:
+        contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+    except UnknownPackageError:
+        pm = ToolPackageManager()
+        contrib_pysite_dir = build_contrib_pysite_package(
+            os.path.join(pm.package_dir, "contrib-pysite")
+        )
+
     if contrib_pysite_dir in sys.path:
         return True
+
     addsitedir(contrib_pysite_dir)
     sys.path.insert(0, contrib_pysite_dir)
 
@@ -87,34 +97,31 @@ def inject_contrib_pysite(verify_openssl=False):
         # pylint: disable=import-error,unused-import,unused-variable
         from OpenSSL import SSL
     except:  # pylint: disable=bare-except
-        build_contrib_pysite_deps(get_core_package_dir("contrib-pysite"))
+        build_contrib_pysite_package(contrib_pysite_dir)
 
     return True
 
 
-def build_contrib_pysite_deps(target_dir):
+def build_contrib_pysite_package(target_dir, with_metadata=True):
+    systype = util.get_systype()
     if os.path.isdir(target_dir):
         fs.rmtree(target_dir)
     os.makedirs(target_dir)
 
     # build dependencies
-    pythonexe = get_pythonexe_path()
+    args = [
+        get_pythonexe_path(),
+        "-m",
+        "pip",
+        "install",
+        "--no-compile",
+        "-t",
+        target_dir,
+    ]
+    if "linux" in systype:
+        args.extend(["--no-binary", ":all:"])
     for dep in get_contrib_pysite_deps():
-        subprocess.check_call(
-            [
-                pythonexe,
-                "-m",
-                "pip",
-                "install",
-                # "--no-cache-dir",
-                "--no-compile",
-                "--no-binary",
-                ":all:",
-                "-t",
-                target_dir,
-                dep,
-            ]
-        )
+        subprocess.check_call(args + [dep])
 
     # build manifests
     with open(os.path.join(target_dir, "package.json"), "w") as fp:
@@ -127,18 +134,55 @@ def build_contrib_pysite_deps(target_dir):
                     sys.version_info.minor,
                     date.today().strftime("%y%m%d"),
                 ),
-                system=util.get_systype(),
+                system=list(
+                    set([systype, "linux_armv6l", "linux_armv7l", "linux_armv8l"])
+                )
+                if systype.startswith("linux_arm")
+                else systype,
+                description="Extra Python package for PlatformIO Core",
+                keywords=["platformio", "platformio-core"],
+                homepage="https://docs.platformio.org/page/core/index.html",
+                repository={
+                    "type": "git",
+                    "url": "https://github.com/platformio/platformio-core",
+                },
             ),
             fp,
         )
-    pm = ToolPackageManager()
-    pkg = PackageItem(target_dir)
-    pkg.metadata = pm.build_metadata(
-        target_dir, PackageSpec(owner="platformio", name="contrib-pysite")
-    )
-    pkg.dump_meta()
 
-    return True
+    # generate package metadata
+    if with_metadata:
+        pm = ToolPackageManager()
+        pkg = PackageItem(target_dir)
+        pkg.metadata = pm.build_metadata(
+            target_dir, PackageSpec(owner="platformio", name="contrib-pysite")
+        )
+        pkg.dump_meta()
+
+    # remove unused files
+    shutil.rmtree(os.path.join(target_dir, "autobahn", "xbr", "contracts"))
+    for root, dirs, files in os.walk(target_dir):
+        for t in ("_test", "test", "tests"):
+            if t in dirs:
+                shutil.rmtree(os.path.join(root, t))
+        for name in files:
+            if name.endswith((".chm", ".pyc")):
+                os.remove(os.path.join(root, name))
+
+    # apply patches
+    with open(
+        os.path.join(target_dir, "autobahn", "twisted", "__init__.py"), "r+"
+    ) as fp:
+        contents = fp.read()
+        contents = contents.replace(
+            "from autobahn.twisted.wamp import ApplicationSession",
+            "# from autobahn.twisted.wamp import ApplicationSession",
+        )
+        fp.seek(0)
+        fp.truncate()
+        fp.write(contents)
+
+    return target_dir
 
 
 def get_contrib_pysite_deps():
@@ -148,7 +192,7 @@ def get_contrib_pysite_deps():
     twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == %s" % ("19.11.2" if PY2 else "20.4.3"),
+        "autobahn == %s" % ("19.11.2" if PY2 else "20.7.1"),
         "json-rpc == 1.13.0",
     ]
 
@@ -169,8 +213,8 @@ def get_contrib_pysite_deps():
         result.append("pypiwin32 == 223")
         # workaround for twisted wheels
         twisted_wheel = (
-            "https://download.lfd.uci.edu/pythonlibs/g5apjq5m/Twisted-"
-            "%s-cp%s-cp%sm-win%s.whl"
+            "https://download.lfd.uci.edu/pythonlibs/x2tqcw5k/Twisted-"
+            "%s-cp%s-cp%s-win%s.whl"
             % (
                 twisted_version,
                 py_version,
