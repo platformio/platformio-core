@@ -119,12 +119,13 @@ class ManifestParserFactory(object):
         assert path.endswith("tar.gz")
         with tarfile.open(path, mode="r:gz") as tf:
             for t in sorted(ManifestFileType.items().values()):
-                try:
-                    return ManifestParserFactory.new(
-                        tf.extractfile(t).read().decode(), t
-                    )
-                except KeyError:
-                    pass
+                for member in (t, "./" + t):
+                    try:
+                        return ManifestParserFactory.new(
+                            tf.extractfile(member).read().decode(), t
+                        )
+                    except KeyError:
+                        pass
         raise UnknownManifestError("Unknown manifest file type in %s archive" % path)
 
     @staticmethod
