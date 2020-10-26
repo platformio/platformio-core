@@ -23,11 +23,8 @@ from os.path import isfile
 from platformio import fs, util
 from platformio.commands import PlatformioCLI
 from platformio.commands.debug.exception import DebugInvalidOptionsError
-from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.run.command import cli as cmd_run
 from platformio.compat import is_bytes
-from platformio.platform.exception import UnknownPlatform
-from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.options import ProjectOptions
 
@@ -89,20 +86,10 @@ def predebug_project(ctx, project_dir, env_name, preload, verbose):
         time.sleep(5)
 
 
-def validate_debug_options(cmd_ctx, env_options):
+def configure_initial_debug_options(platform, env_options):
     def _cleanup_cmds(items):
         items = ProjectConfig.parse_multi_values(items)
         return ["$LOAD_CMDS" if item == "$LOAD_CMD" else item for item in items]
-
-    try:
-        platform = PlatformFactory.new(env_options["platform"])
-    except UnknownPlatform:
-        cmd_ctx.invoke(
-            cmd_platform_install,
-            platforms=[env_options["platform"]],
-            skip_default_package=True,
-        )
-        platform = PlatformFactory.new(env_options["platform"])
 
     board_config = platform.board_config(env_options["board"])
     tool_name = board_config.get_debug_tool_name(env_options.get("debug_tool"))
