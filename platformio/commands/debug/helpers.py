@@ -195,13 +195,16 @@ def validate_debug_options(cmd_ctx, env_options):
 
 
 def configure_esp32_load_cmds(debug_options, configuration):
+    """
+    DEPRECATED: Moved to ESP32 dev-platform
+    See platform.py::configure_debug_options
+    """
+    flash_images = configuration.get("extra", {}).get("flash_images")
     ignore_conds = [
         debug_options["load_cmds"] != ["load"],
         "xtensa-esp32" not in configuration.get("cc_path", ""),
-        not configuration.get("flash_extra_images"),
-        not all(
-            [isfile(item["path"]) for item in configuration.get("flash_extra_images")]
-        ),
+        not flash_images,
+        not all([isfile(item["path"]) for item in flash_images]),
     ]
     if any(ignore_conds):
         return debug_options["load_cmds"]
@@ -210,7 +213,7 @@ def configure_esp32_load_cmds(debug_options, configuration):
         'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
             path=fs.to_unix_path(item["path"]), offset=item["offset"]
         )
-        for item in configuration.get("flash_extra_images")
+        for item in flash_images
     ]
     mon_cmds.append(
         'monitor program_esp32 "{%s.bin}" 0x10000 verify'
