@@ -27,7 +27,13 @@ from twisted.internet import utils  # pylint: disable=import-error
 
 from platformio import __main__, __version__, fs
 from platformio.commands.home import helpers
-from platformio.compat import PY2, get_filesystem_encoding, is_bytes, string_types
+from platformio.compat import (
+    PY2,
+    get_filesystem_encoding,
+    get_locale_encoding,
+    is_bytes,
+    string_types,
+)
 
 try:
     from thread import get_ident as thread_get_ident
@@ -144,13 +150,15 @@ class PIOCoreRPC(object):
     @staticmethod
     def _process_result(result, to_json=False):
         out, err, code = result
+        if out and is_bytes(out):
+            out = out.decode(get_locale_encoding())
+        if err and is_bytes(err):
+            err = err.decode(get_locale_encoding())
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
             raise Exception(text)
         if not to_json:
             return text
-        if is_bytes(out):
-            out = out.decode()
         try:
             return json.loads(out)
         except ValueError as e:
