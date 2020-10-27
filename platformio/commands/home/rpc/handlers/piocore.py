@@ -95,10 +95,11 @@ class PIOCoreRPC(object):
             else:
                 args[i] = str(arg)
 
+        options = options or {}
         to_json = "--json-output" in args
 
         try:
-            if args and args[0] == "remote":
+            if options.get("force_subprocess"):
                 result = yield PIOCoreRPC._call_subprocess(args, options)
                 defer.returnValue(PIOCoreRPC._process_result(result, to_json))
             else:
@@ -117,7 +118,7 @@ class PIOCoreRPC(object):
     @staticmethod
     def _call_inline(args, options):
         PIOCoreRPC.setup_multithreading_std_streams()
-        cwd = (options or {}).get("cwd") or os.getcwd()
+        cwd = options.get("cwd") or os.getcwd()
 
         def _thread_task():
             with fs.cd(cwd):

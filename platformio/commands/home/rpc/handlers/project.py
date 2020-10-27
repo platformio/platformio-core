@@ -198,7 +198,9 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(args, options={"cwd": project_dir})
+        d = PIOCoreRPC.call(
+            args, options={"cwd": project_dir, "force_subprocess": True}
+        )
         d.addCallback(self._generate_project_main, project_dir, framework)
         return d
 
@@ -291,7 +293,9 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(args, options={"cwd": project_dir})
+        d = PIOCoreRPC.call(
+            args, options={"cwd": project_dir, "force_subprocess": True}
+        )
         d.addCallback(self._finalize_arduino_import, project_dir, arduino_project_dir)
         return d
 
@@ -324,6 +328,8 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(args, options={"cwd": new_project_dir})
+        d = PIOCoreRPC.call(
+            args, options={"cwd": new_project_dir, "force_subprocess": True}
+        )
         d.addCallback(lambda _: new_project_dir)
         return d
