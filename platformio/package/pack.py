@@ -29,15 +29,34 @@ from platformio.package.unpack import FileUnpacker
 
 class PackagePacker(object):
     EXCLUDE_DEFAULT = [
+        # PlatformIO internal files
+        PackageItem.METAFILE_NAME,
+        ".pio/",
+        "**/.pio/",
+        # Hidden files
         "._*",
         "__*",
         ".DS_Store",
+        ".vscode",
+        ".cache",
+        "**/.cache",
+        # VCS
         ".git/",
         ".hg/",
         ".svn/",
-        ".pio/",
-        "**/.pio/",
-        PackageItem.METAFILE_NAME,
+        # Docs
+        "docs",
+        "mkdocs",
+        "**/*.[pP][dD][fF]",
+        "**/*.[dD][oO][cC]?",
+        "**/*.[pP][pP][tT]?",
+        # Binary files
+        "**/*.[jJ][pP][gG]",
+        "**/*.[jJ][pP][eE][gG]",
+        "**/*.[pP][nN][gG]",
+        "**/*.[gG][iI][fF]",
+        "**/*.[zZ][iI][pP]",
+        "**/*.[gG][zZ]",
     ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
