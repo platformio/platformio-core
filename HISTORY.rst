@@ -17,6 +17,7 @@ PlatformIO Core 5
 - Fixed a "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
 - Fixed an issue with GCC linker when "native" dev-platform is used in pair with library dependencies (`issue #3669 <https://github.com/platformio/platformio-core/issues/3669>`_)
 - Fixed an "AssertionError: ensure_dir_exists" when checking library updates from simultaneous subprocesses (`issue #3677 <https://github.com/platformio/platformio-core/issues/3677>`_)
+- Fixed an issue when "pio package publish" command removes original archive after submitting to the registry `issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
 
 5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~
