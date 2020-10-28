@@ -28,6 +28,7 @@ from platformio.package.unpack import FileUnpacker
 
 
 class PackagePacker(object):
+    INCLUDE_DEFAULT = ManifestFileType.items().values()
     EXCLUDE_DEFAULT = [
         # PlatformIO internal files
         PackageItem.METAFILE_NAME,
@@ -44,12 +45,20 @@ class PackagePacker(object):
         ".git/",
         ".hg/",
         ".svn/",
+        # Tests
+        "tests?",
         # Docs
+        "doc",
         "docs",
         "mkdocs",
         "**/*.[pP][dD][fF]",
         "**/*.[dD][oO][cC]?",
         "**/*.[pP][pP][tT]?",
+        "**/*.[dD][oO][xX]",
+        "**/*.[hH][tT][mM]?",
+        "**/*.[tT][eE][xX]",
+        "**/*.[jJ][sS]",
+        "**/*.[cC][sS][sS]",
         # Binary files
         "**/*.[jJ][pP][gG]",
         "**/*.[jJ][pP][eE][gG]",
@@ -57,8 +66,29 @@ class PackagePacker(object):
         "**/*.[gG][iI][fF]",
         "**/*.[zZ][iI][pP]",
         "**/*.[gG][zZ]",
+        "**/*.3[gG][pP]",
+        "**/*.[mM][oO][vV]",
+        "**/*.[mM][pP][34]",
+        "**/*.[pP][sS][dD]",
+        "**/*.[wW][aA][wW]",
     ]
-    INCLUDE_DEFAULT = ManifestFileType.items().values()
+    EXCLUDE_LIBRARY_EXTRA = [
+        "assets",
+        "extra",
+        "resources",
+        "html",
+        "media",
+        "doxygen",
+        "**/build/",
+        "**/*.flat",
+        "**/*.[jJ][aA][rR]",
+        "**/*.[eE][xX][eE]",
+        "**/*.[bB][iI][nN]",
+        "**/*.[hH][eE][xX]",
+        "**/*.[dD][bB]",
+        "**/*.[dD][aA][tT]",
+        "**/*.[dD][lL][lL]",
+    ]
 
     def __init__(self, package, manifest_uri=None):
         self.package = package
@@ -149,16 +179,28 @@ class PackagePacker(object):
                 json.dump(manifest_updated, fp, indent=2, ensure_ascii=False)
             include = None
 
-        src_filters = self.compute_src_filters(include, exclude)
+        src_filters = self.compute_src_filters(src, include, exclude)
         with tarfile.open(dst, "w:gz") as tar:
             for f in fs.match_src_files(src, src_filters, followlinks=False):
                 tar.add(os.path.join(src, f), f)
         return dst
 
-    def compute_src_filters(self, include, exclude):
+    def compute_src_filters(self, src, include, exclude):
+        exclude_default = self.EXCLUDE_DEFAULT[:]
+        # extend with library extra filters
+        if any(
+            os.path.isfile(os.path.join(src, name))
+            for name in (
+                ManifestFileType.LIBRARY_JSON,
+                ManifestFileType.LIBRARY_PROPERTIES,
+                ManifestFileType.MODULE_JSON,
+            )
+        ):
+            exclude_default.extend(self.EXCLUDE_LIBRARY_EXTRA)
+
         result = ["+<%s>" % p for p in include or ["*", ".*"]]
         result += ["-<%s>" % p for p in exclude or []]
-        result += ["-<%s>" % p for p in self.EXCLUDE_DEFAULT]
+        result += ["-<%s>" % p for p in exclude_default]
         # automatically include manifests
         result += ["+<%s>" % p for p in self.INCLUDE_DEFAULT]
         return result
