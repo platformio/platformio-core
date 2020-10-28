@@ -23,6 +23,8 @@ import os
 import re
 import sys
 
+from platformio.exception import UserSideException
+
 PY2 = sys.version_info[0] == 2
 CYGWIN = sys.platform.startswith("cygwin")
 WINDOWS = sys.platform.startswith("win")
@@ -57,6 +59,17 @@ def ci_strings_are_equal(a, b):
     if not a or not b:
         return False
     return a.strip().lower() == b.strip().lower()
+
+
+def ensure_python3(raise_exception=True):
+    if not raise_exception or not PY2:
+        return not PY2
+    raise UserSideException(
+        "Python 3.5 or later is required for this operation. \n"
+        "Please install the latest Python 3 and reinstall PlatformIO Core using "
+        "installation script:\n"
+        "https://docs.platformio.org/page/core/installation.html"
+    )
 
 
 if PY2:
