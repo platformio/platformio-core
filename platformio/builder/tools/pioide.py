@@ -93,7 +93,9 @@ def _dump_defines(env):
     defines = []
     # global symbols
     for item in processDefines(env.get("CPPDEFINES", [])):
-        defines.append(env.subst(item).replace("\\", ""))
+        item = item.strip()
+        if item:
+            defines.append(env.subst(item).replace("\\", ""))
 
     # special symbol for Atmel AVR MCU
     if env["PIOPLATFORM"] == "atmelavr":
