@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.0.2 (2020-09-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Initialize a new project or update existing passing working environment name and its options (`issue #3686 <https://github.com/platformio/platformio-core/issues/3686>`_)
 - Automatically build PlatformIO Core extra Python dependencies on a host machine if they are missed in the registry (`issue #3700 <https://github.com/platformio/platformio-core/issues/3700>`_)
 - Improved "core.call" RPC for PlatformIO Home (`issue #3671 <https://github.com/platformio/platformio-core/issues/3671>`_)
 - Fixed a "PermissionError: [WinError 5]" on Windows when external repository is used with `lib_deps <https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option (`issue #3664 <https://github.com/platformio/platformio-core/issues/3664>`_)
