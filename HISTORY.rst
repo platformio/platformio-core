@@ -11,14 +11,15 @@ PlatformIO Core 5
 5.0.2 (2020-09-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Initialize a new project or update existing passing working environment name and its options (`issue #3686 <https://github.com/platformio/platformio-core/issues/3686>`_)
+- Initialize a new project or update the existing passing working environment name and its options (`issue #3686 <https://github.com/platformio/platformio-core/issues/3686>`_)
 - Automatically build PlatformIO Core extra Python dependencies on a host machine if they are missed in the registry (`issue #3700 <https://github.com/platformio/platformio-core/issues/3700>`_)
 - Improved "core.call" RPC for PlatformIO Home (`issue #3671 <https://github.com/platformio/platformio-core/issues/3671>`_)
-- Fixed a "PermissionError: [WinError 5]" on Windows when external repository is used with `lib_deps <https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option (`issue #3664 <https://github.com/platformio/platformio-core/issues/3664>`_)
+- Fixed a "PermissionError: [WinError 5]" on Windows when an external repository is used with `lib_deps <https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option (`issue #3664 <https://github.com/platformio/platformio-core/issues/3664>`_)
 - Fixed a "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
 - Fixed an issue with GCC linker when "native" dev-platform is used in pair with library dependencies (`issue #3669 <https://github.com/platformio/platformio-core/issues/3669>`_)
 - Fixed an "AssertionError: ensure_dir_exists" when checking library updates from simultaneous subprocesses (`issue #3677 <https://github.com/platformio/platformio-core/issues/3677>`_)
-- Fixed an issue when "pio package publish" command removes original archive after submitting to the registry `issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
+- Fixed an issue when `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command removes original archive after submitting to the registry (`issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
+- Fixed an issue when multiple `pio lib install <https://docs.platformio.org/page/core/userguide/lib/cmd_install.html>`__ command with the same local library results in duplicates in ``lib_deps`` (`issue #3715 <https://github.com/platformio/platformio-core/issues/3715>`_)
 
 5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~

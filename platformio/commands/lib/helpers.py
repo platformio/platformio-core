@@ -81,15 +81,22 @@ def save_project_libdeps(project_dir, specs, environments=None, action="add"):
         if environments and env not in environments:
             continue
         config.expand_interpolations = False
-        lib_deps = []
+        candidates = []
         try:
-            lib_deps = ignore_deps_by_specs(config.get("env:" + env, "lib_deps"), specs)
+            candidates = ignore_deps_by_specs(
+                config.get("env:" + env, "lib_deps"), specs
+            )
         except InvalidProjectConfError:
             pass
         if action == "add":
-            lib_deps.extend(spec.as_dependency() for spec in specs)
-        if lib_deps:
-            config.set("env:" + env, "lib_deps", lib_deps)
+            candidates.extend(spec.as_dependency() for spec in specs)
+        if candidates:
+            result = []
+            for item in candidates:
+                item = item.strip()
+                if item and item not in result:
+                    result.append(item)
+            config.set("env:" + env, "lib_deps", result)
         elif config.has_option("env:" + env, "lib_deps"):
             config.remove_option("env:" + env, "lib_deps")
     config.save()
