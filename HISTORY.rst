@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.0.2 (2020-09-??)
+5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
 
 - Initialize a new project or update the existing passing working environment name and its options (`issue #3686 <https://github.com/platformio/platformio-core/issues/3686>`_)
