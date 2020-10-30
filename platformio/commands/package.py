@@ -13,11 +13,14 @@
 # limitations under the License.
 
 import os
+import tempfile
 from datetime import datetime
 
 import click
 
+from platformio import fs
 from platformio.clients.registry import RegistryClient
+from platformio.compat import ensure_python3
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
 
@@ -77,13 +80,16 @@ def package_pack(package, output):
     help="Notify by email when package is processed",
 )
 def package_publish(package, owner, released_at, private, notify):
-    p = PackagePacker(package)
-    archive_path = p.pack()
-    response = RegistryClient().publish_package(
-        archive_path, owner, released_at, private, notify
-    )
-    os.remove(archive_path)
-    click.secho(response.get("message"), fg="green")
+    assert ensure_python3()
+    with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
+        with fs.cd(tmp_dir):
+            p = PackagePacker(package)
+            archive_path = p.pack()
+            response = RegistryClient().publish_package(
+                archive_path, owner, released_at, private, notify
+            )
+            os.remove(archive_path)
+            click.secho(response.get("message"), fg="green")
 
 
 @cli.command("unpublish", short_help="Remove a pushed package from the registry")

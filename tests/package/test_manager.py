@@ -21,6 +21,7 @@ import pytest
 import semantic_version
 
 from platformio import fs, util
+from platformio.compat import PY2
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -144,6 +145,7 @@ def test_build_metadata(isolated_pio_core, tmpdir_factory):
     assert metadata.version.build[1] == vcs_revision
 
 
+@pytest.mark.skipif(PY2, reason="Requires Python 3.5 or higher")
 def test_install_from_url(isolated_pio_core, tmpdir_factory):
     tmp_dir = tmpdir_factory.mktemp("tmp")
     storage_dir = tmpdir_factory.mktemp("storage")

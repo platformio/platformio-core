@@ -78,6 +78,7 @@ DEFAULT_ENV_OPTIONS = dict(
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=get_pythonexe_path(),
+    IDE_EXTRA_DATA={},
 )
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):

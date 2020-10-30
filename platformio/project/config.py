@@ -358,12 +358,6 @@ class ProjectConfigBase(object):
                 click.secho("Warning! %s" % warning, fg="yellow")
         return True
 
-    def remove_option(self, section, option):
-        return self._parser.remove_option(section, option)
-
-    def remove_section(self, section):
-        return self._parser.remove_section(section)
-
 
 class ProjectConfigDirsMixin(object):
     def _get_core_dir(self, exists=False):

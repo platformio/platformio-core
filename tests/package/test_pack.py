@@ -19,9 +19,11 @@ import tarfile
 import pytest
 
 from platformio import fs
-from platformio.compat import WINDOWS
+from platformio.compat import PY2, WINDOWS
 from platformio.package.exception import UnknownManifestError
 from platformio.package.pack import PackagePacker
+
+pytestmark = pytest.mark.skipif(PY2, reason="Requires Python 3.5 or higher")
 
 
 def test_base(tmpdir_factory):

@@ -152,7 +152,10 @@ class PackageManagerInstallMixin(object):
             return self._install_tmp_pkg(pkg_item)
         finally:
             if os.path.isdir(tmp_dir):
-                fs.rmtree(tmp_dir)
+                try:
+                    shutil.rmtree(tmp_dir)
+                except:  # pylint: disable=bare-except
+                    pass
 
     def _install_tmp_pkg(self, tmp_pkg):
         assert isinstance(tmp_pkg, PackageItem)
@@ -213,10 +216,10 @@ class PackageManagerInstallMixin(object):
             # move existing into the new place
             pkg_dir = os.path.join(self.package_dir, target_dirname)
             _cleanup_dir(pkg_dir)
-            shutil.move(dst_pkg.path, pkg_dir)
+            shutil.copytree(dst_pkg.path, pkg_dir, symlinks=True)
             # move new source to the destination location
             _cleanup_dir(dst_pkg.path)
-            shutil.move(tmp_pkg.path, dst_pkg.path)
+            shutil.copytree(tmp_pkg.path, dst_pkg.path, symlinks=True)
             return PackageItem(dst_pkg.path)
 
         if action == "detach-new":
@@ -233,10 +236,10 @@ class PackageManagerInstallMixin(object):
                 )
             pkg_dir = os.path.join(self.package_dir, target_dirname)
             _cleanup_dir(pkg_dir)
-            shutil.move(tmp_pkg.path, pkg_dir)
+            shutil.copytree(tmp_pkg.path, pkg_dir, symlinks=True)
             return PackageItem(pkg_dir)
 
         # otherwise, overwrite existing
         _cleanup_dir(dst_pkg.path)
-        shutil.move(tmp_pkg.path, dst_pkg.path)
+        shutil.copytree(tmp_pkg.path, dst_pkg.path, symlinks=True)
         return PackageItem(dst_pkg.path)

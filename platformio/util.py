@@ -19,7 +19,6 @@ import math
 import os
 import platform
 import re
-import sys
 import time
 from functools import wraps
 from glob import glob
@@ -167,12 +166,9 @@ def get_mdns_services():
     try:
         import zeroconf
     except ImportError:
-        from site import addsitedir
-        from platformio.package.manager.core import get_core_package_dir
+        from platformio.package.manager.core import inject_contrib_pysite
 
-        contrib_pysite_dir = get_core_package_dir("contrib-pysite")
-        addsitedir(contrib_pysite_dir)
-        sys.path.insert(0, contrib_pysite_dir)
+        inject_contrib_pysite()
         import zeroconf  # pylint: disable=import-outside-toplevel
 
     class mDNSListener(object):

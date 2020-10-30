@@ -93,7 +93,9 @@ def _dump_defines(env):
     defines = []
     # global symbols
     for item in processDefines(env.get("CPPDEFINES", [])):
-        defines.append(env.subst(item).replace("\\", ""))
+        item = item.strip()
+        if item:
+            defines.append(env.subst(item).replace("\\", ""))
 
     # special symbol for Atmel AVR MCU
     if env["PIOPLATFORM"] == "atmelavr":
@@ -164,14 +166,17 @@ def DumpIDEData(env, globalenv):
         "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path": env.subst("$PROG_PATH"),
-        "flash_extra_images": [
-            {"offset": item[0], "path": env.subst(item[1])}
-            for item in env.get("FLASH_EXTRA_IMAGES", [])
-        ],
         "svd_path": _get_svd_path(env),
         "compiler_type": env.GetCompilerType(),
         "targets": globalenv.DumpTargets(),
+        "extra": dict(
+            flash_images=[
+                {"offset": item[0], "path": env.subst(item[1])}
+                for item in env.get("FLASH_EXTRA_IMAGES", [])
+            ]
+        ),
     }
+    data["extra"].update(env.get("IDE_EXTRA_DATA", {}))
 
     env_ = env.Clone()
     # https://github.com/platformio/platformio-atom-ide/issues/34

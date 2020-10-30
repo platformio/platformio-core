@@ -133,9 +133,7 @@ class HTTPClient(object):
     def fetch_json_data(self, method, path, **kwargs):
         cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None
         if not cache_valid:
-            return self.raise_error_from_response(
-                self.send_request(method, path, **kwargs)
-            )
+            return self._parse_json_response(self.send_request(method, path, **kwargs))
         cache_key = ContentCache.key_from_args(
             method, path, kwargs.get("params"), kwargs.get("data")
         )
@@ -144,11 +142,12 @@ class HTTPClient(object):
             if result is not None:
                 return json.loads(result)
             response = self.send_request(method, path, **kwargs)
+            data = self._parse_json_response(response)
             cc.set(cache_key, response.text, cache_valid)
-            return self.raise_error_from_response(response)
+            return data
 
     @staticmethod
-    def raise_error_from_response(response, expected_codes=(200, 201, 202)):
+    def _parse_json_response(response, expected_codes=(200, 201, 202)):
         if response.status_code in expected_codes:
             try:
                 return response.json()

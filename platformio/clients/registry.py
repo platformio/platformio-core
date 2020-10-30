@@ -142,6 +142,6 @@ class RegistryClient(HTTPClient):
                 cache_valid="1h",
             )
         except HTTPClientError as e:
-            if e.response.status_code == 404:
+            if e.response is not None and e.response.status_code == 404:
                 return None
             raise e

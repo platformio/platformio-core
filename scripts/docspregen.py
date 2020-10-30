@@ -1066,6 +1066,8 @@ def update_project_examples():
     # Frameworks
     frameworks = []
     for framework in API_FRAMEWORKS:
+        if framework["name"] not in framework_examples_md_lines:
+            continue
         readme_dir = join(project_examples_dir, "frameworks", framework["name"])
         if not isdir(readme_dir):
             os.makedirs(readme_dir)

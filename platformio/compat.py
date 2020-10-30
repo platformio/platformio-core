@@ -23,9 +23,12 @@ import os
 import re
 import sys
 
+from platformio.exception import UserSideException
+
 PY2 = sys.version_info[0] == 2
 CYGWIN = sys.platform.startswith("cygwin")
 WINDOWS = sys.platform.startswith("win")
+MACOS = sys.platform.startswith("darwin")
 
 
 def get_filesystem_encoding():
@@ -58,6 +61,17 @@ def ci_strings_are_equal(a, b):
     return a.strip().lower() == b.strip().lower()
 
 
+def ensure_python3(raise_exception=True):
+    if not raise_exception or not PY2:
+        return not PY2
+    raise UserSideException(
+        "Python 3.5 or later is required for this operation. \n"
+        "Please install the latest Python 3 and reinstall PlatformIO Core using "
+        "installation script:\n"
+        "https://docs.platformio.org/page/core/installation.html"
+    )
+
+
 if PY2:
     import imp
 
@@ -84,7 +98,7 @@ if PY2:
         if isinstance(obj, unicode):
             return obj
         return json.dumps(
-            obj, encoding=get_filesystem_encoding(), ensure_ascii=False, sort_keys=True
+            obj, encoding=get_filesystem_encoding(), ensure_ascii=False
         ).encode("utf8")
 
     _magic_check = re.compile("([*?[])")
@@ -132,7 +146,7 @@ else:
     def dump_json_to_unicode(obj):
         if isinstance(obj, string_types):
             return obj
-        return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+        return json.dumps(obj)
 
     def glob_recursive(pathname):
         return glob.glob(pathname, recursive=True)

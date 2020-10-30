@@ -23,12 +23,12 @@ from time import sleep
 
 import click
 
-from platformio import exception, fs, proc
+from platformio import fs, proc
 from platformio.commands.device import helpers as device_helpers
 from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.test.command import cli as cmd_test
-from platformio.compat import PY2
+from platformio.compat import ensure_python3
 from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 
@@ -37,13 +37,7 @@ from platformio.project.exception import NotPlatformIOProjectError
 @click.option("-a", "--agent", multiple=True)
 @click.pass_context
 def cli(ctx, agent):
-    if PY2:
-        raise exception.UserSideException(
-            "PlatformIO Remote Development requires Python 3.5 or above. \n"
-            "Please install the latest Python 3 and reinstall PlatformIO Core using "
-            "installation script:\n"
-            "https://docs.platformio.org/page/core/installation.html"
-        )
+    assert ensure_python3()
     ctx.obj = agent
     inject_contrib_pysite(verify_openssl=True)
 

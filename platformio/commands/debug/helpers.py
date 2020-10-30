@@ -23,11 +23,8 @@ from os.path import isfile
 from platformio import fs, util
 from platformio.commands import PlatformioCLI
 from platformio.commands.debug.exception import DebugInvalidOptionsError
-from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.run.command import cli as cmd_run
 from platformio.compat import is_bytes
-from platformio.platform.exception import UnknownPlatform
-from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.options import ProjectOptions
 
@@ -89,20 +86,10 @@ def predebug_project(ctx, project_dir, env_name, preload, verbose):
         time.sleep(5)
 
 
-def validate_debug_options(cmd_ctx, env_options):
+def configure_initial_debug_options(platform, env_options):
     def _cleanup_cmds(items):
         items = ProjectConfig.parse_multi_values(items)
         return ["$LOAD_CMDS" if item == "$LOAD_CMD" else item for item in items]
-
-    try:
-        platform = PlatformFactory.new(env_options["platform"])
-    except UnknownPlatform:
-        cmd_ctx.invoke(
-            cmd_platform_install,
-            platforms=[env_options["platform"]],
-            skip_default_package=True,
-        )
-        platform = PlatformFactory.new(env_options["platform"])
 
     board_config = platform.board_config(env_options["board"])
     tool_name = board_config.get_debug_tool_name(env_options.get("debug_tool"))
@@ -195,13 +182,16 @@ def validate_debug_options(cmd_ctx, env_options):
 
 
 def configure_esp32_load_cmds(debug_options, configuration):
+    """
+    DEPRECATED: Moved to ESP32 dev-platform
+    See platform.py::configure_debug_options
+    """
+    flash_images = configuration.get("extra", {}).get("flash_images")
     ignore_conds = [
         debug_options["load_cmds"] != ["load"],
         "xtensa-esp32" not in configuration.get("cc_path", ""),
-        not configuration.get("flash_extra_images"),
-        not all(
-            [isfile(item["path"]) for item in configuration.get("flash_extra_images")]
-        ),
+        not flash_images,
+        not all([isfile(item["path"]) for item in flash_images]),
     ]
     if any(ignore_conds):
         return debug_options["load_cmds"]
@@ -210,7 +200,7 @@ def configure_esp32_load_cmds(debug_options, configuration):
         'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
             path=fs.to_unix_path(item["path"]), offset=item["offset"]
         )
-        for item in configuration.get("flash_extra_images")
+        for item in flash_images
     ]
     mon_cmds.append(
         'monitor program_esp32 "{%s.bin}" 0x10000 verify'

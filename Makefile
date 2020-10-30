@@ -31,5 +31,8 @@ profile:
 	python -m cProfile -o .tox/.tmp/cprofile.prof -m platformio ${PIOARGS}
 	snakeviz .tox/.tmp/cprofile.prof
 
+pack:
+	python setup.py sdist
+
 publish:
 	python setup.py sdist upload

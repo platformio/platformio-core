@@ -174,8 +174,10 @@ def project_init(
     if is_new_project:
         init_base_project(project_dir)
 
-    if board:
-        fill_project_envs(
+    if environment:
+        update_project_env(project_dir, environment, project_option)
+    elif board:
+        update_board_envs(
             ctx, project_dir, board, project_option, env_prefix, ide is not None
         )
 
@@ -358,7 +360,7 @@ def init_cvs_ignore(project_dir):
         fp.write(".pio\n")
 
 
-def fill_project_envs(
+def update_board_envs(
     ctx, project_dir, board_ids, project_option, env_prefix, force_download
 ):
     config = ProjectConfig(
@@ -415,6 +417,26 @@ def _install_dependent_platforms(ctx, platforms):
     ctx.invoke(
         cli_platform_install, platforms=list(set(platforms) - set(installed_platforms))
     )
+
+
+def update_project_env(project_dir, environment, project_option):
+    if not project_option:
+        return
+    config = ProjectConfig(
+        os.path.join(project_dir, "platformio.ini"), parse_extra=False
+    )
+
+    section = "env:%s" % environment
+    if not config.has_section(section):
+        config.add_section(section)
+
+    for item in project_option:
+        if "=" not in item:
+            continue
+        _name, _value = item.split("=", 1)
+        config.set(section, _name.strip(), _value.strip())
+
+    config.save()
 
 
 def get_best_envname(config, board_ids=None):
