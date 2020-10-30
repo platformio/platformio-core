@@ -98,7 +98,7 @@ if PY2:
         if isinstance(obj, unicode):
             return obj
         return json.dumps(
-            obj, encoding=get_filesystem_encoding(), ensure_ascii=False, sort_keys=True
+            obj, encoding=get_filesystem_encoding(), ensure_ascii=False
         ).encode("utf8")
 
     _magic_check = re.compile("([*?[])")
@@ -146,7 +146,7 @@ else:
     def dump_json_to_unicode(obj):
         if isinstance(obj, string_types):
             return obj
-        return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+        return json.dumps(obj)
 
     def glob_recursive(pathname):
         return glob.glob(pathname, recursive=True)
