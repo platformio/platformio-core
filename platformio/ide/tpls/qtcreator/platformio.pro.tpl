@@ -27,3 +27,5 @@ HEADERS += {{file}}
 SOURCES += {{file}}
 % end
 % end
+
+CONFIG += c++17
