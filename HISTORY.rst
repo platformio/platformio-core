@@ -20,6 +20,7 @@ PlatformIO Core 5
 - Fixed an "AssertionError: ensure_dir_exists" when checking library updates from simultaneous subprocesses (`issue #3677 <https://github.com/platformio/platformio-core/issues/3677>`_)
 - Fixed an issue when `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command removes original archive after submitting to the registry (`issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
 - Fixed an issue when multiple `pio lib install <https://docs.platformio.org/page/core/userguide/lib/cmd_install.html>`__ command with the same local library results in duplicates in ``lib_deps`` (`issue #3715 <https://github.com/platformio/platformio-core/issues/3715>`_)
+- Fixed an issue with a "wrong" timestamp in device monitor output using `"time" filter <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #3712 <https://github.com/platformio/platformio-core/issues/3712>`_)
 
 5.0.1 (2020-09-10)
 ~~~~~~~~~~~~~~~~~~
