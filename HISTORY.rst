@@ -11,7 +11,7 @@ PlatformIO Core 5
 5.0.3 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
+- Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
