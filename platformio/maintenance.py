@@ -73,16 +73,19 @@ def on_platformio_exception(e):
 
 def set_caller(caller=None):
     caller = caller or getenv("PLATFORMIO_CALLER")
-    if not caller:
-        if getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
-            caller = "vscode"
-        elif is_container():
-            if getenv("C9_UID"):
-                caller = "C9"
-            elif getenv("USER") == "cabox":
-                caller = "CA"
-            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
-                caller = "Che"
+    if caller:
+        return app.set_session_var("caller_id", caller)
+    if getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+        caller = "vscode"
+    elif getenv("GITPOD_INSTANCE_ID") or getenv("GITPOD_WORKSPACE_URL"):
+        caller = "gitpod"
+    elif is_container():
+        if getenv("C9_UID"):
+            caller = "C9"
+        elif getenv("USER") == "cabox":
+            caller = "CA"
+        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+            caller = "Che"
     app.set_session_var("caller_id", caller)
 
 
