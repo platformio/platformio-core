@@ -86,7 +86,7 @@ def set_caller(caller=None):
             caller = "CA"
         elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
             caller = "Che"
-    app.set_session_var("caller_id", caller)
+    return app.set_session_var("caller_id", caller)
 
 
 class Upgrader(object):
