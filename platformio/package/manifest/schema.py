@@ -141,7 +141,7 @@ class ExampleSchema(StrictSchema):
     name = fields.Str(
         required=True,
         validate=[
-            validate.Length(min=1, max=100),
+            validate.Length(min=1, max=255),
             validate.Regexp(
                 r"^[a-zA-Z\d\-\_/]+$", error="Only [a-zA-Z0-9-_/] chars are allowed"
             ),
