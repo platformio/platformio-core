@@ -11,7 +11,9 @@ PlatformIO Core 5
 5.0.3 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Added an error selector for `Sublime Text <https://docs.platformio.org/en/latest/integration/ide/sublimetext.html>`__ build runner (`issue #3733 <https://github.com/platformio/platformio-core/issues/3733>`_)
 - Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
+- Force VSCode's intelliSenseMode to "gcc-x64" when GCC toolchain is used
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~

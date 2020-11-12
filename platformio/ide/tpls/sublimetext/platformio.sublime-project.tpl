@@ -5,9 +5,10 @@
 			"cmd":
 			[
 				"{{ platformio_path }}",
-				"-f", "-c", "sublimetext",
+				"-c", "sublimetext",
 				"run"
 			],
+			"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "PlatformIO",
 			"variants":
 			[
@@ -15,78 +16,73 @@
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"run"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Build"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"run",
 						"--target",
 						"upload"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Upload"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"run",
 						"--target",
 						"clean"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Clean"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"test"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Test"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
-						"run",
-						"--target",
-						"program"
-					],
-					"name": "Upload using Programmer"
-				},
-				{
-					"cmd":
-					[
-						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"run",
 						"--target",
 						"uploadfs"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Upload SPIFFS image"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"update"
 					],
+					"file_regex": "^(..[^:\n]*):([0-9]+):?([0-9]+)?:? (.*)$",
 					"name": "Update platforms and libraries"
 				},
 				{
 					"cmd":
 					[
 						"{{ platformio_path }}",
-						"-f", "-c", "sublimetext",
+						"-c", "sublimetext",
 						"upgrade"
 					],
 					"name": "Upgrade PlatformIO Core"
