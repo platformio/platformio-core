@@ -15,6 +15,7 @@ PlatformIO Core 5
 - Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
 - Force VSCode's intelliSenseMode to "gcc-x64" when GCC toolchain is used
 - Print ignored test suites and environments in the test summary report only in verbose mode (`issue #3726 <https://github.com/platformio/platformio-core/issues/3726>`_)
+- Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
