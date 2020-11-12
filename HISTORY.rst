@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.0.3 (2020-??-??)
+5.0.3 (2020-11-12)
 ~~~~~~~~~~~~~~~~~~
 
 - Added an error selector for `Sublime Text <https://docs.platformio.org/page/integration/ide/sublimetext.html>`__ build runner (`issue #3733 <https://github.com/platformio/platformio-core/issues/3733>`_)
