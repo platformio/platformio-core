@@ -12,6 +12,7 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
+- Print ignored test suites and environments in the test summary report only in verbose mode (`issue #3726 <https://github.com/platformio/platformio-core/issues/3726>`_)
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
