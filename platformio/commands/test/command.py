@@ -177,7 +177,7 @@ def cli(  # pylint: disable=redefined-builtin
     if without_testing:
         return
 
-    print_testing_summary(results)
+    print_testing_summary(results, verbose)
 
     command_failed = any(r.get("succeeded") is False for r in results)
     if command_failed:
@@ -222,7 +222,7 @@ def print_processing_footer(result):
     )
 
 
-def print_testing_summary(results):
+def print_testing_summary(results, verbose=False):
     click.echo()
 
     tabular_data = []
@@ -236,6 +236,8 @@ def print_testing_summary(results):
             failed_nums += 1
             status_str = click.style("FAILED", fg="red")
         elif result.get("succeeded") is None:
+            if not verbose:
+                continue
             status_str = "IGNORED"
         else:
             succeeded_nums += 1

@@ -19,13 +19,18 @@
             "request": "launch",
             "name": "PIO Debug",
             "executable": "{{ _escape_path(prog_path) }}",
+            "projectEnvName": "{{ env_name }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",
 % end
             "preLaunchTask": {
                 "type": "PlatformIO",
+% if len(config.envs()) > 1:
+                "task": "Pre-Debug ({{ env_name }})"
+% else:
                 "task": "Pre-Debug"
+% end
             },
             "internalConsoleOptions": "openOnSessionStart"
         },
@@ -34,6 +39,7 @@
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
             "executable": "{{ _escape_path(prog_path) }}",
+            "projectEnvName": "{{ env_name }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",

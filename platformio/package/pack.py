@@ -46,6 +46,8 @@ class PackagePacker(object):
         ".git/",
         ".hg/",
         ".svn/",
+    ]
+    EXCLUDE_EXTRA = [
         # Tests
         "tests?",
         # Docs
@@ -120,7 +122,6 @@ class PackagePacker(object):
                 src = tmp_dir
 
             src = self.find_source_root(src)
-
             manifest = self.load_manifest(src)
             filename = self.get_archive_name(
                 manifest["name"],
@@ -188,7 +189,7 @@ class PackagePacker(object):
         return dst
 
     def compute_src_filters(self, src, include, exclude):
-        exclude_default = self.EXCLUDE_DEFAULT[:]
+        exclude_extra = self.EXCLUDE_EXTRA[:]
         # extend with library extra filters
         if any(
             os.path.isfile(os.path.join(src, name))
@@ -198,11 +199,15 @@ class PackagePacker(object):
                 ManifestFileType.MODULE_JSON,
             )
         ):
-            exclude_default.extend(self.EXCLUDE_LIBRARY_EXTRA)
+            exclude_extra.extend(self.EXCLUDE_LIBRARY_EXTRA)
 
         result = ["+<%s>" % p for p in include or ["*", ".*"]]
+        result += ["-<%s>" % p for p in self.EXCLUDE_DEFAULT]
+        # exclude items declared in manifest
         result += ["-<%s>" % p for p in exclude or []]
-        result += ["-<%s>" % p for p in exclude_default]
+        # apply extra excludes if no custom "export" field in manifest
+        if not include and not exclude:
+            result += ["-<%s>" % p for p in exclude_extra]
         # automatically include manifests
         result += ["+<%s>" % p for p in self.INCLUDE_DEFAULT]
         return result

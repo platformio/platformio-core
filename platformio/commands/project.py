@@ -149,15 +149,19 @@ def project_init(
 ):
     if not silent:
         if project_dir == os.getcwd():
-            click.secho("\nThe current working directory", fg="yellow", nl=False)
-            click.secho(" %s " % project_dir, fg="cyan", nl=False)
-            click.secho("will be used for the project.", fg="yellow")
+            click.secho("\nThe current working directory ", fg="yellow", nl=False)
+            try:
+                click.secho(project_dir, fg="cyan", nl=False)
+            except UnicodeEncodeError:
+                click.secho(json.dumps(project_dir), fg="cyan", nl=False)
+            click.secho(" will be used for the project.", fg="yellow")
             click.echo("")
 
-        click.echo(
-            "The next files/directories have been created in %s"
-            % click.style(project_dir, fg="cyan")
-        )
+        click.echo("The next files/directories have been created in ", nl=False)
+        try:
+            click.secho(project_dir, fg="cyan")
+        except UnicodeEncodeError:
+            click.secho(json.dumps(project_dir), fg="cyan")
         click.echo(
             "%s - Put project header files here" % click.style("include", fg="cyan")
         )

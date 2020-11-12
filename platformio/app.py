@@ -255,6 +255,8 @@ def get_cid():
     uid = None
     if os.getenv("C9_UID"):
         uid = os.getenv("C9_UID")
+    elif os.getenv("GITPOD_GIT_USER_NAME"):
+        uid = os.getenv("GITPOD_GIT_USER_NAME")
     elif os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")):
         try:
             uid = json.loads(
