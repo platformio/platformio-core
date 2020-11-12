@@ -26,7 +26,11 @@
 % end
             "preLaunchTask": {
                 "type": "PlatformIO",
+% if len(config.envs()) > 1:
                 "task": "Pre-Debug ({{ env_name }})"
+% else:
+                "task": "Pre-Debug"
+% end
             },
             "internalConsoleOptions": "openOnSessionStart"
         },
