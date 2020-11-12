@@ -118,9 +118,6 @@
 % end
                 ""
             ],
-% if compiler_type == "gcc":
-            "intelliSenseMode": "gcc-x64",
-% end
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
 % end

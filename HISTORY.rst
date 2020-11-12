@@ -8,6 +8,11 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.0.4 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+- Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
+
 5.0.3 (2020-11-12)
 ~~~~~~~~~~~~~~~~~~
 
