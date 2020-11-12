@@ -11,11 +11,12 @@ PlatformIO Core 5
 5.0.3 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Added an error selector for `Sublime Text <https://docs.platformio.org/en/latest/integration/ide/sublimetext.html>`__ build runner (`issue #3733 <https://github.com/platformio/platformio-core/issues/3733>`_)
+- Added an error selector for `Sublime Text <https://docs.platformio.org/page/integration/ide/sublimetext.html>`__ build runner (`issue #3733 <https://github.com/platformio/platformio-core/issues/3733>`_)
 - Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
 - Force VSCode's intelliSenseMode to "gcc-x64" when GCC toolchain is used
 - Print ignored test suites and environments in the test summary report only in verbose mode (`issue #3726 <https://github.com/platformio/platformio-core/issues/3726>`_)
 - Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
+- Fixed an issue when `pio package pack <https://docs.platformio.org/page/core/userguide/package/cmd_pack.html>`__ ignores some folders (`issue #3730 <https://github.com/platformio/platformio-core/issues/3730>`_)
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
