@@ -127,7 +127,13 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
             for key, value in dependency.items()
             if key in ("authors", "platforms", "frameworks")
         }
-        return self._install(spec, search_filters=search_filters or None, silent=silent)
+        try:
+            return self._install(
+                spec, search_filters=search_filters or None, silent=silent
+            )
+        except UnknownPackageError:
+            pass
+        return None
 
     def uninstall_dependencies(self, pkg, silent=False):
         assert isinstance(pkg, PackageItem)
