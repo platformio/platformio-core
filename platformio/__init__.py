@@ -31,11 +31,11 @@ __description__ = (
 )
 __url__ = "https://platformio.org"
 
-__author__ = "PlatformIO"
-__email__ = "contact@platformio.org"
+__author__ = "PlatformIO Labs"
+__email__ = "contact@piolabs.com"
 
 __license__ = "Apache Software License"
-__copyright__ = "Copyright 2014-present PlatformIO"
+__copyright__ = "Copyright 2014-present PlatformIO Labs"
 
 __accounts_api__ = "https://api.accounts.platformio.org"
 __registry_api__ = [

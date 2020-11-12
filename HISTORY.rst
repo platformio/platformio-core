@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.0.4 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Added "Core" suffix when showing PlatformIO Core version using ``pio --verison`` command
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
 
 5.0.3 (2020-11-12)
