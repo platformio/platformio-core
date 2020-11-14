@@ -83,20 +83,15 @@
 % forced_includes = _find_forced_includes(
 %   filter_args(cc_m_flags, ["-include", "-imacros"]), cleaned_includes)
 %
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
-            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
-        },
-        {
-% if systype == "windows":
-            "name": "Win32",
-% elif systype == "darwin":
-            "name": "Mac",
-            "macFrameworkPath": [],
-% else:
-            "name": "Linux",
-% end
+            "name": "PlatformIO",
             "includePath": [
 % for include in cleaned_includes:
                 "{{ include }}",
