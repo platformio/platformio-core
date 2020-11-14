@@ -1,20 +1,10 @@
-% import re
-% STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
-% cc_stds = STD_RE.findall(cc_flags)
-% cxx_stds = STD_RE.findall(cxx_flags)
-%
-%
-clang
+{{ cxx_path }}
 
-% if cc_stds:
-{{"%c"}} -std=c{{ cc_stds[-1] }}
-% end
-% if cxx_stds:
-{{"%cpp"}} -std=c++{{ cxx_stds[-1] }}
-% end
+{{"%c"}} {{ !cc_flags }}
+{{"%cpp"}} {{ !cxx_flags }}
 
 % for include in filter_includes(includes):
--I{{ include }}
+-I{{ !include }}
 % end
 
 % for define in defines:

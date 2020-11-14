@@ -12,6 +12,7 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Added "Core" suffix when showing PlatformIO Core version using ``pio --version`` command
+- Improved ``.ccls`` configuration file for Emacs, Vim, and Sublime Text integrations
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
 
 5.0.3 (2020-11-12)
