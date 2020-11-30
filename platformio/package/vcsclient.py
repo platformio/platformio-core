@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import re
-from os.path import join
-from subprocess import CalledProcessError, check_call
-from sys import modules
+import subprocess
+import sys
 
+from platformio import proc
 from platformio.package.exception import (
     PackageException,
     PlatformioException,
     UserSideException,
 )
-from platformio.proc import exec_command
 
 try:
     from urllib.parse import urlparse
@@ -51,7 +51,7 @@ class VCSClientFactory(object):
         if not type_:
             raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
         try:
-            obj = getattr(modules[__name__], "%sClient" % type_.title())(
+            obj = getattr(sys.modules[__name__], "%sClient" % type_.title())(
                 src_dir, remote_url, tag, silent
             )
             assert isinstance(obj, VCSClientBase)
@@ -86,7 +86,7 @@ class VCSClientBase(object):
 
     @property
     def storage_dir(self):
-        return join(self.src_dir, "." + self.command)
+        return os.path.join(self.src_dir, "." + self.command)
 
     def export(self):
         raise NotImplementedError
@@ -108,17 +108,19 @@ class VCSClientBase(object):
         args = [self.command] + args
         if "cwd" not in kwargs:
             kwargs["cwd"] = self.src_dir
+        if "env" not in kwargs:
+            kwargs["env"] = os.environ
         try:
-            check_call(args, **kwargs)
+            subprocess.check_call(args, **kwargs)
             return True
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             raise VCSBaseException("VCS: Could not process command %s" % e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
         if "cwd" not in kwargs:
             kwargs["cwd"] = self.src_dir
-        result = exec_command(args, **kwargs)
+        result = proc.exec_command(args, **kwargs)
         if result["returncode"] == 0:
             return result["out"].strip()
         raise VCSBaseException(
@@ -129,6 +131,28 @@ class VCSClientBase(object):
 class GitClient(VCSClientBase):
 
     command = "git"
+    _configured = False
+
+    def __init__(self, *args, **kwargs):
+        self.configure()
+        super(GitClient, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def configure(cls):
+        if cls._configured:
+            return True
+        cls._configured = True
+        try:
+            result = proc.exec_command([cls.command, "--exec-path"])
+            if result["returncode"] != 0:
+                return False
+            path = result["out"].strip()
+            if path:
+                proc.append_env_path("PATH", path)
+                return True
+        except subprocess.CalledProcessError:
+            pass
+        return False
 
     def check_client(self):
         try:
@@ -173,7 +197,7 @@ class GitClient(VCSClientBase):
             if self.tag:
                 args += ["--branch", self.tag]
         args += [self.remote_url, self.src_dir]
-        assert self.run_cmd(args)
+        assert self.run_cmd(args, cwd=os.getcwd())
         if is_commit:
             assert self.run_cmd(["reset", "--hard", self.tag])
             return self.run_cmd(

@@ -203,3 +203,11 @@ def where_is_program(program, envpath=None):
             return os.path.join(bin_dir, "%s.exe" % program)
 
     return program
+
+
+def append_env_path(name, value):
+    cur_value = os.environ.get(name) or ""
+    if cur_value and value in cur_value.split(os.pathsep):
+        return cur_value
+    os.environ[name] = os.pathsep.join([cur_value, value])
+    return os.environ[name]

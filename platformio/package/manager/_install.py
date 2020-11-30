@@ -153,7 +153,7 @@ class PackageManagerInstallMixin(object):
         finally:
             if os.path.isdir(tmp_dir):
                 try:
-                    shutil.rmtree(tmp_dir)
+                    fs.rmtree(tmp_dir)
                 except:  # pylint: disable=bare-except
                     pass
 
