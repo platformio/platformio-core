@@ -20,6 +20,7 @@ from threading import Thread
 
 from platformio import exception
 from platformio.compat import (
+    PY2,
     WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
@@ -125,7 +126,9 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = kwargs[s].get_buffer()
 
     for k, v in result.items():
-        if isinstance(result[k], bytes):
+        if PY2 and isinstance(v, unicode):  # pylint: disable=undefined-variable
+            result[k] = v.encode()
+        elif not PY2 and isinstance(result[k], bytes):
             try:
                 result[k] = result[k].decode(
                     get_locale_encoding() or get_filesystem_encoding()
