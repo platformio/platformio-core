@@ -200,12 +200,22 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             if self.options.get("verbose"):
                 click.echo(" ".join(cmd))
 
-            proc.exec_command(
+            result = proc.exec_command(
                 cmd,
                 stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
                 stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
             )
-
+            # Check if at least the binary was executed properly.
+            # 126 - A file to be executed was found,
+            #       but it was not an executable utility.
+            # 127 - A utility to be executed was not found.
+            if result["returncode"] in (126, 127):
+                if self.options.get("verbose"):
+                    click.echo(
+                        "Error: Couldn't call binary '%s', returncode %s"
+                        % (cmd[0], result["returncode"])
+                    )
+                self._bad_input = True
         else:
             if self.options.get("verbose"):
                 click.echo("Error: Couldn't configure command")
