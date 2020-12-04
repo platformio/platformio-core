@@ -166,10 +166,22 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     # pylint: disable=import-outside-toplevel
     from platformio.commands.debug.process.client import GDBClient, reactor
 
-    client = GDBClient(project_dir, __unprocessed, debug_options, env_options)
-    client.spawn(ide_data["gdb_path"], ide_data["prog_path"])
+    # pylint: disable=no-member
+    GDBClient(project_dir, __unprocessed, debug_options, env_options) \
+    .spawn(ide_data["gdb_path"], ide_data["prog_path"]) \
+    .addErrback(handleFailure)
 
     signal.signal(signal.SIGINT, lambda *args, **kwargs: None)
     reactor.run()
 
+    if hasattr(handleFailure, "exception"):
+        raise handleFailure.exception
+
     return True
+
+def handleFailure(failure):
+    handleFailure.exception = failure.value
+
+    # pylint: disable=import-outside-toplevel
+    from platformio.commands.debug.process.client import reactor
+    reactor.callWhenRunning(reactor.stop)
