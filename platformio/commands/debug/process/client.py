@@ -54,7 +54,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
         if not isdir(get_project_cache_dir()):
             os.makedirs(get_project_cache_dir())
-        self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(), prefix=".piodebug-")
+        self._gdbsrc_dir = None
 
         self._target_is_run = False
         self._auto_continue_timer = None
@@ -81,6 +81,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         if not patterns["DEBUG_PORT"]:
             patterns["DEBUG_PORT"] = self._debug_server.get_debug_port()
 
+        self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(), prefix=".piodebug-")
         self.generate_pioinit(self._gdbsrc_dir, patterns)
 
         # start GDB client
