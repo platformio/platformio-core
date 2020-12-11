@@ -91,7 +91,7 @@ def test_check_and_update_libraries(clirunner, isolated_pio_core, validate_clire
     assert "There are the new updates for libraries (ArduinoJson)" in result.output
     assert "Please wait while updating libraries" in result.output
     assert re.search(
-        r"Updating bblanchon/ArduinoJson\s+6\.12\.0\s+\[Outdated [\d\.]+\]",
+        r"Updating bblanchon/ArduinoJson\s+6\.12\.0\s+\[Updating to [\d\.]+\]",
         result.output,
     )
 
@@ -143,7 +143,9 @@ def test_check_and_update_platforms(clirunner, isolated_pio_core, validate_clire
     validate_cliresult(result)
     assert "There are the new updates for platforms (native)" in result.output
     assert "Please wait while updating platforms" in result.output
-    assert re.search(r"Updating native\s+0.0.0\s+\[Outdated [\d\.]+\]", result.output)
+    assert re.search(
+        r"Updating native\s+0.0.0\s+\[Updating to [\d\.]+\]", result.output
+    )
 
     # check updated version
     result = clirunner.invoke(cli_pio, ["platform", "list", "--json-output"])
