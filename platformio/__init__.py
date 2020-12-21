@@ -51,9 +51,9 @@ __core_packages__ = {
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-unity": "~1.20500.0",
     "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~4.40001.0",
-    "tool-cppcheck": "~1.210.0",
+    "tool-cppcheck": "~1.230.0",
     "tool-clangtidy": "~1.100000.0",
-    "tool-pvs-studio": "~7.9.0",
+    "tool-pvs-studio": "~7.11.0",
 }
 
 __check_internet_hosts__ = [
