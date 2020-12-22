@@ -13,6 +13,9 @@ PlatformIO Core 5
 
 - Added "Core" suffix when showing PlatformIO Core version using ``pio --version`` command
 - Improved ``.ccls`` configuration file for Emacs, Vim, and Sublime Text integrations
+- Updated analysis tools:
+    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
+    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
 - Fixed a "git-sh-setup: file not found" error when installing project dependencies from Git VCS (`issue #3740 <https://github.com/platformio/platformio-core/issues/3740>`_)
 
