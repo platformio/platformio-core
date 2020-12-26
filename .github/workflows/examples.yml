@@ -15,7 +15,7 @@ jobs:
         with:
           submodules: "recursive"
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -26,7 +26,8 @@ jobs:
       - name: Run on Linux
         if: startsWith(matrix.os, 'ubuntu')
         env:
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,siwigsm,intel_mcs51,aceinna_imu,tokisaki"
+          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,intel_mcs51"
         run: |
           # ChipKIT issue: install 32-bit support for GCC PIC32
           sudo apt-get install libc6-i386
@@ -40,7 +41,8 @@ jobs:
       - name: Run on macOS
         if: startsWith(matrix.os, 'macos')
         env:
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,siwigsm,microchippic32,gd32v,nuclei,lattice_ice40,tokisaki"
+          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,lattice_ice40"
         run: |
           df -h
           tox -e testexamples
@@ -50,7 +52,8 @@ jobs:
         env:
           PLATFORMIO_CORE_DIR: C:/pio
           PLATFORMIO_WORKSPACE_DIR: C:/pio-workspace/$PROJECT_HASH
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,siwigsm,riscv_gap,tokisaki"
+          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap"
         run: |
           tox -e testexamples
 
