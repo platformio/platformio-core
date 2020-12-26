@@ -16,6 +16,7 @@ PlatformIO Core 5
 - Updated analysis tools:
     * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
     * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
+- Show a warning message about deprecated support for Python 2 and Python 3.5
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
 - Fixed a "git-sh-setup: file not found" error when installing project dependencies from Git VCS (`issue #3740 <https://github.com/platformio/platformio-core/issues/3740>`_)
 
@@ -139,7 +140,8 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/
   - Display system-wide information using a new `pio system info <https://docs.platformio.org/page/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
   - Remove unused data using a new `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
   - Show ignored project environments only in the verbose mode (`issue #3641 <https://github.com/platformio/platformio-core/issues/3641>`_)
-  - Do not escape compiler arguments in VSCode template on Windows.
+  - Do not escape compiler arguments in VSCode template on Windows
+  - Drop support for Python 2 and 3.5.
 
 .. _release_notes_4:
 
