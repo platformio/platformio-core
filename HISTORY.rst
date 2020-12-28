@@ -19,6 +19,7 @@ PlatformIO Core 5
 - Show a warning message about deprecated support for Python 2 and Python 3.5
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
 - Fixed a "git-sh-setup: file not found" error when installing project dependencies from Git VCS (`issue #3740 <https://github.com/platformio/platformio-core/issues/3740>`_)
+- Fixed an issue with package publishing on Windows when Unix permissions are not preserved (`issue #3776 <https://github.com/platformio/platformio-core/issues/3776>`_)
 
 5.0.3 (2020-11-12)
 ~~~~~~~~~~~~~~~~~~

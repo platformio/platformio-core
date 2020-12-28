@@ -42,7 +42,7 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         env:
           PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,lattice_ice40"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,lattice_ice40,gd32v"
         run: |
           df -h
           tox -e testexamples
