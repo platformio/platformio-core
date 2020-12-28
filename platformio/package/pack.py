@@ -20,8 +20,8 @@ import tarfile
 import tempfile
 
 from platformio import fs
-from platformio.compat import ensure_python3
-from platformio.package.exception import PackageException
+from platformio.compat import WINDOWS, ensure_python3
+from platformio.package.exception import PackageException, UserSideException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.package.meta import PackageItem
@@ -117,6 +117,12 @@ class PackagePacker(object):
 
             # if zip/tar.gz -> unpack to tmp dir
             if not os.path.isdir(src):
+                if WINDOWS:
+                    raise UserSideException(
+                        "Packaging from an archive does not work on Windows OS. Please "
+                        "extract data from `%s` manually and pack a folder instead"
+                        % src
+                    )
                 with FileUnpacker(src) as fu:
                     assert fu.unpack(tmp_dir, silent=True)
                 src = tmp_dir
