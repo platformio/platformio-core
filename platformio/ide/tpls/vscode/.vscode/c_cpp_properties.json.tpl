@@ -127,6 +127,7 @@
                 ""
             ],
 % end
+            "compileCommands": "{{ compile_commands_path }}",
             "compilerPath": "{{ cc_path }}",
             "compilerArgs": [
 % for flag in [

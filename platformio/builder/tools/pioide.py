@@ -167,6 +167,7 @@ def DumpIDEData(env, globalenv):
         "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path": env.subst("$PROG_PATH"),
         "svd_path": _get_svd_path(env),
+        "compile_commands_path": env.subst("$COMPILATIONDB_PATH"),
         "compiler_type": env.GetCompilerType(),
         "targets": globalenv.DumpTargets(),
         "extra": dict(
