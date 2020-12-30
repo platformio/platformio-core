@@ -8,6 +8,11 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.0.4 (2020-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Check for debug server's "ready_pattern" in "stderr"
+
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
 
