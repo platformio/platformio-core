@@ -124,13 +124,14 @@ class DebugServer(BaseProcess):
 
     @defer.inlineCallbacks
     def _wait_until_ready(self):
-        timeout = 10
+        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        timeout = 60 if ready_pattern else 10
         elapsed = 0
         delay = 0.5
         auto_ready_delay = 0.5
         while not self._ready and not self._process_ended and elapsed < timeout:
             yield self.async_sleep(delay)
-            if not self.debug_options.get("server", {}).get("ready_pattern"):
+            if not ready_pattern:
                 self._ready = self._last_activity < (time.time() - auto_ready_delay)
             elapsed += delay
 
