@@ -104,7 +104,7 @@ class PackageManagerUpdateMixin(object):
 
         outdated = self.outdated(pkg, to_spec)
         if not silent:
-            self.print_outdated_state(outdated, show_incompatible)
+            self.print_outdated_state(outdated, only_check, show_incompatible)
 
         if only_check or not outdated.is_outdated(allow_incompatible=False):
             return pkg
@@ -116,24 +116,39 @@ class PackageManagerUpdateMixin(object):
             self.unlock()
 
     @staticmethod
-    def print_outdated_state(outdated, show_incompatible=True):
+    def print_outdated_state(outdated, only_check, show_incompatible):
         if outdated.detached:
             return click.echo("[%s]" % (click.style("Detached", fg="yellow")))
+
         if (
             not outdated.latest
             or outdated.current == outdated.latest
             or (not show_incompatible and outdated.current == outdated.wanted)
         ):
             return click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
+
         if outdated.wanted and outdated.current == outdated.wanted:
             return click.echo(
                 "[%s]" % (click.style("Incompatible %s" % outdated.latest, fg="yellow"))
             )
+
+        if only_check:
+            return click.echo(
+                "[%s]"
+                % (
+                    click.style(
+                        "Outdated %s" % str(outdated.wanted or outdated.latest),
+                        fg="red",
+                    )
+                )
+            )
+
         return click.echo(
             "[%s]"
             % (
                 click.style(
-                    "Outdated %s" % str(outdated.wanted or outdated.latest), fg="red"
+                    "Updating to %s" % str(outdated.wanted or outdated.latest),
+                    fg="green",
                 )
             )
         )

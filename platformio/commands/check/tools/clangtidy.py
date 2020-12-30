@@ -49,6 +49,12 @@ class ClangtidyCheckTool(CheckToolBase):
 
         return DefectItem(severity, category, message, file_, line, column, defect_id)
 
+    @staticmethod
+    def is_check_successful(cmd_result):
+        # Note: Clang-Tidy returns 1 for not critical compilation errors,
+        # so 0 and 1 are only acceptable values
+        return cmd_result["returncode"] < 2
+
     def configure_command(self):
         tool_path = join(get_core_package_dir("tool-clangtidy"), "clang-tidy")
 

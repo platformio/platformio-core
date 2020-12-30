@@ -143,7 +143,8 @@ class ExampleSchema(StrictSchema):
         validate=[
             validate.Length(min=1, max=255),
             validate.Regexp(
-                r"^[a-zA-Z\d\-\_/]+$", error="Only [a-zA-Z0-9-_/] chars are allowed"
+                r"^[a-zA-Z\d\-\_/\. ]+$",
+                error="Only [a-zA-Z0-9-_/. ] chars are allowed",
             ),
         ],
     )

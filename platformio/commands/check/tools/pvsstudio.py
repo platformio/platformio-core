@@ -52,6 +52,11 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
                 )
             )
 
+    def tool_output_filter(self, line):
+        if "license was not entered" in line.lower():
+            self._bad_input = True
+        return line
+
     def _process_defects(self, defects):
         for defect in defects:
             if not isinstance(defect, DefectItem):
@@ -203,6 +208,12 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         if os.path.isdir(self._tmp_dir):
             shutil.rmtree(self._tmp_dir)
 
+    @staticmethod
+    def is_check_successful(cmd_result):
+        return (
+            "license" not in cmd_result["err"].lower() and cmd_result["returncode"] == 0
+        )
+
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
         for scope, files in self.get_project_target_files(
@@ -219,11 +230,8 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
                     self._bad_input = True
                     continue
 
-                result = proc.exec_command(cmd)
-                # pylint: disable=unsupported-membership-test
-                if result["returncode"] != 0 or "license" in result["err"].lower():
-                    self._bad_input = True
-                    click.echo(result["err"])
+                result = self.execute_check_cmd(cmd)
+                if result["returncode"] != 0:
                     continue
 
                 self._process_defects(self.parse_defects(self._tmp_output_file))

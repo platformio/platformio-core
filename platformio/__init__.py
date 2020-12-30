@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (5, 0, 3)
+VERSION = (5, 0, 4)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -31,11 +31,11 @@ __description__ = (
 )
 __url__ = "https://platformio.org"
 
-__author__ = "PlatformIO"
-__email__ = "contact@platformio.org"
+__author__ = "PlatformIO Labs"
+__email__ = "contact@piolabs.com"
 
 __license__ = "Apache Software License"
-__copyright__ = "Copyright 2014-present PlatformIO"
+__copyright__ = "Copyright 2014-present PlatformIO Labs"
 
 __accounts_api__ = "https://api.accounts.platformio.org"
 __registry_api__ = [
@@ -51,9 +51,9 @@ __core_packages__ = {
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-unity": "~1.20500.0",
     "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~4.40001.0",
-    "tool-cppcheck": "~1.210.0",
+    "tool-cppcheck": "~1.230.0",
     "tool-clangtidy": "~1.100000.0",
-    "tool-pvs-studio": "~7.9.0",
+    "tool-pvs-studio": "~7.11.0",
 }
 
 __check_internet_hosts__ = [

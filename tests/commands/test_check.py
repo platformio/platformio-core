@@ -410,6 +410,22 @@ check_tool = pvs-studio
     assert style == 0
 
 
+def test_check_pvs_studio_fails_without_license(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\ncheck_tool = pvs-studio"
+
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
+
+    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    verbose_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert default_result.exit_code != 0
+    assert "failed to perform check" in default_result.output.lower()
+
+    assert verbose_result.exit_code != 0
+    assert "license was not entered" in verbose_result.output.lower()
+
+
 def test_check_embedded_platform_all_tools(clirunner, validate_cliresult, tmpdir):
     config = """
 [env:test]

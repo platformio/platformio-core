@@ -27,6 +27,7 @@ from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
+from platformio.compat import ensure_python3
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
@@ -43,8 +44,25 @@ def on_platformio_start(ctx, force, caller):
     set_caller(caller)
     telemetry.on_command()
 
-    if not PlatformioCLI.in_silence():
-        after_upgrade(ctx)
+    if PlatformioCLI.in_silence():
+        return
+
+    after_upgrade(ctx)
+
+    if not ensure_python3(raise_exception=False):
+        click.secho(
+            """
+Python 2 and Python 3.5 are not compatible with PlatformIO Core 5.0.
+Please check the migration guide on how to fix this warning message:
+""",
+            fg="yellow",
+        )
+        click.secho(
+            "https://docs.platformio.org/en/latest/core/migration.html"
+            "#drop-support-for-python-2-and-3-5",
+            fg="blue",
+        )
+        click.echo("")
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=unused-argument

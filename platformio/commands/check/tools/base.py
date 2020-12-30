@@ -168,6 +168,29 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
                 os.remove(f)
 
     @staticmethod
+    def is_check_successful(cmd_result):
+        return cmd_result["returncode"] == 0
+
+    def execute_check_cmd(self, cmd):
+        result = proc.exec_command(
+            cmd,
+            stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
+            stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
+        )
+
+        if not self.is_check_successful(result):
+            click.echo(
+                "\nError: Failed to execute check command! Exited with code %d."
+                % result["returncode"]
+            )
+            if self.options.get("verbose"):
+                click.echo(result["out"])
+                click.echo(result["err"])
+            self._bad_input = True
+
+        return result
+
+    @staticmethod
     def get_project_target_files(patterns):
         c_extension = (".c",)
         cpp_extensions = (".cc", ".cpp", ".cxx", ".ino")
@@ -200,11 +223,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             if self.options.get("verbose"):
                 click.echo(" ".join(cmd))
 
-            proc.exec_command(
-                cmd,
-                stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
-                stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
-            )
+            self.execute_check_cmd(cmd)
 
         else:
             if self.options.get("verbose"):

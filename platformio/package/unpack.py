@@ -134,27 +134,28 @@ class FileUnpacker(object):
         self.path = path
         self._archiver = None
 
-    def _init_archiver(self):
+    def __enter__(self):
+        self._archiver = self.new_archiver(self.path)
+        return self
+
+    def __exit__(self, *args):
+        if self._archiver:
+            self._archiver.close()
+
+    @staticmethod
+    def new_archiver(path):
         magic_map = {
             b"\x1f\x8b\x08": TARArchiver,
             b"\x42\x5a\x68": TARArchiver,
             b"\x50\x4b\x03\x04": ZIPArchiver,
         }
         magic_len = max(len(k) for k in magic_map)
-        with open(self.path, "rb") as fp:
+        with open(path, "rb") as fp:
             data = fp.read(magic_len)
             for magic, archiver in magic_map.items():
                 if data.startswith(magic):
-                    return archiver(self.path)
-        raise PackageException("Unknown archive type '%s'" % self.path)
-
-    def __enter__(self):
-        self._archiver = self._init_archiver()
-        return self
-
-    def __exit__(self, *args):
-        if self._archiver:
-            self._archiver.close()
+                    return archiver(path)
+        raise PackageException("Unknown archive type '%s'" % path)
 
     def unpack(
         self, dest_dir=None, with_progress=True, check_unpacked=True, silent=False

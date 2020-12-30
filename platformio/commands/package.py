@@ -23,6 +23,7 @@ from platformio.clients.registry import RegistryClient
 from platformio.compat import ensure_python3
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
+from platformio.package.unpack import FileUnpacker, TARArchiver
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
@@ -81,6 +82,17 @@ def package_pack(package, output):
 )
 def package_publish(package, owner, released_at, private, notify):
     assert ensure_python3()
+
+    # publish .tar.gz instantly without repacking
+    if not os.path.isdir(package) and isinstance(
+        FileUnpacker.new_archiver(package), TARArchiver
+    ):
+        response = RegistryClient().publish_package(
+            package, owner, released_at, private, notify
+        )
+        click.secho(response.get("message"), fg="green")
+        return
+
     with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
         with fs.cd(tmp_dir):
             p = PackagePacker(package)

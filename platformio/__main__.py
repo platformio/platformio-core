@@ -33,7 +33,7 @@ except:  # pylint: disable=bare-except
 @click.command(
     cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
 )
-@click.version_option(__version__, prog_name="PlatformIO")
+@click.version_option(__version__, prog_name="PlatformIO Core")
 @click.option("--force", "-f", is_flag=True, help="DEPRECATE")
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")

@@ -62,10 +62,11 @@ def ci_strings_are_equal(a, b):
 
 
 def ensure_python3(raise_exception=True):
-    if not raise_exception or not PY2:
-        return not PY2
+    compatible = sys.version_info >= (3, 6)
+    if not raise_exception or compatible:
+        return compatible
     raise UserSideException(
-        "Python 3.5 or later is required for this operation. \n"
+        "Python 3.6 or later is required for this operation. \n"
         "Please install the latest Python 3 and reinstall PlatformIO Core using "
         "installation script:\n"
         "https://docs.platformio.org/page/core/installation.html"

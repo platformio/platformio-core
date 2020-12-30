@@ -109,7 +109,7 @@ class CppcheckCheckTool(CheckToolBase):
         cmd = [
             tool_path,
             "--addon-python=%s" % proc.get_pythonexe_path(),
-            "--error-exitcode=1",
+            "--error-exitcode=3",
             "--verbose" if self.options.get("verbose") else "--quiet",
         ]
 
@@ -220,6 +220,11 @@ class CppcheckCheckTool(CheckToolBase):
                 if os.path.isfile(dump_file):
                     os.remove(dump_file)
 
+    @staticmethod
+    def is_check_successful(cmd_result):
+        # Cppcheck is configured to return '3' if a defect is found
+        return cmd_result["returncode"] in (0, 3)
+
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
         project_files = self.get_project_target_files(self.options["patterns"])
@@ -238,11 +243,7 @@ class CppcheckCheckTool(CheckToolBase):
             if self.options.get("verbose"):
                 click.echo(" ".join(cmd))
 
-            proc.exec_command(
-                cmd,
-                stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
-                stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
-            )
+            self.execute_check_cmd(cmd)
 
         self.clean_up()
 
