@@ -167,3 +167,6 @@ ATTRS{idVendor}=="c251", ATTRS{idProduct}=="2710", MODE="0666", ENV{ID_MM_DEVICE
 
 # CMSIS-DAP compatible adapters
 ATTRS{product}=="*CMSIS-DAP*", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+
+# Atmel AVR Dragon
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2107", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
