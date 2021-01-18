@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.0.5 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
 * Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
 * Check for debug server's "ready_pattern" in "stderr"
 

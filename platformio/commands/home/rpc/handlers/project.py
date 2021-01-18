@@ -18,12 +18,11 @@ import os
 import shutil
 import time
 
-import jsonrpc  # pylint: disable=import-error
+import jsonrpc
 
 from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
@@ -32,7 +31,7 @@ from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 
 
-class ProjectRPC(object):
+class ProjectRPC:
     @staticmethod
     def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)
@@ -254,8 +253,6 @@ class ProjectRPC(object):
 
     def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
         board = str(board)
-        if arduino_project_dir and PY2:
-            arduino_project_dir = arduino_project_dir.encode(get_filesystem_encoding())
         # don't import PIO Project
         if is_platformio_project(arduino_project_dir):
             return arduino_project_dir

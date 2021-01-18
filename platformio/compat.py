@@ -78,6 +78,12 @@ if PY2:
 
     string_types = (str, unicode)
 
+    def create_task(coro, name=None):
+        raise NotImplementedError
+
+    def get_running_loop():
+        raise NotImplementedError
+
     def is_bytes(x):
         return isinstance(x, (buffer, bytearray))
 
@@ -128,6 +134,12 @@ if PY2:
 else:
     import importlib.util
     from glob import escape as glob_escape
+
+    if sys.version_info >= (3, 7):
+        from asyncio import create_task, get_running_loop
+    else:
+        from asyncio import ensure_future as create_task
+        from asyncio import get_event_loop as get_running_loop
 
     string_types = (str,)
 

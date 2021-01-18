@@ -12,36 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=keyword-arg-before-vararg,arguments-differ,signature-differs
-
 import requests
-from twisted.internet import defer  # pylint: disable=import-error
-from twisted.internet import reactor  # pylint: disable=import-error
-from twisted.internet import threads  # pylint: disable=import-error
+from starlette.concurrency import run_in_threadpool
 
 from platformio import util
 from platformio.proc import where_is_program
 
 
 class AsyncSession(requests.Session):
-    def __init__(self, n=None, *args, **kwargs):
-        if n:
-            pool = reactor.getThreadPool()
-            pool.adjustPoolsize(0, n)
-
-        super(AsyncSession, self).__init__(*args, **kwargs)
-
-    def request(self, *args, **kwargs):
+    async def request(  # pylint: disable=signature-differs,invalid-overridden-method
+        self, *args, **kwargs
+    ):
         func = super(AsyncSession, self).request
-        return threads.deferToThread(func, *args, **kwargs)
-
-    def wrap(self, *args, **kwargs):  # pylint: disable=no-self-use
-        return defer.ensureDeferred(*args, **kwargs)
+        return await run_in_threadpool(func, *args, **kwargs)
 
 
 @util.memoized(expire="60s")
 def requests_session():
-    return AsyncSession(n=5)
+    return AsyncSession()
 
 
 @util.memoized(expire="60s")

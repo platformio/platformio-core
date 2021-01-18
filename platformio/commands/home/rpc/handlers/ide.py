@@ -14,11 +14,12 @@
 
 import time
 
-import jsonrpc  # pylint: disable=import-error
-from twisted.internet import defer  # pylint: disable=import-error
+import jsonrpc
+
+from platformio.compat import get_running_loop
 
 
-class IDERPC(object):
+class IDERPC:
     def __init__(self):
         self._queue = {}
 
@@ -28,14 +29,14 @@ class IDERPC(object):
                 code=4005, message="PIO Home IDE agent is not started"
             )
         while self._queue[sid]:
-            self._queue[sid].pop().callback(
+            self._queue[sid].pop().set_result(
                 {"id": time.time(), "method": command, "params": params}
             )
 
     def listen_commands(self, sid=0):
         if sid not in self._queue:
             self._queue[sid] = []
-        self._queue[sid].append(defer.Deferred())
+        self._queue[sid].append(get_running_loop().create_future())
         return self._queue[sid][-1]
 
     def open_project(self, sid, project_dir):

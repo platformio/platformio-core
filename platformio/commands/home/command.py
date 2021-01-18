@@ -15,17 +15,17 @@
 # pylint: disable=too-many-locals,too-many-statements
 
 import mimetypes
+import os
 import socket
-from os.path import isdir
 
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS
-from platformio.package.manager.core import get_core_package_dir, inject_contrib_pysite
+from platformio.compat import WINDOWS, ensure_python3
+from platformio.package.manager.core import get_core_package_dir
 
 
-@click.command("home", short_help="UI to manage PlatformIO")
+@click.command("home", short_help="GUI to manage PlatformIO")
 @click.option("--port", type=int, default=8008, help="HTTP port, default=8008")
 @click.option(
     "--host",
@@ -46,60 +46,16 @@ from platformio.package.manager.core import get_core_package_dir, inject_contrib
     ),
 )
 def cli(port, host, no_open, shutdown_timeout):
-    # pylint: disable=import-error, import-outside-toplevel
-
-    # import contrib modules
-    inject_contrib_pysite()
-
-    from autobahn.twisted.resource import WebSocketResource
-    from twisted.internet import reactor
-    from twisted.web import server
-    from twisted.internet.error import CannotListenError
-
-    from platformio.commands.home.rpc.handlers.app import AppRPC
-    from platformio.commands.home.rpc.handlers.ide import IDERPC
-    from platformio.commands.home.rpc.handlers.misc import MiscRPC
-    from platformio.commands.home.rpc.handlers.os import OSRPC
-    from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-    from platformio.commands.home.rpc.handlers.project import ProjectRPC
-    from platformio.commands.home.rpc.handlers.account import AccountRPC
-    from platformio.commands.home.rpc.server import JSONRPCServerFactory
-    from platformio.commands.home.web import WebRoot
-
-    factory = JSONRPCServerFactory(shutdown_timeout)
-    factory.addHandler(AppRPC(), namespace="app")
-    factory.addHandler(IDERPC(), namespace="ide")
-    factory.addHandler(MiscRPC(), namespace="misc")
-    factory.addHandler(OSRPC(), namespace="os")
-    factory.addHandler(PIOCoreRPC(), namespace="core")
-    factory.addHandler(ProjectRPC(), namespace="project")
-    factory.addHandler(AccountRPC(), namespace="account")
-
-    contrib_dir = get_core_package_dir("contrib-piohome")
-    if not isdir(contrib_dir):
-        raise exception.PlatformioException("Invalid path to PIO Home Contrib")
-
     # Ensure PIO Home mimetypes are known
     mimetypes.add_type("text/html", ".html")
     mimetypes.add_type("text/css", ".css")
     mimetypes.add_type("application/javascript", ".js")
 
-    root = WebRoot(contrib_dir)
-    root.putChild(b"wsrpc", WebSocketResource(factory))
-    site = server.Site(root)
-
     # hook for `platformio-node-helpers`
     if host == "__do_not_start__":
         return
 
-    already_started = is_port_used(host, port)
     home_url = "http://%s:%d" % (host, port)
-    if not no_open:
-        if already_started:
-            click.launch(home_url)
-        else:
-            reactor.callLater(1, lambda: click.launch(home_url))
-
     click.echo(
         "\n".join(
             [
@@ -115,21 +71,21 @@ def cli(port, host, no_open, shutdown_timeout):
     click.echo("")
     click.echo("Open PlatformIO Home in your browser by this URL => %s" % home_url)
 
-    try:
-        reactor.listenTCP(port, site, interface=host)
-    except CannotListenError as e:
-        click.secho(str(e), fg="red", err=True)
-        already_started = True
-
-    if already_started:
+    if is_port_used(host, port):
         click.secho(
             "PlatformIO Home server is already started in another process.", fg="yellow"
         )
+        if not no_open:
+            click.launch(home_url)
         return
 
-    click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
-
-    reactor.run()
+    run_server(
+        host=host,
+        port=port,
+        no_open=no_open,
+        shutdown_timeout=shutdown_timeout,
+        home_url=home_url,
+    )
 
 
 def is_port_used(host, port):
@@ -150,3 +106,54 @@ def is_port_used(host, port):
             return False
 
     return True
+
+
+def run_server(host, port, no_open, shutdown_timeout, home_url):
+    # pylint: disable=import-error, import-outside-toplevel
+
+    ensure_python3()
+
+    import uvicorn
+    from starlette.applications import Starlette
+    from starlette.routing import Mount, WebSocketRoute
+    from starlette.staticfiles import StaticFiles
+
+    from platformio.commands.home.rpc.handlers.account import AccountRPC
+    from platformio.commands.home.rpc.handlers.app import AppRPC
+    from platformio.commands.home.rpc.handlers.ide import IDERPC
+    from platformio.commands.home.rpc.handlers.misc import MiscRPC
+    from platformio.commands.home.rpc.handlers.os import OSRPC
+    from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
+    from platformio.commands.home.rpc.handlers.project import ProjectRPC
+    from platformio.commands.home.rpc.server import WebSocketJSONRPCServerFactory
+
+    contrib_dir = get_core_package_dir("contrib-piohome")
+    if not os.path.isdir(contrib_dir):
+        raise exception.PlatformioException("Invalid path to PIO Home Contrib")
+
+    ws_rpc_factory = WebSocketJSONRPCServerFactory(shutdown_timeout)
+    ws_rpc_factory.addHandler(AccountRPC(), namespace="account")
+    ws_rpc_factory.addHandler(AppRPC(), namespace="app")
+    ws_rpc_factory.addHandler(IDERPC(), namespace="ide")
+    ws_rpc_factory.addHandler(MiscRPC(), namespace="misc")
+    ws_rpc_factory.addHandler(OSRPC(), namespace="os")
+    ws_rpc_factory.addHandler(PIOCoreRPC(), namespace="core")
+    ws_rpc_factory.addHandler(ProjectRPC(), namespace="project")
+
+    uvicorn.run(
+        Starlette(
+            routes=[
+                WebSocketRoute("/wsrpc", ws_rpc_factory, name="wsrpc"),
+                Mount("/", StaticFiles(directory=contrib_dir, html=True)),
+            ],
+            on_startup=[
+                lambda: click.echo(
+                    "PIO Home has been started. Press Ctrl+C to shutdown."
+                ),
+                lambda: None if no_open else click.launch(home_url),
+            ],
+        ),
+        host=host,
+        port=port,
+        log_level="warning",
+    )

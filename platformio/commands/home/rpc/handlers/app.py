@@ -20,7 +20,7 @@ from platformio import __version__, app, fs, util
 from platformio.project.helpers import get_project_core_dir, is_platformio_project
 
 
-class AppRPC(object):
+class AppRPC:
 
     APPSTATE_PATH = join(get_project_core_dir(), "homestate.json")
 

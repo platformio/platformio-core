@@ -14,25 +14,23 @@
 
 from __future__ import absolute_import
 
+import glob
 import io
 import os
 import shutil
 from functools import cmp_to_key
 
 import click
-from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import __default_requests_timeout__, fs, util
 from platformio.cache import ContentCache
 from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
-from platformio.compat import PY2, get_filesystem_encoding, glob_recursive
 
 
-class OSRPC(object):
+class OSRPC:
     @staticmethod
-    @defer.inlineCallbacks
-    def fetch_content(uri, data=None, headers=None, cache_valid=None):
+    async def fetch_content(uri, data=None, headers=None, cache_valid=None):
         if not headers:
             headers = {
                 "User-Agent": (
@@ -46,18 +44,18 @@ class OSRPC(object):
             if cache_key:
                 result = cc.get(cache_key)
                 if result is not None:
-                    defer.returnValue(result)
+                    return result
 
         # check internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
         session = helpers.requests_session()
         if data:
-            r = yield session.post(
+            r = await session.post(
                 uri, data=data, headers=headers, timeout=__default_requests_timeout__
             )
         else:
-            r = yield session.get(
+            r = await session.get(
                 uri, headers=headers, timeout=__default_requests_timeout__
             )
 
@@ -66,11 +64,11 @@ class OSRPC(object):
         if cache_valid:
             with ContentCache() as cc:
                 cc.set(cache_key, result, cache_valid)
-        defer.returnValue(result)
+        return result
 
-    def request_content(self, uri, data=None, headers=None, cache_valid=None):
+    async def request_content(self, uri, data=None, headers=None, cache_valid=None):
         if uri.startswith("http"):
-            return self.fetch_content(uri, data, headers, cache_valid)
+            return await self.fetch_content(uri, data, headers, cache_valid)
         if os.path.isfile(uri):
             with io.open(uri, encoding="utf-8") as fp:
                 return fp.read()
@@ -82,13 +80,11 @@ class OSRPC(object):
 
     @staticmethod
     def reveal_file(path):
-        return click.launch(
-            path.encode(get_filesystem_encoding()) if PY2 else path, locate=True
-        )
+        return click.launch(path, locate=True)
 
     @staticmethod
     def open_file(path):
-        return click.launch(path.encode(get_filesystem_encoding()) if PY2 else path)
+        return click.launch(path)
 
     @staticmethod
     def is_file(path):
@@ -121,7 +117,9 @@ class OSRPC(object):
         result = set()
         for pathname in pathnames:
             result |= set(
-                glob_recursive(os.path.join(root, pathname) if root else pathname)
+                glob.glob(
+                    os.path.join(root, pathname) if root else pathname, recursive=True
+                )
             )
         return list(result)
 
