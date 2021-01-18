@@ -14,13 +14,13 @@
 
 import inspect
 import json
-import sys
 
 import click
 import jsonrpc
 from starlette.endpoints import WebSocketEndpoint
 
 from platformio.compat import create_task, get_running_loop, is_bytes
+from platformio.proc import force_exit
 
 
 class JSONRPCServerFactoryBase:
@@ -61,12 +61,7 @@ class JSONRPCServerFactoryBase:
 
         def _auto_shutdown_server():
             click.echo("Automatically shutdown server on timeout")
-            try:
-                get_running_loop().stop()
-            except:  # pylint: disable=bare-except
-                pass
-            finally:
-                sys.exit(0)
+            force_exit()
 
         self.shutdown_timer = get_running_loop().call_later(
             self.shutdown_timeout, _auto_shutdown_server

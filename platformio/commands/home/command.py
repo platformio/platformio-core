@@ -12,17 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-locals,too-many-statements
-
 import mimetypes
-import os
-import socket
 
 import click
 
-from platformio import exception
-from platformio.compat import WINDOWS, ensure_python3
-from platformio.package.manager.core import get_core_package_dir
+from platformio.commands.home.helpers import is_port_used
+from platformio.compat import ensure_python3
 
 
 @click.command("home", short_help="GUI to manage PlatformIO")
@@ -46,6 +41,8 @@ from platformio.package.manager.core import get_core_package_dir
     ),
 )
 def cli(port, host, no_open, shutdown_timeout):
+    ensure_python3()
+
     # Ensure PIO Home mimetypes are known
     mimetypes.add_type("text/html", ".html")
     mimetypes.add_type("text/css", ".css")
@@ -79,81 +76,13 @@ def cli(port, host, no_open, shutdown_timeout):
             click.launch(home_url)
         return
 
+    # pylint: disable=import-outside-toplevel
+    from platformio.commands.home.run import run_server
+
     run_server(
         host=host,
         port=port,
         no_open=no_open,
         shutdown_timeout=shutdown_timeout,
         home_url=home_url,
-    )
-
-
-def is_port_used(host, port):
-    socket.setdefaulttimeout(1)
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if WINDOWS:
-        try:
-            s.bind((host, port))
-            s.close()
-            return False
-        except (OSError, socket.error):
-            pass
-    else:
-        try:
-            s.connect((host, port))
-            s.close()
-        except socket.error:
-            return False
-
-    return True
-
-
-def run_server(host, port, no_open, shutdown_timeout, home_url):
-    # pylint: disable=import-error, import-outside-toplevel
-
-    ensure_python3()
-
-    import uvicorn
-    from starlette.applications import Starlette
-    from starlette.routing import Mount, WebSocketRoute
-    from starlette.staticfiles import StaticFiles
-
-    from platformio.commands.home.rpc.handlers.account import AccountRPC
-    from platformio.commands.home.rpc.handlers.app import AppRPC
-    from platformio.commands.home.rpc.handlers.ide import IDERPC
-    from platformio.commands.home.rpc.handlers.misc import MiscRPC
-    from platformio.commands.home.rpc.handlers.os import OSRPC
-    from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-    from platformio.commands.home.rpc.handlers.project import ProjectRPC
-    from platformio.commands.home.rpc.server import WebSocketJSONRPCServerFactory
-
-    contrib_dir = get_core_package_dir("contrib-piohome")
-    if not os.path.isdir(contrib_dir):
-        raise exception.PlatformioException("Invalid path to PIO Home Contrib")
-
-    ws_rpc_factory = WebSocketJSONRPCServerFactory(shutdown_timeout)
-    ws_rpc_factory.addHandler(AccountRPC(), namespace="account")
-    ws_rpc_factory.addHandler(AppRPC(), namespace="app")
-    ws_rpc_factory.addHandler(IDERPC(), namespace="ide")
-    ws_rpc_factory.addHandler(MiscRPC(), namespace="misc")
-    ws_rpc_factory.addHandler(OSRPC(), namespace="os")
-    ws_rpc_factory.addHandler(PIOCoreRPC(), namespace="core")
-    ws_rpc_factory.addHandler(ProjectRPC(), namespace="project")
-
-    uvicorn.run(
-        Starlette(
-            routes=[
-                WebSocketRoute("/wsrpc", ws_rpc_factory, name="wsrpc"),
-                Mount("/", StaticFiles(directory=contrib_dir, html=True)),
-            ],
-            on_startup=[
-                lambda: click.echo(
-                    "PIO Home has been started. Press Ctrl+C to shutdown."
-                ),
-                lambda: None if no_open else click.launch(home_url),
-            ],
-        ),
-        host=host,
-        port=port,
-        log_level="warning",
     )
