@@ -53,7 +53,7 @@ def on_platformio_start(ctx, force, caller):
         click.secho(
             """
 Python 2 and Python 3.5 are not compatible with PlatformIO Core 5.0.
-Please check the migration guide on how to fix this warning message:
+Please check a migration guide on how to fix this warning message:
 """,
             fg="yellow",
         )

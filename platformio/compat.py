@@ -67,9 +67,9 @@ def ensure_python3(raise_exception=True):
         return compatible
     raise UserSideException(
         "Python 3.6 or later is required for this operation. \n"
-        "Please install the latest Python 3 and reinstall PlatformIO Core using "
-        "installation script:\n"
-        "https://docs.platformio.org/page/core/installation.html"
+        "Please check a migration guide:\n"
+        "https://docs.platformio.org/en/latest/core/migration.html"
+        "#drop-support-for-python-2-and-3-5"
     )
 
 
