@@ -24,7 +24,6 @@ from functools import wraps
 from glob import glob
 
 import click
-import zeroconf
 
 from platformio import __version__, compat, exception, proc
 from platformio.compat import PY2, WINDOWS
@@ -165,6 +164,9 @@ def get_logical_devices():
 def get_mdns_services():
     compat.ensure_python3()
 
+    # pylint: disable=import-outside-toplevel
+    import zeroconf
+
     class mDNSListener(object):
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
@@ -186,9 +188,6 @@ def get_mdns_services():
         def __exit__(self, etype, value, traceback):
             self._zc.close()
 
-        def remove_service(self, zc, type_, name):
-            pass
-
         def add_service(self, zc, type_, name):
             try:
                 assert zeroconf.service_type_name(name)
@@ -202,6 +201,12 @@ def get_mdns_services():
                 s = zc.get_service_info(type_, name)
                 if s:
                     self._found_services.append(s)
+
+        def remove_service(self, zc, type_, name):
+            pass
+
+        def update_service(self, zc, type_, name):
+            pass
 
         def get_services(self):
             return self._found_services

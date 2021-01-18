@@ -36,8 +36,10 @@ minimal_requirements = [
     "requests==2.*",
     "semantic_version==2.8.*",
     "tabulate==0.8.*",
-    "zeroconf==%s" % ("0.19.*" if PY2 else "0.28.*"),
 ]
+
+if not PY2:
+    minimal_requirements.append("zeroconf==0.28.*")
 
 home_requirements = [
     "aiofiles==0.6.*",
