@@ -24,8 +24,9 @@ from functools import wraps
 from glob import glob
 
 import click
+import zeroconf
 
-from platformio import __version__, exception, proc
+from platformio import __version__, compat, exception, proc
 from platformio.compat import PY2, WINDOWS
 from platformio.fs import cd, load_json  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
@@ -162,14 +163,7 @@ def get_logical_devices():
 
 
 def get_mdns_services():
-    # pylint: disable=import-outside-toplevel
-    try:
-        import zeroconf
-    except ImportError:
-        from platformio.package.manager.core import inject_contrib_pysite
-
-        inject_contrib_pysite()
-        import zeroconf  # pylint: disable=import-outside-toplevel
+    compat.ensure_python3()
 
     class mDNSListener(object):
         def __init__(self):
@@ -178,7 +172,15 @@ def get_mdns_services():
             self._found_services = []
 
         def __enter__(self):
-            zeroconf.ServiceBrowser(self._zc, "_services._dns-sd._udp.local.", self)
+            zeroconf.ServiceBrowser(
+                self._zc,
+                [
+                    "_http._tcp.local.",
+                    "_hap._tcp.local.",
+                    "_services._dns-sd._udp.local.",
+                ],
+                self,
+            )
             return self
 
         def __exit__(self, etype, value, traceback):
@@ -225,12 +227,7 @@ def get_mdns_services():
                 {
                     "type": service.type,
                     "name": service.name,
-                    "ip": ".".join(
-                        [
-                            str(c if isinstance(c, int) else ord(c))
-                            for c in service.address
-                        ]
-                    ),
+                    "ip": ", ".join(service.parsed_addresses()),
                     "port": service.port,
                     "properties": properties,
                 }

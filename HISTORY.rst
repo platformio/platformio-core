@@ -8,9 +8,10 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.0.4 (2020-12-??)
+5.0.5 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
 * Check for debug server's "ready_pattern" in "stderr"
 
 5.0.4 (2020-12-30)
