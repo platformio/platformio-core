@@ -15,6 +15,8 @@ PlatformIO Core 5
 * Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
 * Check for debug server's "ready_pattern" in "stderr"
 * Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
+* Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for a firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
+* Fixed an issue with Python 3.8+ on Windows when network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
