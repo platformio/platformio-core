@@ -59,7 +59,7 @@ def _dump_includes(env):
             includes["toolchain"].extend([os.path.realpath(inc) for inc in glob(g)])
 
     includes["unity"] = []
-    unity_dir = get_core_package_dir("tool-unity")
+    unity_dir = get_core_package_dir("tool-unity", auto_install=False)
     if unity_dir:
         includes["unity"].append(unity_dir)
 

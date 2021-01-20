@@ -27,7 +27,7 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import get_pythonexe_path
 
 
-def get_core_package_dir(name):
+def get_core_package_dir(name, auto_install=True):
     if name not in __core_packages__:
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
@@ -37,6 +37,8 @@ def get_core_package_dir(name):
     pkg = pm.get_package(spec)
     if pkg:
         return pkg.path
+    if not auto_install:
+        return None
     assert pm.install(spec)
     _remove_unnecessary_packages()
     return pm.get_package(spec).path
