@@ -14,6 +14,7 @@ PlatformIO Core 5
 * Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
 * Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
 * Check for debug server's "ready_pattern" in "stderr"
+* Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
