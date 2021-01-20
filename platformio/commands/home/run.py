@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
 import os
 
 import click
@@ -31,6 +30,7 @@ from platformio.commands.home.rpc.handlers.os import OSRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.commands.home.rpc.handlers.project import ProjectRPC
 from platformio.commands.home.rpc.server import WebSocketJSONRPCServerFactory
+from platformio.compat import get_running_loop
 from platformio.exception import PlatformioException
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import force_exit
@@ -47,7 +47,7 @@ class ShutdownMiddleware:
 
 
 async def shutdown_server(_=None):
-    asyncio.get_event_loop().call_later(0.5, force_exit)
+    get_running_loop().call_later(0.5, force_exit)
     return PlainTextResponse("Server has been shutdown!")
 
 

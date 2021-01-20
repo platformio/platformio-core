@@ -184,7 +184,7 @@ class ProjectRPC:
             )
         return sorted(result, key=lambda data: data["platform"]["title"])
 
-    def init(self, board, framework, project_dir):
+    async def init(self, board, framework, project_dir):
         assert project_dir
         state = AppRPC.load_state()
         if not os.path.isdir(project_dir):
@@ -197,14 +197,13 @@ class ProjectRPC:
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        d.addCallback(self._generate_project_main, project_dir, framework)
-        return d
+        return self._generate_project_main(project_dir, framework)
 
     @staticmethod
-    def _generate_project_main(_, project_dir, framework):
+    def _generate_project_main(project_dir, framework):
         main_content = None
         if framework == "arduino":
             main_content = "\n".join(
@@ -251,7 +250,7 @@ class ProjectRPC:
                 fp.write(main_content.strip())
         return project_dir
 
-    def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
+    async def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
         board = str(board)
         # don't import PIO Project
         if is_platformio_project(arduino_project_dir):
@@ -290,14 +289,9 @@ class ProjectRPC:
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        d.addCallback(self._finalize_arduino_import, project_dir, arduino_project_dir)
-        return d
-
-    @staticmethod
-    def _finalize_arduino_import(_, project_dir, arduino_project_dir):
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
@@ -307,7 +301,7 @@ class ProjectRPC:
         return project_dir
 
     @staticmethod
-    def import_pio(project_dir):
+    async def import_pio(project_dir):
         if not project_dir or not is_platformio_project(project_dir):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001, message="Not an PlatformIO project: %s" % project_dir
@@ -325,8 +319,7 @@ class ProjectRPC:
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": new_project_dir, "force_subprocess": True}
         )
-        d.addCallback(lambda _: new_project_dir)
-        return d
+        return new_project_dir
