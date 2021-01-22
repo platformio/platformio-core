@@ -162,7 +162,6 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         pkg.dump_meta()
 
     # remove unused files
-    shutil.rmtree(os.path.join(target_dir, "autobahn", "xbr", "contracts"))
     for root, dirs, files in os.walk(target_dir):
         for t in ("_test", "test", "tests"):
             if t in dirs:
@@ -170,19 +169,6 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         for name in files:
             if name.endswith((".chm", ".pyc")):
                 os.remove(os.path.join(root, name))
-
-    # apply patches
-    with open(
-        os.path.join(target_dir, "autobahn", "twisted", "__init__.py"), "r+"
-    ) as fp:
-        contents = fp.read()
-        contents = contents.replace(
-            "from autobahn.twisted.wamp import ApplicationSession",
-            "# from autobahn.twisted.wamp import ApplicationSession",
-        )
-        fp.seek(0)
-        fp.truncate()
-        fp.write(contents)
 
     return target_dir
 
@@ -194,22 +180,12 @@ def get_contrib_pysite_deps():
     twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == %s" % ("19.11.2" if PY2 else "20.7.1"),
-        "json-rpc == 1.13.0",
     ]
 
     # twisted[tls], see setup.py for %twisted_version%
     result.extend(
         ["pyopenssl >= 16.0.0", "service_identity >= 18.1.0", "idna >= 0.6, != 2.3"]
     )
-
-    # zeroconf
-    if PY2:
-        result.append(
-            "https://github.com/ivankravets/python-zeroconf/" "archive/pio-py27.zip"
-        )
-    else:
-        result.append("zeroconf == 0.26.0")
 
     if "windows" in sys_type:
         result.append("pypiwin32 == 223")
