@@ -773,11 +773,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_compat_mode(self):
+        mode = self._manifest.get("build", {}).get(
+            "libCompatMode",
+        )
+        if not mode and self._manifest.get("platforms"):
+            mode = "strict"
         # pylint: disable=no-member
         return self.validate_compat_mode(
-            self._manifest.get("build", {}).get(
-                "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
-            )
+            mode or LibBuilderBase.lib_compat_mode.fget(self)
         )
 
     def is_platforms_compatible(self, platforms):

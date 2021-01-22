@@ -13,10 +13,11 @@ PlatformIO Core 5
 
 * Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
 * Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
-* Check for debug server's "ready_pattern" in "stderr"
+* Check for debugging server's "ready_pattern" in "stderr"
 * Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
-* Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for a firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
-* Fixed an issue with Python 3.8+ on Windows when network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+* Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
+* Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+* Fixed an issue when "strict" compatibility mode was not used for a library with custom "platforms" field in `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__ manifest (`issue #3806 <https://github.com/platformio/platformio-core/issues/3806>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
@@ -25,8 +26,8 @@ PlatformIO Core 5
 - Improved ``.ccls`` configuration file for Emacs, Vim, and Sublime Text integrations
 - Updated analysis tools:
 
-    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
-    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
+  * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
+  * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
 
 - Show a warning message about deprecated support for Python 2 and Python 3.5
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
