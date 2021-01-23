@@ -146,6 +146,8 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
                 pkg.metadata.name not in deppkgs
                 or pkg.metadata.version not in deppkgs[pkg.metadata.name]
             ):
+                if pkg.metadata.spec.url or pkg.metadata.spec.owner != "platformio":
+                    continue
                 try:
                     pm.uninstall(pkg.metadata.spec)
                 except UnknownPackageError:
