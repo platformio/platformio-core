@@ -69,7 +69,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         )
         p.install_python_packages()
         p.on_installed()
-        self.cleanup_packages(list(p.packages))
+        self.autoremove_packages(list(p.packages))
         return pkg
 
     def uninstall(self, spec, silent=False, skip_dependencies=False):
@@ -83,7 +83,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         if not skip_dependencies:
             p.uninstall_python_packages()
             p.on_uninstalled()
-            self.cleanup_packages(list(p.packages))
+            self.autoremove_packages(list(p.packages))
         return pkg
 
     def update(  # pylint: disable=arguments-differ, too-many-arguments
@@ -118,7 +118,8 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         p.update_packages(only_check)
-        self.cleanup_packages(list(p.packages))
+        if not only_check:
+            self.autoremove_packages(list(p.packages))
 
         if missed_pkgs:
             p.install_packages(
@@ -127,28 +128,30 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
 
         return new_pkg or pkg
 
-    def cleanup_packages(self, names):
+    def autoremove_packages(self, names):
         self.memcache_reset()
-        deppkgs = {}
+        required = {}
         for platform in PlatformPackageManager().get_installed():
             p = PlatformFactory.new(platform)
             for pkg in p.get_installed_packages():
-                if pkg.metadata.name not in deppkgs:
-                    deppkgs[pkg.metadata.name] = set()
-                deppkgs[pkg.metadata.name].add(pkg.metadata.version)
+                if pkg.metadata.name not in required:
+                    required[pkg.metadata.name] = set()
+                required[pkg.metadata.name].add(pkg.metadata.version)
 
         pm = ToolPackageManager()
         for pkg in pm.get_installed():
-            if pkg.metadata.name not in names:
+            skip_conds = [
+                pkg.metadata.name not in names,
+                pkg.metadata.spec.url,
+                pkg.metadata.name in required
+                and pkg.metadata.version in required[pkg.metadata.name],
+            ]
+            if any(skip_conds):
                 continue
-            if (
-                pkg.metadata.name not in deppkgs
-                or pkg.metadata.version not in deppkgs[pkg.metadata.name]
-            ):
-                try:
-                    pm.uninstall(pkg.metadata.spec)
-                except UnknownPackageError:
-                    pass
+            try:
+                pm.uninstall(pkg.metadata.spec)
+            except UnknownPackageError:
+                pass
 
         self.memcache_reset()
         return True
