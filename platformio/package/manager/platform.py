@@ -69,7 +69,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         )
         p.install_python_packages()
         p.on_installed()
-        self.autoremove_packages(list(p.packages))
         return pkg
 
     def uninstall(self, spec, silent=False, skip_dependencies=False):
@@ -83,7 +82,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         if not skip_dependencies:
             p.uninstall_python_packages()
             p.on_uninstalled()
-            self.autoremove_packages(list(p.packages))
         return pkg
 
     def update(  # pylint: disable=arguments-differ, too-many-arguments
@@ -118,8 +116,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         p.update_packages(only_check)
-        if not only_check:
-            self.autoremove_packages(list(p.packages))
 
         if missed_pkgs:
             p.install_packages(
@@ -127,34 +123,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         return new_pkg or pkg
-
-    def autoremove_packages(self, names):
-        self.memcache_reset()
-        required = {}
-        for platform in PlatformPackageManager().get_installed():
-            p = PlatformFactory.new(platform)
-            for pkg in p.get_installed_packages():
-                if pkg.metadata.name not in required:
-                    required[pkg.metadata.name] = set()
-                required[pkg.metadata.name].add(pkg.metadata.version)
-
-        pm = ToolPackageManager()
-        for pkg in pm.get_installed():
-            skip_conds = [
-                pkg.metadata.name not in names,
-                pkg.metadata.spec.url,
-                pkg.metadata.name in required
-                and pkg.metadata.version in required[pkg.metadata.name],
-            ]
-            if any(skip_conds):
-                continue
-            try:
-                pm.uninstall(pkg.metadata.spec)
-            except UnknownPackageError:
-                pass
-
-        self.memcache_reset()
-        return True
 
     @util.memoized(expire="5s")
     def get_installed_boards(self):
