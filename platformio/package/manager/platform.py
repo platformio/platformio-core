@@ -118,16 +118,17 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         p.update_packages(only_check)
-        self.cleanup_packages(list(p.packages), only_check)
+        if not only_check:
+            self.cleanup_packages(list(p.packages))
 
-        if missed_pkgs:
-            p.install_packages(
-                with_packages=list(missed_pkgs), skip_default_package=True
-            )
+            if missed_pkgs:
+                p.install_packages(
+                    with_packages=list(missed_pkgs), skip_default_package=True
+                )
 
         return new_pkg or pkg
 
-    def cleanup_packages(self, names, only_check):
+    def cleanup_packages(self, names):
         self.memcache_reset()
         deppkgs = {}
         for platform in PlatformPackageManager().get_installed():
@@ -141,7 +142,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         for pkg in pm.get_installed():
             if pkg.metadata.name not in names:
                 continue
-            if not only_check and (
+            if (
                 pkg.metadata.name not in deppkgs
                 or pkg.metadata.version not in deppkgs[pkg.metadata.name]
             ):
