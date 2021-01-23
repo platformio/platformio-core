@@ -18,12 +18,13 @@ PlatformIO Core 5
 * Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
 * Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Fixed an issue when "strict" compatibility mode was not used for a library with custom "platforms" field in `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__ manifest (`issue #3806 <https://github.com/platformio/platformio-core/issues/3806>`_)
+* Fixed an issue with compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
 
 - Added "Core" suffix when showing PlatformIO Core version using ``pio --version`` command
-- Improved ``.ccls`` configuration file for Emacs, Vim, and Sublime Text integrations
+- Improved ".ccls" configuration file for Emacs, Vim, and Sublime Text integrations
 - Updated analysis tools:
 
   * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules

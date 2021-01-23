@@ -1,4 +1,4 @@
-{{ cxx_path }}
+clang
 
 {{"%c"}} {{ !cc_flags }}
 {{"%cpp"}} {{ !cxx_flags }}
