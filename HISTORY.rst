@@ -11,16 +11,30 @@ PlatformIO Core 5
 5.0.5 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
-* Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
-* Check for debugging server's "ready_pattern" in "stderr"
-* Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
-* Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
-* Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
-* Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
-* Fixed an issue when "strict" compatibility mode was not used for a library with custom "platforms" field in `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__ manifest (`issue #3806 <https://github.com/platformio/platformio-core/issues/3806>`_)
-* Fixed an issue with compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
-* Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
+* **Build System**
+
+  - Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
+  - Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+  - Fixed an issue when "strict" compatibility mode was not used for a library with custom "platforms" field in `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__ manifest (`issue #3806 <https://github.com/platformio/platformio-core/issues/3806>`_)
+
+* **Package Management System**
+
+  - New options for `system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command:
+
+    + ``--dry-run`` option to show data that will be removed
+    + ``--core-packages`` option to remove unnecessary core packages
+    + ``--platform-packages`` option to remove unnecessary development platform packages (`issue #923 <https://github.com/platformio/platformio-core/issues/923>`_)
+
+  - Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
+  - Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
+
+* **Miscellaneous**
+
+  - Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
+  - Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
+  - Check for debugging server's "ready_pattern" in "stderr"
+  - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
+  - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~

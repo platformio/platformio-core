@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from platformio import util
 from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.base import BasePackageManager
+from platformio.package.manager.core import get_installed_core_packages
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageType
 from platformio.platform.exception import IncompatiblePlatform, UnknownBoard
@@ -164,3 +167,37 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             ):
                 return manifest
         raise UnknownBoard(id_)
+
+
+#
+# Helpers
+#
+
+
+def remove_unnecessary_platform_packages(dry_run=False):
+    candidates = []
+    required = set()
+    core_packages = get_installed_core_packages()
+    for platform in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(platform)
+        for pkg in p.get_installed_packages(with_optional=True):
+            required.add(pkg)
+
+    pm = ToolPackageManager()
+    for pkg in pm.get_installed():
+        skip_conds = [
+            pkg.metadata.spec.url,
+            os.path.isfile(os.path.join(pkg.path, ".piokeep")),
+            pkg in required,
+            pkg in core_packages,
+        ]
+        if not any(skip_conds):
+            candidates.append(pkg)
+
+    if dry_run:
+        return candidates
+
+    for pkg in candidates:
+        pm.uninstall(pkg)
+
+    return candidates

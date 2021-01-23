@@ -405,7 +405,12 @@ class PackageItem(object):
         )
 
     def __eq__(self, other):
-        return all([self.path == other.path, self.metadata == other.metadata])
+        if not self.path or not other.path:
+            return self.path == other.path
+        return os.path.realpath(self.path) == os.path.realpath(other.path)
+
+    def __hash__(self):
+        return hash(os.path.realpath(self.path))
 
     def exists(self):
         return os.path.isdir(self.path)

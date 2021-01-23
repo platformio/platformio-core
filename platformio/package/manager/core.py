@@ -27,6 +27,17 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import get_pythonexe_path
 
 
+def get_installed_core_packages():
+    result = []
+    pm = ToolPackageManager()
+    for name, requirements in __core_packages__.items():
+        spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
+        pkg = pm.get_package(spec)
+        if pkg:
+            result.append(pkg)
+    return result
+
+
 def get_core_package_dir(name, auto_install=True):
     if name not in __core_packages__:
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
@@ -40,7 +51,7 @@ def get_core_package_dir(name, auto_install=True):
     if not auto_install:
         return None
     assert pm.install(spec)
-    _remove_unnecessary_packages()
+    remove_unnecessary_core_packages()
     return pm.get_package(spec).path
 
 
@@ -54,24 +65,40 @@ def update_core_packages(only_check=False, silent=False):
         if not silent or pm.outdated(pkg, spec).is_outdated():
             pm.update(pkg, spec, only_check=only_check)
     if not only_check:
-        _remove_unnecessary_packages()
+        remove_unnecessary_core_packages()
     return True
 
 
-def _remove_unnecessary_packages():
+def remove_unnecessary_core_packages(dry_run=False):
+    candidates = []
     pm = ToolPackageManager()
     best_pkg_versions = {}
+
     for name, requirements in __core_packages__.items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
         pkg = pm.get_package(spec)
         if not pkg:
             continue
         best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
+
     for pkg in pm.get_installed():
-        if pkg.metadata.name not in best_pkg_versions:
-            continue
-        if pkg.metadata.version != best_pkg_versions[pkg.metadata.name]:
-            pm.uninstall(pkg)
+        skip_conds = [
+            os.path.isfile(os.path.join(pkg.path, ".piokeep")),
+            pkg.metadata.spec.owner != "platformio",
+            pkg.metadata.name not in best_pkg_versions,
+            pkg.metadata.name in best_pkg_versions
+            and pkg.metadata.version == best_pkg_versions[pkg.metadata.name],
+        ]
+        if not any(skip_conds):
+            candidates.append(pkg)
+
+    if dry_run:
+        return candidates
+
+    for pkg in candidates:
+        pm.uninstall(pkg)
+
+    return candidates
 
 
 def inject_contrib_pysite(verify_openssl=False):
