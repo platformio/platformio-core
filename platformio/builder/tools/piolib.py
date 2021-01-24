@@ -773,19 +773,11 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_compat_mode(self):
-        missing = object()
-        mode = self.env.GetProjectConfig().getraw(
-            "env:" + self.env["PIOENV"], "lib_compat_mode", missing
-        )
-        if mode == missing:
-            mode = self._manifest.get("build", {}).get(
-                "libCompatMode",
-            )
-        if not mode and self._manifest.get("platforms"):
-            mode = "strict"
         # pylint: disable=no-member
         return self.validate_compat_mode(
-            mode or LibBuilderBase.lib_compat_mode.fget(self)
+            self._manifest.get("build", {}).get(
+                "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
+            )
         )
 
     def is_platforms_compatible(self, platforms):

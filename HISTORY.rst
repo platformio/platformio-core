@@ -15,7 +15,6 @@ PlatformIO Core 5
 
   - Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
   - Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
-  - Fixed an issue when "strict" compatibility mode was not used for a library with custom "platforms" field in `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__ manifest (`issue #3806 <https://github.com/platformio/platformio-core/issues/3806>`_)
 
 * **Package Management System**
 
