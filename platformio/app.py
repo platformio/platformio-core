@@ -55,6 +55,10 @@ DEFAULT_SETTINGS = {
         "description": "Check for the platform updates interval (days)",
         "value": 7,
     },
+    "check_prune_system_threshold": {
+        "description": "Check for pruning unnecessary data threshold (megabytes)",
+        "value": 1024,
+    },
     "enable_cache": {
         "description": "Enable caching for HTTP API requests",
         "value": True,

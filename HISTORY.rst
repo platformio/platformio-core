@@ -24,6 +24,7 @@ PlatformIO Core 5
     + ``--core-packages`` option to remove unnecessary core packages
     + ``--platform-packages`` option to remove unnecessary development platform packages (`issue #923 <https://github.com/platformio/platformio-core/issues/923>`_)
 
+  - Added new `check_prune_system_threshold <https://docs.platformio.org/page/core/userguide/cmd_settings.html#check-prune-system-threshold>`__ setting
   - Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
   - Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
 
