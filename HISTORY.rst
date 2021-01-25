@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.0.5 (2021-??-??)
+5.1.0 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * **Build System**
