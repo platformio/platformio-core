@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+from urllib.parse import urlparse
 
 import click
 import uvicorn
@@ -21,6 +22,7 @@ from starlette.middleware import Middleware
 from starlette.responses import PlainTextResponse
 from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
+from starlette.status import HTTP_403_FORBIDDEN
 
 from platformio.commands.home.rpc.handlers.account import AccountRPC
 from platformio.commands.home.rpc.handlers.app import AppRPC
@@ -51,6 +53,12 @@ async def shutdown_server(_=None):
     return PlainTextResponse("Server has been shutdown!")
 
 
+async def protected_page(_):
+    return PlainTextResponse(
+        "Protected PlatformIO Home session", status_code=HTTP_403_FORBIDDEN
+    )
+
+
 def run_server(host, port, no_open, shutdown_timeout, home_url):
     contrib_dir = get_core_package_dir("contrib-piohome")
     if not os.path.isdir(contrib_dir):
@@ -65,14 +73,19 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
     ws_rpc_factory.addHandler(PIOCoreRPC(), namespace="core")
     ws_rpc_factory.addHandler(ProjectRPC(), namespace="project")
 
+    path = urlparse(home_url).path
+    routes = [
+        WebSocketRoute(path + "wsrpc", ws_rpc_factory, name="wsrpc"),
+        Route(path + "__shutdown__", shutdown_server, methods=["POST"]),
+        Mount(path, StaticFiles(directory=contrib_dir, html=True), name="static"),
+    ]
+    if path != "/":
+        routes.append(Route("/", protected_page))
+
     uvicorn.run(
         Starlette(
             middleware=[Middleware(ShutdownMiddleware)],
-            routes=[
-                WebSocketRoute("/wsrpc", ws_rpc_factory, name="wsrpc"),
-                Route("/__shutdown__", shutdown_server, methods=["POST"]),
-                Mount("/", StaticFiles(directory=contrib_dir, html=True)),
-            ],
+            routes=routes,
             on_startup=[
                 lambda: click.echo(
                     "PIO Home has been started. Press Ctrl+C to shutdown."

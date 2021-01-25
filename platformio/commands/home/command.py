@@ -40,7 +40,14 @@ from platformio.compat import ensure_python3
         "are connected. Default is 0 which means never auto shutdown"
     ),
 )
-def cli(port, host, no_open, shutdown_timeout):
+@click.option(
+    "--session-id",
+    help=(
+        "A unique session identifier to keep PIO Home isolated from other instances "
+        "and protect from 3rd party access"
+    ),
+)
+def cli(port, host, no_open, shutdown_timeout, session_id):
     ensure_python3()
 
     # Ensure PIO Home mimetypes are known
@@ -52,7 +59,11 @@ def cli(port, host, no_open, shutdown_timeout):
     if host == "__do_not_start__":
         return
 
-    home_url = "http://%s:%d" % (host, port)
+    home_url = "http://%s:%d%s" % (
+        host,
+        port,
+        ("/session/%s/" % session_id) if session_id else "/",
+    )
     click.echo(
         "\n".join(
             [
@@ -61,7 +72,7 @@ def cli(port, host, no_open, shutdown_timeout):
                 " /\\-_--\\   PlatformIO Home",
                 "/  \\_-__\\",
                 "|[]| [] |  %s" % home_url,
-                "|__|____|______________%s" % ("_" * len(host)),
+                "|__|____|__%s" % ("_" * len(home_url)),
             ]
         )
     )
