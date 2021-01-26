@@ -169,6 +169,15 @@ def test_spec_vcs_urls():
         url="git+git@github.com:platformio/platformio-core.git",
         requirements="^1.2.3,!=5",
     )
+    assert PackageSpec(
+        owner="platformio",
+        name="external-repo",
+        requirements="https://github.com/platformio/platformio-core",
+    ) == PackageSpec(
+        owner="platformio",
+        name="external-repo",
+        url="git+https://github.com/platformio/platformio-core",
+    )
 
 
 def test_spec_as_dict():

@@ -112,16 +112,11 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 )
 
     def _install_dependency(self, dependency, silent=False):
-        if set(["name", "version"]) <= set(dependency.keys()) and any(
-            c in dependency["version"] for c in (":", "/", "@")
-        ):
-            spec = PackageSpec("%s=%s" % (dependency["name"], dependency["version"]))
-        else:
-            spec = PackageSpec(
-                owner=dependency.get("owner"),
-                name=dependency.get("name"),
-                requirements=dependency.get("version"),
-            )
+        spec = PackageSpec(
+            owner=dependency.get("owner"),
+            name=dependency.get("name"),
+            requirements=dependency.get("version"),
+        )
         search_filters = {
             key: value
             for key, value in dependency.items()
@@ -143,11 +138,12 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         if not silent:
             self.print_message("Removing dependencies...", fg="yellow")
         for dependency in manifest.get("dependencies"):
-            pkg = self.get_package(
-                PackageSpec(
-                    name=dependency.get("name"), requirements=dependency.get("version")
-                )
+            spec = PackageSpec(
+                owner=dependency.get("owner"),
+                name=dependency.get("name"),
+                requirements=dependency.get("version"),
             )
+            pkg = self.get_package(spec)
             if not pkg:
                 continue
             self._uninstall(pkg, silent=silent)

@@ -18,11 +18,10 @@ from platformio.package.meta import PackageSpec
 
 class PlatformPackagesMixin(object):
     def get_package_spec(self, name, version=None):
-        version = version or self.packages[name].get("version")
-        if version and any(c in version for c in (":", "/", "@")):
-            return PackageSpec("%s=%s" % (name, version))
         return PackageSpec(
-            owner=self.packages[name].get("owner"), name=name, requirements=version
+            owner=self.packages[name].get("owner"),
+            name=name,
+            requirements=version or self.packages[name].get("version"),
         )
 
     def get_package(self, name, spec=None):
