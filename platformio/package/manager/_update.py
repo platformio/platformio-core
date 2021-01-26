@@ -26,7 +26,10 @@ class PackageManagerUpdateMixin(object):
     def outdated(self, pkg, spec=None):
         assert isinstance(pkg, PackageItem)
         assert not spec or isinstance(spec, PackageSpec)
-        assert os.path.isdir(pkg.path) and pkg.metadata
+        assert pkg.metadata
+
+        if not os.path.isdir(pkg.path):
+            return PackageOutdatedResult(current=pkg.metadata.version)
 
         # skip detached package to a specific version
         detached_conditions = [
