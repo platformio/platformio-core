@@ -34,10 +34,14 @@ PlatformIO Core 5
   - Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
   - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
 
+* **Debugging**
+
+  - Configure a custom debug adapter speed using a new `debug_speed <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-speed>`__ option (`issue #3799 <https://github.com/platformio/platformio-core/issues/3799>`_)
+  - Handle debugging server's "ready_pattern" in "stderr" output
+
 * **Miscellaneous**
 
   - Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
-  - Check for debugging server's "ready_pattern" in "stderr"
   - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
   - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
 

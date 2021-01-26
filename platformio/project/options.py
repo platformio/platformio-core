@@ -683,6 +683,11 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="debug",
+                name="debug_speed",
+                description="A debug adapter speed (JTAG speed)",
+            ),
+            ConfigEnvOption(
+                group="debug",
                 name="debug_svd_path",
                 description=(
                     "A custom path to SVD file which contains information about "
