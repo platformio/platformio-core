@@ -18,12 +18,13 @@ from platformio.project.config import ProjectConfig
 
 
 class DeviceMonitorFilter(miniterm.Transform):
-    def __init__(self, project_dir=None, environment=None):
+    def __init__(self, options=None):
         """ Called by PlatformIO to pass context """
         miniterm.Transform.__init__(self)
 
-        self.project_dir = project_dir
-        self.environment = environment
+        self.options = options or {}
+        self.project_dir = self.options.get("project_dir")
+        self.environment = self.options.get("environment")
 
         self.config = ProjectConfig.get_instance()
         if not self.environment:

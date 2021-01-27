@@ -45,6 +45,7 @@ PlatformIO Core 5
   - Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
   - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
   - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
+  - Fixed an issue when `pio device monitor --eol <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-eol>`__ and "send_on_enter" filter do not work properly (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~

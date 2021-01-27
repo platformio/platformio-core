@@ -179,7 +179,9 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     for name in os.listdir(filters_dir):
         if not name.endswith(".py"):
             continue
-        device_helpers.load_monitor_filter(os.path.join(filters_dir, name))
+        device_helpers.load_monitor_filter(
+            os.path.join(filters_dir, name), options=kwargs
+        )
 
     project_options = {}
     try:
@@ -193,9 +195,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     if "platform" in project_options:
         with fs.cd(kwargs["project_dir"]):
             platform = PlatformFactory.new(project_options["platform"])
-            device_helpers.register_platform_filters(
-                platform, kwargs["project_dir"], kwargs["environment"]
-            )
+            device_helpers.register_platform_filters(platform, options=kwargs)
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
