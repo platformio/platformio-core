@@ -50,7 +50,7 @@ __core_packages__ = {
     "contrib-piohome": "~3.3.3",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-unity": "~1.20500.0",
-    "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~4.40100.0",
+    "tool-scons": "~2.20501.7" if sys.version_info.major == 2 else "~4.40100.1",
     "tool-cppcheck": "~1.230.0",
     "tool-clangtidy": "~1.100000.0",
     "tool-pvs-studio": "~7.11.0",

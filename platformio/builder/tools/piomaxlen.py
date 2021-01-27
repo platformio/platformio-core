@@ -67,6 +67,8 @@ def generate(env):
         _long_sources_hook=long_sources_hook,
         TEMPFILE=TempFileMunge,
         MAXLINELENGTH=MAX_LINE_LENGTH,
+        TEMPFILESUFFIX=".tmp",
+        TEMPFILEDIR="$BUILD_DIR",
     )
 
     for name in ("LINKCOM", "ASCOM", "ASPPCOM", "CCCOM", "CXXCOM"):
