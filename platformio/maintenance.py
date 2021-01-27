@@ -40,6 +40,8 @@ from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
+    ensure_python3(raise_exception=True)
+
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     set_caller(caller)
@@ -47,23 +49,7 @@ def on_platformio_start(ctx, force, caller):
 
     if PlatformioCLI.in_silence():
         return
-
     after_upgrade(ctx)
-
-    if not ensure_python3(raise_exception=False):
-        click.secho(
-            """
-Python 2 and Python 3.5 are not compatible with PlatformIO Core 5.0.
-Please check a migration guide on how to fix this warning message:
-""",
-            fg="yellow",
-        )
-        click.secho(
-            "https://docs.platformio.org/en/latest/core/migration.html"
-            "#drop-support-for-python-2-and-3-5",
-            fg="blue",
-        )
-        click.echo("")
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
