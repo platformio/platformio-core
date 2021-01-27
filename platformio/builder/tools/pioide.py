@@ -151,15 +151,6 @@ def _escape_build_flag(flags):
 def DumpIDEData(env, globalenv):
     """ env here is `projenv`"""
 
-    env["__escape_build_flag"] = _escape_build_flag
-
-    LINTCCOM = (
-        "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
-    )
-    LINTCXXCOM = (
-        "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
-    )
-
     data = {
         "env_name": env["PIOENV"],
         "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
@@ -192,7 +183,17 @@ def DumpIDEData(env, globalenv):
             _new_defines.append(item)
     env_.Replace(CPPDEFINES=_new_defines)
 
-    data.update({"cc_flags": env_.subst(LINTCCOM), "cxx_flags": env_.subst(LINTCXXCOM)})
+    # export C/C++ build flags
+    env_["__escape_build_flag"] = _escape_build_flag
+    CFLAGSCOM = (
+        "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    )
+    CXXFLAGSCOM = (
+        "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    )
+    data.update(
+        {"cc_flags": env_.subst(CFLAGSCOM), "cxx_flags": env_.subst(CXXFLAGSCOM)}
+    )
 
     return data
 
