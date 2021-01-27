@@ -81,12 +81,19 @@ DEFAULT_ENV_OPTIONS = dict(
     IDE_EXTRA_DATA={},
 )
 
+# Declare command verbose messages
+command_strings = dict(
+    ARCOM="Archiving",
+    LINKCOM="Linking",
+    RANLIBCOM="Indexing",
+    ASCOM="Compiling",
+    ASPPCOM="Compiling",
+    CCCOM="Compiling",
+    CXXCOM="Compiling",
+)
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    DEFAULT_ENV_OPTIONS["ARCOMSTR"] = "Archiving $TARGET"
-    DEFAULT_ENV_OPTIONS["LINKCOMSTR"] = "Linking $TARGET"
-    DEFAULT_ENV_OPTIONS["RANLIBCOMSTR"] = "Indexing $TARGET"
-    for k in ("ASCOMSTR", "ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
-        DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
+    for name, value in command_strings.items():
+        DEFAULT_ENV_OPTIONS["%sSTR" % name] = "%s $TARGET" % (value)
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 

@@ -14,15 +14,30 @@
 
 from __future__ import absolute_import
 
-from hashlib import md5
-from os import makedirs
-from os.path import isdir, isfile, join
+import hashlib
+import os
+import re
+
+from SCons.Platform import TempFileMunge  # pylint: disable=import-error
+from SCons.Subst import quote_spaces  # pylint: disable=import-error
 
 from platformio.compat import WINDOWS, hashlib_encode_data
 
-# Windows CLI has limit with command length to 8192
-# Leave 2000 chars for flags and other options
-MAX_LINE_LENGTH = 6000 if WINDOWS else 128072
+# There are the next limits depending on a platform:
+# - Windows = 8192
+# - Unix    = 131072
+# We need ~256 characters for a temporary file path
+MAX_LINE_LENGTH = (8192 if WINDOWS else 131072) - 256
+
+WINPATHSEP_RE = re.compile(r"\\([^\"'\\]|$)")
+
+
+def tempfile_arg_esc_func(arg):
+    arg = quote_spaces(arg)
+    if not WINDOWS:
+        return arg
+    # GCC requires double Windows slashes, let's use UNIX separator
+    return WINPATHSEP_RE.sub(r"/\1", arg)
 
 
 def long_sources_hook(env, sources):
@@ -41,30 +56,14 @@ def long_sources_hook(env, sources):
     return '@"%s"' % _file_long_data(env, " ".join(data))
 
 
-def long_incflags_hook(env, incflags):
-    _incflags = env.subst(incflags).replace("\\", "/")
-    if len(_incflags) < MAX_LINE_LENGTH:
-        return incflags
-
-    # fix space in paths
-    data = []
-    for line in _incflags.split(" -I"):
-        line = line.strip()
-        if not line.startswith("-I"):
-            line = "-I" + line
-        data.append('-I"%s"' % line[2:])
-
-    return '@"%s"' % _file_long_data(env, " ".join(data))
-
-
 def _file_long_data(env, data):
     build_dir = env.subst("$BUILD_DIR")
-    if not isdir(build_dir):
-        makedirs(build_dir)
-    tmp_file = join(
-        build_dir, "longcmd-%s" % md5(hashlib_encode_data(data)).hexdigest()
+    if not os.path.isdir(build_dir):
+        os.makedirs(build_dir)
+    tmp_file = os.path.join(
+        build_dir, "longcmd-%s" % hashlib.md5(hashlib_encode_data(data)).hexdigest()
     )
-    if isfile(tmp_file):
+    if os.path.isfile(tmp_file):
         return tmp_file
     with open(tmp_file, "w") as fp:
         fp.write(data)
@@ -76,17 +75,21 @@ def exists(_):
 
 
 def generate(env):
-    env.Replace(_long_sources_hook=long_sources_hook)
-    env.Replace(_long_incflags_hook=long_incflags_hook)
-    coms = {}
-    for key in ("ARCOM", "LINKCOM"):
-        coms[key] = env.get(key, "").replace(
-            "$SOURCES", "${_long_sources_hook(__env__, SOURCES)}"
-        )
-    for key in ("_CCCOMCOM", "ASPPCOM"):
-        coms[key] = env.get(key, "").replace(
-            "$_CPPINCFLAGS", "${_long_incflags_hook(__env__, _CPPINCFLAGS)}"
-        )
-    env.Replace(**coms)
+    kwargs = dict(
+        _long_sources_hook=long_sources_hook,
+        TEMPFILE=TempFileMunge,
+        MAXLINELENGTH=MAX_LINE_LENGTH,
+        TEMPFILEARGESCFUNC=tempfile_arg_esc_func,
+        TEMPFILESUFFIX=".tmp",
+        TEMPFILEDIR="$BUILD_DIR",
+    )
+
+    for name in ("LINKCOM", "ASCOM", "ASPPCOM", "CCCOM", "CXXCOM"):
+        kwargs[name] = "${TEMPFILE('%s','$%sSTR')}" % (env.get(name), name)
+
+    kwargs["ARCOM"] = env.get("ARCOM", "").replace(
+        "$SOURCES", "${_long_sources_hook(__env__, SOURCES)}"
+    )
+    env.Replace(**kwargs)
 
     return env
