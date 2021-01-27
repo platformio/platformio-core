@@ -16,8 +16,10 @@ from __future__ import absolute_import
 
 import hashlib
 import os
+import re
 
 from SCons.Platform import TempFileMunge  # pylint: disable=import-error
+from SCons.Subst import quote_spaces  # pylint: disable=import-error
 
 from platformio.compat import WINDOWS, hashlib_encode_data
 
@@ -26,6 +28,16 @@ from platformio.compat import WINDOWS, hashlib_encode_data
 # - Unix    = 131072
 # We need ~256 characters for a temporary file path
 MAX_LINE_LENGTH = (8192 if WINDOWS else 131072) - 256
+
+WINPATHSEP_RE = re.compile(r"\\([^\"'\\]|$)")
+
+
+def tempfile_arg_esc_func(arg):
+    arg = quote_spaces(arg)
+    if not WINDOWS:
+        return arg
+    # GCC requires double Windows slashes, let's use UNIX separator
+    return WINPATHSEP_RE.sub(r"/\1", arg)
 
 
 def long_sources_hook(env, sources):
@@ -67,6 +79,7 @@ def generate(env):
         _long_sources_hook=long_sources_hook,
         TEMPFILE=TempFileMunge,
         MAXLINELENGTH=MAX_LINE_LENGTH,
+        TEMPFILEARGESCFUNC=tempfile_arg_esc_func,
         TEMPFILESUFFIX=".tmp",
         TEMPFILEDIR="$BUILD_DIR",
     )
