@@ -8,8 +8,13 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.1.0 (2021-??-??)
+5.1.0 (2021-01-28)
 ~~~~~~~~~~~~~~~~~~
+
+* **PlatformIO Home**
+
+  - Boosted PlatformIO Home performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
 
 * **Build System**
 
@@ -17,9 +22,9 @@ PlatformIO Core 5
   - Refactored a workaround for a maximum command line character limitation (`issue #3792 <https://github.com/platformio/platformio-core/issues/3792>`_)
   - Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 
-* **Package Management System**
+* **Package Management**
 
-  - New options for `system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command:
+  - New options for `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command:
 
     + ``--dry-run`` option to show data that will be removed
     + ``--core-packages`` option to remove unnecessary core packages
@@ -29,11 +34,6 @@ PlatformIO Core 5
   - Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
   - Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
   - Fixed a "ValueError: Invalid simple block" when uninstalling a package with a custom name and external source (`issue #3816 <https://github.com/platformio/platformio-core/issues/3816>`_)
-
-* **PlatformIO Home**
-
-  - Significantly speedup PlatformIO Home loading time by migrating to native Python 3 Asynchronous I/O
-  - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
 
 * **Debugging**
 
