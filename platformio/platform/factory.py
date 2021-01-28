@@ -37,6 +37,8 @@ class PlatformFactory(object):
 
     @classmethod
     def new(cls, pkg_or_spec):
+        # pylint: disable=import-outside-toplevel
+
         platform_dir = None
         platform_name = None
         if isinstance(pkg_or_spec, PackageItem):
@@ -45,9 +47,7 @@ class PlatformFactory(object):
         elif os.path.isdir(pkg_or_spec):
             platform_dir = pkg_or_spec
         else:
-            from platformio.package.manager.platform import (  # pylint: disable=import-outside-toplevel
-                PlatformPackageManager,
-            )
+            from platformio.package.manager.platform import PlatformPackageManager
 
             pkg = PlatformPackageManager().get_package(pkg_or_spec)
             if not pkg:

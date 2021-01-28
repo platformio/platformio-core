@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import json
-import os
 import platform
 import subprocess
 import sys
@@ -27,11 +26,15 @@ from platformio.commands.system.completion import (
     install_completion_code,
     uninstall_completion_code,
 )
+from platformio.commands.system.prune import (
+    prune_cached_data,
+    prune_core_packages,
+    prune_platform_packages,
+)
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_cache_dir
 
 
 @click.group("system", short_help="Miscellaneous system commands")
@@ -99,22 +102,49 @@ def system_info(json_output):
 
 @cli.command("prune", short_help="Remove unused data")
 @click.option("--force", "-f", is_flag=True, help="Do not prompt for confirmation")
-def system_prune(force):
-    click.secho("WARNING! This will remove:", fg="yellow")
-    click.echo(" - cached API requests")
-    click.echo(" - cached package downloads")
-    click.echo(" - temporary data")
-    if not force:
-        click.confirm("Do you want to continue?", abort=True)
+@click.option(
+    "--dry-run", is_flag=True, help="Do not prune, only show data that will be removed"
+)
+@click.option("--cache", is_flag=True, help="Prune only cached data")
+@click.option(
+    "--core-packages", is_flag=True, help="Prune only unnecessary core packages"
+)
+@click.option(
+    "--platform-packages",
+    is_flag=True,
+    help="Prune only unnecessary development platform packages",
+)
+def system_prune(force, dry_run, cache, core_packages, platform_packages):
+    if dry_run:
+        click.secho(
+            "Dry run mode (do not prune, only show data that will be removed)",
+            fg="yellow",
+        )
+        click.echo()
 
-    reclaimed_total = 0
-    cache_dir = get_project_cache_dir()
-    if os.path.isdir(cache_dir):
-        reclaimed_total += fs.calculate_folder_size(cache_dir)
-        fs.rmtree(cache_dir)
+    reclaimed_cache = 0
+    reclaimed_core_packages = 0
+    reclaimed_platform_packages = 0
+    prune_all = not any([cache, core_packages, platform_packages])
+
+    if cache or prune_all:
+        reclaimed_cache = prune_cached_data(force, dry_run)
+        click.echo()
+
+    if core_packages or prune_all:
+        reclaimed_core_packages = prune_core_packages(force, dry_run)
+        click.echo()
+
+    if platform_packages or prune_all:
+        reclaimed_platform_packages = prune_platform_packages(force, dry_run)
+        click.echo()
 
     click.secho(
-        "Total reclaimed space: %s" % fs.humanize_file_size(reclaimed_total), fg="green"
+        "Total reclaimed space: %s"
+        % fs.humanize_file_size(
+            reclaimed_cache + reclaimed_core_packages + reclaimed_platform_packages
+        ),
+        fg="green",
     )
 
 

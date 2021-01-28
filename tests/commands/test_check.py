@@ -154,7 +154,7 @@ def test_check_includes_passed(clirunner, check_dir):
             inc_count = l.count("-I")
 
     # at least 1 include path for default mode
-    assert inc_count > 1
+    assert inc_count > 0
 
 
 def test_check_silent_mode(clirunner, validate_cliresult, check_dir):

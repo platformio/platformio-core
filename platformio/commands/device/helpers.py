@@ -76,7 +76,7 @@ def get_board_hwids(project_dir, platform, board):
         return platform.board_config(board).get("build.hwids", [])
 
 
-def load_monitor_filter(path, project_dir=None, environment=None):
+def load_monitor_filter(path, options=None):
     name = os.path.basename(path)
     name = name[: name.find(".")]
     module = load_python_module("platformio.commands.device.filters.%s" % name, path)
@@ -87,12 +87,12 @@ def load_monitor_filter(path, project_dir=None, environment=None):
             or cls == DeviceMonitorFilter
         ):
             continue
-        obj = cls(project_dir, environment)
+        obj = cls(options)
         miniterm.TRANSFORMATIONS[obj.NAME] = obj
     return True
 
 
-def register_platform_filters(platform, project_dir, environment):
+def register_platform_filters(platform, options=None):
     monitor_dir = os.path.join(platform.get_dir(), "monitor")
     if not os.path.isdir(monitor_dir):
         return
@@ -103,4 +103,4 @@ def register_platform_filters(platform, project_dir, environment):
         path = os.path.join(monitor_dir, name)
         if not os.path.isfile(path):
             continue
-        load_monitor_filter(path, project_dir, environment)
+        load_monitor_filter(path, options)

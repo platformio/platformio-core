@@ -26,18 +26,28 @@ from platformio import (
 from platformio.compat import PY2, WINDOWS
 
 
-install_requires = [
-    "bottle<0.13",
+minimal_requirements = [
+    "bottle==0.12.*",
     "click>=5,<8%s" % (",!=7.1,!=7.1.1" if WINDOWS else ""),
     "colorama",
-    "pyserial>=3,<4,!=3.3",
-    "requests>=2.4.0,<3",
-    "semantic_version>=2.8.1,<3",
-    "tabulate>=0.8.3,<1",
-    "pyelftools>=0.25,<1",
-    "marshmallow%s" % (">=2,<3" if PY2 else ">=2"),
+    "marshmallow%s" % (">=2,<3" if PY2 else ">=2,<4"),
+    "pyelftools>=0.27,<1",
+    "pyserial==3.*",
+    "requests==2.*",
+    "semantic_version==2.8.*",
+    "tabulate==0.8.*",
 ]
 
+if not PY2:
+    minimal_requirements.append("zeroconf==0.28.*")
+
+home_requirements = [
+    "aiofiles==0.6.*",
+    "json-rpc==1.13.*",
+    "starlette==0.14.*",
+    "uvicorn==0.13.*",
+    "wsproto==1.0.*",
+]
 
 setup(
     name=__title__,
@@ -48,10 +58,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    python_requires=", ".join(
-        [">=2.7", "!=3.0.*", "!=3.1.*", "!=3.2.*", "!=3.3.*", "!=3.4.*"]
-    ),
-    install_requires=install_requires,
+    install_requires=minimal_requirements + ([] if PY2 else home_requirements),
     packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
     package_data={
         "platformio": [
@@ -77,7 +84,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",

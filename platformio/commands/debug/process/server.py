@@ -124,15 +124,24 @@ class DebugServer(BaseProcess):
 
     @defer.inlineCallbacks
     def _wait_until_ready(self):
-        timeout = 10
+        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        timeout = 60 if ready_pattern else 10
         elapsed = 0
         delay = 0.5
         auto_ready_delay = 0.5
         while not self._ready and not self._process_ended and elapsed < timeout:
             yield self.async_sleep(delay)
-            if not self.debug_options.get("server", {}).get("ready_pattern"):
+            if not ready_pattern:
                 self._ready = self._last_activity < (time.time() - auto_ready_delay)
             elapsed += delay
+
+    def _check_ready_by_pattern(self, data):
+        if self._ready:
+            return self._ready
+        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        if ready_pattern:
+            self._ready = ready_pattern.encode() in data
+        return self._ready
 
     @staticmethod
     def async_sleep(secs):
@@ -147,11 +156,11 @@ class DebugServer(BaseProcess):
         super(DebugServer, self).outReceived(
             escape_gdbmi_stream("@", data) if is_gdbmi_mode() else data
         )
-        if self._ready:
-            return
-        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
-        if ready_pattern:
-            self._ready = ready_pattern.encode() in data
+        self._check_ready_by_pattern(data)
+
+    def errReceived(self, data):
+        super(DebugServer, self).errReceived(data)
+        self._check_ready_by_pattern(data)
 
     def processEnded(self, reason):
         self._process_ended = True

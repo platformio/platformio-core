@@ -8,15 +8,54 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.1.0 (2021-01-28)
+~~~~~~~~~~~~~~~~~~
+
+* **PlatformIO Home**
+
+  - Boosted PlatformIO Home performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
+
+* **Build System**
+
+  - Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
+  - Refactored a workaround for a maximum command line character limitation (`issue #3792 <https://github.com/platformio/platformio-core/issues/3792>`_)
+  - Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+
+* **Package Management**
+
+  - New options for `pio system prune <https://docs.platformio.org/page/core/userguide/system/cmd_prune.html>`__ command:
+
+    + ``--dry-run`` option to show data that will be removed
+    + ``--core-packages`` option to remove unnecessary core packages
+    + ``--platform-packages`` option to remove unnecessary development platform packages (`issue #923 <https://github.com/platformio/platformio-core/issues/923>`_)
+
+  - Added new `check_prune_system_threshold <https://docs.platformio.org/page/core/userguide/cmd_settings.html#check-prune-system-threshold>`__ setting
+  - Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
+  - Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
+  - Fixed a "ValueError: Invalid simple block" when uninstalling a package with a custom name and external source (`issue #3816 <https://github.com/platformio/platformio-core/issues/3816>`_)
+
+* **Debugging**
+
+  - Configure a custom debug adapter speed using a new `debug_speed <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-speed>`__ option (`issue #3799 <https://github.com/platformio/platformio-core/issues/3799>`_)
+  - Handle debugging server's "ready_pattern" in "stderr" output
+
+* **Miscellaneous**
+
+  - Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
+  - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
+  - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
+  - Fixed an issue when `pio device monitor --eol <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-eol>`__ and "send_on_enter" filter do not work properly (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
+
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~
 
 - Added "Core" suffix when showing PlatformIO Core version using ``pio --version`` command
-- Improved ``.ccls`` configuration file for Emacs, Vim, and Sublime Text integrations
+- Improved ".ccls" configuration file for Emacs, Vim, and Sublime Text integrations
 - Updated analysis tools:
 
-    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
-    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
+  * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
+  * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
 
 - Show a warning message about deprecated support for Python 2 and Python 3.5
 - Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension

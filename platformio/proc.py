@@ -24,6 +24,7 @@ from platformio.compat import (
     WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
+    get_running_loop,
     string_types,
 )
 
@@ -31,7 +32,10 @@ from platformio.compat import (
 class AsyncPipeBase(object):
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
-        self._pipe_reader = os.fdopen(self._fd_read)
+        if PY2:
+            self._pipe_reader = os.fdopen(self._fd_read)
+        else:
+            self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
         self._buffer = ""
         self._thread = Thread(target=self.run)
         self._thread.start()
@@ -67,10 +71,10 @@ class BuildAsyncPipe(AsyncPipeBase):
         line = ""
         print_immediately = False
 
-        for byte in iter(lambda: self._pipe_reader.read(1), ""):
-            self._buffer += byte
+        for char in iter(lambda: self._pipe_reader.read(1), ""):
+            self._buffer += char
 
-            if line and byte.strip() and line[-3:] == (byte * 3):
+            if line and char.strip() and line[-3:] == (char * 3):
                 print_immediately = True
 
             if print_immediately:
@@ -78,12 +82,12 @@ class BuildAsyncPipe(AsyncPipeBase):
                 if line:
                     self.data_callback(line)
                     line = ""
-                self.data_callback(byte)
-                if byte == "\n":
+                self.data_callback(char)
+                if char == "\n":
                     print_immediately = False
             else:
-                line += byte
-                if byte != "\n":
+                line += char
+                if char != "\n":
                     continue
                 self.line_callback(line)
                 line = ""
@@ -214,3 +218,12 @@ def append_env_path(name, value):
         return cur_value
     os.environ[name] = os.pathsep.join([cur_value, value])
     return os.environ[name]
+
+
+def force_exit(code=0):
+    try:
+        get_running_loop().stop()
+    except:  # pylint: disable=bare-except
+        pass
+    finally:
+        sys.exit(code)

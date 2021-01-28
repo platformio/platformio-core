@@ -27,7 +27,18 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import get_pythonexe_path
 
 
-def get_core_package_dir(name):
+def get_installed_core_packages():
+    result = []
+    pm = ToolPackageManager()
+    for name, requirements in __core_packages__.items():
+        spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
+        pkg = pm.get_package(spec)
+        if pkg:
+            result.append(pkg)
+    return result
+
+
+def get_core_package_dir(name, auto_install=True):
     if name not in __core_packages__:
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
@@ -37,8 +48,10 @@ def get_core_package_dir(name):
     pkg = pm.get_package(spec)
     if pkg:
         return pkg.path
+    if not auto_install:
+        return None
     assert pm.install(spec)
-    _remove_unnecessary_packages()
+    remove_unnecessary_core_packages()
     return pm.get_package(spec).path
 
 
@@ -52,24 +65,40 @@ def update_core_packages(only_check=False, silent=False):
         if not silent or pm.outdated(pkg, spec).is_outdated():
             pm.update(pkg, spec, only_check=only_check)
     if not only_check:
-        _remove_unnecessary_packages()
+        remove_unnecessary_core_packages()
     return True
 
 
-def _remove_unnecessary_packages():
+def remove_unnecessary_core_packages(dry_run=False):
+    candidates = []
     pm = ToolPackageManager()
     best_pkg_versions = {}
+
     for name, requirements in __core_packages__.items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
         pkg = pm.get_package(spec)
         if not pkg:
             continue
         best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
+
     for pkg in pm.get_installed():
-        if pkg.metadata.name not in best_pkg_versions:
-            continue
-        if pkg.metadata.version != best_pkg_versions[pkg.metadata.name]:
-            pm.uninstall(pkg)
+        skip_conds = [
+            os.path.isfile(os.path.join(pkg.path, ".piokeep")),
+            pkg.metadata.spec.owner != "platformio",
+            pkg.metadata.name not in best_pkg_versions,
+            pkg.metadata.name in best_pkg_versions
+            and pkg.metadata.version == best_pkg_versions[pkg.metadata.name],
+        ]
+        if not any(skip_conds):
+            candidates.append(pkg)
+
+    if dry_run:
+        return candidates
+
+    for pkg in candidates:
+        pm.uninstall(pkg)
+
+    return candidates
 
 
 def inject_contrib_pysite(verify_openssl=False):
@@ -160,7 +189,6 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         pkg.dump_meta()
 
     # remove unused files
-    shutil.rmtree(os.path.join(target_dir, "autobahn", "xbr", "contracts"))
     for root, dirs, files in os.walk(target_dir):
         for t in ("_test", "test", "tests"):
             if t in dirs:
@@ -168,19 +196,6 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         for name in files:
             if name.endswith((".chm", ".pyc")):
                 os.remove(os.path.join(root, name))
-
-    # apply patches
-    with open(
-        os.path.join(target_dir, "autobahn", "twisted", "__init__.py"), "r+"
-    ) as fp:
-        contents = fp.read()
-        contents = contents.replace(
-            "from autobahn.twisted.wamp import ApplicationSession",
-            "# from autobahn.twisted.wamp import ApplicationSession",
-        )
-        fp.seek(0)
-        fp.truncate()
-        fp.write(contents)
 
     return target_dir
 
@@ -192,22 +207,12 @@ def get_contrib_pysite_deps():
     twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == %s" % ("19.11.2" if PY2 else "20.7.1"),
-        "json-rpc == 1.13.0",
     ]
 
     # twisted[tls], see setup.py for %twisted_version%
     result.extend(
         ["pyopenssl >= 16.0.0", "service_identity >= 18.1.0", "idna >= 0.6, != 2.3"]
     )
-
-    # zeroconf
-    if PY2:
-        result.append(
-            "https://github.com/ivankravets/python-zeroconf/" "archive/pio-py27.zip"
-        )
-    else:
-        result.append("zeroconf == 0.26.0")
 
     if "windows" in sys_type:
         result.append("pypiwin32 == 223")

@@ -17,7 +17,8 @@ from __future__ import absolute_import
 import os
 from glob import glob
 
-from SCons.Defaults import processDefines  # pylint: disable=import-error
+import SCons.Defaults  # pylint: disable=import-error
+import SCons.Subst  # pylint: disable=import-error
 
 from platformio.compat import glob_escape
 from platformio.package.manager.core import get_core_package_dir
@@ -58,8 +59,16 @@ def _dump_includes(env):
         for g in toolchain_incglobs:
             includes["toolchain"].extend([os.path.realpath(inc) for inc in glob(g)])
 
+    # include Unity framework if there are tests in project
     includes["unity"] = []
-    unity_dir = get_core_package_dir("tool-unity")
+    auto_install_unity = False
+    test_dir = env.GetProjectConfig().get_optional_dir("test")
+    if os.path.isdir(test_dir) and os.listdir(test_dir) != ["README"]:
+        auto_install_unity = True
+    unity_dir = get_core_package_dir(
+        "tool-unity",
+        auto_install=auto_install_unity,
+    )
     if unity_dir:
         includes["unity"].append(unity_dir)
 
@@ -92,7 +101,7 @@ def _get_gcc_defines(env):
 def _dump_defines(env):
     defines = []
     # global symbols
-    for item in processDefines(env.get("CPPDEFINES", [])):
+    for item in SCons.Defaults.processDefines(env.get("CPPDEFINES", [])):
         item = item.strip()
         if item:
             defines.append(env.subst(item).replace("\\", ""))
@@ -141,25 +150,17 @@ def _get_svd_path(env):
     return None
 
 
-def _escape_build_flag(flags):
-    return [flag if " " not in flag else '"%s"' % flag for flag in flags]
+def _subst_cmd(env, cmd):
+    args = env.subst_list(cmd, SCons.Subst.SUBST_CMD)[0]
+    return " ".join([SCons.Subst.quote_spaces(arg) for arg in args])
 
 
 def DumpIDEData(env, globalenv):
     """ env here is `projenv`"""
 
-    env["__escape_build_flag"] = _escape_build_flag
-
-    LINTCCOM = (
-        "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
-    )
-    LINTCXXCOM = (
-        "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
-    )
-
     data = {
         "env_name": env["PIOENV"],
-        "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
+        "libsource_dirs": [env.subst(item) for item in env.GetLibSourceDirs()],
         "defines": _dump_defines(env),
         "includes": _dump_includes(env),
         "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
@@ -181,7 +182,7 @@ def DumpIDEData(env, globalenv):
     env_ = env.Clone()
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
-    for item in processDefines(env_.get("CPPDEFINES", [])):
+    for item in SCons.Defaults.processDefines(env_.get("CPPDEFINES", [])):
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))
@@ -189,7 +190,13 @@ def DumpIDEData(env, globalenv):
             _new_defines.append(item)
     env_.Replace(CPPDEFINES=_new_defines)
 
-    data.update({"cc_flags": env_.subst(LINTCCOM), "cxx_flags": env_.subst(LINTCXXCOM)})
+    # export C/C++ build flags
+    data.update(
+        {
+            "cc_flags": _subst_cmd(env_, "$CFLAGS $CCFLAGS $CPPFLAGS"),
+            "cxx_flags": _subst_cmd(env_, "$CXXFLAGS $CCFLAGS $CPPFLAGS"),
+        }
+    )
 
     return data
 

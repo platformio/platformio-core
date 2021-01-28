@@ -12,90 +12,107 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=import-error
+import inspect
+import json
 
 import click
 import jsonrpc
-from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
-from jsonrpc.exceptions import JSONRPCDispatchException
-from twisted.internet import defer, reactor
+from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import PY2, dump_json_to_unicode, is_bytes
-
-
-class JSONRPCServerProtocol(WebSocketServerProtocol):
-    def onOpen(self):
-        self.factory.connection_nums += 1
-        if self.factory.shutdown_timer:
-            self.factory.shutdown_timer.cancel()
-            self.factory.shutdown_timer = None
-
-    def onClose(self, wasClean, code, reason):  # pylint: disable=unused-argument
-        self.factory.connection_nums -= 1
-        if self.factory.connection_nums == 0:
-            self.factory.shutdownByTimeout()
-
-    def onMessage(self, payload, isBinary):  # pylint: disable=unused-argument
-        # click.echo("> %s" % payload)
-        response = jsonrpc.JSONRPCResponseManager.handle(
-            payload, self.factory.dispatcher
-        ).data
-        # if error
-        if "result" not in response:
-            self.sendJSONResponse(response)
-            return None
-
-        d = defer.maybeDeferred(lambda: response["result"])
-        d.addCallback(self._callback, response)
-        d.addErrback(self._errback, response)
-
-        return None
-
-    def _callback(self, result, response):
-        response["result"] = result
-        self.sendJSONResponse(response)
-
-    def _errback(self, failure, response):
-        if isinstance(failure.value, JSONRPCDispatchException):
-            e = failure.value
-        else:
-            e = JSONRPCDispatchException(code=4999, message=failure.getErrorMessage())
-        del response["result"]
-        response["error"] = e.error._data  # pylint: disable=protected-access
-        self.sendJSONResponse(response)
-
-    def sendJSONResponse(self, response):
-        # click.echo("< %s" % response)
-        if "error" in response:
-            click.secho("Error: %s" % response["error"], fg="red", err=True)
-        response = dump_json_to_unicode(response)
-        if not PY2 and not is_bytes(response):
-            response = response.encode("utf-8")
-        self.sendMessage(response)
+from platformio.compat import create_task, get_running_loop, is_bytes
+from platformio.proc import force_exit
 
 
-class JSONRPCServerFactory(WebSocketServerFactory):
+class JSONRPCServerFactoryBase:
 
-    protocol = JSONRPCServerProtocol
     connection_nums = 0
-    shutdown_timer = 0
+    shutdown_timer = None
 
     def __init__(self, shutdown_timeout=0):
-        super(JSONRPCServerFactory, self).__init__()
         self.shutdown_timeout = shutdown_timeout
         self.dispatcher = jsonrpc.Dispatcher()
 
-    def shutdownByTimeout(self):
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def addHandler(self, handler, namespace):
+        self.dispatcher.build_method_map(handler, prefix="%s." % namespace)
+
+    def on_client_connect(self):
+        self.connection_nums += 1
+        if self.shutdown_timer:
+            self.shutdown_timer.cancel()
+            self.shutdown_timer = None
+
+    def on_client_disconnect(self):
+        self.connection_nums -= 1
+        if self.connection_nums < 1:
+            self.connection_nums = 0
+
+        if self.connection_nums == 0:
+            self.shutdown_by_timeout()
+
+    async def on_shutdown(self):
+        pass
+
+    def shutdown_by_timeout(self):
         if self.shutdown_timeout < 1:
             return
 
         def _auto_shutdown_server():
             click.echo("Automatically shutdown server on timeout")
-            reactor.stop()
+            force_exit()
 
-        self.shutdown_timer = reactor.callLater(
+        self.shutdown_timer = get_running_loop().call_later(
             self.shutdown_timeout, _auto_shutdown_server
         )
 
-    def addHandler(self, handler, namespace):
-        self.dispatcher.build_method_map(handler, prefix="%s." % namespace)
+
+class WebSocketJSONRPCServerFactory(JSONRPCServerFactoryBase):
+    def __call__(self, *args, **kwargs):
+        ws = WebSocketJSONRPCServer(*args, **kwargs)
+        ws.factory = self
+        return ws
+
+
+class WebSocketJSONRPCServer(WebSocketEndpoint):
+    encoding = "text"
+    factory: WebSocketJSONRPCServerFactory = None
+
+    async def on_connect(self, websocket):
+        await websocket.accept()
+        self.factory.on_client_connect()  # pylint: disable=no-member
+
+    async def on_receive(self, websocket, data):
+        create_task(self._handle_rpc(websocket, data))
+
+    async def on_disconnect(self, websocket, close_code):
+        self.factory.on_client_disconnect()  # pylint: disable=no-member
+
+    async def _handle_rpc(self, websocket, data):
+        response = jsonrpc.JSONRPCResponseManager.handle(
+            data, self.factory.dispatcher  # pylint: disable=no-member
+        )
+        if response.result and inspect.isawaitable(response.result):
+            try:
+                response.result = await response.result
+                response.data["result"] = response.result
+                response.error = None
+            except Exception as exc:  # pylint: disable=broad-except
+                if not isinstance(exc, jsonrpc.exceptions.JSONRPCDispatchException):
+                    exc = jsonrpc.exceptions.JSONRPCDispatchException(
+                        code=4999, message=str(exc)
+                    )
+                response.result = None
+                response.error = exc.error._data  # pylint: disable=protected-access
+                new_data = response.data.copy()
+                new_data["error"] = response.error
+                del new_data["result"]
+                response.data = new_data
+
+        if response.error:
+            click.secho("Error: %s" % response.error, fg="red", err=True)
+        if "result" in response.data and is_bytes(response.data["result"]):
+            response.data["result"] = response.data["result"].decode("utf-8")
+
+        await websocket.send_text(json.dumps(response.data))

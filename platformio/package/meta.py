@@ -107,16 +107,21 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
         self, raw=None, owner=None, id=None, name=None, requirements=None, url=None
     ):
+        self._requirements = None
         self.owner = owner
         self.id = id
         self.name = name
-        self._requirements = None
         self.url = url
         self.raw = raw
         if requirements:
-            self.requirements = requirements
+            try:
+                self.requirements = requirements
+            except ValueError as exc:
+                if not self.name or self.url or self.raw:
+                    raise exc
+                self.raw = "%s=%s" % (self.name, requirements)
         self._name_is_custom = False
-        self._parse(raw)
+        self._parse(self.raw)
 
     def __eq__(self, other):
         return all(
@@ -405,7 +410,12 @@ class PackageItem(object):
         )
 
     def __eq__(self, other):
-        return all([self.path == other.path, self.metadata == other.metadata])
+        if not self.path or not other.path:
+            return self.path == other.path
+        return os.path.realpath(self.path) == os.path.realpath(other.path)
+
+    def __hash__(self):
+        return hash(os.path.realpath(self.path))
 
     def exists(self):
         return os.path.isdir(self.path)

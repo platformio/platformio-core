@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from platformio import util
 from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.base import BasePackageManager
+from platformio.package.manager.core import get_installed_core_packages
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageType
 from platformio.platform.exception import IncompatiblePlatform, UnknownBoard
@@ -69,7 +72,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         )
         p.install_python_packages()
         p.on_installed()
-        self.cleanup_packages(list(p.packages))
         return pkg
 
     def uninstall(self, spec, silent=False, skip_dependencies=False):
@@ -83,7 +85,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         if not skip_dependencies:
             p.uninstall_python_packages()
             p.on_uninstalled()
-            self.cleanup_packages(list(p.packages))
         return pkg
 
     def update(  # pylint: disable=arguments-differ, too-many-arguments
@@ -118,7 +119,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         p.update_packages(only_check)
-        self.cleanup_packages(list(p.packages))
 
         if missed_pkgs:
             p.install_packages(
@@ -126,32 +126,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
 
         return new_pkg or pkg
-
-    def cleanup_packages(self, names):
-        self.memcache_reset()
-        deppkgs = {}
-        for platform in PlatformPackageManager().get_installed():
-            p = PlatformFactory.new(platform)
-            for pkg in p.get_installed_packages():
-                if pkg.metadata.name not in deppkgs:
-                    deppkgs[pkg.metadata.name] = set()
-                deppkgs[pkg.metadata.name].add(pkg.metadata.version)
-
-        pm = ToolPackageManager()
-        for pkg in pm.get_installed():
-            if pkg.metadata.name not in names:
-                continue
-            if (
-                pkg.metadata.name not in deppkgs
-                or pkg.metadata.version not in deppkgs[pkg.metadata.name]
-            ):
-                try:
-                    pm.uninstall(pkg.metadata.spec)
-                except UnknownPackageError:
-                    pass
-
-        self.memcache_reset()
-        return True
 
     @util.memoized(expire="5s")
     def get_installed_boards(self):
@@ -193,3 +167,37 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             ):
                 return manifest
         raise UnknownBoard(id_)
+
+
+#
+# Helpers
+#
+
+
+def remove_unnecessary_platform_packages(dry_run=False):
+    candidates = []
+    required = set()
+    core_packages = get_installed_core_packages()
+    for platform in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(platform)
+        for pkg in p.get_installed_packages(with_optional=True):
+            required.add(pkg)
+
+    pm = ToolPackageManager()
+    for pkg in pm.get_installed():
+        skip_conds = [
+            pkg.metadata.spec.url,
+            os.path.isfile(os.path.join(pkg.path, ".piokeep")),
+            pkg in required,
+            pkg in core_packages,
+        ]
+        if not any(skip_conds):
+            candidates.append(pkg)
+
+    if dry_run:
+        return candidates
+
+    for pkg in candidates:
+        pm.uninstall(pkg)
+
+    return candidates

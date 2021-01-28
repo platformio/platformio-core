@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import jsonrpc  # pylint: disable=import-error
+import jsonrpc
 
 from platformio.clients.account import AccountClient
 
 
-class AccountRPC(object):
+class AccountRPC:
     @staticmethod
     def call_client(method, *args, **kwargs):
         try:

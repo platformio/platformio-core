@@ -18,12 +18,11 @@ import os
 import shutil
 import time
 
-import jsonrpc  # pylint: disable=import-error
+import jsonrpc
 
 from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
@@ -32,7 +31,7 @@ from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 
 
-class ProjectRPC(object):
+class ProjectRPC:
     @staticmethod
     def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)
@@ -185,7 +184,7 @@ class ProjectRPC(object):
             )
         return sorted(result, key=lambda data: data["platform"]["title"])
 
-    def init(self, board, framework, project_dir):
+    async def init(self, board, framework, project_dir):
         assert project_dir
         state = AppRPC.load_state()
         if not os.path.isdir(project_dir):
@@ -198,14 +197,13 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        d.addCallback(self._generate_project_main, project_dir, framework)
-        return d
+        return self._generate_project_main(project_dir, framework)
 
     @staticmethod
-    def _generate_project_main(_, project_dir, framework):
+    def _generate_project_main(project_dir, framework):
         main_content = None
         if framework == "arduino":
             main_content = "\n".join(
@@ -252,10 +250,8 @@ class ProjectRPC(object):
                 fp.write(main_content.strip())
         return project_dir
 
-    def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
+    async def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
         board = str(board)
-        if arduino_project_dir and PY2:
-            arduino_project_dir = arduino_project_dir.encode(get_filesystem_encoding())
         # don't import PIO Project
         if is_platformio_project(arduino_project_dir):
             return arduino_project_dir
@@ -293,14 +289,9 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        d.addCallback(self._finalize_arduino_import, project_dir, arduino_project_dir)
-        return d
-
-    @staticmethod
-    def _finalize_arduino_import(_, project_dir, arduino_project_dir):
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
@@ -310,7 +301,7 @@ class ProjectRPC(object):
         return project_dir
 
     @staticmethod
-    def import_pio(project_dir):
+    async def import_pio(project_dir):
         if not project_dir or not is_platformio_project(project_dir):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001, message="Not an PlatformIO project: %s" % project_dir
@@ -328,8 +319,7 @@ class ProjectRPC(object):
             and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
         ):
             args.extend(["--ide", state["storage"]["coreCaller"]])
-        d = PIOCoreRPC.call(
+        await PIOCoreRPC.call(
             args, options={"cwd": new_project_dir, "force_subprocess": True}
         )
-        d.addCallback(lambda _: new_project_dir)
-        return d
+        return new_project_dir

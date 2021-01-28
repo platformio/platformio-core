@@ -26,6 +26,7 @@ from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
+from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version
 from platformio.compat import ensure_python3
 from platformio.package.manager.core import update_core_packages
@@ -39,6 +40,8 @@ from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
+    ensure_python3(raise_exception=True)
+
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     set_caller(caller)
@@ -46,23 +49,7 @@ def on_platformio_start(ctx, force, caller):
 
     if PlatformioCLI.in_silence():
         return
-
     after_upgrade(ctx)
-
-    if not ensure_python3(raise_exception=False):
-        click.secho(
-            """
-Python 2 and Python 3.5 are not compatible with PlatformIO Core 5.0.
-Please check the migration guide on how to fix this warning message:
-""",
-            fg="yellow",
-        )
-        click.secho(
-            "https://docs.platformio.org/en/latest/core/migration.html"
-            "#drop-support-for-python-2-and-3-5",
-            fg="blue",
-        )
-        click.echo("")
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
@@ -73,6 +60,7 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         check_platformio_upgrade()
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
+        check_prune_system()
     except (
         http.HTTPClientError,
         http.InternetIsOffline,
@@ -347,3 +335,31 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
 
     click.echo("*" * terminal_width)
     click.echo("")
+
+
+def check_prune_system():
+    last_check = app.get_state_item("last_check", {})
+    interval = 30 * 3600 * 24  # 1 time per month
+    if (time() - interval) < last_check.get("prune_system", 0):
+        return
+
+    last_check["prune_system"] = int(time())
+    app.set_state_item("last_check", last_check)
+    threshold_mb = int(app.get_setting("check_prune_system_threshold") or 0)
+    if threshold_mb <= 0:
+        return
+
+    unnecessary_mb = calculate_unnecessary_system_data() / 1024
+    if unnecessary_mb < threshold_mb:
+        return
+
+    terminal_width, _ = click.get_terminal_size()
+    click.echo()
+    click.echo("*" * terminal_width)
+    click.secho(
+        "We found %s of unnecessary PlatformIO system data (temporary files, "
+        "unnecessary packages, etc.).\nUse `pio system prune --dry-run` to list "
+        "them or `pio system prune` to save disk space."
+        % fs.humanize_file_size(unnecessary_mb),
+        fg="yellow",
+    )

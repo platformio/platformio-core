@@ -22,10 +22,17 @@ class SendOnEnter(DeviceMonitorFilter):
         super(SendOnEnter, self).__init__(*args, **kwargs)
         self._buffer = ""
 
+        if self.options.get("eol") == "CR":
+            self._eol = "\r"
+        elif self.options.get("eol") == "LF":
+            self._eol = "\n"
+        else:
+            self._eol = "\r\n"
+
     def tx(self, text):
         self._buffer += text
-        if self._buffer.endswith("\r\n"):
-            text = self._buffer[:-2]
+        if self._buffer.endswith(self._eol):
+            text = self._buffer[: len(self._eol) * -1]
             self._buffer = ""
             return text
         return ""

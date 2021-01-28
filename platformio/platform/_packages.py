@@ -17,18 +17,17 @@ from platformio.package.meta import PackageSpec
 
 
 class PlatformPackagesMixin(object):
-    def get_package_spec(self, name):
-        version = self.packages[name].get("version", "")
-        if any(c in version for c in (":", "/", "@")):
-            return PackageSpec("%s=%s" % (name, version))
+    def get_package_spec(self, name, version=None):
         return PackageSpec(
-            owner=self.packages[name].get("owner"), name=name, requirements=version
+            owner=self.packages[name].get("owner"),
+            name=name,
+            requirements=version or self.packages[name].get("version"),
         )
 
-    def get_package(self, name):
+    def get_package(self, name, spec=None):
         if not name:
             return None
-        return self.pm.get_package(self.get_package_spec(name))
+        return self.pm.get_package(spec or self.get_package_spec(name))
 
     def get_package_dir(self, name):
         pkg = self.get_package(name)
@@ -38,12 +37,18 @@ class PlatformPackagesMixin(object):
         pkg = self.get_package(name)
         return str(pkg.metadata.version) if pkg else None
 
-    def get_installed_packages(self):
+    def get_installed_packages(self, with_optional=False):
         result = []
-        for name in self.packages:
-            pkg = self.get_package(name)
-            if pkg:
-                result.append(pkg)
+        for name, options in self.packages.items():
+            versions = [options.get("version")]
+            if with_optional:
+                versions.extend(options.get("optionalVersions", []))
+            for version in versions:
+                if not version:
+                    continue
+                pkg = self.get_package(name, self.get_package_spec(name, version))
+                if pkg:
+                    result.append(pkg)
         return result
 
     def dump_used_packages(self):

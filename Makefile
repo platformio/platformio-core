@@ -3,8 +3,8 @@ lint:
 	pylint -j 6 --rcfile=./.pylintrc ./tests
 
 isort:
-	isort -rc ./platformio
-	isort -rc ./tests
+	isort ./platformio
+	isort ./tests
 
 format:
 	black --target-version py27 ./platformio
