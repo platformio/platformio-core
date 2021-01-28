@@ -176,6 +176,7 @@ def configure_initial_debug_options(platform, env_options):
             tool_name,
             tool_settings,
         ),
+        speed=env_options.get("debug_speed", tool_settings.get("speed")),
         server=server_options,
     )
     return result
