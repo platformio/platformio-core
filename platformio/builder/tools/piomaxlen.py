@@ -26,8 +26,8 @@ from platformio.compat import WINDOWS, hashlib_encode_data
 # There are the next limits depending on a platform:
 # - Windows = 8192
 # - Unix    = 131072
-# We need ~256 characters for a temporary file path
-MAX_LINE_LENGTH = (8192 if WINDOWS else 131072) - 256
+# We need ~512 characters for compiler and temporary file paths
+MAX_LINE_LENGTH = (8192 if WINDOWS else 131072) - 512
 
 WINPATHSEP_RE = re.compile(r"\\([^\"'\\]|$)")
 

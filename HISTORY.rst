@@ -8,12 +8,17 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.1.1 (2021-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a "The command line is too long" issue with a linking process on Windows (`issue #3827 <https://github.com/platformio/platformio-core/issues/3827>`_)
+
 5.1.0 (2021-01-28)
 ~~~~~~~~~~~~~~~~~~
 
 * **PlatformIO Home**
 
-  - Boosted PlatformIO Home performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - Boosted `PlatformIO Home <https://docs.platformio.org/page/home/index.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
   - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
 
 * **Build System**
