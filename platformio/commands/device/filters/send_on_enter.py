@@ -32,7 +32,7 @@ class SendOnEnter(DeviceMonitorFilter):
     def tx(self, text):
         self._buffer += text
         if self._buffer.endswith(self._eol):
-            text = self._buffer[: len(self._eol) * -1]
+            text = self._buffer
             self._buffer = ""
             return text
         return ""
