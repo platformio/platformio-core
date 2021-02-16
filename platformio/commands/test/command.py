@@ -141,7 +141,8 @@ def cli(  # pylint: disable=redefined-builtin
 
                 cls = (
                     NativeTestProcessor
-                    if config.get(section, "platform") == "native" or config.get(section, "platform") == "windows_x86"
+                    if config.get(section, "platform") == "native" or 
+                    config.get(section, "platform") == "windows_x86"
                     else EmbeddedTestProcessor
                 )
                 tp = cls(
