@@ -52,6 +52,7 @@ def BoardConfig(env, board=None):
         except (AssertionError, UnknownBoard) as e:
             sys.stderr.write("Error: %s\n" % str(e))
             env.Exit(1)
+    return None
 
 
 def GetFrameworkScript(env, framework):

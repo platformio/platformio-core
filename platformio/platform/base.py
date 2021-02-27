@@ -252,6 +252,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
             click.secho(
                 "Could not install Python packages -> %s" % e, fg="red", err=True
             )
+        return None
 
     def uninstall_python_packages(self):
         if not self.python_packages:

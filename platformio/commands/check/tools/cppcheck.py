@@ -230,7 +230,7 @@ class CppcheckCheckTool(CheckToolBase):
         project_files = self.get_project_target_files(self.options["patterns"])
 
         languages = ("c", "c++")
-        if not any([project_files[t] for t in languages]):
+        if not any(project_files[t] for t in languages):
             click.echo("Error: Nothing to check.")
             return True
         for language in languages:

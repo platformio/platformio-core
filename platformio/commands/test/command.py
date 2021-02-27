@@ -128,9 +128,9 @@ def cli(  # pylint: disable=redefined-builtin
                     not environment and default_envs and envname not in default_envs,
                     testname != "*"
                     and patterns["filter"]
-                    and not any([fnmatch(testname, p) for p in patterns["filter"]]),
+                    and not any(fnmatch(testname, p) for p in patterns["filter"]),
                     testname != "*"
-                    and any([fnmatch(testname, p) for p in patterns["ignore"]]),
+                    and any(fnmatch(testname, p) for p in patterns["ignore"]),
                 ]
                 if any(skip_conditions):
                     results.append({"env": envname, "test": testname})

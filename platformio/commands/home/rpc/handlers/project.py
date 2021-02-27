@@ -257,15 +257,13 @@ class ProjectRPC:
             return arduino_project_dir
 
         is_arduino_project = any(
-            [
-                os.path.isfile(
-                    os.path.join(
-                        arduino_project_dir,
-                        "%s.%s" % (os.path.basename(arduino_project_dir), ext),
-                    )
+            os.path.isfile(
+                os.path.join(
+                    arduino_project_dir,
+                    "%s.%s" % (os.path.basename(arduino_project_dir), ext),
                 )
-                for ext in ("ino", "pde")
-            ]
+            )
+            for ext in ("ino", "pde")
         )
         if not is_arduino_project:
             raise jsonrpc.exceptions.JSONRPCDispatchException(
