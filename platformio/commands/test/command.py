@@ -25,6 +25,7 @@ from tabulate import tabulate
 from platformio import app, exception, fs, util
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
@@ -140,9 +141,9 @@ def cli(  # pylint: disable=redefined-builtin
                 print_processing_header(testname, envname)
 
                 cls = (
-                    NativeTestProcessor
-                    if config.get(section, "platform") == "native"
-                    else EmbeddedTestProcessor
+                    EmbeddedTestProcessor
+                    if is_embedded_platform(config.get(section, "platform"))
+                    else NativeTestProcessor
                 )
                 tp = cls(
                     ctx,
@@ -192,6 +193,12 @@ def get_test_names(test_dir):
     if not names:
         names = ["*"]
     return names
+
+
+def is_embedded_platform(name):
+    if not name:
+        return False
+    return PlatformFactory.new(name).is_embedded()
 
 
 def print_processing_header(test, env):
