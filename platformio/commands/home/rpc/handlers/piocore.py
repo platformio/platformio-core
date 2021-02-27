@@ -20,7 +20,7 @@ import sys
 from io import StringIO
 
 import click
-import jsonrpc
+from ajsonrpc.core import JSONRPC20DispatchException
 from starlette.concurrency import run_in_threadpool
 
 from platformio import __main__, __version__, fs, proc
@@ -99,7 +99,7 @@ class PIOCoreRPC:
                 result = await PIOCoreRPC._call_subprocess(args, options)
                 return PIOCoreRPC._process_result(result, to_json)
         except Exception as e:  # pylint: disable=bare-except
-            raise jsonrpc.exceptions.JSONRPCDispatchException(
+            raise JSONRPC20DispatchException(
                 code=4003, message="PIO Core Call Error", data=str(e)
             )
 

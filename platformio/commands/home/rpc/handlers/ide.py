@@ -14,7 +14,7 @@
 
 import time
 
-import jsonrpc
+from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio.compat import get_running_loop
 
@@ -25,7 +25,7 @@ class IDERPC:
 
     def send_command(self, sid, command, params):
         if not self._queue.get(sid):
-            raise jsonrpc.exceptions.JSONRPCDispatchException(
+            raise JSONRPC20DispatchException(
                 code=4005, message="PIO Home IDE agent is not started"
             )
         while self._queue[sid]:

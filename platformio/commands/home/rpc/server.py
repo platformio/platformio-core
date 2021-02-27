@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import inspect
-import json
-
 import click
-import jsonrpc
+from ajsonrpc.dispatcher import Dispatcher
+from ajsonrpc.manager import AsyncJSONRPCResponseManager
 from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import create_task, get_running_loop, is_bytes
+from platformio.compat import create_task, get_running_loop
 from platformio.proc import force_exit
 
 
@@ -30,13 +28,13 @@ class JSONRPCServerFactoryBase:
 
     def __init__(self, shutdown_timeout=0):
         self.shutdown_timeout = shutdown_timeout
-        self.dispatcher = jsonrpc.Dispatcher()
+        self.manager = AsyncJSONRPCResponseManager(Dispatcher())
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
-    def addHandler(self, handler, namespace):
-        self.dispatcher.build_method_map(handler, prefix="%s." % namespace)
+    def addObjectHandler(self, handler, namespace):
+        self.manager.dispatcher.add_object(handler, prefix="%s." % namespace)
 
     def on_client_connect(self):
         self.connection_nums += 1
@@ -90,29 +88,8 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         self.factory.on_client_disconnect()  # pylint: disable=no-member
 
     async def _handle_rpc(self, websocket, data):
-        response = jsonrpc.JSONRPCResponseManager.handle(
-            data, self.factory.dispatcher  # pylint: disable=no-member
-        )
-        if response.result and inspect.isawaitable(response.result):
-            try:
-                response.result = await response.result
-                response.data["result"] = response.result
-                response.error = None
-            except Exception as exc:  # pylint: disable=broad-except
-                if not isinstance(exc, jsonrpc.exceptions.JSONRPCDispatchException):
-                    exc = jsonrpc.exceptions.JSONRPCDispatchException(
-                        code=4999, message=str(exc)
-                    )
-                response.result = None
-                response.error = exc.error._data  # pylint: disable=protected-access
-                new_data = response.data.copy()
-                new_data["error"] = response.error
-                del new_data["result"]
-                response.data = new_data
-
+        # pylint: disable=no-member
+        response = await self.factory.manager.get_response_for_payload(data)
         if response.error:
-            click.secho("Error: %s" % response.error, fg="red", err=True)
-        if "result" in response.data and is_bytes(response.data["result"]):
-            response.data["result"] = response.data["result"].decode("utf-8")
-
-        await websocket.send_text(json.dumps(response.data))
+            click.secho("Error: %s" % response.error.message, fg="red", err=True)
+        await websocket.send_text(self.factory.manager.serialize(response.body))
