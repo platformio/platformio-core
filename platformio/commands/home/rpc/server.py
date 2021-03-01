@@ -28,7 +28,9 @@ class JSONRPCServerFactoryBase:
 
     def __init__(self, shutdown_timeout=0):
         self.shutdown_timeout = shutdown_timeout
-        self.manager = AsyncJSONRPCResponseManager(Dispatcher())
+        self.manager = AsyncJSONRPCResponseManager(
+            Dispatcher(), is_server_error_verbose=True
+        )
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
@@ -91,5 +93,5 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         # pylint: disable=no-member
         response = await self.factory.manager.get_response_for_payload(data)
         if response.error:
-            click.secho("Error: %s" % response.error.message, fg="red", err=True)
+            click.secho("Error: %s" % response.error.data, fg="red", err=True)
         await websocket.send_text(self.factory.manager.serialize(response.body))
