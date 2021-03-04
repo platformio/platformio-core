@@ -255,7 +255,7 @@ class ManifestSchema(BaseSchema):
     def load_spdx_licenses():
         version = "3.11"
         spdx_data_url = (
-            "hhttps://raw.githubusercontent.com/spdx/license-list-data/"
+            "https://raw.githubusercontent.com/spdx/license-list-data/"
             "v%s/json/licenses.json" % version
         )
         return json.loads(fetch_remote_content(spdx_data_url))
