@@ -187,7 +187,13 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             flags = self.cc_flags
             compiler = self.cc_path
 
-        cmd = [compiler, src_file, "-E", "-o", self._tmp_preprocessed_file]
+        cmd = [
+            compiler,
+            '"%s"' % src_file,
+            "-E",
+            "-o",
+            '"%s"' % self._tmp_preprocessed_file,
+        ]
         cmd.extend([f for f in flags if f])
         cmd.extend(["-D%s" % d for d in self.cpp_defines])
         cmd.append('@"%s"' % self._tmp_cmd_file)
