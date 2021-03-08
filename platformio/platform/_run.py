@@ -134,7 +134,9 @@ class PlatformRunMixin(object):
                 args,
                 stdout=proc.BuildAsyncPipe(
                     line_callback=self._on_stdout_line,
-                    data_callback=lambda data: _write_and_flush(sys.stdout, data),
+                    data_callback=lambda data: None
+                    if self.silent
+                    else _write_and_flush(sys.stdout, data),
                 ),
                 stderr=proc.BuildAsyncPipe(
                     line_callback=self._on_stderr_line,
