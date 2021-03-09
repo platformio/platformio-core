@@ -15,6 +15,7 @@ PlatformIO Core 5
 * Fixed an issue with `device monitor <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html>`__ when the "send_on_enter" filter didn't send EOL chars (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
 * Fixed an issue with silent mode when unwanted data is printed to stdout (`issue #3837 <https://github.com/platformio/platformio-core/issues/3837>`_)
 * Fixed an issue when code inspection fails with "Bad JSON" (`issue #3790 <https://github.com/platformio/platformio-core/issues/3790>`_)
+* Fixed an issue with overriding user-specified debugging configuration information in VSCode (`issue #3824 <https://github.com/platformio/platformio-core/issues/3824>`_)
 
 5.1.0 (2021-01-28)
 ~~~~~~~~~~~~~~~~~~
