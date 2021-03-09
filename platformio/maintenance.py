@@ -349,8 +349,8 @@ def check_prune_system():
     if threshold_mb <= 0:
         return
 
-    unnecessary_mb = calculate_unnecessary_system_data() / 1024
-    if unnecessary_mb < threshold_mb:
+    unnecessary_size = calculate_unnecessary_system_data()
+    if (unnecessary_size / 1024) < threshold_mb:
         return
 
     terminal_width, _ = click.get_terminal_size()
@@ -360,6 +360,6 @@ def check_prune_system():
         "We found %s of unnecessary PlatformIO system data (temporary files, "
         "unnecessary packages, etc.).\nUse `pio system prune --dry-run` to list "
         "them or `pio system prune` to save disk space."
-        % fs.humanize_file_size(unnecessary_mb),
+        % fs.humanize_file_size(unnecessary_size),
         fg="yellow",
     )
