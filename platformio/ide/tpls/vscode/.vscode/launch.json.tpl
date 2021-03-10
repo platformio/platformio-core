@@ -28,7 +28,7 @@
 %  debug["name"] = "PIO Debug"
 %  debug["preLaunchTask"] = {
 %    "type": "PlatformIO",
-%    "task": "Pre-Debug (%s)" % env_name if len(config.envs()) > 1 else "Pre-Debug",
+%    "task": ("Pre-Debug (%s)" % env_name) if len(config.envs()) > 1 else "Pre-Debug",
 %  }
 %  return [debug, predebug]
 % end
