@@ -96,14 +96,13 @@ class CppcheckCheckTool(CheckToolBase):
                     )
                     click.echo()
                 self._bad_input = True
+                self._buffer = ""
             return None
 
         self._buffer = ""
         return DefectItem(**args)
 
-    def configure_command(
-        self, language, src_files
-    ):  # pylint: disable=arguments-differ
+    def configure_command(self, language, src_file):  # pylint: disable=arguments-differ
         tool_path = os.path.join(get_core_package_dir("tool-cppcheck"), "cppcheck")
 
         cmd = [
@@ -157,8 +156,8 @@ class CppcheckCheckTool(CheckToolBase):
             "--include=" + inc
             for inc in self.get_forced_includes(build_flags, self.cpp_includes)
         )
-        cmd.append("--file-list=%s" % self._generate_src_file(src_files))
         cmd.append("--includes-file=%s" % self._generate_inc_file())
+        cmd.append('"%s"' % src_file)
 
         return cmd
 
@@ -227,23 +226,25 @@ class CppcheckCheckTool(CheckToolBase):
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
-        project_files = self.get_project_target_files(self.options["patterns"])
 
-        languages = ("c", "c++")
-        if not any(project_files[t] for t in languages):
+        project_files = self.get_project_target_files(self.options["patterns"])
+        src_files_scope = ("c", "c++")
+        if not any(project_files[t] for t in src_files_scope):
             click.echo("Error: Nothing to check.")
             return True
-        for language in languages:
-            if not project_files[language]:
-                continue
-            cmd = self.configure_command(language, project_files[language])
-            if not cmd:
-                self._bad_input = True
-                continue
-            if self.options.get("verbose"):
-                click.echo(" ".join(cmd))
 
-            self.execute_check_cmd(cmd)
+        for scope, files in project_files.items():
+            if scope not in src_files_scope:
+                continue
+            for src_file in files:
+                cmd = self.configure_command(scope, src_file)
+                if not cmd:
+                    self._bad_input = True
+                    continue
+                if self.options.get("verbose"):
+                    click.echo(" ".join(cmd))
+
+                self.execute_check_cmd(cmd)
 
         self.clean_up()
 
