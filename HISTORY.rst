@@ -8,6 +8,14 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.0 (2021-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* **PlatformIO Debugging**
+
+  - Boosted `PlatformIO Debugging <https://docs.platformio.org/page/plus/debugging.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - Support debugging on Windows using Windows CMD (CLI) (`issue #3793 <https://github.com/platformio/platformio-core/issues/3793>`_)
+
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
 
