@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.1.1 (2021-??-??)
+5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed a "The command line is too long" issue with a linking process on Windows (`issue #3827 <https://github.com/platformio/platformio-core/issues/3827>`_)
