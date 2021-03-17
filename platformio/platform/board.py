@@ -15,11 +15,8 @@
 import os
 
 from platformio import fs, telemetry, util
-from platformio.commands.debug.exception import (
-    DebugInvalidOptionsError,
-    DebugSupportError,
-)
 from platformio.compat import PY2
+from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
 from platformio.exception import UserSideException
 from platformio.platform.exception import InvalidBoardManifest
 

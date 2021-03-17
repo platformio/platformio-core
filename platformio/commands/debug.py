@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-arguments, too-many-statements
-# pylint: disable=too-many-locals, too-many-branches
+# pylint: disable=too-many-arguments, too-many-locals
+# pylint: disable=too-many-branches, too-many-statements
 
+import asyncio
 import os
-import signal
-from os.path import isfile
 
 import click
 
 from platformio import app, exception, fs, proc
-from platformio.commands.debug import helpers
-from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.platform import platform_install as cmd_platform_install
-from platformio.package.manager.core import inject_contrib_pysite
+from platformio.compat import WINDOWS
+from platformio.debug import helpers
+from platformio.debug.exception import DebugInvalidOptionsError
+from platformio.debug.process.client import DebugClientProcess
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
@@ -131,7 +131,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
             ide_data["prog_path"]
         ) or not helpers.has_debug_symbols(ide_data["prog_path"])
     else:
-        rebuild_prog = not isfile(ide_data["prog_path"])
+        rebuild_prog = not os.path.isfile(ide_data["prog_path"])
 
     if preload or (not rebuild_prog and load_mode != "always"):
         # don't load firmware through debug server
@@ -157,19 +157,17 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
         if load_mode == "modified":
             helpers.is_prog_obsolete(ide_data["prog_path"])
 
-    if not isfile(ide_data["prog_path"]):
+    if not os.path.isfile(ide_data["prog_path"]):
         raise DebugInvalidOptionsError("Program/firmware is missed")
 
-    # run debugging client
-    inject_contrib_pysite()
-
-    # pylint: disable=import-outside-toplevel
-    from platformio.commands.debug.process.client import GDBClient, reactor
-
-    client = GDBClient(project_dir, __unprocessed, debug_options, env_options)
-    client.spawn(ide_data["gdb_path"], ide_data["prog_path"])
-
-    signal.signal(signal.SIGINT, lambda *args, **kwargs: None)
-    reactor.run()
+    loop = asyncio.ProactorEventLoop() if WINDOWS else asyncio.get_event_loop()
+    asyncio.set_event_loop(loop)
+    client = DebugClientProcess(project_dir, __unprocessed, debug_options, env_options)
+    coro = client.run(ide_data["gdb_path"], ide_data["prog_path"])
+    loop.run_until_complete(coro)
+    if WINDOWS:
+        # an issue with asyncio executor and STIDIN, it cannot be closed gracefully
+        os._exit(0)  # pylint: disable=protected-access
+    loop.close()
 
     return True
