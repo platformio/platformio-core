@@ -17,7 +17,7 @@ import time
 
 from platformio.cache import ContentCache
 from platformio.commands.home.rpc.handlers.os import OSRPC
-from platformio.compat import create_task
+from platformio.compat import aio_create_task
 
 
 class MiscRPC:
@@ -30,7 +30,7 @@ class MiscRPC:
                 cache_data = json.loads(cache_data)
                 # automatically update cache in background every 12 hours
                 if cache_data["time"] < (time.time() - (3600 * 12)):
-                    create_task(
+                    aio_create_task(
                         self._preload_latest_tweets(data_url, cache_key, cache_valid)
                     )
                 return cache_data["result"]

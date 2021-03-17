@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 
 import click
 
 from platformio.cache import cleanup_content_cache
 from platformio.commands.boards import print_boards
-from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.package.version import get_original_version
@@ -172,7 +172,7 @@ def platform_search(query, json_output):
     for platform in _get_registry_platforms():
         if query == "all":
             query = ""
-        search_data = dump_json_to_unicode(platform)
+        search_data = json.dumps(platform)
         if query and query.lower() not in search_data.lower():
             continue
         platforms.append(
@@ -182,7 +182,7 @@ def platform_search(query, json_output):
         )
 
     if json_output:
-        click.echo(dump_json_to_unicode(platforms))
+        click.echo(json.dumps(platforms))
     else:
         _print_platforms(platforms)
 
@@ -198,7 +198,7 @@ def platform_frameworks(query, json_output):
     ):
         if query == "all":
             query = ""
-        search_data = dump_json_to_unicode(framework)
+        search_data = json.dumps(framework)
         if query and query.lower() not in search_data.lower():
             continue
         framework["homepage"] = "https://platformio.org/frameworks/" + framework["name"]
@@ -211,7 +211,7 @@ def platform_frameworks(query, json_output):
 
     frameworks = sorted(frameworks, key=lambda manifest: manifest["name"])
     if json_output:
-        click.echo(dump_json_to_unicode(frameworks))
+        click.echo(json.dumps(frameworks))
     else:
         _print_platforms(frameworks)
 
@@ -228,7 +228,7 @@ def platform_list(json_output):
 
     platforms = sorted(platforms, key=lambda manifest: manifest["name"])
     if json_output:
-        click.echo(dump_json_to_unicode(platforms))
+        click.echo(json.dumps(platforms))
     else:
         _print_platforms(platforms)
 
@@ -241,7 +241,7 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     if not data:
         raise UnknownPlatform(platform)
     if json_output:
-        return click.echo(dump_json_to_unicode(data))
+        return click.echo(json.dumps(data))
 
     dep = "{ownername}/{name}".format(**data) if "ownername" in data else data["name"]
     click.echo(
@@ -401,7 +401,7 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
                     str(outdated.latest) if outdated.latest else None
                 )
             result.append(data)
-        return click.echo(dump_json_to_unicode(result))
+        return click.echo(json.dumps(result))
 
     # cleanup cached board and platform lists
     cleanup_content_cache("http")

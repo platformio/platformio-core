@@ -18,7 +18,6 @@ import click
 from tabulate import tabulate
 
 from platformio import fs
-from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
 
 
@@ -83,4 +82,4 @@ def _print_boards_json(query, installed=False):
             if query.lower() not in search_data.lower():
                 continue
         result.append(board)
-    click.echo(dump_json_to_unicode(result))
+    click.echo(json.dumps(result))

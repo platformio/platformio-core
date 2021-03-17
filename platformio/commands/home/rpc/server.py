@@ -17,7 +17,7 @@ from ajsonrpc.dispatcher import Dispatcher
 from ajsonrpc.manager import AsyncJSONRPCResponseManager
 from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import create_task, get_running_loop
+from platformio.compat import aio_create_task, aio_get_running_loop
 from platformio.proc import force_exit
 
 
@@ -63,7 +63,7 @@ class JSONRPCServerFactoryBase:
             click.echo("Automatically shutdown server on timeout")
             force_exit()
 
-        self.shutdown_timer = get_running_loop().call_later(
+        self.shutdown_timer = aio_get_running_loop().call_later(
             self.shutdown_timeout, _auto_shutdown_server
         )
 
@@ -84,7 +84,7 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         self.factory.on_client_connect()  # pylint: disable=no-member
 
     async def on_receive(self, websocket, data):
-        create_task(self._handle_rpc(websocket, data))
+        aio_create_task(self._handle_rpc(websocket, data))
 
     async def on_disconnect(self, websocket, close_code):
         self.factory.on_client_disconnect()  # pylint: disable=no-member

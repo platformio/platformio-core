@@ -16,6 +16,7 @@
 
 from __future__ import absolute_import
 
+import json
 import sys
 from os import environ, makedirs, remove
 from os.path import isdir, join, splitdrive
@@ -23,7 +24,6 @@ from os.path import isdir, join, splitdrive
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
-from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
 from platformio.util import get_systype
 
@@ -242,7 +242,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             data["memory"]["files"].append(file_data)
 
     with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
-        fp.write(dump_json_to_unicode(data))
+        fp.write(json.dumps(data))
 
 
 def exists(_):

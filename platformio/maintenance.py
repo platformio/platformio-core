@@ -28,7 +28,6 @@ from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version
-from platformio.compat import ensure_python3
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
@@ -40,8 +39,6 @@ from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
-    ensure_python3(raise_exception=True)
-
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     set_caller(caller)

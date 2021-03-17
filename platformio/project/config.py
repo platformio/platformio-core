@@ -12,21 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
+import hashlib
 import json
 import os
 import re
-from hashlib import sha1
 
 import click
 
 from platformio import fs
-from platformio.compat import (
-    PY2,
-    WINDOWS,
-    glob_recursive,
-    hashlib_encode_data,
-    string_types,
-)
+from platformio.compat import PY2, WINDOWS, hashlib_encode_data, string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
@@ -122,7 +117,7 @@ class ProjectConfigBase(object):
         for pattern in self.get("platformio", "extra_configs", []):
             if pattern.startswith("~"):
                 pattern = fs.expanduser(pattern)
-            for item in glob_recursive(pattern):
+            for item in glob.glob(pattern, recursive=True):
                 self.read(item)
 
     def _maintain_renaimed_options(self):
@@ -402,7 +397,7 @@ class ProjectConfigDirsMixin(object):
                 "%s-%s"
                 % (
                     os.path.basename(project_dir),
-                    sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
+                    hashlib.sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
                 ),
             )
 

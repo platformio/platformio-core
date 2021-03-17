@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import sys
 from fnmatch import fnmatch
@@ -21,7 +22,6 @@ from serial.tools import miniterm
 
 from platformio import exception, fs, util
 from platformio.commands.device import helpers as device_helpers
-from platformio.compat import dump_json_to_unicode
 from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import NotPlatformIOProjectError
 
@@ -52,9 +52,7 @@ def device_list(  # pylint: disable=too-many-branches
     single_key = list(data)[0] if len(list(data)) == 1 else None
 
     if json_output:
-        return click.echo(
-            dump_json_to_unicode(data[single_key] if single_key else data)
-        )
+        return click.echo(json.dumps(data[single_key] if single_key else data))
 
     titles = {
         "serial": "Serial Ports",

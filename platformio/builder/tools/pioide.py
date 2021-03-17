@@ -14,13 +14,12 @@
 
 from __future__ import absolute_import
 
+import glob
 import os
-from glob import glob
 
 import SCons.Defaults  # pylint: disable=import-error
 import SCons.Subst  # pylint: disable=import-error
 
-from platformio.compat import glob_escape
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
@@ -49,7 +48,7 @@ def _dump_includes(env):
     for pkg in p.get_installed_packages():
         if p.get_package_type(pkg.metadata.name) != "toolchain":
             continue
-        toolchain_dir = glob_escape(pkg.path)
+        toolchain_dir = glob.escape(pkg.path)
         toolchain_incglobs = [
             os.path.join(toolchain_dir, "*", "include", "c++", "*"),
             os.path.join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
@@ -57,7 +56,9 @@ def _dump_includes(env):
             os.path.join(toolchain_dir, "*", "include*"),
         ]
         for g in toolchain_incglobs:
-            includes["toolchain"].extend([os.path.realpath(inc) for inc in glob(g)])
+            includes["toolchain"].extend(
+                [os.path.realpath(inc) for inc in glob.glob(g)]
+            )
 
     # include Unity framework if there are tests in project
     includes["unity"] = []

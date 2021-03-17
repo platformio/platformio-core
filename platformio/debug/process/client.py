@@ -21,7 +21,7 @@ import time
 
 from platformio import fs, proc, telemetry, util
 from platformio.cache import ContentCache
-from platformio.compat import get_running_loop, hashlib_encode_data, is_bytes
+from platformio.compat import aio_get_running_loop, hashlib_encode_data, is_bytes
 from platformio.debug import helpers
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.initcfgs import get_gdb_init_config
@@ -191,7 +191,7 @@ class DebugClientProcess(
     def _auto_exec_continue(self):
         auto_exec_delay = 0.5  # in seconds
         if self._last_activity > (time.time() - auto_exec_delay):
-            get_running_loop().call_later(0.1, self._auto_exec_continue)
+            aio_get_running_loop().call_later(0.1, self._auto_exec_continue)
             return
 
         if not self.debug_options["init_break"] or self._target_is_running:
