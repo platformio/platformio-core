@@ -20,6 +20,7 @@ import time
 
 from platformio import fs
 from platformio.compat import (
+    WINDOWS,
     create_task,
     get_locale_encoding,
     get_running_loop,
@@ -102,16 +103,17 @@ class DebugBaseProcess:
 
     async def _read_stdin_pipe(self):
         loop = get_running_loop()
-        try:
-            loop.add_reader(
-                sys.stdin.fileno(),
-                lambda: self.stdin_data_received(sys.stdin.buffer.readline()),
-            )
-        except NotImplementedError:
+        if WINDOWS:
             while True:
                 self.stdin_data_received(
                     await loop.run_in_executor(None, sys.stdin.buffer.readline)
                 )
+        else:
+            reader = asyncio.StreamReader()
+            protocol = asyncio.StreamReaderProtocol(reader)
+            await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+            while True:
+                self.stdin_data_received(await reader.readline())
 
     def stdin_data_received(self, data):
         self._last_activity = time.time()
