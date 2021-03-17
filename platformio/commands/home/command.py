@@ -17,6 +17,7 @@ import mimetypes
 import click
 
 from platformio.commands.home.helpers import is_port_used
+from platformio.commands.home.run import run_server
 from platformio.compat import ensure_python3
 
 
@@ -86,9 +87,6 @@ def cli(port, host, no_open, shutdown_timeout, session_id):
         if not no_open:
             click.launch(home_url)
         return
-
-    # pylint: disable=import-outside-toplevel
-    from platformio.commands.home.run import run_server
 
     run_server(
         host=host,

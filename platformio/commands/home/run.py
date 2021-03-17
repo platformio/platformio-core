@@ -32,7 +32,7 @@ from platformio.commands.home.rpc.handlers.os import OSRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.commands.home.rpc.handlers.project import ProjectRPC
 from platformio.commands.home.rpc.server import WebSocketJSONRPCServerFactory
-from platformio.compat import get_running_loop
+from platformio.compat import aio_get_running_loop
 from platformio.exception import PlatformioException
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import force_exit
@@ -49,7 +49,7 @@ class ShutdownMiddleware:
 
 
 async def shutdown_server(_=None):
-    get_running_loop().call_later(0.5, force_exit)
+    aio_get_running_loop().call_later(0.5, force_exit)
     return PlainTextResponse("Server has been shutdown!")
 
 

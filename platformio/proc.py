@@ -24,7 +24,6 @@ from platformio.compat import (
     WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
-    get_running_loop,
     string_types,
 )
 
@@ -221,9 +220,4 @@ def append_env_path(name, value):
 
 
 def force_exit(code=0):
-    try:
-        get_running_loop().stop()
-    except:  # pylint: disable=bare-except
-        pass
-    finally:
-        sys.exit(code)
+    os._exit(code)  # pylint: disable=protected-access

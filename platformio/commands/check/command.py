@@ -15,6 +15,7 @@
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 # pylint: disable=redefined-builtin,too-many-statements
 
+import json
 import os
 from collections import Counter
 from os.path import dirname, isfile
@@ -26,7 +27,6 @@ from tabulate import tabulate
 from platformio import app, exception, fs, util
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools import CheckToolFactory
-from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, get_project_dir
 
@@ -163,7 +163,7 @@ def cli(
                     print_processing_footer(result)
 
         if json_output:
-            click.echo(dump_json_to_unicode(results_to_json(results)))
+            click.echo(json.dumps(results_to_json(results)))
         elif not silent:
             print_check_summary(results)
 

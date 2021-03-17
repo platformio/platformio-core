@@ -15,16 +15,17 @@
 from __future__ import absolute_import
 
 import atexit
+import glob
 import io
 import os
 import re
 import sys
-from tempfile import mkstemp
+import tempfile
 
 import click
 
 from platformio import fs, util
-from platformio.compat import get_filesystem_encoding, get_locale_encoding, glob_escape
+from platformio.compat import get_filesystem_encoding, get_locale_encoding
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command
 
@@ -116,7 +117,7 @@ class InoToCPPConverter(object):
         return out_file
 
     def _gcc_preprocess(self, contents, out_file):
-        tmp_path = mkstemp()[1]
+        tmp_path = tempfile.mkstemp()[1]
         self.write_safe_contents(tmp_path, contents)
         self.env.Execute(
             self.env.VerboseAction(
@@ -229,7 +230,7 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-    src_dir = glob_escape(env.subst("$PROJECT_SRC_DIR"))
+    src_dir = glob.escape(env.subst("$PROJECT_SRC_DIR"))
     ino_nodes = env.Glob(os.path.join(src_dir, "*.ino")) + env.Glob(
         os.path.join(src_dir, "*.pde")
     )

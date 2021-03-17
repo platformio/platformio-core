@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+import os
 import sys
-from os import environ, makedirs
-from os.path import isdir, join
 from time import time
 
 import click
@@ -29,7 +29,6 @@ from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import compat, fs
-from platformio.compat import dump_json_to_unicode
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
@@ -65,18 +64,18 @@ DEFAULT_ENV_OPTIONS = dict(
         "pioide",
         "piosize",
     ],
-    toolpath=[join(fs.get_source_dir(), "builder", "tools")],
+    toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
     # Propagating External Environment
-    ENV=environ,
+    ENV=os.environ,
     UNIX_TIME=int(time()),
-    BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
-    BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
-    BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=join("$BUILD_DIR", "compile_commands.json"),
+    BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
+    BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
+    BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
+    COMPILATIONDB_PATH=os.path.join("$BUILD_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
-    PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=get_pythonexe_path(),
     IDE_EXTRA_DATA={},
 )
@@ -124,7 +123,7 @@ env.Replace(
     BUILD_CACHE_DIR=config.get_optional_dir("build_cache"),
     LIBSOURCE_DIRS=[
         config.get_optional_dir("lib"),
-        join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
+        os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
         config.get_optional_dir("globallib"),
     ],
 )
@@ -142,8 +141,8 @@ if (
     )
 
 if env.subst("$BUILD_CACHE_DIR"):
-    if not isdir(env.subst("$BUILD_CACHE_DIR")):
-        makedirs(env.subst("$BUILD_CACHE_DIR"))
+    if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
+        os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
 
 if int(ARGUMENTS.get("ISATTY", 0)):
@@ -160,15 +159,17 @@ elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 if "compiledb" in COMMAND_LINE_TARGETS:
     env.Tool("compilation_db")
 
-if not isdir(env.subst("$BUILD_DIR")):
-    makedirs(env.subst("$BUILD_DIR"))
+if not os.path.isdir(env.subst("$BUILD_DIR")):
+    os.makedirs(env.subst("$BUILD_DIR"))
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(
-    join("$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]))
+    os.path.join(
+        "$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1])
+    )
 )
 
 for item in env.GetExtraScripts("pre"):
@@ -225,9 +226,7 @@ if "idedata" in COMMAND_LINE_TARGETS:
         projenv = env
     click.echo(
         "\n%s\n"
-        % dump_json_to_unicode(
-            projenv.DumpIDEData(env)  # pylint: disable=undefined-variable
-        )
+        % json.dumps(projenv.DumpIDEData(env))  # pylint: disable=undefined-variable
     )
     env.Exit(0)
 

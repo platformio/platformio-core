@@ -24,7 +24,7 @@ import uuid
 from os.path import dirname, isdir, isfile, join, realpath
 
 from platformio import __version__, exception, fs, proc
-from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
+from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.helpers import get_default_projects_dir, get_project_core_dir
 
@@ -115,7 +115,7 @@ class State(object):
         if self.modified:
             try:
                 with open(self.path, "w") as fp:
-                    fp.write(dump_json_to_unicode(self._storage))
+                    fp.write(json.dumps(self._storage))
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()

@@ -167,7 +167,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     loop.run_until_complete(coro)
     if WINDOWS:
         # an issue with asyncio executor and STIDIN, it cannot be closed gracefully
-        os._exit(0)  # pylint: disable=protected-access
+        proc.force_exit()
     loop.close()
 
     return True

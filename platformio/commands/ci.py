@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import getenv, makedirs, remove
-from os.path import basename, isdir, isfile, join, realpath
-from shutil import copyfile, copytree
-from tempfile import mkdtemp
+import glob
+import os
+import shutil
+import tempfile
 
 import click
 
-from platformio import app, compat, fs
+from platformio import app, fs
 from platformio.commands.project import project_init as cmd_project_init
 from platformio.commands.project import validate_boards
 from platformio.commands.run.command import cli as cmd_run
@@ -33,8 +33,8 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     for i, p in enumerate(value):
         if p.startswith("~"):
             value[i] = fs.expanduser(p)
-        value[i] = realpath(value[i])
-        if not compat.glob_recursive(value[i]):
+        value[i] = os.path.realpath(value[i])
+        if not glob.glob(value[i], recursive=True):
             invalid_path = p
             break
     try:
@@ -51,7 +51,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option(
     "--build-dir",
-    default=mkdtemp,
+    default=tempfile.mkdtemp,
     type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
 )
 @click.option("--keep-build-dir", is_flag=True)
@@ -78,28 +78,28 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
     verbose,
 ):
 
-    if not src and getenv("PLATFORMIO_CI_SRC"):
-        src = validate_path(ctx, None, getenv("PLATFORMIO_CI_SRC").split(":"))
+    if not src and os.getenv("PLATFORMIO_CI_SRC"):
+        src = validate_path(ctx, None, os.getenv("PLATFORMIO_CI_SRC").split(":"))
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 
     try:
         app.set_session_var("force_option", True)
 
-        if not keep_build_dir and isdir(build_dir):
+        if not keep_build_dir and os.path.isdir(build_dir):
             fs.rmtree(build_dir)
-        if not isdir(build_dir):
-            makedirs(build_dir)
+        if not os.path.isdir(build_dir):
+            os.makedirs(build_dir)
 
         for dir_name, patterns in dict(lib=lib, src=src).items():
             if not patterns:
                 continue
             contents = []
             for p in patterns:
-                contents += compat.glob_recursive(p)
-            _copy_contents(join(build_dir, dir_name), contents)
+                contents += glob.glob(p, recursive=True)
+            _copy_contents(os.path.join(build_dir, dir_name), contents)
 
-        if project_conf and isfile(project_conf):
+        if project_conf and os.path.isfile(project_conf):
             _copy_project_conf(build_dir, project_conf)
         elif not board:
             raise CIBuildEnvsEmpty()
@@ -126,48 +126,50 @@ def _copy_contents(dst_dir, contents):
     items = {"dirs": set(), "files": set()}
 
     for path in contents:
-        if isdir(path):
+        if os.path.isdir(path):
             items["dirs"].add(path)
-        elif isfile(path):
+        elif os.path.isfile(path):
             items["files"].add(path)
 
-    dst_dir_name = basename(dst_dir)
+    dst_dir_name = os.path.basename(dst_dir)
 
     if dst_dir_name == "src" and len(items["dirs"]) == 1:
-        copytree(list(items["dirs"]).pop(), dst_dir, symlinks=True)
+        shutil.copytree(list(items["dirs"]).pop(), dst_dir, symlinks=True)
     else:
-        if not isdir(dst_dir):
-            makedirs(dst_dir)
+        if not os.path.isdir(dst_dir):
+            os.makedirs(dst_dir)
         for d in items["dirs"]:
-            copytree(d, join(dst_dir, basename(d)), symlinks=True)
+            shutil.copytree(
+                d, os.path.join(dst_dir, os.path.basename(d)), symlinks=True
+            )
 
     if not items["files"]:
         return
 
     if dst_dir_name == "lib":
-        dst_dir = join(dst_dir, mkdtemp(dir=dst_dir))
+        dst_dir = os.path.join(dst_dir, tempfile.mkdtemp(dir=dst_dir))
 
     for f in items["files"]:
-        dst_file = join(dst_dir, basename(f))
+        dst_file = os.path.join(dst_dir, os.path.basename(f))
         if f == dst_file:
             continue
-        copyfile(f, dst_file)
+        shutil.copyfile(f, dst_file)
 
 
 def _exclude_contents(dst_dir, patterns):
     contents = []
     for p in patterns:
-        contents += compat.glob_recursive(join(compat.glob_escape(dst_dir), p))
+        contents += glob.glob(os.path.join(glob.escape(dst_dir), p), recursive=True)
     for path in contents:
-        path = realpath(path)
-        if isdir(path):
+        path = os.path.realpath(path)
+        if os.path.isdir(path):
             fs.rmtree(path)
-        elif isfile(path):
-            remove(path)
+        elif os.path.isfile(path):
+            os.remove(path)
 
 
 def _copy_project_conf(build_dir, project_conf):
     config = ProjectConfig(project_conf, parse_extra=False)
     if config.has_section("platformio"):
         config.remove_section("platformio")
-    config.save(join(build_dir, "platformio.ini"))
+    config.save(os.path.join(build_dir, "platformio.ini"))

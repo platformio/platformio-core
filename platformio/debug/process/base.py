@@ -21,9 +21,9 @@ import time
 from platformio import fs
 from platformio.compat import (
     WINDOWS,
-    create_task,
+    aio_create_task,
+    aio_get_running_loop,
     get_locale_encoding,
-    get_running_loop,
     string_types,
 )
 from platformio.proc import get_pythonexe_path
@@ -83,7 +83,7 @@ class DebugBaseProcess:
         for pipe in ("stdin", "stdout", "stderr"):
             if pipe not in kwargs:
                 kwargs[pipe] = subprocess.PIPE
-        loop = get_running_loop()
+        loop = aio_get_running_loop()
         await loop.subprocess_exec(
             lambda: DebugSubprocessProtocol(self), *args, **kwargs
         )
@@ -99,10 +99,10 @@ class DebugBaseProcess:
         self.transport = transport
 
     def connect_stdin_pipe(self):
-        self._stdin_read_task = create_task(self._read_stdin_pipe())
+        self._stdin_read_task = aio_create_task(self._read_stdin_pipe())
 
     async def _read_stdin_pipe(self):
-        loop = get_running_loop()
+        loop = aio_get_running_loop()
         if WINDOWS:
             while True:
                 self.stdin_data_received(
