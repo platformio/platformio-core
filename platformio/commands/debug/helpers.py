@@ -192,7 +192,7 @@ def configure_esp32_load_cmds(debug_options, configuration):
         debug_options["load_cmds"] != ["load"],
         "xtensa-esp32" not in configuration.get("cc_path", ""),
         not flash_images,
-        not all([isfile(item["path"]) for item in flash_images]),
+        not all(isfile(item["path"]) for item in flash_images),
     ]
     if any(ignore_conds):
         return debug_options["load_cmds"]

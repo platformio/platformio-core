@@ -70,10 +70,8 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert all(
-            [
-                tmpdir.join(".vscode").join(f).check()
-                for f in ("c_cpp_properties.json", "launch.json")
-            ]
+            tmpdir.join(".vscode").join(f).check()
+            for f in ("c_cpp_properties.json", "launch.json")
         )
         assert (
             "framework-arduino-avr"
@@ -113,7 +111,7 @@ def test_init_ide_eclipse(clirunner, validate_cliresult):
         result = clirunner.invoke(cmd_init, ["-b", "uno", "--ide", "eclipse"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
-        assert all([isfile(f) for f in (".cproject", ".project")])
+        assert all(isfile(f) for f in (".cproject", ".project"))
 
 
 def test_init_special_board(clirunner, validate_cliresult):

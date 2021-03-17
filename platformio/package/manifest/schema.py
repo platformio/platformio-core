@@ -253,5 +253,9 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        spdx_data_url = "https://dl.bintray.com/platformio/dl-misc/spdx-licenses-3.json"
+        version = "3.12"
+        spdx_data_url = (
+            "https://raw.githubusercontent.com/spdx/license-list-data/"
+            "v%s/json/licenses.json" % version
+        )
         return json.loads(fetch_remote_content(spdx_data_url))

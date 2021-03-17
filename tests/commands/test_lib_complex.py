@@ -172,27 +172,23 @@ def test_global_lib_list(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "list"])
     validate_cliresult(result)
     assert all(
-        [
-            n in result.output
-            for n in (
-                "Source: https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
-                "Version: 5.10.1",
-                "Source: git+https://github.com/gioblu/PJON.git#3.0",
-                "Version: 3.0.0+sha.1fb26fd",
-            )
-        ]
+        n in result.output
+        for n in (
+            "Source: https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
+            "Version: 5.10.1",
+            "Source: git+https://github.com/gioblu/PJON.git#3.0",
+            "Version: 3.0.0+sha.1fb26fd",
+        )
     )
 
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     assert all(
-        [
-            n in result.output
-            for n in (
-                "__pkg_dir",
-                '"__src_url": "git+https://github.com/gioblu/PJON.git#6.2"',
-                '"version": "5.10.1"',
-            )
-        ]
+        n in result.output
+        for n in (
+            "__pkg_dir",
+            '"__src_url": "git+https://github.com/gioblu/PJON.git#6.2"',
+            '"version": "5.10.1"',
+        )
     )
     items1 = [i["name"] for i in json.loads(result.output)]
     items2 = [
@@ -316,7 +312,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
 def test_lib_show(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["show", "64"])
     validate_cliresult(result)
-    assert all([s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR")])
+    assert all(s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR"))
     result = clirunner.invoke(cmd_lib, ["show", "OneWire", "--json-output"])
     validate_cliresult(result)
     assert "OneWire" in result.output
@@ -333,10 +329,8 @@ def test_lib_stats(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["stats"])
     validate_cliresult(result)
     assert all(
-        [
-            s in result.output
-            for s in ("UPDATED", "POPULAR", "https://platformio.org/lib/show")
-        ]
+        s in result.output
+        for s in ("UPDATED", "POPULAR", "https://platformio.org/lib/show")
     )
 
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])

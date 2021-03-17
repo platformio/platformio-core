@@ -137,6 +137,9 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         fs.rmtree(target_dir)
     os.makedirs(target_dir)
 
+    # issue 3865: There is no "rustup" in "Raspbian GNU/Linux 10 (buster)"
+    os.environ["CRYPTOGRAPHY_DONT_BUILD_RUST"] = "1"
+
     # build dependencies
     args = [
         get_pythonexe_path(),

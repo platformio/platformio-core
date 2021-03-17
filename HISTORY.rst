@@ -8,12 +8,21 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.1.1 (2021-03-17)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a "The command line is too long" issue with a linking process on Windows (`issue #3827 <https://github.com/platformio/platformio-core/issues/3827>`_)
+* Fixed an issue with `device monitor <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html>`__ when the "send_on_enter" filter didn't send EOL chars (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
+* Fixed an issue with silent mode when unwanted data is printed to stdout (`issue #3837 <https://github.com/platformio/platformio-core/issues/3837>`_)
+* Fixed an issue when code inspection fails with "Bad JSON" (`issue #3790 <https://github.com/platformio/platformio-core/issues/3790>`_)
+* Fixed an issue with overriding user-specified debugging configuration information in VSCode (`issue #3824 <https://github.com/platformio/platformio-core/issues/3824>`_)
+
 5.1.0 (2021-01-28)
 ~~~~~~~~~~~~~~~~~~
 
 * **PlatformIO Home**
 
-  - Boosted PlatformIO Home performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - Boosted `PlatformIO Home <https://docs.platformio.org/page/home/index.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
   - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/page/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
 
 * **Build System**
@@ -45,7 +54,7 @@ PlatformIO Core 5
   - Improved listing of `multicast DNS services <https://docs.platformio.org/page/core/userguide/device/cmd_list.html>`_
   - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
   - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
-  - Fixed an issue when `pio device monitor --eol <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-eol>`__ and "send_on_enter" filter do not work properly (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
+  - Fixed an issue when `pio device monitor --eol <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-eol>`__ and "send_on_enter" filter do not work properly (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
 
 5.0.4 (2020-12-30)
 ~~~~~~~~~~~~~~~~~~

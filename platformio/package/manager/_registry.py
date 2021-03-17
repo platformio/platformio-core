@@ -207,9 +207,9 @@ class PackageManageRegistryMixin(object):
             time.sleep(1)
         return (None, None)
 
-    def pick_best_registry_version(self, versions, spec=None):
+    def filter_incompatible_registry_versions(self, versions, spec=None):
         assert not spec or isinstance(spec, PackageSpec)
-        best = None
+        result = []
         for version in versions:
             semver = cast_version_to_semver(version["name"])
             if spec and spec.requirements and semver not in spec.requirements:
@@ -218,6 +218,13 @@ class PackageManageRegistryMixin(object):
                 self.is_system_compatible(f.get("system")) for f in version["files"]
             ):
                 continue
+            result.append(version)
+        return result
+
+    def pick_best_registry_version(self, versions, spec=None):
+        best = None
+        for version in self.filter_incompatible_registry_versions(versions, spec):
+            semver = cast_version_to_semver(version["name"])
             if not best or (semver > cast_version_to_semver(best["name"])):
                 best = version
         return best

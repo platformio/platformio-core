@@ -95,7 +95,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
             if isinstance(line, bytes):
                 line = line.decode("utf8", "ignore")
             self.on_run_out(line)
-            if all([l in line for l in ("Tests", "Failures", "Ignored")]):
+            if all(l in line for l in ("Tests", "Failures", "Ignored")):
                 break
         ser.close()
         return not self._run_failed

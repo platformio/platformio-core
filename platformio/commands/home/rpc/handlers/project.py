@@ -18,7 +18,7 @@ import os
 import shutil
 import time
 
-import jsonrpc
+from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
@@ -257,18 +257,16 @@ class ProjectRPC:
             return arduino_project_dir
 
         is_arduino_project = any(
-            [
-                os.path.isfile(
-                    os.path.join(
-                        arduino_project_dir,
-                        "%s.%s" % (os.path.basename(arduino_project_dir), ext),
-                    )
+            os.path.isfile(
+                os.path.join(
+                    arduino_project_dir,
+                    "%s.%s" % (os.path.basename(arduino_project_dir), ext),
                 )
-                for ext in ("ino", "pde")
-            ]
+            )
+            for ext in ("ino", "pde")
         )
         if not is_arduino_project:
-            raise jsonrpc.exceptions.JSONRPCDispatchException(
+            raise JSONRPC20DispatchException(
                 code=4000, message="Not an Arduino project: %s" % arduino_project_dir
             )
 
@@ -303,7 +301,7 @@ class ProjectRPC:
     @staticmethod
     async def import_pio(project_dir):
         if not project_dir or not is_platformio_project(project_dir):
-            raise jsonrpc.exceptions.JSONRPCDispatchException(
+            raise JSONRPC20DispatchException(
                 code=4001, message="Not an PlatformIO project: %s" % project_dir
             )
         new_project_dir = os.path.join(

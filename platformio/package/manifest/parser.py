@@ -568,6 +568,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     continue
                 found = True
                 item["maintainer"] = True
+                # pylint: disable=unsupported-membership-test
                 if not item.get("email") and email and "@" in email:
                     item["email"] = email
             if not found:
