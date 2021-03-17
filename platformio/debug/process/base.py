@@ -1,0 +1,189 @@
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import asyncio
+import signal
+import subprocess
+import sys
+import time
+
+from platformio import fs
+from platformio.compat import (
+    create_task,
+    get_locale_encoding,
+    get_running_loop,
+    string_types,
+)
+from platformio.proc import get_pythonexe_path
+from platformio.project.helpers import get_project_core_dir
+
+
+class DebugSubprocessProtocol(asyncio.SubprocessProtocol):
+    def __init__(self, factory):
+        self.factory = factory
+        self._is_exited = False
+
+    def connection_made(self, transport):
+        self.factory.connection_made(transport)
+
+    def pipe_data_received(self, fd, data):
+        pipe_to_cb = [
+            self.factory.stdin_data_received,
+            self.factory.stdout_data_received,
+            self.factory.stderr_data_received,
+        ]
+        pipe_to_cb[fd](data)
+
+    def connection_lost(self, exc):
+        self.process_exited()
+
+    def process_exited(self):
+        if self._is_exited:
+            return
+        self.factory.process_exited()
+        self._is_exited = True
+
+
+class DebugBaseProcess:
+
+    STDOUT_CHUNK_SIZE = 2048
+    LOG_FILE = None
+
+    COMMON_PATTERNS = {
+        "PLATFORMIO_HOME_DIR": get_project_core_dir(),
+        "PLATFORMIO_CORE_DIR": get_project_core_dir(),
+        "PYTHONEXE": get_pythonexe_path(),
+    }
+
+    def __init__(self):
+        self.transport = None
+        self._is_running = False
+        self._last_activity = 0
+        self._exit_future = None
+        self._stdin_read_task = None
+        self._std_encoding = get_locale_encoding()
+
+    async def spawn(self, *args, **kwargs):
+        wait_until_exit = False
+        if "wait_until_exit" in kwargs:
+            wait_until_exit = kwargs["wait_until_exit"]
+            del kwargs["wait_until_exit"]
+        for pipe in ("stdin", "stdout", "stderr"):
+            if pipe not in kwargs:
+                kwargs[pipe] = subprocess.PIPE
+        loop = get_running_loop()
+        await loop.subprocess_exec(
+            lambda: DebugSubprocessProtocol(self), *args, **kwargs
+        )
+        if wait_until_exit:
+            self._exit_future = loop.create_future()
+            await self._exit_future
+
+    def is_running(self):
+        return self._is_running
+
+    def connection_made(self, transport):
+        self._is_running = True
+        self.transport = transport
+
+    def connect_stdin_pipe(self):
+        self._stdin_read_task = create_task(self._read_stdin_pipe())
+
+    async def _read_stdin_pipe(self):
+        loop = get_running_loop()
+        try:
+            loop.add_reader(
+                sys.stdin.fileno(),
+                lambda: self.stdin_data_received(sys.stdin.buffer.readline()),
+            )
+        except NotImplementedError:
+            while True:
+                self.stdin_data_received(
+                    await loop.run_in_executor(None, sys.stdin.buffer.readline)
+                )
+
+    def stdin_data_received(self, data):
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
+                fp.write(data)
+
+    def stdout_data_received(self, data):
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
+                fp.write(data)
+        while data:
+            chunk = data[: self.STDOUT_CHUNK_SIZE]
+            print(chunk.decode(self._std_encoding, "replace"), end="", flush=True)
+            data = data[self.STDOUT_CHUNK_SIZE :]
+
+    def stderr_data_received(self, data):
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
+                fp.write(data)
+        print(
+            data.decode(self._std_encoding, "replace"),
+            end="",
+            file=sys.stderr,
+            flush=True,
+        )
+
+    def process_exited(self):
+        self._is_running = False
+        self._last_activity = time.time()
+        # Allow terminating via SIGINT/CTRL+C
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+        if self._stdin_read_task:
+            self._stdin_read_task.cancel()
+            self._stdin_read_task = None
+        if self._exit_future:
+            self._exit_future.set_result(True)
+            self._exit_future = None
+
+    def apply_patterns(self, source, patterns=None):
+        _patterns = self.COMMON_PATTERNS.copy()
+        _patterns.update(patterns or {})
+
+        for key, value in _patterns.items():
+            if key.endswith(("_DIR", "_PATH")):
+                _patterns[key] = fs.to_unix_path(value)
+
+        def _replace(text):
+            for key, value in _patterns.items():
+                pattern = "$%s" % key
+                text = text.replace(pattern, value or "")
+            return text
+
+        if isinstance(source, string_types):
+            source = _replace(source)
+        elif isinstance(source, (list, dict)):
+            items = enumerate(source) if isinstance(source, list) else source.items()
+            for key, value in items:
+                if isinstance(value, string_types):
+                    source[key] = _replace(value)
+                elif isinstance(value, (list, dict)):
+                    source[key] = self.apply_patterns(value, patterns)
+
+        return source
+
+    def terminate(self):
+        if not self.is_running() or not self.transport:
+            return
+        try:
+            self.transport.kill()
+            self.transport.close()
+        except:  # pylint: disable=bare-except
+            pass
