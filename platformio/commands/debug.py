@@ -17,6 +17,7 @@
 
 import asyncio
 import os
+import subprocess
 
 import click
 
@@ -24,13 +25,14 @@ from platformio import app, exception, fs, proc
 from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.compat import WINDOWS
 from platformio.debug import helpers
+from platformio.debug.config.factory import DebugConfigFactory
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.process.client import DebugClientProcess
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
-from platformio.project.helpers import is_platformio_project, load_project_ide_data
+from platformio.project.helpers import is_platformio_project
 
 
 @click.command(
@@ -62,46 +64,40 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     app.set_session_var("custom_project_conf", project_conf)
 
     # use env variables from Eclipse or CLion
-    for sysenv in ("CWD", "PWD", "PLATFORMIO_PROJECT_DIR"):
+    for name in ("CWD", "PWD", "PLATFORMIO_PROJECT_DIR"):
         if is_platformio_project(project_dir):
             break
-        if os.getenv(sysenv):
-            project_dir = os.getenv(sysenv)
+        if os.getenv(name):
+            project_dir = os.getenv(name)
 
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(project_conf)
-        config.validate(envs=[environment] if environment else None)
-
-        env_name = environment or helpers.get_default_debug_env(config)
-        env_options = config.items(env=env_name, as_dict=True)
-        if not set(env_options.keys()) >= set(["platform", "board"]):
-            raise ProjectEnvsNotAvailableError()
-
-        try:
-            platform = PlatformFactory.new(env_options["platform"])
-        except UnknownPlatform:
-            ctx.invoke(
-                cmd_platform_install,
-                platforms=[env_options["platform"]],
-                skip_default_package=True,
-            )
-            platform = PlatformFactory.new(env_options["platform"])
-
-        debug_options = helpers.configure_initial_debug_options(platform, env_options)
-        assert debug_options
+        project_config = ProjectConfig.get_instance(project_conf)
+    project_config.validate(envs=[environment] if environment else None)
+    env_name = environment or helpers.get_default_debug_env(project_config)
 
     if not interface:
         return helpers.predebug_project(ctx, project_dir, env_name, False, verbose)
 
-    ide_data = load_project_ide_data(project_dir, env_name)
-    if not ide_data:
-        raise DebugInvalidOptionsError("Could not load a build configuration")
+    env_options = project_config.items(env=env_name, as_dict=True)
+    if not set(env_options.keys()) >= set(["platform", "board"]):
+        raise ProjectEnvsNotAvailableError()
+
+    try:
+        platform = PlatformFactory.new(env_options["platform"])
+    except UnknownPlatform:
+        ctx.invoke(
+            cmd_platform_install,
+            platforms=[env_options["platform"]],
+            skip_default_package=True,
+        )
+        platform = PlatformFactory.new(env_options["platform"])
+
+    debug_config = DebugConfigFactory.new(platform, project_config, env_name)
 
     if "--version" in __unprocessed:
-        result = proc.exec_command([ide_data["gdb_path"], "--version"])
-        if result["returncode"] == 0:
-            return click.echo(result["out"])
-        raise exception.PlatformioException("\n".join([result["out"], result["err"]]))
+        return subprocess.run(
+            [debug_config.client_executable_path, "--version"], check=True
+        )
 
     try:
         fs.ensure_udev_rules()
@@ -113,29 +109,23 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
             nl=False,
         )
 
-    try:
-        debug_options = platform.configure_debug_options(debug_options, ide_data)
-    except NotImplementedError:
-        # legacy for ESP32 dev-platform <=2.0.0
-        debug_options["load_cmds"] = helpers.configure_esp32_load_cmds(
-            debug_options, ide_data
-        )
-
     rebuild_prog = False
-    preload = debug_options["load_cmds"] == ["preload"]
-    load_mode = debug_options["load_mode"]
+    preload = debug_config.load_cmds == ["preload"]
+    load_mode = debug_config.load_mode
     if load_mode == "always":
-        rebuild_prog = preload or not helpers.has_debug_symbols(ide_data["prog_path"])
+        rebuild_prog = preload or not helpers.has_debug_symbols(
+            debug_config.program_path
+        )
     elif load_mode == "modified":
         rebuild_prog = helpers.is_prog_obsolete(
-            ide_data["prog_path"]
-        ) or not helpers.has_debug_symbols(ide_data["prog_path"])
+            debug_config.program_path
+        ) or not helpers.has_debug_symbols(debug_config.program_path)
     else:
-        rebuild_prog = not os.path.isfile(ide_data["prog_path"])
+        rebuild_prog = not os.path.isfile(debug_config.program_path)
 
     if preload or (not rebuild_prog and load_mode != "always"):
         # don't load firmware through debug server
-        debug_options["load_cmds"] = []
+        debug_config.load_cmds = []
 
     if rebuild_prog:
         if helpers.is_gdbmi_mode():
@@ -155,15 +145,15 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
 
         # save SHA sum of newly created prog
         if load_mode == "modified":
-            helpers.is_prog_obsolete(ide_data["prog_path"])
+            helpers.is_prog_obsolete(debug_config.program_path)
 
-    if not os.path.isfile(ide_data["prog_path"]):
+    if not os.path.isfile(debug_config.program_path):
         raise DebugInvalidOptionsError("Program/firmware is missed")
 
     loop = asyncio.ProactorEventLoop() if WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
-    client = DebugClientProcess(project_dir, __unprocessed, debug_options, env_options)
-    coro = client.run(ide_data["gdb_path"], ide_data["prog_path"])
+    client = DebugClientProcess(project_dir, debug_config)
+    coro = client.run(__unprocessed)
     loop.run_until_complete(coro)
     if WINDOWS:
         # an issue with asyncio executor and STIDIN, it cannot be closed gracefully

@@ -13,10 +13,12 @@
 # limitations under the License.
 
 import asyncio
+import fnmatch
 import os
 import time
 
-from platformio import fs, util
+from platformio import fs
+from platformio.compat import MACOS, WINDOWS
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.helpers import escape_gdbmi_stream, is_gdbmi_mode
 from platformio.debug.process.base import DebugBaseProcess
@@ -24,27 +26,22 @@ from platformio.proc import where_is_program
 
 
 class DebugServerProcess(DebugBaseProcess):
-    def __init__(self, debug_options, env_options):
+    def __init__(self, debug_config):
         super(DebugServerProcess, self).__init__()
-        self.debug_options = debug_options
-        self.env_options = env_options
-
-        self._debug_port = ":3333"
+        self.debug_config = debug_config
         self._ready = False
 
-    async def run(self, patterns):  # pylint: disable=too-many-branches
-        systype = util.get_systype()
-        server = self.debug_options.get("server")
+    async def run(self):  # pylint: disable=too-many-branches
+        server = self.debug_config.server
         if not server:
             return None
-        server = self.apply_patterns(server, patterns)
         server_executable = server["executable"]
         if not server_executable:
             return None
         if server["cwd"]:
             server_executable = os.path.join(server["cwd"], server_executable)
         if (
-            "windows" in systype
+            WINDOWS
             and not server_executable.endswith(".exe")
             and os.path.isfile(server_executable + ".exe")
         ):
@@ -56,15 +53,18 @@ class DebugServerProcess(DebugBaseProcess):
             raise DebugInvalidOptionsError(
                 "\nCould not launch Debug Server '%s'. Please check that it "
                 "is installed and is included in a system PATH\n\n"
-                "See documentation or contact contact@platformio.org:\n"
+                "See documentation:\n"
                 "https://docs.platformio.org/page/plus/debugging.html\n"
                 % server_executable
             )
 
         openocd_pipe_allowed = all(
-            [not self.debug_options["port"], "openocd" in server_executable]
+            [
+                not self.debug_config.env_options.get("debug_port"),
+                "gdb" in self.debug_config.client_executable_path,
+                "openocd" in server_executable,
+            ]
         )
-        # openocd_pipe_allowed = False
         if openocd_pipe_allowed:
             args = []
             if server["cwd"]:
@@ -76,18 +76,16 @@ class DebugServerProcess(DebugBaseProcess):
             str_args = " ".join(
                 [arg if arg.startswith("-") else '"%s"' % arg for arg in args]
             )
-            self._debug_port = '| "%s" %s' % (server_executable, str_args)
-            self._debug_port = fs.to_unix_path(self._debug_port)
-            return self._debug_port
+            return fs.to_unix_path('| "%s" %s' % (server_executable, str_args))
 
         env = os.environ.copy()
         # prepend server "lib" folder to LD path
         if (
-            "windows" not in systype
+            not WINDOWS
             and server["cwd"]
             and os.path.isdir(os.path.join(server["cwd"], "lib"))
         ):
-            ld_key = "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH"
+            ld_key = "DYLD_LIBRARY_PATH" if MACOS else "LD_LIBRARY_PATH"
             env[ld_key] = os.path.join(server["cwd"], "lib")
             if os.environ.get(ld_key):
                 env[ld_key] = "%s:%s" % (env[ld_key], os.environ.get(ld_key))
@@ -102,20 +100,12 @@ class DebugServerProcess(DebugBaseProcess):
         await self.spawn(
             *([server_executable] + server["arguments"]), cwd=server["cwd"], env=env
         )
-
-        if "mspdebug" in server_executable.lower():
-            self._debug_port = ":2000"
-        elif "jlink" in server_executable.lower():
-            self._debug_port = ":2331"
-        elif "qemu" in server_executable.lower():
-            self._debug_port = ":1234"
-
         await self._wait_until_ready()
 
-        return self._debug_port
+        return self.debug_config.port
 
     async def _wait_until_ready(self):
-        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        ready_pattern = self.debug_config.server_ready_pattern
         timeout = 60 if ready_pattern else 10
         elapsed = 0
         delay = 0.5
@@ -129,13 +119,10 @@ class DebugServerProcess(DebugBaseProcess):
     def _check_ready_by_pattern(self, data):
         if self._ready:
             return self._ready
-        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        ready_pattern = self.debug_config.server_ready_pattern
         if ready_pattern:
             self._ready = ready_pattern.encode() in data
         return self._ready
-
-    def get_debug_port(self):
-        return self._debug_port
 
     def stdout_data_received(self, data):
         super(DebugServerProcess, self).stdout_data_received(

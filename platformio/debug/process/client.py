@@ -23,8 +23,6 @@ from platformio import fs, proc, telemetry, util
 from platformio.cache import ContentCache
 from platformio.compat import aio_get_running_loop, hashlib_encode_data, is_bytes
 from platformio.debug import helpers
-from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.debug.initcfgs import get_gdb_init_config
 from platformio.debug.process.base import DebugBaseProcess
 from platformio.debug.process.server import DebugServerProcess
 from platformio.project.helpers import get_project_cache_dir
@@ -37,14 +35,12 @@ class DebugClientProcess(
     PIO_SRC_NAME = ".pioinit"
     INIT_COMPLETED_BANNER = "PlatformIO: Initialization completed"
 
-    def __init__(self, project_dir, args, debug_options, env_options):
+    def __init__(self, project_dir, debug_config):
         super(DebugClientProcess, self).__init__()
         self.project_dir = project_dir
-        self.args = list(args)
-        self.debug_options = debug_options
-        self.env_options = env_options
+        self.debug_config = debug_config
 
-        self._server_process = DebugServerProcess(debug_options, env_options)
+        self._server_process = DebugServerProcess(debug_config)
         self._session_id = None
 
         if not os.path.isdir(get_project_cache_dir()):
@@ -56,27 +52,13 @@ class DebugClientProcess(
         self._target_is_running = False
         self._errors_buffer = b""
 
-    async def run(self, gdb_path, prog_path):
-        session_hash = gdb_path + prog_path
+    async def run(self, extra_args):
+        gdb_path = self.debug_config.client_executable_path
+        session_hash = gdb_path + self.debug_config.program_path
         self._session_id = hashlib.sha1(hashlib_encode_data(session_hash)).hexdigest()
         self._kill_previous_session()
-
-        patterns = {
-            "PROJECT_DIR": self.project_dir,
-            "PROG_PATH": prog_path,
-            "PROG_DIR": os.path.dirname(prog_path),
-            "PROG_NAME": os.path.basename(os.path.splitext(prog_path)[0]),
-            "DEBUG_PORT": self.debug_options["port"],
-            "UPLOAD_PROTOCOL": self.debug_options["upload_protocol"],
-            "INIT_BREAK": self.debug_options["init_break"] or "",
-            "LOAD_CMDS": "\n".join(self.debug_options["load_cmds"] or []),
-        }
-
-        await self._server_process.run(patterns)
-        if not patterns["DEBUG_PORT"]:
-            patterns["DEBUG_PORT"] = self._server_process.get_debug_port()
-
-        self.generate_pioinit(self._gdbsrc_dir, patterns)
+        self.debug_config.port = await self._server_process.run()
+        self.generate_init_script(os.path.join(self._gdbsrc_dir, self.PIO_SRC_NAME))
 
         # start GDB client
         args = [
@@ -89,13 +71,11 @@ class DebugClientProcess(
             "-l",
             "10",
         ]
-        args.extend(self.args)
-        if not gdb_path:
-            raise DebugInvalidOptionsError("GDB client is not configured")
+        args.extend(list(extra_args or []))
         gdb_data_dir = self._get_data_dir(gdb_path)
         if gdb_data_dir:
             args.extend(["--data-directory", gdb_data_dir])
-        args.append(patterns["PROG_PATH"])
+        args.append(self.debug_config.program_path)
         await self.spawn(*args, cwd=self.project_dir, wait_until_exit=True)
 
     @staticmethod
@@ -107,13 +87,13 @@ class DebugClientProcess(
         )
         return gdb_data_dir if os.path.isdir(gdb_data_dir) else None
 
-    def generate_pioinit(self, dst_dir, patterns):
+    def generate_init_script(self, dst):
         # default GDB init commands depending on debug tool
-        commands = get_gdb_init_config(self.debug_options).split("\n")
+        commands = self.debug_config.get_init_script("gdb").split("\n")
 
-        if self.debug_options["init_cmds"]:
-            commands = self.debug_options["init_cmds"]
-        commands.extend(self.debug_options["extra_cmds"])
+        if self.debug_config.init_cmds:
+            commands = self.debug_config.init_cmds
+        commands.extend(self.debug_config.extra_cmds)
 
         if not any("define pio_reset_run_target" in cmd for cmd in commands):
             commands = [
@@ -134,20 +114,20 @@ class DebugClientProcess(
                 "define pio_restart_target",
                 "   pio_reset_halt_target",
                 "   $INIT_BREAK",
-                "   %s" % ("continue" if patterns["INIT_BREAK"] else "next"),
+                "   %s" % ("continue" if self.debug_config.init_break else "next"),
                 "end",
             ]
 
         banner = [
             "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
-            "echo PlatformIO: debug_tool = %s\\n" % self.debug_options["tool"],
+            "echo PlatformIO: debug_tool = %s\\n" % self.debug_config.tool_name,
             "echo PlatformIO: Initializing remote target...\\n",
         ]
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
         commands = banner + commands + footer
 
-        with open(os.path.join(dst_dir, self.PIO_SRC_NAME), "w") as fp:
-            fp.write("\n".join(self.apply_patterns(commands, patterns)))
+        with open(dst, "w") as fp:
+            fp.write("\n".join(self.debug_config.reveal_patterns(commands)))
 
     def connection_made(self, transport):
         super(DebugClientProcess, self).connection_made(transport)
@@ -179,7 +159,9 @@ class DebugClientProcess(
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
             telemetry.send_event(
-                "Debug", "Started", telemetry.dump_run_environment(self.env_options)
+                "Debug",
+                "Started",
+                telemetry.dump_run_environment(self.debug_config.env_options),
             )
             self._auto_exec_continue()
 
@@ -194,12 +176,12 @@ class DebugClientProcess(
             aio_get_running_loop().call_later(0.1, self._auto_exec_continue)
             return
 
-        if not self.debug_options["init_break"] or self._target_is_running:
+        if not self.debug_config.init_break or self._target_is_running:
             return
 
         self.console_log(
             "PlatformIO: Resume the execution to `debug_init_break = %s`\n"
-            % self.debug_options["init_break"]
+            % self.debug_config.init_break
         )
         self.console_log(
             "PlatformIO: More configuration options -> http://bit.ly/pio-debug\n"
@@ -226,7 +208,7 @@ class DebugClientProcess(
         last_erros = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_erros, flags=re.M)
 
         err = "%s -> %s" % (
-            telemetry.dump_run_environment(self.env_options),
+            telemetry.dump_run_environment(self.debug_config.env_options),
             last_erros,
         )
         telemetry.send_exception("DebugInitError: %s" % err)
