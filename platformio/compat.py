@@ -30,9 +30,9 @@ if sys.version_info >= (3,):
 
 
 PY2 = sys.version_info[0] == 2
-CYGWIN = sys.platform.startswith("cygwin")
-WINDOWS = sys.platform.startswith("win")
-MACOS = sys.platform.startswith("darwin")
+IS_CYGWIN = sys.platform.startswith("cygwin")
+IS_WINDOWS = WINDOWS = sys.platform.startswith("win")
+IS_MACOS = sys.platform.startswith("darwin")
 string_types = (str,)
 
 

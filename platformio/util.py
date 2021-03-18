@@ -26,7 +26,7 @@ from glob import glob
 import click
 
 from platformio import __version__, compat, exception, proc
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.fs import cd, load_json  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
 
@@ -106,12 +106,6 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if WINDOWS and PY2:
-            try:
-                # pylint: disable=undefined-variable
-                d = unicode(d, errors="ignore")
-            except TypeError:
-                pass
         if not filter_hwid or "VID:PID" in h:
             result.append({"port": p, "description": d, "hwid": h})
 
@@ -119,7 +113,7 @@ def get_serial_ports(filter_hwid=False):
         return result
 
     # fix for PySerial
-    if not result and "darwin" in get_systype():
+    if not result and IS_MACOS:
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -131,7 +125,7 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if WINDOWS:
+    if IS_WINDOWS:
         try:
             result = proc.exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]

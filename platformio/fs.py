@@ -25,7 +25,7 @@ import sys
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 
 
 class cd(object):
@@ -176,7 +176,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
 
 
 def to_unix_path(path):
-    if not WINDOWS or not path:
+    if not IS_WINDOWS or not path:
         return path
     return re.sub(r"[\\]+", "/", path)
 
@@ -185,7 +185,7 @@ def expanduser(path):
     """
     Be compatible with Python 3.8, on Windows skip HOME and check for USERPROFILE
     """
-    if not WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
+    if not IS_WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
         return os.path.expanduser(path)
     return os.environ["USERPROFILE"] + path[1:]
 

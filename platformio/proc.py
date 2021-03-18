@@ -20,8 +20,7 @@ from threading import Thread
 
 from platformio import exception
 from platformio.compat import (
-    PY2,
-    WINDOWS,
+    IS_WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
     string_types,
@@ -31,10 +30,7 @@ from platformio.compat import (
 class AsyncPipeBase(object):
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
-        if PY2:
-            self._pipe_reader = os.fdopen(self._fd_read)
-        else:
-            self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
+        self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
         self._buffer = ""
         self._thread = Thread(target=self.run)
         self._thread.start()
@@ -129,9 +125,7 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = kwargs[s].get_buffer()
 
     for k, v in result.items():
-        if PY2 and isinstance(v, unicode):  # pylint: disable=undefined-variable
-            result[k] = v.encode()
-        elif not PY2 and isinstance(result[k], bytes):
+        if isinstance(result[k], bytes):
             try:
                 result[k] = result[k].decode(
                     get_locale_encoding() or get_filesystem_encoding()
@@ -178,7 +172,7 @@ def copy_pythonpath_to_osenv():
         _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
     for p in os.sys.path:
         conditions = [p not in _PYTHONPATH]
-        if not WINDOWS:
+        if not IS_WINDOWS:
             conditions.append(
                 os.path.isdir(os.path.join(p, "click"))
                 or os.path.isdir(os.path.join(p, "platformio"))
@@ -195,7 +189,7 @@ def where_is_program(program, envpath=None):
 
     # try OS's built-in commands
     try:
-        result = exec_command(["where" if WINDOWS else "which", program], env=env)
+        result = exec_command(["where" if IS_WINDOWS else "which", program], env=env)
         if result["returncode"] == 0 and os.path.isfile(result["out"].strip()):
             return result["out"].strip()
     except OSError:

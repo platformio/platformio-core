@@ -19,7 +19,7 @@ import sys
 import time
 
 from platformio.compat import (
-    WINDOWS,
+    IS_WINDOWS,
     aio_create_task,
     aio_get_running_loop,
     get_locale_encoding,
@@ -93,7 +93,7 @@ class DebugBaseProcess:
 
     async def _read_stdin_pipe(self):
         loop = aio_get_running_loop()
-        if WINDOWS:
+        if IS_WINDOWS:
             while True:
                 self.stdin_data_received(
                     await loop.run_in_executor(None, sys.stdin.buffer.readline)

@@ -18,7 +18,7 @@ import requests
 from starlette.concurrency import run_in_threadpool
 
 from platformio import util
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 from platformio.proc import where_is_program
 
 
@@ -37,15 +37,13 @@ def requests_session():
 
 @util.memoized(expire="60s")
 def get_core_fullpath():
-    return where_is_program(
-        "platformio" + (".exe" if "windows" in util.get_systype() else "")
-    )
+    return where_is_program("platformio" + (".exe" if IS_WINDOWS else ""))
 
 
 def is_port_used(host, port):
     socket.setdefaulttimeout(1)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if WINDOWS:
+    if IS_WINDOWS:
         try:
             s.bind((host, port))
             s.close()

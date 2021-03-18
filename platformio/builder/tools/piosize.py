@@ -24,8 +24,8 @@ from os.path import isdir, join, splitdrive
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
+from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command
-from platformio.util import get_systype
 
 
 def _run_tool(cmd, env, tool_args):
@@ -164,7 +164,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         location = symbol_locations.get(hex(symbol["addr"]))
         if not location or "?" in location:
             continue
-        if "windows" in get_systype():
+        if IS_WINDOWS:
             drive, tail = splitdrive(location)
             location = join(drive.upper(), tail)
         symbol["file"] = location

@@ -33,7 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.clients.http import InternetIsOffline
-from platformio.compat import WINDOWS, hashlib_encode_data, string_types
+from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
@@ -142,7 +142,7 @@ class LibBuilderBase(object):
     def __contains__(self, path):
         p1 = self.path
         p2 = path
-        if WINDOWS:
+        if IS_WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
         if p1 == p2:

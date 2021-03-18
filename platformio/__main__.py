@@ -22,7 +22,7 @@ import click
 
 from platformio import __version__, exception
 from platformio.commands import PlatformioCLI
-from platformio.compat import CYGWIN, PY2, ensure_python3
+from platformio.compat import IS_CYGWIN, PY2, ensure_python3
 
 try:
     import click_completion  # pylint: disable=import-error
@@ -76,7 +76,7 @@ def process_result(ctx, result, *_, **__):
 
 
 def configure():
-    if CYGWIN:
+    if IS_CYGWIN:
         raise exception.CygwinEnvDetected()
 
     # https://urllib3.readthedocs.org

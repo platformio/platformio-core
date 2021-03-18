@@ -13,12 +13,11 @@
 # limitations under the License.
 
 import asyncio
-import fnmatch
 import os
 import time
 
 from platformio import fs
-from platformio.compat import MACOS, WINDOWS
+from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.helpers import escape_gdbmi_stream, is_gdbmi_mode
 from platformio.debug.process.base import DebugBaseProcess
@@ -41,7 +40,7 @@ class DebugServerProcess(DebugBaseProcess):
         if server["cwd"]:
             server_executable = os.path.join(server["cwd"], server_executable)
         if (
-            WINDOWS
+            IS_WINDOWS
             and not server_executable.endswith(".exe")
             and os.path.isfile(server_executable + ".exe")
         ):
@@ -81,11 +80,11 @@ class DebugServerProcess(DebugBaseProcess):
         env = os.environ.copy()
         # prepend server "lib" folder to LD path
         if (
-            not WINDOWS
+            not IS_WINDOWS
             and server["cwd"]
             and os.path.isdir(os.path.join(server["cwd"], "lib"))
         ):
-            ld_key = "DYLD_LIBRARY_PATH" if MACOS else "LD_LIBRARY_PATH"
+            ld_key = "DYLD_LIBRARY_PATH" if IS_MACOS else "LD_LIBRARY_PATH"
             env[ld_key] = os.path.join(server["cwd"], "lib")
             if os.environ.get(ld_key):
                 env[ld_key] = "%s:%s" % (env[ld_key], os.environ.get(ld_key))
