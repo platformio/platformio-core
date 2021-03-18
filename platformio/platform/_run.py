@@ -20,7 +20,7 @@ import sys
 import click
 
 from platformio import app, fs, proc, telemetry
-from platformio.compat import PY2, hashlib_encode_data, is_bytes
+from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
 
@@ -90,14 +90,9 @@ class PlatformRunMixin(object):
 
     def _run_scons(self, variables, targets, jobs):
         scons_dir = get_core_package_dir("tool-scons")
-        script_path = (
-            os.path.join(scons_dir, "script", "scons")
-            if PY2
-            else os.path.join(scons_dir, "scons.py")
-        )
         args = [
             proc.get_pythonexe_path(),
-            script_path,
+            os.path.join(scons_dir, "scons.py"),
             "-Q",
             "--warn=no-no-parallel-support",
             "--jobs",

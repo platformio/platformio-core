@@ -19,9 +19,14 @@ import signal
 import tempfile
 import time
 
-from platformio import fs, proc, telemetry, util
+from platformio import fs, proc, telemetry
 from platformio.cache import ContentCache
-from platformio.compat import aio_get_running_loop, hashlib_encode_data, is_bytes
+from platformio.compat import (
+    IS_WINDOWS,
+    aio_get_running_loop,
+    hashlib_encode_data,
+    is_bytes,
+)
 from platformio.debug import helpers
 from platformio.debug.process.base import DebugBaseProcess
 from platformio.debug.process.server import DebugServerProcess
@@ -230,7 +235,7 @@ class DebugClientProcess(
             cc.delete(self._session_id)
         if not pid:
             return
-        if "windows" in util.get_systype():
+        if IS_WINDOWS:
             kill = ["Taskkill", "/PID", pid, "/F"]
         else:
             kill = ["kill", pid]

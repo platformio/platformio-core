@@ -21,7 +21,7 @@ from os.path import dirname, isdir, isfile, join
 from click.testing import CliRunner
 
 from platformio import __version__, exception, fs
-from platformio.compat import WINDOWS, hashlib_encode_data
+from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
 
@@ -92,7 +92,7 @@ def get_project_libdeps_dir():
 def get_default_projects_dir():
     docs_dir = join(fs.expanduser("~"), "Documents")
     try:
-        assert WINDOWS
+        assert IS_WINDOWS
         import ctypes.wintypes  # pylint: disable=import-outside-toplevel
 
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
@@ -128,7 +128,7 @@ def compute_project_checksum(config):
         if not chunks:
             continue
         chunks_to_str = ",".join(sorted(chunks))
-        if WINDOWS:  # case insensitive OS
+        if IS_WINDOWS:  # case insensitive OS
             chunks_to_str = chunks_to_str.lower()
         checksum.update(hashlib_encode_data(chunks_to_str))
 

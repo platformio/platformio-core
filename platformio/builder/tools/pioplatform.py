@@ -21,7 +21,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import fs, util
-from platformio.compat import WINDOWS
+from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.package.meta import PackageItem
 from platformio.package.version import get_original_version
 from platformio.platform.exception import UnknownBoard
@@ -71,7 +71,6 @@ def LoadPioPlatform(env):
     env["PIOPLATFORM"] = p.name
 
     # Add toolchains and uploaders to $PATH and $*_LIBRARY_PATH
-    systype = util.get_systype()
     for pkg in p.get_installed_packages():
         type_ = p.get_package_type(pkg.metadata.name)
         if type_ not in ("toolchain", "uploader", "debugger"):
@@ -83,12 +82,12 @@ def LoadPioPlatform(env):
             else pkg.path,
         )
         if (
-            not WINDOWS
+            not IS_WINDOWS
             and os.path.isdir(os.path.join(pkg.path, "lib"))
             and type_ != "toolchain"
         ):
             env.PrependENVPath(
-                "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH",
+                "DYLD_LIBRARY_PATH" if IS_MACOS else "LD_LIBRARY_PATH",
                 os.path.join(pkg.path, "lib"),
             )
 

@@ -19,7 +19,7 @@ import tarfile
 import jsondiff
 import pytest
 
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 from platformio.package.manifest import parser
 from platformio.package.manifest.schema import ManifestSchema, ManifestValidationError
 
@@ -715,7 +715,7 @@ def test_examples_from_dir(tmpdir_factory):
     pio_dir.join(".vimrc").write("")
     pio_ini = pio_dir.join("platformio.ini")
     pio_ini.write("")
-    if not WINDOWS:
+    if not IS_WINDOWS:
         pio_dir.join("platformio.ini.copy").mksymlinkto(pio_ini)
     pio_dir.mkdir("include").join("main.h").write("")
     pio_dir.mkdir("src").join("main.cpp").write("")

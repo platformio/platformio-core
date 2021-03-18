@@ -21,7 +21,7 @@ import re
 import click
 
 from platformio import fs
-from platformio.compat import PY2, WINDOWS, hashlib_encode_data, string_types
+from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
@@ -88,11 +88,7 @@ class ProjectConfigBase(object):
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = (
-            ConfigParser.ConfigParser()
-            if PY2
-            else ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
-        )
+        self._parser = ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
@@ -359,7 +355,7 @@ class ProjectConfigDirsMixin(object):
         default = ProjectOptions["platformio.core_dir"].default
         core_dir = self.get("platformio", "core_dir")
         win_core_dir = None
-        if WINDOWS and core_dir == default:
+        if IS_WINDOWS and core_dir == default:
             win_core_dir = os.path.splitdrive(core_dir)[0] + "\\.platformio"
             if os.path.isdir(win_core_dir):
                 core_dir = win_core_dir

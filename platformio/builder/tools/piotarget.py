@@ -31,7 +31,7 @@ def VerboseAction(_, act, actstr):
 
 def PioClean(env, clean_dir):
     def _relpath(path):
-        if compat.WINDOWS:
+        if compat.IS_WINDOWS:
             prefix = os.getcwd()[:2].lower()
             if (
                 ":" not in prefix

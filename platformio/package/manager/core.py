@@ -20,7 +20,6 @@ import sys
 from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
-from platformio.compat import PY2
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
@@ -207,7 +206,7 @@ def get_contrib_pysite_deps():
     sys_type = util.get_systype()
     py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
-    twisted_version = "19.10.0" if PY2 else "20.3.0"
+    twisted_version = "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
     ]

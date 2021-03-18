@@ -69,7 +69,7 @@ def system_info(json_output):
     data["platformio_exe"] = {
         "title": "PlatformIO Core Executable",
         "value": proc.where_is_program(
-            "platformio.exe" if proc.WINDOWS else "platformio"
+            "platformio.exe" if compat.IS_WINDOWS else "platformio"
         ),
     }
     data["python_exe"] = {

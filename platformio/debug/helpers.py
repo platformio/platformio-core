@@ -23,7 +23,7 @@ from os.path import isfile
 from platformio import util
 from platformio.commands import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
-from platformio.compat import is_bytes
+from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
 
 
@@ -152,11 +152,7 @@ def reveal_debug_port(env_debug_port, tool_name, tool_settings):
                 continue
             port = item["port"]
             if tool_name.startswith("blackmagic"):
-                if (
-                    "windows" in util.get_systype()
-                    and port.startswith("COM")
-                    and len(port) > 4
-                ):
+                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
                     port = "\\\\.\\%s" % port
                 if "GDB" in item["description"]:
                     return port

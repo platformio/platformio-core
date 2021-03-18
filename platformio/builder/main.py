@@ -129,7 +129,7 @@ env.Replace(
 )
 
 if (
-    compat.WINDOWS
+    compat.IS_WINDOWS
     and sys.version_info >= (3, 8)
     and env["PROJECT_DIR"].startswith("\\\\")
 ):

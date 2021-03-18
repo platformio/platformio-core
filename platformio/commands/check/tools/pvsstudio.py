@@ -19,9 +19,10 @@ from xml.etree.ElementTree import fromstring
 
 import click
 
-from platformio import proc, util
+from platformio import proc
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
+from platformio.compat import IS_WINDOWS
 from platformio.package.manager.core import get_core_package_dir
 
 
@@ -34,7 +35,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         self._tmp_cmd_file = self._generate_tmp_file_path() + ".cmd"
         self.tool_path = os.path.join(
             get_core_package_dir("tool-pvs-studio"),
-            "x64" if "windows" in util.get_systype() else "bin",
+            "x64" if IS_WINDOWS else "bin",
             "pvs-studio",
         )
         super(PvsStudioCheckTool, self).__init__(*args, **kwargs)
@@ -70,9 +71,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
     def _demangle_report(self, output_file):
         converter_tool = os.path.join(
             get_core_package_dir("tool-pvs-studio"),
-            "HtmlGenerator"
-            if "windows" in util.get_systype()
-            else os.path.join("bin", "plog-converter"),
+            "HtmlGenerator" if IS_WINDOWS else os.path.join("bin", "plog-converter"),
         )
 
         cmd = (

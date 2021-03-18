@@ -15,7 +15,6 @@
 import os
 
 from platformio import fs, telemetry, util
-from platformio.compat import PY2
 from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
 from platformio.exception import UserSideException
 from platformio.platform.exception import InvalidBoardManifest
@@ -40,15 +39,6 @@ class PlatformBoardConfig(object):
             value = self._manifest
             for k in path.split("."):
                 value = value[k]
-            # pylint: disable=undefined-variable
-            if PY2 and isinstance(value, unicode):
-                # cast to plain string from unicode for PY2, resolves issue in
-                # dev/platform when BoardConfig.get() is used in pair with
-                # os.path.join(file_encoding, unicode_encoding)
-                try:
-                    value = value.encode("utf-8")
-                except UnicodeEncodeError:
-                    pass
             return value
         except KeyError:
             if default is not None:

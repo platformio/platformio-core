@@ -21,7 +21,7 @@ import click
 
 from platformio import VERSION, __version__, app, exception
 from platformio.clients.http import fetch_remote_content
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
@@ -73,7 +73,7 @@ def cli(dev):
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
-        if any(m in r["err"].lower() for m in permission_errors) and not WINDOWS:
+        if any(m in r["err"].lower() for m in permission_errors) and not IS_WINDOWS:
             click.secho(
                 """
 -----------------
