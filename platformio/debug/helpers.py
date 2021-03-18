@@ -20,13 +20,11 @@ from hashlib import sha1
 from io import BytesIO
 from os.path import isfile
 
-from platformio import fs, util
+from platformio import util
 from platformio.commands import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
 from platformio.compat import is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.project.config import ProjectConfig
-from platformio.project.options import ProjectOptions
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
@@ -84,130 +82,6 @@ def predebug_project(ctx, project_dir, env_name, preload, verbose):
     )
     if preload:
         time.sleep(5)
-
-
-def configure_initial_debug_options(platform, env_options):
-    def _cleanup_cmds(items):
-        items = ProjectConfig.parse_multi_values(items)
-        return ["$LOAD_CMDS" if item == "$LOAD_CMD" else item for item in items]
-
-    board_config = platform.board_config(env_options["board"])
-    tool_name = board_config.get_debug_tool_name(env_options.get("debug_tool"))
-    tool_settings = board_config.get("debug", {}).get("tools", {}).get(tool_name, {})
-    server_options = None
-
-    # specific server per a system
-    if isinstance(tool_settings.get("server", {}), list):
-        for item in tool_settings["server"][:]:
-            tool_settings["server"] = item
-            if util.get_systype() in item.get("system", []):
-                break
-
-    # user overwrites debug server
-    if env_options.get("debug_server"):
-        server_options = {
-            "cwd": None,
-            "executable": None,
-            "arguments": env_options.get("debug_server"),
-        }
-        server_options["executable"] = server_options["arguments"][0]
-        server_options["arguments"] = server_options["arguments"][1:]
-    elif "server" in tool_settings:
-        server_options = tool_settings["server"]
-        server_package = server_options.get("package")
-        server_package_dir = (
-            platform.get_package_dir(server_package) if server_package else None
-        )
-        if server_package and not server_package_dir:
-            platform.install_packages(
-                with_packages=[server_package], skip_default_package=True, silent=True
-            )
-            server_package_dir = platform.get_package_dir(server_package)
-        server_options.update(
-            dict(
-                cwd=server_package_dir if server_package else None,
-                executable=server_options.get("executable"),
-                arguments=[
-                    a.replace("$PACKAGE_DIR", server_package_dir)
-                    if server_package_dir
-                    else a
-                    for a in server_options.get("arguments", [])
-                ],
-            )
-        )
-
-    extra_cmds = _cleanup_cmds(env_options.get("debug_extra_cmds"))
-    extra_cmds.extend(_cleanup_cmds(tool_settings.get("extra_cmds")))
-    result = dict(
-        tool=tool_name,
-        upload_protocol=env_options.get(
-            "upload_protocol", board_config.get("upload", {}).get("protocol")
-        ),
-        load_cmds=_cleanup_cmds(
-            env_options.get(
-                "debug_load_cmds",
-                tool_settings.get(
-                    "load_cmds",
-                    tool_settings.get(
-                        "load_cmd", ProjectOptions["env.debug_load_cmds"].default
-                    ),
-                ),
-            )
-        ),
-        load_mode=env_options.get(
-            "debug_load_mode",
-            tool_settings.get(
-                "load_mode", ProjectOptions["env.debug_load_mode"].default
-            ),
-        ),
-        init_break=env_options.get(
-            "debug_init_break",
-            tool_settings.get(
-                "init_break", ProjectOptions["env.debug_init_break"].default
-            ),
-        ),
-        init_cmds=_cleanup_cmds(
-            env_options.get("debug_init_cmds", tool_settings.get("init_cmds"))
-        ),
-        extra_cmds=extra_cmds,
-        require_debug_port=tool_settings.get("require_debug_port", False),
-        port=reveal_debug_port(
-            env_options.get("debug_port", tool_settings.get("port")),
-            tool_name,
-            tool_settings,
-        ),
-        speed=env_options.get("debug_speed", tool_settings.get("speed")),
-        server=server_options,
-    )
-    return result
-
-
-def configure_esp32_load_cmds(debug_options, configuration):
-    """
-    DEPRECATED: Moved to ESP32 dev-platform
-    See platform.py::configure_debug_options
-    """
-    flash_images = configuration.get("extra", {}).get("flash_images")
-    ignore_conds = [
-        debug_options["load_cmds"] != ["load"],
-        "xtensa-esp32" not in configuration.get("cc_path", ""),
-        not flash_images,
-        not all(isfile(item["path"]) for item in flash_images),
-    ]
-    if any(ignore_conds):
-        return debug_options["load_cmds"]
-
-    mon_cmds = [
-        'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
-            path=fs.to_unix_path(item["path"]), offset=item["offset"]
-        )
-        for item in flash_images
-    ]
-    mon_cmds.append(
-        'monitor program_esp32 "{%s.bin}" 0x10000 verify'
-        % fs.to_unix_path(configuration["prog_path"][:-4])
-    )
-    return mon_cmds
 
 
 def has_debug_symbols(prog_path):

@@ -18,16 +18,12 @@ import subprocess
 import sys
 import time
 
-from platformio import fs
 from platformio.compat import (
     WINDOWS,
     aio_create_task,
     aio_get_running_loop,
     get_locale_encoding,
-    string_types,
 )
-from platformio.proc import get_pythonexe_path
-from platformio.project.helpers import get_project_core_dir
 
 
 class DebugSubprocessProtocol(asyncio.SubprocessProtocol):
@@ -60,12 +56,6 @@ class DebugBaseProcess:
 
     STDOUT_CHUNK_SIZE = 2048
     LOG_FILE = None
-
-    COMMON_PATTERNS = {
-        "PLATFORMIO_HOME_DIR": get_project_core_dir(),
-        "PLATFORMIO_CORE_DIR": get_project_core_dir(),
-        "PYTHONEXE": get_pythonexe_path(),
-    }
 
     def __init__(self):
         self.transport = None
@@ -154,32 +144,6 @@ class DebugBaseProcess:
         if self._exit_future:
             self._exit_future.set_result(True)
             self._exit_future = None
-
-    def apply_patterns(self, source, patterns=None):
-        _patterns = self.COMMON_PATTERNS.copy()
-        _patterns.update(patterns or {})
-
-        for key, value in _patterns.items():
-            if key.endswith(("_DIR", "_PATH")):
-                _patterns[key] = fs.to_unix_path(value)
-
-        def _replace(text):
-            for key, value in _patterns.items():
-                pattern = "$%s" % key
-                text = text.replace(pattern, value or "")
-            return text
-
-        if isinstance(source, string_types):
-            source = _replace(source)
-        elif isinstance(source, (list, dict)):
-            items = enumerate(source) if isinstance(source, list) else source.items()
-            for key, value in items:
-                if isinstance(value, string_types):
-                    source[key] = _replace(value)
-                elif isinstance(value, (list, dict)):
-                    source[key] = self.apply_patterns(value, patterns)
-
-        return source
 
     def terminate(self):
         if not self.is_running() or not self.transport:

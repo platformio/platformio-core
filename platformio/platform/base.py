@@ -203,7 +203,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
                 elif "nobuild" in targets and opts.get("type") != "framework":
                     self.packages[name]["optional"] = True
 
-    def configure_debug_options(self, initial_debug_options, ide_data):
+    def configure_debug_session(self, debug_config):
         raise NotImplementedError
 
     def get_lib_storages(self):
