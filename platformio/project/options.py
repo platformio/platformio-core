@@ -695,6 +695,14 @@ ProjectOptions = OrderedDict(
                 ),
                 type=click.Path(exists=True, file_okay=True, dir_okay=False),
             ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_server_ready_pattern",
+                description=(
+                    "A pattern to determine when debugging server is ready "
+                    "for an incoming connection"
+                ),
+            ),
             # Advanced
             ConfigEnvOption(
                 group="advanced",

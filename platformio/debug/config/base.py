@@ -130,7 +130,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def server_ready_pattern(self):
-        return (self.server or {}).get("ready_pattern")
+        return self.env_options.get(
+            "debug_server_ready_pattern", (self.server or {}).get("ready_pattern")
+        )
 
     def _load_build_data(self):
         data = load_project_ide_data(self.project_config.path, self.env_name)

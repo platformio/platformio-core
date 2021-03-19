@@ -14,6 +14,7 @@
 
 import asyncio
 import os
+import re
 import time
 
 from platformio import fs
@@ -120,7 +121,13 @@ class DebugServerProcess(DebugBaseProcess):
             return self._ready
         ready_pattern = self.debug_config.server_ready_pattern
         if ready_pattern:
-            self._ready = ready_pattern.encode() in data
+            if ready_pattern.startswith("^"):
+                self._ready = re.match(
+                    ready_pattern,
+                    data.decode("utf-8", "ignore"),
+                )
+            else:
+                self._ready = ready_pattern.encode() in data
         return self._ready
 
     def stdout_data_received(self, data):

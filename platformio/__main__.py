@@ -22,7 +22,7 @@ import click
 
 from platformio import __version__, exception
 from platformio.commands import PlatformioCLI
-from platformio.compat import IS_CYGWIN, PY2, ensure_python3
+from platformio.compat import IS_CYGWIN, ensure_python3
 
 try:
     import click_completion  # pylint: disable=import-error
@@ -118,7 +118,7 @@ def main(argv=None):
             exit_code = int(e.code)
     except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
-            if not PY2:
+            if sys.version_info.major != 2:
                 from platformio import maintenance
 
                 maintenance.on_platformio_exception(e)

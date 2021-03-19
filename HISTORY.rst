@@ -15,6 +15,7 @@ PlatformIO Core 5
 
   - Boosted `PlatformIO Debugging <https://docs.platformio.org/page/plus/debugging.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
   - Support debugging on Windows using Windows CMD/CLI (`pio debug <https://docs.platformio.org/page/core/userguide/cmd_debug.html>`__) (`issue #3793 <https://github.com/platformio/platformio-core/issues/3793>`_)
+  - Configure a custom pattern to determine when debugging server is started with a new `debug_server_ready_pattern <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-server-ready-pattern>`__ option
 
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
