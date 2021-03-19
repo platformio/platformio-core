@@ -29,14 +29,21 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         self.project_config = project_config
         self.env_name = env_name
         self.env_options = project_config.items(env=env_name, as_dict=True)
-        self.board_config = platform.board_config(self.env_options["board"])
         self.build_data = self._load_build_data()
-        self.tool_name = self.board_config.get_debug_tool_name(
-            self.env_options.get("debug_tool")
-        )
-        self.tool_settings = (
-            self.board_config.get("debug", {}).get("tools", {}).get(self.tool_name, {})
-        )
+
+        self.tool_name = None
+        self.board_config = {}
+        self.tool_settings = {}
+        if "board" in self.env_options:
+            self.board_config = platform.board_config(self.env_options["board"])
+            self.tool_name = self.board_config.get_debug_tool_name(
+                self.env_options.get("debug_tool")
+            )
+            self.tool_settings = (
+                self.board_config.get("debug", {})
+                .get("tools", {})
+                .get(self.tool_name, {})
+            )
 
         self._load_cmds = None
         self._port = None

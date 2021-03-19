@@ -37,7 +37,7 @@ class GDBClientProcess(DebugClientProcess):
         await super(GDBClientProcess, self).run()
 
         self.generate_init_script(os.path.join(self.working_dir, self.PIO_SRC_NAME))
-        gdb_path = self.debug_config.client_executable_path
+        gdb_path = self.debug_config.client_executable_path or "gdb"
         # start GDB client
         args = [
             gdb_path,
@@ -115,7 +115,8 @@ class GDBClientProcess(DebugClientProcess):
                 token, _ = data.split(b"-", 1)
                 self.stdout_data_received(token + b"^running\n")
                 return
-            data = data.replace(b"-exec-run", b"-exec-continue")
+            if self.debug_config.platform.is_embedded():
+                data = data.replace(b"-exec-run", b"-exec-continue")
 
         if b"-exec-continue" in data:
             self._target_is_running = True
@@ -158,9 +159,14 @@ class GDBClientProcess(DebugClientProcess):
         self.console_log(
             "PlatformIO: More configuration options -> http://bit.ly/pio-debug\n"
         )
-        self.transport.get_pipe_transport(0).write(
-            b"0-exec-continue\n" if helpers.is_gdbmi_mode() else b"continue\n"
-        )
+        if self.debug_config.platform.is_embedded():
+            self.transport.get_pipe_transport(0).write(
+                b"0-exec-continue\n" if helpers.is_gdbmi_mode() else b"continue\n"
+            )
+        else:
+            self.transport.get_pipe_transport(0).write(
+                b"0-exec-run\n" if helpers.is_gdbmi_mode() else b"run\n"
+            )
         self._target_is_running = True
 
     def stderr_data_received(self, data):
