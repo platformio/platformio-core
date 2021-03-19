@@ -334,7 +334,13 @@ def ConfigureDebugFlags(env):
     for scope in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
         _cleanup_debug_flags(scope)
 
-    debug_flags = env.ParseFlags(env.GetProjectOption("debug_build_flags"))
+    debug_flags = env.ParseFlags(
+        env.get("PIODEBUGFLAGS")
+        if env.get("PIODEBUGFLAGS")
+        and not env.GetProjectOptions(as_dict=True).get("debug_build_flags")
+        else env.GetProjectOption("debug_build_flags")
+    )
+
     env.MergeFlags(debug_flags)
     optimization_flags = [
         f for f in debug_flags.get("CCFLAGS", []) if f.startswith(("-O", "-g"))
