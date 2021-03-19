@@ -50,7 +50,7 @@ def GetBuildType(env):
     return (
         "debug"
         if (
-            set(["debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+            set(["__debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
             or env.GetProjectOption("build_type") == "debug"
         )
         else "release"

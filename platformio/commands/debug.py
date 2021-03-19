@@ -76,7 +76,9 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     env_name = environment or helpers.get_default_debug_env(project_config)
 
     if not interface:
-        return helpers.predebug_project(ctx, project_dir, env_name, False, verbose)
+        return helpers.predebug_project(
+            ctx, project_dir, project_config, env_name, False, verbose
+        )
 
     env_options = project_config.items(env=env_name, as_dict=True)
     if "platform" not in env_options:
@@ -138,11 +140,15 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
             )
             stream = helpers.GDBMIConsoleStream()
             with proc.capture_std_streams(stream):
-                helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
+                helpers.predebug_project(
+                    ctx, project_dir, project_config, env_name, preload, verbose
+                )
             stream.close()
         else:
             click.echo("Preparing firmware for debugging...")
-            helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
+            helpers.predebug_project(
+                ctx, project_dir, project_config, env_name, preload, verbose
+            )
 
         # save SHA sum of newly created prog
         if load_mode == "modified":
