@@ -92,7 +92,7 @@ def has_debug_symbols(prog_path):
         b".debug_abbrev": False,
         b" -Og": False,
         b" -g": False,
-        b"__PLATFORMIO_BUILD_DEBUG__": False,
+        # b"__PLATFORMIO_BUILD_DEBUG__": False,
     }
     with open(prog_path, "rb") as fp:
         last_data = b""
