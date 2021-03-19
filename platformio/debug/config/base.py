@@ -99,8 +99,8 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def init_cmds(self):
-        return self.env_options.get(
-            "debug_init_cmds", self.tool_settings.get("init_cmds")
+        return self.cleanup_cmds(
+            self.env_options.get("debug_init_cmds", self.tool_settings.get("init_cmds"))
         )
 
     @property
