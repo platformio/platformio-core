@@ -79,7 +79,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
         return helpers.predebug_project(ctx, project_dir, env_name, False, verbose)
 
     env_options = project_config.items(env=env_name, as_dict=True)
-    if not set(env_options.keys()) >= set(["platform", "board"]):
+    if "platform" not in env_options:
         raise ProjectEnvsNotAvailableError()
 
     try:

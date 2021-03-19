@@ -16,6 +16,7 @@ import importlib
 import re
 
 from platformio.debug.config.generic import GenericDebugConfig
+from platformio.debug.config.native import NativeDebugConfig
 
 
 class DebugConfigFactory(object):
@@ -29,13 +30,19 @@ class DebugConfigFactory(object):
         board_config = platform.board_config(
             project_config.get("env:" + env_name, "board")
         )
-        tool_name = board_config.get_debug_tool_name(
-            project_config.get("env:" + env_name, "debug_tool")
+        tool_name = (
+            board_config.get_debug_tool_name(
+                project_config.get("env:" + env_name, "debug_tool")
+            )
+            if board_config
+            else None
         )
         config_cls = None
         try:
             mod = importlib.import_module("platformio.debug.config.%s" % tool_name)
             config_cls = getattr(mod, cls.get_clsname(tool_name))
         except ModuleNotFoundError:
-            config_cls = GenericDebugConfig
+            config_cls = (
+                GenericDebugConfig if platform.is_embedded() else NativeDebugConfig
+            )
         return config_cls(platform, project_config, env_name)
