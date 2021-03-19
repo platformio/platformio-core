@@ -135,7 +135,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         )
 
     def _load_build_data(self):
-        data = load_project_ide_data(self.project_config.path, self.env_name)
+        data = load_project_ide_data(
+            os.path.dirname(self.project_config.path), self.env_name, cache=True
+        )
         if data:
             return data
         raise DebugInvalidOptionsError("Could not load a build configuration")
