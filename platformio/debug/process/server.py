@@ -51,10 +51,9 @@ class DebugServerProcess(DebugBaseProcess):
             server_executable = where_is_program(server_executable)
         if not os.path.isfile(server_executable):
             raise DebugInvalidOptionsError(
-                "\nCould not launch Debug Server '%s'. Please check that it "
-                "is installed and is included in a system PATH\n\n"
-                "See documentation:\n"
-                "https://docs.platformio.org/page/plus/debugging.html\n"
+                "Could not launch Debug Server '%s'. Please check that it "
+                "is installed and is included in a system PATH\n"
+                "See https://docs.platformio.org/page/plus/debugging.html"
                 % server_executable
             )
 
