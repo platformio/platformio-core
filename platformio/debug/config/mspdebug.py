@@ -24,7 +24,7 @@ end
 define pio_reset_run_target
 end
 
-target extended-remote $DEBUG_PORT
+target remote $DEBUG_PORT
 monitor erase
 $LOAD_CMDS
 pio_reset_halt_target
