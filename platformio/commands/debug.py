@@ -27,7 +27,7 @@ from platformio.compat import IS_WINDOWS
 from platformio.debug import helpers
 from platformio.debug.config.factory import DebugConfigFactory
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.debug.process.client import DebugClientProcess
+from platformio.debug.process.gdb import GDBClientProcess
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
@@ -153,9 +153,10 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
 
     loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
-    client = DebugClientProcess(project_dir, debug_config)
+    client = GDBClientProcess(project_dir, debug_config)
     coro = client.run(__unprocessed)
     loop.run_until_complete(coro)
+    del client
     if IS_WINDOWS:
         # an issue with asyncio executor and STIDIN, it cannot be closed gracefully
         proc.force_exit()

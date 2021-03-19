@@ -92,8 +92,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         result = self.env_options.get("debug_init_break", missed)
         if result != missed:
             return result
-        else:
-            result = None
+        result = None
         if not result:
             result = self.tool_settings.get("init_break")
         return result or ProjectOptions["env.debug_init_break"].default
