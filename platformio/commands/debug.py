@@ -120,8 +120,9 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
         rebuild_prog = helpers.is_prog_obsolete(
             debug_config.program_path
         ) or not helpers.has_debug_symbols(debug_config.program_path)
-    else:
-        rebuild_prog = not os.path.isfile(debug_config.program_path)
+
+    if not (debug_config.program_path and os.path.isfile(debug_config.program_path)):
+        rebuild_prog = True
 
     if preload or (not rebuild_prog and load_mode != "always"):
         # don't load firmware through debug server
