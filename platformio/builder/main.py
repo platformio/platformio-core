@@ -224,10 +224,11 @@ if "idedata" in COMMAND_LINE_TARGETS:
         Import("projenv")
     except:  # pylint: disable=bare-except
         projenv = env
-    click.echo(
-        "\n%s\n"
-        % json.dumps(projenv.DumpIDEData(env))  # pylint: disable=undefined-variable
-    )
+    data = projenv.DumpIDEData(env)
+    # dump to file for the further reading by project.helpers.load_project_ide_data
+    with open(projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")), "w") as fp:
+        json.dump(data, fp)
+    click.echo("\n%s\n" % json.dumps(data))  # pylint: disable=undefined-variable
     env.Exit(0)
 
 if "sizedata" in COMMAND_LINE_TARGETS:
