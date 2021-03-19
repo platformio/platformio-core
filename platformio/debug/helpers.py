@@ -23,6 +23,9 @@ from os.path import isfile
 from platformio import util
 from platformio.commands import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
+from platformio.commands.run.command import print_processing_header
+from platformio.commands.test.helpers import get_test_names
+from platformio.commands.test.processor import TestProcessorBase
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
 
@@ -72,14 +75,41 @@ def get_default_debug_env(config):
     return default_envs[0] if default_envs else all_envs[0]
 
 
-def predebug_project(ctx, project_dir, env_name, preload, verbose):
-    ctx.invoke(
-        cmd_run,
-        project_dir=project_dir,
-        environment=[env_name],
-        target=["debug"] + (["upload"] if preload else []),
-        verbose=verbose,
-    )
+def predebug_project(
+    ctx, project_dir, project_config, env_name, preload, verbose
+):  # pylint: disable=too-many-arguments
+    debug_testname = project_config.get("env:" + env_name, "debug_test")
+    if debug_testname:
+        test_names = get_test_names(project_config)
+        if debug_testname not in test_names:
+            raise DebugInvalidOptionsError(
+                "Unknown test name `%s`. Valid names are `%s`"
+                % (debug_testname, ", ".join(test_names))
+            )
+        print_processing_header(env_name, project_config, verbose)
+        tp = TestProcessorBase(
+            ctx,
+            debug_testname,
+            env_name,
+            dict(
+                project_config=project_config,
+                project_dir=project_dir,
+                without_building=False,
+                without_uploading=True,
+                without_testing=True,
+                verbose=False,
+            ),
+        )
+        tp.build_or_upload(["__debug", "__test"] + (["upload"] if preload else []))
+    else:
+        ctx.invoke(
+            cmd_run,
+            project_dir=project_dir,
+            environment=[env_name],
+            target=["__debug"] + (["upload"] if preload else []),
+            verbose=verbose,
+        )
+
     if preload:
         time.sleep(5)
 

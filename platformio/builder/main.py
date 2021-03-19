@@ -210,7 +210,7 @@ env.AddPreAction(
     ),
 )
 
-AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
+AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 
 ##############################################################################

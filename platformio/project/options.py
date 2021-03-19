@@ -703,6 +703,11 @@ ProjectOptions = OrderedDict(
                     "for an incoming connection"
                 ),
             ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_test",
+                description=("A name of a unit test to be debugged"),
+            ),
             # Advanced
             ConfigEnvOption(
                 group="advanced",
