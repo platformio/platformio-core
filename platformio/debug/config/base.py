@@ -88,7 +88,12 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def init_break(self):
-        result = self.env_options.get("debug_init_break")
+        missed = object()
+        result = self.env_options.get("debug_init_break", missed)
+        if result != missed:
+            return result
+        else:
+            result = None
         if not result:
             result = self.tool_settings.get("init_break")
         return result or ProjectOptions["env.debug_init_break"].default
@@ -196,13 +201,14 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
             raise NotImplementedError
 
     def reveal_patterns(self, source, recursive=True):
+        program_path = self.program_path or ""
         patterns = {
             "PLATFORMIO_CORE_DIR": get_project_core_dir(),
             "PYTHONEXE": proc.get_pythonexe_path(),
             "PROJECT_DIR": self.project_config.path,
-            "PROG_PATH": self.program_path,
-            "PROG_DIR": os.path.dirname(self.program_path),
-            "PROG_NAME": os.path.basename(os.path.splitext(self.program_path)[0]),
+            "PROG_PATH": program_path,
+            "PROG_DIR": os.path.dirname(program_path),
+            "PROG_NAME": os.path.basename(os.path.splitext(program_path)[0]),
             "DEBUG_PORT": self.port,
             "UPLOAD_PROTOCOL": self.upload_protocol,
             "INIT_BREAK": self.init_break or "",
