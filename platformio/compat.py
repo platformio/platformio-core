@@ -97,3 +97,11 @@ def ensure_python3(raise_exception=True):
         "https://docs.platformio.org/en/latest/core/migration.html"
         "#drop-support-for-python-2-and-3-5"
     )
+
+
+def path_to_unicode(path):
+    """
+    Deprecated: Compatibility with dev-platforms,
+    and custom device monitor filters
+    """
+    return path
