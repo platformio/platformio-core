@@ -20,6 +20,13 @@ PlatformIO Core 5
   - Configure a custom pattern to determine when debugging server is started with a new `debug_server_ready_pattern <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-server-ready-pattern>`__ option
   - Fixed an issue with silent hanging when a custom debug server is not found (`issue #3756 <https://github.com/platformio/platformio-core/issues/3756>`_)
 
+* **Static Code Analysis**
+
+  - Updated analysis tools:
+
+    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.4.1 with new checks and MISRA improvements
+    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.12 with new diagnostics and extended capabilities for security and safety standards
+
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
 
