@@ -27,6 +27,10 @@ PlatformIO Core 5
     * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.4.1 with new checks and MISRA improvements
     * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.12 with new diagnostics and extended capabilities for security and safety standards
 
+* **Miscellaneous**
+
+  - Ensure that a serial port is ready before running unit tests on a remote target (`issue #3742 <https://github.com/platformio/platformio-core/issues/3742>`_)
+
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
 
