@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import os
 import shutil
 import time
+import click
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
@@ -200,10 +201,22 @@ class ProjectRPC:
         await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        return self._generate_project_main(project_dir, framework)
+        return self._generate_project_main(project_dir, framework, board)
 
     @staticmethod
-    def _generate_project_main(project_dir, framework):
+    def _generate_project_main(project_dir, framework, board):
+        # some platforms (like ststm8) have no C++ compiler and the Arduino core
+        # implementation is written in C. For these, we must generate a main.c
+        # instead of a main.cpp, otherwise we get compile errors and user confusion.
+        pm = PlatformPackageManager()
+        board_config = pm.board_config(board)
+        platform = board_config["platform"]
+        # in the future, there might be more
+        platforms_with_arduino_c_implementation = [
+            "ststm8",
+        ]
+        arduino_core_implementation_in_c = platform in platforms_with_arduino_c_implementation
+        main_source_file = "main.cpp" if not arduino_core_implementation_in_c else "main.c"
         main_content = None
         if framework == "arduino":
             main_content = "\n".join(
@@ -241,7 +254,7 @@ class ProjectRPC:
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
-            main_path = os.path.join(src_dir, "main.cpp")
+            main_path = os.path.join(src_dir, main_source_file)
             if os.path.isfile(main_path):
                 return project_dir
             if not os.path.isdir(src_dir):
