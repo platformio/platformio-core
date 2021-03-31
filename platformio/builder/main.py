@@ -135,7 +135,7 @@ if (
 ):
     click.secho(
         "There is a known issue with Python 3.8+ and mapped network drives on "
-        "Windows.\nPlease downgrade Python to the latest 3.7. More details at:\n"
+        "Windows.\nSee a solution at:\n"
         "https://github.com/platformio/platformio-core/issues/3417",
         fg="yellow",
     )
