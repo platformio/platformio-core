@@ -215,7 +215,7 @@ class ProjectRPC:
             "ststm8",
         ]
         arduino_core_implementation_in_c = platform in platforms_with_arduino_c_implementation
-        main_source_file = "main.cpp" if not arduino_core_implementation_in_c else "main.c"
+        main_source_file = "main.c" if arduino_core_implementation_in_c else "main.cpp"
         main_content = None
         if framework == "arduino":
             main_content = "\n".join(
