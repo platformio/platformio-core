@@ -12,10 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.platform import platform_install as cmd_platform_install
+from platformio.commands.platform import init_platform
 from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
-from platformio.platform.exception import UnknownPlatform
-from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import UndefinedEnvPlatformError
 
 # pylint: disable=too-many-instance-attributes
@@ -66,15 +64,7 @@ class EnvironmentProcessor(object):
         if "monitor" in build_targets:
             build_targets.remove("monitor")
 
-        try:
-            p = PlatformFactory.new(self.options["platform"])
-        except UnknownPlatform:
-            self.cmd_ctx.invoke(
-                cmd_platform_install,
-                platforms=[self.options["platform"]],
-                skip_default_package=True,
-            )
-            p = PlatformFactory.new(self.options["platform"])
-
-        result = p.run(build_vars, build_targets, self.silent, self.verbose, self.jobs)
+        result = init_platform(self.options["platform"]).run(
+            build_vars, build_targets, self.silent, self.verbose, self.jobs
+        )
         return result["returncode"] == 0
