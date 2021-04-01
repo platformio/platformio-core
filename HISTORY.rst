@@ -30,6 +30,7 @@ PlatformIO Core 5
 * **Miscellaneous**
 
   - Ensure that a serial port is ready before running unit tests on a remote target (`issue #3742 <https://github.com/platformio/platformio-core/issues/3742>`_)
+  - Fixed an error "Unknown development platform" when running unit tests on a clean machine (`issue #3901 <https://github.com/platformio/platformio-core/issues/3901>`_)
 
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~

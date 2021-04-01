@@ -22,14 +22,12 @@ import subprocess
 import click
 
 from platformio import app, exception, fs, proc
-from platformio.commands.platform import platform_install as cmd_platform_install
+from platformio.commands.platform import init_platform
 from platformio.compat import IS_WINDOWS
 from platformio.debug import helpers
 from platformio.debug.config.factory import DebugConfigFactory
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.process.gdb import GDBClientProcess
-from platformio.platform.exception import UnknownPlatform
-from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project
@@ -84,17 +82,9 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     if "platform" not in env_options:
         raise ProjectEnvsNotAvailableError()
 
-    try:
-        platform = PlatformFactory.new(env_options["platform"])
-    except UnknownPlatform:
-        ctx.invoke(
-            cmd_platform_install,
-            platforms=[env_options["platform"]],
-            skip_default_package=True,
-        )
-        platform = PlatformFactory.new(env_options["platform"])
-
-    debug_config = DebugConfigFactory.new(platform, project_config, env_name)
+    debug_config = DebugConfigFactory.new(
+        init_platform(env_options["platform"]), project_config, env_name
+    )
 
     if "--version" in __unprocessed:
         return subprocess.run(

@@ -22,10 +22,10 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
+from platformio.commands.platform import init_platform
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.helpers import get_test_names
 from platformio.commands.test.native import NativeTestProcessor
-from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
@@ -141,9 +141,7 @@ def cli(  # pylint: disable=redefined-builtin
                 cls = (
                     EmbeddedTestProcessor
                     if config.get(section, "platform")
-                    and PlatformFactory.new(
-                        config.get(section, "platform")
-                    ).is_embedded()
+                    and init_platform(config.get(section, "platform")).is_embedded()
                     else NativeTestProcessor
                 )
                 tp = cls(
