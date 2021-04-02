@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from platformio.compat import IS_WINDOWS
 from platformio.debug.config.base import DebugConfigBase
 
 
@@ -28,5 +29,6 @@ define pio_restart_target
 end
 
 $INIT_BREAK
-set startup-with-shell off
-"""
+""" + (
+        "set startup-with-shell off" if not IS_WINDOWS else ""
+    )
