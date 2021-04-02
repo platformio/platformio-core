@@ -200,10 +200,10 @@ class ProjectRPC:
         await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        return self._generate_project_main(project_dir, framework)
+        return self._generate_project_main(project_dir, board, framework)
 
     @staticmethod
-    def _generate_project_main(project_dir, framework):
+    def _generate_project_main(project_dir, board, framework):
         main_content = None
         if framework == "arduino":
             main_content = "\n".join(
@@ -238,10 +238,25 @@ class ProjectRPC:
             )
         if not main_content:
             return project_dir
+
+        is_cpp_project = True
+        pm = PlatformPackageManager()
+        try:
+            board = pm.board_config(board)
+            platforms = board.get("platforms", board.get("platform"))
+            if not isinstance(platforms, list):
+                platforms = [platforms]
+            c_based_platforms = ["intel_mcs51", "ststm8"]
+            is_cpp_project = not (set(platforms) & set(c_based_platforms))
+        except exception.PlatformioException:
+            pass
+
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
-            main_path = os.path.join(src_dir, "main.cpp")
+            main_path = os.path.join(
+                src_dir, "main.%s" % ("cpp" if is_cpp_project else "c")
+            )
             if os.path.isfile(main_path):
                 return project_dir
             if not os.path.isdir(src_dir):
