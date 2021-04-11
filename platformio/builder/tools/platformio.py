@@ -75,7 +75,8 @@ def BuildProgram(env):
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     program = env.Program(
-        os.path.join("$BUILD_DIR", env.subst("$PROGNAME$PROGSUFFIX")), env["PIOBUILDFILES"]
+        os.path.join("$BUILD_DIR", env.subst("$PROGNAME$PROGSUFFIX")),
+        env["PIOBUILDFILES"],
     )
     env.Replace(PIOMAINPROG=program)
 
