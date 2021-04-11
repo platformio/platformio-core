@@ -105,6 +105,7 @@ def predebug_project(
         ctx.invoke(
             cmd_run,
             project_dir=project_dir,
+            project_conf=project_config.path,
             environment=[env_name],
             target=["__debug"] + (["upload"] if preload else []),
             verbose=verbose,

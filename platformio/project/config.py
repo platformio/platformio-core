@@ -384,7 +384,7 @@ class ProjectConfigDirsMixin(object):
         if result is None:
             return None
 
-        project_dir = os.path.dirname(self.path)
+        project_dir = os.getcwd()
 
         # patterns
         if "$PROJECT_HASH" in result:
