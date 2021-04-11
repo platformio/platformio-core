@@ -82,9 +82,10 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     if "platform" not in env_options:
         raise ProjectEnvsNotAvailableError()
 
-    debug_config = DebugConfigFactory.new(
-        init_platform(env_options["platform"]), project_config, env_name
-    )
+    with fs.cd(project_dir):
+        debug_config = DebugConfigFactory.new(
+            init_platform(env_options["platform"]), project_config, env_name
+        )
 
     if "--version" in __unprocessed:
         return subprocess.run(
