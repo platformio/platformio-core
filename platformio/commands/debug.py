@@ -150,15 +150,18 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
 
     loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
-    client = GDBClientProcess(project_dir, debug_config)
-    coro = client.run(__unprocessed)
-    try:
-        loop.run_until_complete(coro)
-        if IS_WINDOWS:
-            # an issue with asyncio executor and STIDIN, it cannot be closed gracefully
-            proc.force_exit()
-    finally:
-        del client
-        loop.close()
+
+    with fs.cd(project_dir):
+        client = GDBClientProcess(project_dir, debug_config)
+        coro = client.run(__unprocessed)
+        try:
+            loop.run_until_complete(coro)
+            if IS_WINDOWS:
+                # an issue with `asyncio` executor and STIDIN,
+                # it cannot be closed gracefully
+                proc.force_exit()
+        finally:
+            del client
+            loop.close()
 
     return True
