@@ -24,8 +24,9 @@ from functools import wraps
 from glob import glob
 
 import click
+import zeroconf
 
-from platformio import __version__, compat, exception, proc
+from platformio import __version__, exception, proc
 from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.fs import cd, load_json  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
@@ -156,11 +157,6 @@ def get_logical_devices():
 
 
 def get_mdns_services():
-    compat.ensure_python3()
-
-    # pylint: disable=import-outside-toplevel
-    import zeroconf
-
     class mDNSListener(object):
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)

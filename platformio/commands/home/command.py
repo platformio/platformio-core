@@ -18,7 +18,6 @@ import click
 
 from platformio.commands.home.helpers import is_port_used
 from platformio.commands.home.run import run_server
-from platformio.compat import ensure_python3
 
 
 @click.command("home", short_help="GUI to manage PlatformIO")
@@ -49,8 +48,6 @@ from platformio.compat import ensure_python3
     ),
 )
 def cli(port, host, no_open, shutdown_timeout, session_id):
-    ensure_python3()
-
     # Ensure PIO Home mimetypes are known
     mimetypes.add_type("text/html", ".html")
     mimetypes.add_type("text/css", ".css")

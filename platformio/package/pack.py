@@ -20,7 +20,7 @@ import tarfile
 import tempfile
 
 from platformio import fs
-from platformio.compat import IS_WINDOWS, ensure_python3
+from platformio.compat import IS_WINDOWS
 from platformio.package.exception import PackageException, UserSideException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
@@ -94,7 +94,6 @@ class PackagePacker(object):
     ]
 
     def __init__(self, package, manifest_uri=None):
-        assert ensure_python3()
         self.package = package
         self.manifest_uri = manifest_uri
 
