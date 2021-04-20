@@ -20,7 +20,6 @@ import click
 
 from platformio import fs
 from platformio.clients.registry import RegistryClient
-from platformio.compat import ensure_python3
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
 from platformio.package.unpack import FileUnpacker, TARArchiver
@@ -81,8 +80,6 @@ def package_pack(package, output):
     help="Notify by email when package is processed",
 )
 def package_publish(package, owner, released_at, private, notify):
-    assert ensure_python3()
-
     # publish .tar.gz instantly without repacking
     if not os.path.isdir(package) and isinstance(
         FileUnpacker.new_archiver(package), TARArchiver
