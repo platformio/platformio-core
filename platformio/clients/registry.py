@@ -15,7 +15,6 @@
 from platformio import __registry_api__, fs
 from platformio.clients.account import AccountClient
 from platformio.clients.http import HTTPClient, HTTPClientError
-from platformio.package.meta import PackageType
 
 # pylint: disable=too-many-arguments
 
@@ -32,18 +31,13 @@ class RegistryClient(HTTPClient):
         kwargs["headers"] = headers
         return self.fetch_json_data(*args, **kwargs)
 
-    def publish_package(
-        self, archive_path, owner=None, released_at=None, private=False, notify=True
+    def publish_package(  # pylint: disable=redefined-builtin
+        self, owner, type, archive_path, released_at=None, private=False, notify=True
     ):
-        account = AccountClient()
-        if not owner:
-            owner = (
-                account.get_account_info(offline=True).get("profile").get("username")
-            )
         with open(archive_path, "rb") as fp:
             return self.send_auth_request(
                 "post",
-                "/v3/packages/%s/%s" % (owner, PackageType.from_archive(archive_path)),
+                "/v3/packages/%s/%s" % (owner, type),
                 params={
                     "private": 1 if private else 0,
                     "notify": 1 if notify else 0,
@@ -59,13 +53,8 @@ class RegistryClient(HTTPClient):
             )
 
     def unpublish_package(  # pylint: disable=redefined-builtin
-        self, type, name, owner=None, version=None, undo=False
+        self, owner, type, name, version=None, undo=False
     ):
-        account = AccountClient()
-        if not owner:
-            owner = (
-                account.get_account_info(offline=True).get("profile").get("username")
-            )
         path = "/v3/packages/%s/%s/%s" % (owner, type, name)
         if version:
             path += "/" + version
