@@ -184,7 +184,7 @@ def account_destroy():
     click.confirm(
         "Are you sure you want to delete the %s user account?\n"
         "Warning! All linked data will be permanently removed and can not be restored."
-        % client.get_account_info().get("profile").get("username"),
+        % client.get_logged_username(),
         abort=True,
     )
     client.destroy_account()

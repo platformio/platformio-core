@@ -27,6 +27,16 @@ PlatformIO Core 5
     * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.4.1 with new checks and MISRA improvements
     * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.12 with new diagnostics and extended capabilities for security and safety standards
 
+* **Package Management**
+
+  - Improved a package publishing process:
+
+    * Show package details
+    * Check for conflicting names in the PlatformIO Trusted Registry
+    * Check for duplicates and used version
+
+  - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command
+
 * **Miscellaneous**
 
   - Ensure that a serial port is ready before running unit tests on a remote target (`issue #3742 <https://github.com/platformio/platformio-core/issues/3742>`_)
