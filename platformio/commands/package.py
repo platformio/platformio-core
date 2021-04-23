@@ -24,6 +24,7 @@ from platformio.clients.account import AccountClient
 from platformio.clients.registry import RegistryClient
 from platformio.exception import UserSideException
 from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.package.manifest.schema import ManifestSchema, ManifestValidationError
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
 from platformio.package.unpack import FileUnpacker, TARArchiver
@@ -37,6 +38,45 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     except ValueError as e:
         raise click.BadParameter(e)
     return value
+
+
+def load_manifest_from_archive(path):
+    return ManifestSchema().load_manifest(
+        ManifestParserFactory.new_from_archive(path).as_dict()
+    )
+
+
+def check_package_duplicates(
+    owner, type, name, version
+):  # pylint: disable=redefined-builtin
+    items = (
+        RegistryClient()
+        .list_packages(filters=dict(types=[type], names=[name]))
+        .get("items")
+    )
+    if not items:
+        return True
+    # duplicated version by owner
+    if any(
+        item["owner"]["username"] == owner and item["version"]["name"] == version
+        for item in items
+    ):
+        raise UserSideException(
+            "The package `%s/%s@%s` is already published in the registry"
+            % (owner, name, version)
+        )
+    other_owners = [
+        item["owner"]["username"]
+        for item in items
+        if item["owner"]["username"] != owner
+    ]
+    if other_owners:
+        click.secho(
+            "\nWarning! A package with the name `%s` is already published by the next "
+            "owners: %s\n" % (name, ", ".join(other_owners)),
+            fg="yellow",
+        )
+    return True
 
 
 @click.group("package", short_help="Package manager")
@@ -57,6 +97,12 @@ def cli():
 def package_pack(package, output):
     p = PackagePacker(package)
     archive_path = p.pack(output)
+    # validate manifest
+    try:
+        load_manifest_from_archive(archive_path)
+    except ManifestValidationError as e:
+        os.remove(archive_path)
+        raise e
     click.secho('Wrote a tarball to "%s"' % archive_path, fg="green")
 
 
@@ -107,7 +153,7 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
                 archive_path = p.pack()
 
         type_ = PackageType.from_archive(archive_path)
-        manifest = ManifestParserFactory.new_from_archive(archive_path).as_dict()
+        manifest = load_manifest_from_archive(archive_path)
         name = manifest.get("name")
         version = manifest.get("version")
         data = [
@@ -119,7 +165,7 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
         click.echo(tabulate(data, tablefmt="plain"))
 
         # look for duplicates
-        _check_duplicates(owner, type_, name, version)
+        check_package_duplicates(owner, type_, name, version)
 
         if not non_interactive:
             click.confirm(
@@ -140,37 +186,6 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
         if not do_not_pack:
             os.remove(archive_path)
         click.secho(response.get("message"), fg="green")
-
-
-def _check_duplicates(owner, type, name, version):  # pylint: disable=redefined-builtin
-    items = (
-        RegistryClient()
-        .list_packages(filters=dict(types=[type], names=[name]))
-        .get("items")
-    )
-    if not items:
-        return True
-    # duplicated version by owner
-    if any(
-        item["owner"]["username"] == owner and item["version"]["name"] == version
-        for item in items
-    ):
-        raise UserSideException(
-            "The package `%s/%s@%s` is already published in the registry"
-            % (owner, name, version)
-        )
-    other_owners = [
-        item["owner"]["username"]
-        for item in items
-        if item["owner"]["username"] != owner
-    ]
-    if other_owners:
-        click.secho(
-            "\nWarning! A package with the name `%s` is already published by the next "
-            "owners: `%s`\n" % (name, ", ".join(other_owners)),
-            fg="yellow",
-        )
-    return True
 
 
 @cli.command("unpublish", short_help="Remove a pushed package from the registry")

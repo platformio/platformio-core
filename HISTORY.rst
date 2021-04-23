@@ -34,6 +34,7 @@ PlatformIO Core 5
     * Show package details
     * Check for conflicting names in the PlatformIO Trusted Registry
     * Check for duplicates and used version
+    * Validate package manifest
 
   - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command
 
@@ -235,24 +236,24 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/
 PlatformIO Core 4
 -----------------
 
-See `PlatformIO Core 4.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-4>`__.
+See `PlatformIO Core 4.0 history <https://github.com/platformio/platformio-core/blob/v4.3.4/HISTORY.rst>`__.
 
 PlatformIO Core 3
 -----------------
 
-See `PlatformIO Core 3.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-3>`__.
+See `PlatformIO Core 3.0 history <https://github.com/platformio/platformio-core/blob/v3.6.7/HISTORY.rst>`__.
 
 PlatformIO Core 2
 -----------------
 
-See `PlatformIO Core 2.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-2>`__.
+See `PlatformIO Core 2.0 history <https://github.com/platformio/platformio-core/blob/v2.11.2/HISTORY.rst>`__.
 
 PlatformIO Core 1
 -----------------
 
-See `PlatformIO Core 1.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-1>`__.
+See `PlatformIO Core 1.0 history <https://github.com/platformio/platformio-core/blob/v1.5.0/HISTORY.rst>`__.
 
 PlatformIO Core Preview
 -----------------------
 
-See `PlatformIO Core Preview history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-preview>`__.
+See `PlatformIO Core Preview history <https://github.com/platformio/platformio-core/blob/v0.10.2/HISTORY.rst>`__.
