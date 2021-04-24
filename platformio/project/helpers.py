@@ -155,7 +155,7 @@ def _load_project_ide_data(project_dir, env_names):
     # pylint: disable=import-outside-toplevel
     from platformio.commands.run.command import cli as cmd_run
 
-    args = ["--project-dir", project_dir, "--target", "idedata"]
+    args = ["--project-dir", project_dir, "--target", "_idedata"]
     for name in env_names:
         args.extend(["-e", name])
     result = CliRunner().invoke(cmd_run, args)
