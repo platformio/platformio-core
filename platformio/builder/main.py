@@ -219,7 +219,7 @@ if "envdump" in COMMAND_LINE_TARGETS:
     click.echo(env.Dump())
     env.Exit(0)
 
-if "idedata" in COMMAND_LINE_TARGETS:
+if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
     try:
         Import("projenv")
     except:  # pylint: disable=bare-except
