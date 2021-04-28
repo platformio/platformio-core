@@ -49,10 +49,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
+      DOCS_REPO: platformio/platformio-docs
       DOCS_DIR: platformio-docs
       LATEST_DOCS_DIR: latest-docs
       RELEASE_BUILD: ${{ startsWith(github.ref, 'refs/tags/v') }}
-      DOCS_REPO: platformio/platformio-docs
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: Download artifact
@@ -61,8 +61,8 @@ jobs:
           name: docs
       - name: Unpack artifact
         run: |
-          mkdir ./LATEST_DOCS_DIR
-          tar -xzf ./docs.tar.gz -C ./LATEST_DOCS_DIR
+          mkdir ./${{ env.LATEST_DOCS_DIR }}
+          tar -xzf ./docs.tar.gz -C ./${{ env.LATEST_DOCS_DIR }}
       - name: Delete Artifact
         uses: geekyeggo/delete-artifact@v1
         with:
@@ -87,11 +87,11 @@ jobs:
           rm -rf ${{ env.DOCS_DIR }}/.git
           rm -rf ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
           mkdir -p ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
-          cp -rf LATEST_DOCS_DIR/html/* ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
+          cp -rf ${{ env.LATEST_DOCS_DIR }}/html/* ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
           if [[ ${{ env.RELEASE_BUILD }} == false ]]; then
             rm -rf ${{ env.DOCS_DIR }}/page
             mkdir -p ${{ env.DOCS_DIR }}/page
-            cp -rf LATEST_DOCS_DIR/rtdpage/* ${{ env.DOCS_DIR }}/page
+            cp -rf ${{ env.LATEST_DOCS_DIR }}/rtdpage/* ${{ env.DOCS_DIR }}/page
           fi
       - name: Validate Docs
         run: |
