@@ -31,6 +31,7 @@ class LogToFile(DeviceMonitorFilter):
             "%y%m%d-%H%M%S"
         )
         print("--- Logging an output to %s" % os.path.abspath(log_file_name))
+        # pylint: disable=consider-using-with
         self._log_fp = io.open(log_file_name, "w", encoding="utf-8")
         return self
 

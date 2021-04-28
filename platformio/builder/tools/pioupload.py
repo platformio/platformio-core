@@ -236,9 +236,9 @@ def CheckUploadSize(_, target, source, env):
     def _format_availale_bytes(value, total):
         percent_raw = float(value) / float(total)
         blocks_per_progress = 10
-        used_blocks = int(round(blocks_per_progress * percent_raw))
-        if used_blocks > blocks_per_progress:
-            used_blocks = blocks_per_progress
+        used_blocks = min(
+            int(round(blocks_per_progress * percent_raw)), blocks_per_progress
+        )
         return "[{:{}}] {: 6.1%} (used {:d} bytes from {:d} bytes)".format(
             "=" * used_blocks, blocks_per_progress, percent_raw, value, total
         )

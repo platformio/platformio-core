@@ -62,7 +62,7 @@ class LockFile(object):
             else:
                 raise LockFileExists
 
-        self._fp = open(self._lock_path, "w")
+        self._fp = open(self._lock_path, "w")  # pylint: disable=consider-using-with
         try:
             if LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_FCNTL:
                 fcntl.flock(self._fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
