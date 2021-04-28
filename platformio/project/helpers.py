@@ -46,14 +46,14 @@ def find_project_dir_above(path):
 
 
 def get_project_core_dir():
-    """ Deprecated, use ProjectConfig.get_optional_dir("core") instead """
+    """Deprecated, use ProjectConfig.get_optional_dir("core") instead"""
     return ProjectConfig.get_instance(
         join(get_project_dir(), "platformio.ini")
     ).get_optional_dir("core", exists=True)
 
 
 def get_project_cache_dir():
-    """ Deprecated, use ProjectConfig.get_optional_dir("cache") instead """
+    """Deprecated, use ProjectConfig.get_optional_dir("cache") instead"""
     return ProjectConfig.get_instance(
         join(get_project_dir(), "platformio.ini")
     ).get_optional_dir("cache")

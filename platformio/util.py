@@ -77,7 +77,7 @@ class throttle(object):
 
 
 def singleton(cls):
-    """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
+    """From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples"""
     _instances = {}
 
     def get_instance(*args, **kwargs):
@@ -231,7 +231,7 @@ def get_mdns_services():
 
 
 def pioversion_to_intstr():
-    """ Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
+    """Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
     vermatch = re.match(r"^([\d\.]+)", __version__)
     assert vermatch
     return [int(i) for i in vermatch.group(1).split(".")[:3]]

@@ -157,7 +157,7 @@ def _subst_cmd(env, cmd):
 
 
 def DumpIDEData(env, globalenv):
-    """ env here is `projenv`"""
+    """env here is `projenv`"""
 
     data = {
         "env_name": env["PIOENV"],

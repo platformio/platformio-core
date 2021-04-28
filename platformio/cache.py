@@ -92,7 +92,7 @@ class ContentCache(object):
         return self._unlock_dbindex()
 
     def delete(self, keys=None):
-        """ Keys=None, delete expired items """
+        """Keys=None, delete expired items"""
         if not os.path.isfile(self._db_path):
             return None
         if not keys:
