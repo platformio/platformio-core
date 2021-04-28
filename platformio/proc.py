@@ -109,16 +109,16 @@ def exec_command(*args, **kwargs):
     default.update(kwargs)
     kwargs = default
 
-    p = subprocess.Popen(*args, **kwargs)
-    try:
-        result["out"], result["err"] = p.communicate()
-        result["returncode"] = p.returncode
-    except KeyboardInterrupt:
-        raise exception.AbortedByUser()
-    finally:
-        for s in ("stdout", "stderr"):
-            if isinstance(kwargs[s], AsyncPipeBase):
-                kwargs[s].close()
+    with subprocess.Popen(*args, **kwargs) as p:
+        try:
+            result["out"], result["err"] = p.communicate()
+            result["returncode"] = p.returncode
+        except KeyboardInterrupt:
+            raise exception.AbortedByUser()
+        finally:
+            for s in ("stdout", "stderr"):
+                if isinstance(kwargs[s], AsyncPipeBase):
+                    kwargs[s].close()
 
     for s in ("stdout", "stderr"):
         if isinstance(kwargs[s], AsyncPipeBase):
