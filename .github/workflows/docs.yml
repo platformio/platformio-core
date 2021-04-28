@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Build Docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,3 +31,78 @@ jobs:
           job_name: '*Docs*'
           commit: true
           url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
+
+      - name: Preserve Docs
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          tar -czvf docs.tar.gz -C docs/_build html rtdpage
+
+      - name: Save artifact
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: ./docs.tar.gz
+
+  deploy:
+    name: Deploy Docs
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      DOCS_DIR: platformio-docs
+      LATEST_DOCS_DIR: latest-docs
+      RELEASE_BUILD: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      DOCS_REPO: platformio/platformio-docs
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docs
+      - name: Unpack artifact
+        run: |
+          mkdir ./LATEST_DOCS_DIR
+          tar -xzf ./docs.tar.gz -C ./LATEST_DOCS_DIR
+      - name: Delete Artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: docs
+      - name: Select Docs type
+        id: get-destination-dir
+        run: |
+          if [[ ${{ env.RELEASE_BUILD }} == true ]]; then
+            echo "::set-output name=dst_dir::stable"
+          else
+            echo "::set-output name=dst_dir::latest"
+          fi
+      - name: Checkout latest Docs
+        continue-on-error: true
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.DOCS_REPO }}
+          path: ${{ env.DOCS_DIR }}
+          ref: gh-pages
+      - name: Synchronize Docs
+        run: |
+          rm -rf ${{ env.DOCS_DIR }}/.git
+          rm -rf ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
+          mkdir -p ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
+          cp -rf LATEST_DOCS_DIR/html/* ${{ env.DOCS_DIR }}/en/${{ steps.get-destination-dir.outputs.dst_dir }}
+          if [[ ${{ env.RELEASE_BUILD }} == false ]]; then
+            rm -rf ${{ env.DOCS_DIR }}/page
+            mkdir -p ${{ env.DOCS_DIR }}/page
+            cp -rf LATEST_DOCS_DIR/rtdpage/* ${{ env.DOCS_DIR }}/page
+          fi
+      - name: Validate Docs
+        run: |
+          if [ -z "$(ls -A ${{ env.DOCS_DIR }})" ]; then
+             echo "Docs folder is empty. Aborting!"
+             exit 1
+          fi
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: ${{ env.DOCS_REPO }}
+          publish_dir: ./${{ env.DOCS_DIR }}
+          commit_message: Sync Docs
