@@ -80,7 +80,7 @@ class EndpointSessionIterator(object):
         return self
 
     def next(self):
-        """ For Python 2 compatibility """
+        """For Python 2 compatibility"""
         return self.__next__()
 
     def __next__(self):

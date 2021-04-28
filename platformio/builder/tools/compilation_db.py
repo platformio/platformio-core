@@ -58,7 +58,7 @@ class __CompilationDbNode(SCons.Node.Python.Value):
 
 
 def changed_since_last_build_node(*args, **kwargs):
-    """ Dummy decider to force always building"""
+    """Dummy decider to force always building"""
     return True
 
 
