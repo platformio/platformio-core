@@ -162,6 +162,8 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
             ("Name:", name),
             ("Version:", version),
         ]
+        if manifest.get("system"):
+            data.insert(len(data) - 1, ("System", ", ".join(manifest.get("system"))))
         click.echo(tabulate(data, tablefmt="plain"))
 
         # look for duplicates
