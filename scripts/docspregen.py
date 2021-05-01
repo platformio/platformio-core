@@ -789,7 +789,7 @@ board manifest `{id}.json <{board_manifest_url}>`_. For example,
             """
 Uploading
 ---------
-%s supports the next uploading protocols:
+%s supports the following uploading protocols:
 """
             % board["name"]
         )
