@@ -16,6 +16,7 @@
 
 import fnmatch
 import os
+import shutil
 from time import time
 
 import click
@@ -192,7 +193,7 @@ def print_processing_header(test, env):
             click.style(env, fg="cyan", bold=True),
         )
     )
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
 

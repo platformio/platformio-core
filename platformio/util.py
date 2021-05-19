@@ -19,6 +19,7 @@ import math
 import os
 import platform
 import re
+import shutil
 import time
 from functools import wraps
 from glob import glob
@@ -269,7 +270,7 @@ def merge_dicts(d1, d2, path=None):
 
 
 def print_labeled_bar(label, is_error=False, fg=None):
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     width = len(click.unstyle(label))
     half_line = "=" * int((terminal_width - width - 2) / 2)
     click.secho("%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)

@@ -28,7 +28,7 @@ from platformio.compat import PY2, WINDOWS
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click>=5,<8%s" % (",!=7.1,!=7.1.1" if WINDOWS else ""),
+    "click>=5,<9%s" % (",!=7.1,!=7.1.1" if WINDOWS else ""),
     "colorama",
     "marshmallow%s" % (">=2,<3" if PY2 else ">=2,<4"),
     "pyelftools>=0.27,<1",
@@ -39,10 +39,10 @@ minimal_requirements = [
 ]
 
 if not PY2:
-    minimal_requirements.append("zeroconf==0.29.*")
+    minimal_requirements.append("zeroconf==0.31.*")
 
 home_requirements = [
-    "aiofiles==0.6.*",
+    "aiofiles==0.7.*",
     "ajsonrpc==1.1.*",
     "starlette==0.14.*",
     "uvicorn==0.13.*",
