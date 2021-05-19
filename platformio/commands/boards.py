@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import shutil
 
 import click
 from tabulate import tabulate
@@ -40,7 +41,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
             grpboards[board["platform"]] = []
         grpboards[board["platform"]].append(board)
 
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     for (platform, boards) in sorted(grpboards.items()):
         click.echo("")
         click.echo("Platform: ", nl=False)

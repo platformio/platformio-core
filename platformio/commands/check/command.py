@@ -17,6 +17,7 @@
 
 import json
 import os
+import shutil
 from collections import Counter
 from os.path import dirname, isfile
 from time import time
@@ -193,7 +194,7 @@ def print_processing_header(tool, envname, envdump):
         "Checking %s > %s (%s)"
         % (click.style(envname, fg="cyan", bold=True), tool, "; ".join(envdump))
     )
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
 
