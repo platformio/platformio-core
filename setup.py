@@ -45,7 +45,7 @@ home_requirements = [
     "aiofiles==0.7.*",
     "ajsonrpc==1.1.*",
     "starlette==0.14.*",
-    "uvicorn==0.13.*",
+    "uvicorn==0.14.*",
     "wsproto==1.0.*",
 ]
 
