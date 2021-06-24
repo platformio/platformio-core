@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 
 from platformio import fs, proc, util
@@ -237,5 +238,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                     source[key] = _replace(value)
                 elif isinstance(value, (list, dict)) and recursive:
                     source[key] = self.reveal_patterns(value, patterns)
+
+        data = json.dumps(source)
+        if any(("$" + key) in data for key in patterns):
+            source = self.reveal_patterns(source, patterns)
 
         return source
