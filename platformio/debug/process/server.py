@@ -26,10 +26,14 @@ from platformio.proc import where_is_program
 
 
 class DebugServerProcess(DebugBaseProcess):
+
+    STD_BUFFER_SIZE = 1024
+
     def __init__(self, debug_config):
         super(DebugServerProcess, self).__init__()
         self.debug_config = debug_config
         self._ready = False
+        self._std_buffer = {"out": b"", "err": b""}
 
     async def run(self):  # pylint: disable=too-many-branches
         server = self.debug_config.server
@@ -133,8 +137,12 @@ class DebugServerProcess(DebugBaseProcess):
         super(DebugServerProcess, self).stdout_data_received(
             escape_gdbmi_stream("@", data) if is_gdbmi_mode() else data
         )
-        self._check_ready_by_pattern(data)
+        self._std_buffer["out"] += data
+        self._check_ready_by_pattern(self._std_buffer["out"])
+        self._std_buffer["out"] = self._std_buffer["out"][-1 * self.STD_BUFFER_SIZE :]
 
     def stderr_data_received(self, data):
         super(DebugServerProcess, self).stderr_data_received(data)
-        self._check_ready_by_pattern(data)
+        self._std_buffer["err"] += data
+        self._check_ready_by_pattern(self._std_buffer["err"])
+        self._std_buffer["err"] = self._std_buffer["err"][-1 * self.STD_BUFFER_SIZE :]
