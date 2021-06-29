@@ -31,6 +31,7 @@ jobs:
           job_name: '*Docs*'
           commit: true
           url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
+          token: ${{ secrets.SLACK_GITHUB_TOKEN }}
 
       - name: Preserve Docs
         if: ${{ github.event_name == 'push' }}
