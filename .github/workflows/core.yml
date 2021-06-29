@@ -42,3 +42,4 @@ jobs:
           job_name: '*Core*'
           commit: true
           url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
+          token: ${{ secrets.SLACK_GITHUB_TOKEN }}
