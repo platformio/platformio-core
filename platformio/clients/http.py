@@ -103,7 +103,7 @@ class HTTPClient(object):
             return
         try:
             self._session.close()
-        except:
+        except:  # pylint: disable=bare-except
             pass
         self._session = None
 
