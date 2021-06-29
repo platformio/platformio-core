@@ -101,7 +101,10 @@ class HTTPClient(object):
     def __del__(self):
         if not self._session:
             return
-        self._session.close()
+        try:
+            self._session.close()
+        except:
+            pass
         self._session = None
 
     def _next_session(self):
