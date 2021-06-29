@@ -625,6 +625,7 @@ def update_framework_docs():
 
 
 def update_boards():
+    print("Updating boards...")
     lines = []
 
     lines.append(RST_COPYRIGHT)
