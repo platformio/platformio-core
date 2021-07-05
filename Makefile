@@ -7,8 +7,8 @@ isort:
 	isort ./tests
 
 format:
-	black --target-version py27 ./platformio
-	black --target-version py27 ./tests
+	black ./platformio
+	black ./tests
 
 test:
 	py.test --verbose --capture=no --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
