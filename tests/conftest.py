@@ -42,6 +42,7 @@ def clirunner(request):
         "PLATFORMIO_WORKSPACE_DIR": {"new": None},
     }
     for key, item in backup_env_vars.items():
+        # pylint: disable=unnecessary-dict-index-lookup
         backup_env_vars[key]["old"] = os.environ.get(key)
         if item["new"] is not None:
             os.environ[key] = item["new"]
