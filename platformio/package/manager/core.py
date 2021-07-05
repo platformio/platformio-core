@@ -78,6 +78,7 @@ def remove_unnecessary_core_packages(dry_run=False):
         pkg = pm.get_package(spec)
         if not pkg:
             continue
+        # pylint: disable=no-member
         best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
 
     for pkg in pm.get_installed():
