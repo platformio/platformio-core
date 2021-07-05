@@ -57,7 +57,9 @@ class BaseArchiver(object):
 
 class TARArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(TARArchiver, self).__init__(tarfile_open(archpath))
+        super(TARArchiver, self).__init__(
+            tarfile_open(archpath)  # pylint: disable=consider-using-with
+        )
 
     def get_items(self):
         return self._afo.getmembers()
@@ -99,7 +101,9 @@ class TARArchiver(BaseArchiver):
 
 class ZIPArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(ZIPArchiver, self).__init__(ZipFile(archpath))
+        super(ZIPArchiver, self).__init__(
+            ZipFile(archpath)  # pylint: disable=consider-using-with
+        )
 
     @staticmethod
     def preserve_permissions(item, dest_dir):

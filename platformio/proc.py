@@ -124,16 +124,16 @@ def exec_command(*args, **kwargs):
         if isinstance(kwargs[s], AsyncPipeBase):
             result[s[3:]] = kwargs[s].get_buffer()
 
-    for k, v in result.items():
-        if isinstance(result[k], bytes):
+    for key, value in result.items():
+        if isinstance(value, bytes):
             try:
-                result[k] = result[k].decode(
+                result[key] = value.decode(
                     get_locale_encoding() or get_filesystem_encoding()
                 )
             except UnicodeDecodeError:
-                result[k] = result[k].decode("latin-1")
-        if v and isinstance(v, string_types):
-            result[k] = result[k].strip()
+                result[key] = value.decode("latin-1")
+        if value and isinstance(value, string_types):
+            result[key] = value.strip()
 
     return result
 
