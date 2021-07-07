@@ -14,6 +14,7 @@
 
 import hashlib
 import os
+import re
 import shutil
 import tempfile
 
@@ -125,6 +126,12 @@ class PackageManagerInstallMixin(object):
         spec = self.ensure_spec(spec)
         tmp_dir = tempfile.mkdtemp(prefix="pkg-installing-", dir=self.get_tmp_dir())
         vcs = None
+
+        azure_devops_re = re.compile(r'^https://[^/]+dev\.azure\.com/.*/_git/.+$')
+        if azure_devops_re.match(url):
+            url = "git+" + url
+            click.echo(f"Detected Azure DevOps URL: Using git+https URL {url}")
+
         try:
             if url.startswith("file://"):
                 _url = url[7:]
