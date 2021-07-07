@@ -19,3 +19,16 @@ To get started, <a href="https://cla-assistant.io/platformio/platformio-core">si
 9. Build documentation `tox -e docs` (creates a directory _build under docs where you can find the html)
 10. Commit changes to your forked repository
 11. Submit a Pull Request on GitHub.
+
+## Debugging in the IDE
+
+### PyCharm
+
+After running `tox` as above:
+
+1. In the Python Interpreter settings, add the Python interpreter that was installed with `tox`
+   with
+   
+       *Add > Virtualenv Environment > Existing Environment*
+   
+1. Add a Run Configuration with target “Module name” (not “Script path”) and value `platformio`
