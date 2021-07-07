@@ -102,7 +102,7 @@ class ProjectConfigBase(object):
             return
         self._parsed.append(path)
         try:
-            self._parser.read(path)
+            self._parser.read(path, "utf-8")
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConfError(path, str(e))
 
