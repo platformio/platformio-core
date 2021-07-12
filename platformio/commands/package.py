@@ -47,8 +47,9 @@ def load_manifest_from_archive(path):
 
 
 def check_package_duplicates(
-    owner, type, name, version
+    owner, type, name, version, system
 ):  # pylint: disable=redefined-builtin
+    found = False
     items = (
         RegistryClient()
         .list_packages(filters=dict(types=[type], names=[name]))
@@ -56,11 +57,19 @@ def check_package_duplicates(
     )
     if not items:
         return True
-    # duplicated version by owner
-    if any(
-        item["owner"]["username"] == owner and item["version"]["name"] == version
-        for item in items
-    ):
+    # duplicated version by owner / system
+    found = False
+    for item in items:
+        if item["owner"]["username"] != owner or item["version"]["name"] != version:
+            continue
+        if not system:
+            found = True
+            break
+        published_systems = []
+        for f in item["version"]["files"]:
+            published_systems.extend(f.get("system", []))
+        found = set(system).issubset(set(published_systems))
+    if found:
         raise UserSideException(
             "The package `%s/%s@%s` is already published in the registry"
             % (owner, name, version)
@@ -167,7 +176,7 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
         click.echo(tabulate(data, tablefmt="plain"))
 
         # look for duplicates
-        check_package_duplicates(owner, type_, name, version)
+        check_package_duplicates(owner, type_, name, version, manifest.get("system"))
 
         if not non_interactive:
             click.confirm(
