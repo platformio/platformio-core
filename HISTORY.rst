@@ -33,7 +33,7 @@ PlatformIO Core 5
 
 * **Build System**
 
-  - Upgraded build engine to the SCons 4.2 (`release notes <https://github.com/SCons/scons/blob/rel_4.2.0/CHANGES.txt>`_)
+  - Upgraded build engine to the SCons 4.2 (`release notes <https://github.com/SCons/scons/blob/rel_4.2.0/CHANGES.txt>`__)
   - Fixed an issue with broken binary file extension when a custom ``PROGNAME`` contains dot symbols (`issue #3906 <https://github.com/platformio/platformio-core/issues/3906>`_)
 
 * **Static Code Analysis**
