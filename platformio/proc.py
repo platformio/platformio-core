@@ -118,11 +118,11 @@ def exec_command(*args, **kwargs):
         finally:
             for s in ("stdout", "stderr"):
                 if isinstance(kwargs[s], AsyncPipeBase):
-                    kwargs[s].close()
+                    kwargs[s].close()  # pylint: disable=no-member
 
     for s in ("stdout", "stderr"):
         if isinstance(kwargs[s], AsyncPipeBase):
-            result[s[3:]] = kwargs[s].get_buffer()
+            result[s[3:]] = kwargs[s].get_buffer()  # pylint: disable=no-member
 
     for key, value in result.items():
         if isinstance(value, bytes):
