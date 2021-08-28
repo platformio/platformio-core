@@ -128,9 +128,9 @@ class LibBuilderBase(object):
 
         self._is_dependent = False
         self._is_built = False
-        self._depbuilders = list()
-        self._circular_deps = list()
-        self._processed_files = list()
+        self._depbuilders = []
+        self._circular_deps = []
+        self._processed_files = []
 
         # reset source filter, could be overridden with extra script
         self.env["SRC_FILTER"] = ""

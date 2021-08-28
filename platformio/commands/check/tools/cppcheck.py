@@ -64,7 +64,7 @@ class CppcheckCheckTool(CheckToolBase):
         if any(f not in self._buffer for f in self.defect_fields):
             return None
 
-        args = dict()
+        args = {}
         for field in self._buffer.split(self._field_delimiter):
             field = field.strip().replace('"', "")
             name, value = field.split("=", 1)

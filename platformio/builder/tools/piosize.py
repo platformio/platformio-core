@@ -220,7 +220,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             "sections": sections,
         }
 
-        files = dict()
+        files = {}
         for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
             file_path = symbol.get("file") or "unknown"
             if not files.get(file_path, {}):
@@ -235,7 +235,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
             files[file_path]["symbols"].append(symbol)
 
-        data["memory"]["files"] = list()
+        data["memory"]["files"] = []
         for k, v in files.items():
             file_data = {"path": k}
             file_data.update(v)

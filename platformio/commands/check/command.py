@@ -215,7 +215,7 @@ def print_processing_footer(result):
 
 
 def collect_component_stats(result):
-    components = dict()
+    components = {}
 
     def _append_defect(component, defect):
         if not components.get(component):
@@ -250,7 +250,7 @@ def print_defects_stats(results):
 
     severity_labels = list(DefectItem.SEVERITY_LABELS.values())
     severity_labels.reverse()
-    tabular_data = list()
+    tabular_data = []
     for k, v in component_stats.items():
         tool_defect = [v.get(s, 0) for s in severity_labels]
         tabular_data.append([k] + tool_defect)
