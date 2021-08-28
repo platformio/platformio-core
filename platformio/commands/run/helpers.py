@@ -54,11 +54,11 @@ def clean_build_dir(build_dir, config):
     if isdir(build_dir):
         # check project structure
         if isfile(checksum_file):
-            with open(checksum_file) as fp:
+            with open(checksum_file, encoding="utf8") as fp:
                 if fp.read() == checksum:
                     return
         fs.rmtree(build_dir)
 
     makedirs(build_dir)
-    with open(checksum_file, "w") as fp:
+    with open(checksum_file, mode="w", encoding="utf8") as fp:
         fp.write(checksum)

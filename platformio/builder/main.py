@@ -226,7 +226,11 @@ if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
         projenv = env
     data = projenv.DumpIDEData(env)
     # dump to file for the further reading by project.helpers.load_project_ide_data
-    with open(projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")), "w") as fp:
+    with open(
+        projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
+        mode="w",
+        encoding="utf8",
+    ) as fp:
         json.dump(data, fp)
     click.echo("\n%s\n" % json.dumps(data))  # pylint: disable=undefined-variable
     env.Exit(0)

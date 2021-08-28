@@ -261,7 +261,7 @@ class ProjectRPC:
                 return project_dir
             if not os.path.isdir(src_dir):
                 os.makedirs(src_dir)
-            with open(main_path, "w") as fp:
+            with open(main_path, mode="w", encoding="utf8") as fp:
                 fp.write(main_content.strip())
         return project_dir
 

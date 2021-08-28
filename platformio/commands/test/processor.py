@@ -224,7 +224,7 @@ class TestProcessorBase(object):
             test_dir,
             "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c")),
         )
-        with open(tmp_file, "w") as fp:
+        with open(tmp_file, mode="w", encoding="utf8") as fp:
             fp.write(data)
 
         atexit.register(delete_tmptest_files, test_dir)

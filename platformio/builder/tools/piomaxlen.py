@@ -65,7 +65,7 @@ def _file_long_data(env, data):
     )
     if os.path.isfile(tmp_file):
         return tmp_file
-    with open(tmp_file, "w") as fp:
+    with open(tmp_file, mode="w", encoding="utf8") as fp:
         fp.write(data)
     return tmp_file
 

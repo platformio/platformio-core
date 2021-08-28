@@ -86,7 +86,9 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                with io.open(os.path.join(root, fname), errors="ignore") as fp:
+                with io.open(
+                    os.path.join(root, fname), encoding="utf8", errors="ignore"
+                ) as fp:
                     content = fp.read()
                 if not content:
                     continue
@@ -671,7 +673,7 @@ class MbedLibBuilder(LibBuilderBase):
 
     def _mbed_conf_append_macros(self, mbed_config_path, macros):
         lines = []
-        with open(mbed_config_path) as fp:
+        with open(mbed_config_path, encoding="utf8") as fp:
             for line in fp.readlines():
                 line = line.strip()
                 if line == "#endif":
@@ -690,7 +692,7 @@ class MbedLibBuilder(LibBuilderBase):
                 if len(tokens) < 2 or tokens[1] not in macros:
                     lines.append(line)
         lines.append("")
-        with open(mbed_config_path, "w") as fp:
+        with open(mbed_config_path, mode="w", encoding="utf8") as fp:
             fp.write("\n".join(lines))
 
 

@@ -40,13 +40,13 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         )
         super(PvsStudioCheckTool, self).__init__(*args, **kwargs)
 
-        with open(self._tmp_cfg_file, "w") as fp:
+        with open(self._tmp_cfg_file, mode="w", encoding="utf8") as fp:
             fp.write(
                 "exclude-path = "
                 + self.config.get_optional_dir("packages").replace("\\", "/")
             )
 
-        with open(self._tmp_cmd_file, "w") as fp:
+        with open(self._tmp_cmd_file, mode="w", encoding="utf8") as fp:
             fp.write(
                 " ".join(
                     ['-I"%s"' % inc.replace("\\", "/") for inc in self.cpp_includes]

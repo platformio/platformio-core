@@ -181,7 +181,9 @@ class PackagePacker(object):
             and os.path.isdir(os.path.join(src, include[0]))
         ):
             src = os.path.join(src, include[0])
-            with open(os.path.join(src, "library.json"), "w") as fp:
+            with open(
+                os.path.join(src, "library.json"), mode="w", encoding="utf8"
+            ) as fp:
                 manifest_updated = manifest.copy()
                 del manifest_updated["export"]["include"]
                 json.dump(manifest_updated, fp, indent=2, ensure_ascii=False)

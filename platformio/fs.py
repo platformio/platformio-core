@@ -52,7 +52,7 @@ def get_source_dir():
 
 def load_json(file_path):
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, mode="r", encoding="utf8") as f:
             return json.load(f)
     except ValueError:
         raise exception.InvalidJSONFile(file_path)
@@ -102,7 +102,7 @@ def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
         result = set()
-        with open(rules_path) as fp:
+        with open(rules_path, encoding="utf8") as fp:
             for line in fp.readlines():
                 line = line.strip()
                 if not line or line.startswith("#"):

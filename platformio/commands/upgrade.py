@@ -103,7 +103,7 @@ def get_pip_package(to_develop):
         os.makedirs(cache_dir)
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
-        with open(pkg_name, "w") as fp:
+        with open(pkg_name, "w", encoding="utf8") as fp:
             r = exec_command(
                 ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True
             )

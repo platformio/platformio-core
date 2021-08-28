@@ -158,7 +158,7 @@ def is_container():
         return True
     if not os.path.isfile("/proc/1/cgroup"):
         return False
-    with open("/proc/1/cgroup") as fp:
+    with open("/proc/1/cgroup", encoding="utf8") as fp:
         return ":/docker/" in fp.read()
 
 

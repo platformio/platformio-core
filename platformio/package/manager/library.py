@@ -44,7 +44,9 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         root_dir = self.find_library_root(path)
 
         # automatically generate library manifest
-        with open(os.path.join(root_dir, "library.json"), "w") as fp:
+        with open(
+            os.path.join(root_dir, "library.json"), mode="w", encoding="utf8"
+        ) as fp:
             json.dump(
                 dict(
                     name=spec.name,

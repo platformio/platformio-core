@@ -154,11 +154,11 @@ def is_prog_obsolete(prog_path):
     new_digest = shasum.hexdigest()
     old_digest = None
     if isfile(prog_hash_path):
-        with open(prog_hash_path) as fp:
+        with open(prog_hash_path, encoding="utf8") as fp:
             old_digest = fp.read()
     if new_digest == old_digest:
         return False
-    with open(prog_hash_path, "w") as fp:
+    with open(prog_hash_path, mode="w", encoding="utf8") as fp:
         fp.write(new_digest)
     return True
 

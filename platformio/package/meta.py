@@ -382,12 +382,12 @@ class PackageMetaData(object):
         )
 
     def dump(self, path):
-        with open(path, "w") as fp:
+        with open(path, mode="w", encoding="utf8") as fp:
             return json.dump(self.as_dict(), fp)
 
     @staticmethod
     def load(path):
-        with open(path) as fp:
+        with open(path, encoding="utf8") as fp:
             data = json.load(fp)
             if data["spec"]:
                 data["spec"] = PackageSpec(**data["spec"])

@@ -114,7 +114,7 @@ class State(object):
     def __exit__(self, type_, value, traceback):
         if self.modified:
             try:
-                with open(self.path, "w") as fp:
+                with open(self.path, mode="w", encoding="utf8") as fp:
                     fp.write(json.dumps(self._storage))
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())

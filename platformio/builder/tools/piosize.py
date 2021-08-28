@@ -37,7 +37,7 @@ def _run_tool(cmd, env, tool_args):
         makedirs(build_dir)
     tmp_file = join(build_dir, "size-data-longcmd.txt")
 
-    with open(tmp_file, "w") as fp:
+    with open(tmp_file, mode="w", encoding="utf8") as fp:
         fp.write("\n".join(tool_args))
 
     cmd.append("@" + tmp_file)
@@ -241,7 +241,9 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             file_data.update(v)
             data["memory"]["files"].append(file_data)
 
-    with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
+    with open(
+        join(env.subst("$BUILD_DIR"), "sizedata.json"), mode="w", encoding="utf8"
+    ) as fp:
         fp.write(json.dumps(data))
 
 

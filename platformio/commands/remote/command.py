@@ -350,7 +350,7 @@ def device_monitor(ctx, agents, **kwargs):
             sleep(0.1)
         if not t.is_alive():
             return
-        with open(sock_file) as fp:
+        with open(sock_file, encoding="utf8") as fp:
             kwargs["port"] = fp.read()
         ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)

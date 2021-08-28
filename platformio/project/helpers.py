@@ -177,6 +177,6 @@ def _load_cached_project_ide_data(project_dir, env_names):
     for name in env_names:
         if not os.path.isfile(os.path.join(build_dir, name, "idedata.json")):
             continue
-        with open(os.path.join(build_dir, name, "idedata.json")) as fp:
+        with open(os.path.join(build_dir, name, "idedata.json"), encoding="utf8") as fp:
             result[name] = json.load(fp)
     return result

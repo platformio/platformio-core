@@ -105,7 +105,7 @@ class GDBClientProcess(DebugClientProcess):
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
         commands = banner + commands + footer
 
-        with open(dst, "w") as fp:
+        with open(dst, mode="w", encoding="utf8") as fp:
             fp.write("\n".join(self.debug_config.reveal_patterns(commands)))
 
     def stdin_data_received(self, data):

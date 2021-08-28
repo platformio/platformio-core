@@ -156,7 +156,9 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         subprocess.check_call(args + [dep])
 
     # build manifests
-    with open(os.path.join(target_dir, "package.json"), "w") as fp:
+    with open(
+        os.path.join(target_dir, "package.json"), mode="w", encoding="utf8"
+    ) as fp:
         json.dump(
             dict(
                 name="contrib-pysite",

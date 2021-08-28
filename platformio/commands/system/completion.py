@@ -42,7 +42,7 @@ def is_completion_code_installed(shell, path):
 
     import click_completion  # pylint: disable=import-error,import-outside-toplevel
 
-    with open(path) as fp:
+    with open(path, encoding="utf8") as fp:
         return click_completion.get_code(shell=shell) in fp.read()
 
 
@@ -64,7 +64,7 @@ def uninstall_completion_code(shell, path):
 
     import click_completion  # pylint: disable=import-error,import-outside-toplevel
 
-    with open(path, "r+") as fp:
+    with open(path, "r+", encoding="utf8") as fp:
         contents = fp.read()
         fp.seek(0)
         fp.truncate()
