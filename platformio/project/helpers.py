@@ -29,7 +29,9 @@ def get_project_dir():
     return os.getcwd()
 
 
-def is_platformio_project(project_dir=get_project_dir()):
+def is_platformio_project(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
     return isfile(join(project_dir, "platformio.ini"))
 
 
@@ -133,7 +135,7 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_project_ide_data(project_dir, env_or_envs: list, cache=False):
+def load_project_ide_data(project_dir, env_or_envs, cache=False):
     assert env_or_envs
     env_names = env_or_envs
     if not isinstance(env_names, list):
@@ -171,8 +173,10 @@ def _load_cached_project_ide_data(project_dir, env_names):
     build_dir = ProjectConfig.get_instance(
         join(project_dir, "platformio.ini")
     ).get_optional_dir("build")
+    result = {}
     for name in env_names:
         if not os.path.isfile(os.path.join(build_dir, name, "idedata.json")):
             continue
         with open(os.path.join(build_dir, name, "idedata.json")) as fp:
-            return {name: json.load(fp)}
+            result[name] = json.load(fp)
+    return result
