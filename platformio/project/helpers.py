@@ -29,7 +29,9 @@ def get_project_dir():
     return os.getcwd()
 
 
-def is_platformio_project(project_dir=get_project_dir()):
+def is_platformio_project(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
     return isfile(join(project_dir, "platformio.ini"))
 
 
