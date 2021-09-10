@@ -40,8 +40,9 @@ PlatformIO Core 5
 
   - Updated analysis tools:
 
-    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.4.1 with new checks and MISRA improvements
-    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.12 with new diagnostics and extended capabilities for security and safety standards
+    * `Clang-Tidy <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v12.0.1 with new modules and extended checks list
+    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.5.0 with improved code analysis and MISRA improvements
+    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.14 with support for intermodular analysis, improved MISRA support and new diagnostics
 
 * **Miscellaneous**
 
