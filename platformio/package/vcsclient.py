@@ -150,7 +150,7 @@ class GitClient(VCSClientBase):
             if path:
                 proc.append_env_path("PATH", path)
                 return True
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             pass
         return False
 
