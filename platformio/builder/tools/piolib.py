@@ -461,12 +461,22 @@ class LibBuilderBase(object):
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
                     self.env.PrependUnique(**{key: lb.env.get(key)})
 
-        if self.lib_archive:
-            libs.append(
-                self.env.BuildLibrary(self.build_dir, self.src_dir, self.src_filter)
+        do_not_archive = not self.lib_archive
+        if not do_not_archive:
+            nodes = self.env.CollectBuildFiles(
+                self.build_dir, self.src_dir, self.src_filter
             )
-        else:
+            if nodes:
+                libs.append(
+                    self.env.BuildLibrary(
+                        self.build_dir, self.src_dir, self.src_filter, nodes
+                    )
+                )
+            else:
+                do_not_archive = True
+        if do_not_archive:
             self.env.BuildSources(self.build_dir, self.src_dir, self.src_filter)
+
         return libs
 
 
