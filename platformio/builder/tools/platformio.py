@@ -348,9 +348,10 @@ def BuildFrameworks(env, frameworks):
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
-    return env.StaticLibrary(
-        env.subst(variant_dir), env.CollectBuildFiles(variant_dir, src_dir, src_filter)
-    )
+    nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
+    if nodes:
+        return env.StaticLibrary(env.subst(variant_dir), nodes)
+    return env.BuildSources(variant_dir, src_dir, src_filter)
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):

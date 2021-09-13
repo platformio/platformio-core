@@ -35,6 +35,7 @@ PlatformIO Core 5
 
   - Upgraded build engine to the SCons 4.2 (`release notes <https://github.com/SCons/scons/blob/rel_4.2.0/CHANGES.txt>`__)
   - Fixed an issue with broken binary file extension when a custom ``PROGNAME`` contains dot symbols (`issue #3906 <https://github.com/platformio/platformio-core/issues/3906>`_)
+  - Fixed an issue when PlatformIO archives a library that does not contain C/C++ source files (`issue #4019 <https://github.com/platformio/platformio-core/issues/4019>`_)
 
 * **Static Code Analysis**
 
