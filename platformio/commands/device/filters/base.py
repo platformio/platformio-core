@@ -19,7 +19,7 @@ from platformio.project.config import ProjectConfig
 
 class DeviceMonitorFilter(miniterm.Transform):
     def __init__(self, options=None):
-        """ Called by PlatformIO to pass context """
+        """Called by PlatformIO to pass context"""
         miniterm.Transform.__init__(self)
 
         self.options = options or {}
@@ -35,7 +35,7 @@ class DeviceMonitorFilter(miniterm.Transform):
                 self.environment = self.config.envs()[0]
 
     def __call__(self):
-        """ Called by the miniterm library when the filter is actually used """
+        """Called by the miniterm library when the filter is actually used"""
         return self
 
     @property

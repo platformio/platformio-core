@@ -15,7 +15,9 @@
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 # pylint: disable=redefined-builtin,too-many-statements
 
+import json
 import os
+import shutil
 from collections import Counter
 from os.path import dirname, isfile
 from time import time
@@ -26,7 +28,6 @@ from tabulate import tabulate
 from platformio import app, exception, fs, util
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools import CheckToolFactory
-from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, get_project_dir
 
@@ -163,7 +164,7 @@ def cli(
                     print_processing_footer(result)
 
         if json_output:
-            click.echo(dump_json_to_unicode(results_to_json(results)))
+            click.echo(json.dumps(results_to_json(results)))
         elif not silent:
             print_check_summary(results)
 
@@ -193,7 +194,7 @@ def print_processing_header(tool, envname, envdump):
         "Checking %s > %s (%s)"
         % (click.style(envname, fg="cyan", bold=True), tool, "; ".join(envdump))
     )
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
 
@@ -214,7 +215,7 @@ def print_processing_footer(result):
 
 
 def collect_component_stats(result):
-    components = dict()
+    components = {}
 
     def _append_defect(component, defect):
         if not components.get(component):
@@ -249,7 +250,7 @@ def print_defects_stats(results):
 
     severity_labels = list(DefectItem.SEVERITY_LABELS.values())
     severity_labels.reverse()
-    tabular_data = list()
+    tabular_data = []
     for k, v in component_stats.items():
         tool_defect = [v.get(s, 0) for s in severity_labels]
         tabular_data.append([k] + tool_defect)

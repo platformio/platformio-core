@@ -20,7 +20,7 @@ import tarfile
 import tempfile
 
 from platformio import fs
-from platformio.compat import WINDOWS, ensure_python3
+from platformio.compat import IS_WINDOWS
 from platformio.package.exception import PackageException, UserSideException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
@@ -94,7 +94,6 @@ class PackagePacker(object):
     ]
 
     def __init__(self, package, manifest_uri=None):
-        assert ensure_python3()
         self.package = package
         self.manifest_uri = manifest_uri
 
@@ -117,7 +116,7 @@ class PackagePacker(object):
 
             # if zip/tar.gz -> unpack to tmp dir
             if not os.path.isdir(src):
-                if WINDOWS:
+                if IS_WINDOWS:
                     raise UserSideException(
                         "Packaging from an archive does not work on Windows OS. Please "
                         "extract data from `%s` manually and pack a folder instead"
@@ -182,7 +181,9 @@ class PackagePacker(object):
             and os.path.isdir(os.path.join(src, include[0]))
         ):
             src = os.path.join(src, include[0])
-            with open(os.path.join(src, "library.json"), "w") as fp:
+            with open(
+                os.path.join(src, "library.json"), mode="w", encoding="utf8"
+            ) as fp:
                 manifest_updated = manifest.copy()
                 del manifest_updated["export"]["include"]
                 json.dump(manifest_updated, fp, indent=2, ensure_ascii=False)

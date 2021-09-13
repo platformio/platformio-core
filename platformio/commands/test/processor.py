@@ -139,9 +139,9 @@ class TestProcessorBase(object):
                 cmd_run,
                 project_dir=self.options["project_dir"],
                 project_conf=self.options["project_config"].path,
-                upload_port=self.options["upload_port"],
+                upload_port=self.options.get("upload_port"),
                 verbose=self.options["verbose"],
-                silent=self.options["silent"],
+                silent=self.options.get("silent"),
                 environment=[self.env_name],
                 disable_auto_clean="nobuild" in target,
                 target=target,
@@ -224,7 +224,7 @@ class TestProcessorBase(object):
             test_dir,
             "%s.%s" % (tmp_file_prefix, transport_options.get("language", "c")),
         )
-        with open(tmp_file, "w") as fp:
+        with open(tmp_file, mode="w", encoding="utf8") as fp:
             fp.write(data)
 
         atexit.register(delete_tmptest_files, test_dir)

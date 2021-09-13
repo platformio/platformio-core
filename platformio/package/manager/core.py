@@ -20,7 +20,6 @@ import sys
 from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
-from platformio.compat import PY2
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
@@ -79,6 +78,7 @@ def remove_unnecessary_core_packages(dry_run=False):
         pkg = pm.get_package(spec)
         if not pkg:
             continue
+        # pylint: disable=no-member
         best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
 
     for pkg in pm.get_installed():
@@ -156,7 +156,9 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
         subprocess.check_call(args + [dep])
 
     # build manifests
-    with open(os.path.join(target_dir, "package.json"), "w") as fp:
+    with open(
+        os.path.join(target_dir, "package.json"), mode="w", encoding="utf8"
+    ) as fp:
         json.dump(
             dict(
                 name="contrib-pysite",
@@ -207,7 +209,7 @@ def get_contrib_pysite_deps():
     sys_type = util.get_systype()
     py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
-    twisted_version = "19.10.0" if PY2 else "20.3.0"
+    twisted_version = "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
     ]

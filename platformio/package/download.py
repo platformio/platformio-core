@@ -73,7 +73,7 @@ class FileDownloader(object):
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
-        fp = open(self._destination, "wb")
+        fp = open(self._destination, "wb")  # pylint: disable=consider-using-with
         try:
             if not with_progress or self.get_size() == -1:
                 if not silent:

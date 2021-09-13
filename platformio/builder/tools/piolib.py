@@ -33,7 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.clients.http import InternetIsOffline
-from platformio.compat import WINDOWS, hashlib_encode_data, string_types
+from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
@@ -86,7 +86,9 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                with io.open(os.path.join(root, fname), errors="ignore") as fp:
+                with io.open(
+                    os.path.join(root, fname), encoding="utf8", errors="ignore"
+                ) as fp:
                     content = fp.read()
                 if not content:
                     continue
@@ -126,9 +128,9 @@ class LibBuilderBase(object):
 
         self._is_dependent = False
         self._is_built = False
-        self._depbuilders = list()
-        self._circular_deps = list()
-        self._processed_files = list()
+        self._depbuilders = []
+        self._circular_deps = []
+        self._processed_files = []
 
         # reset source filter, could be overridden with extra script
         self.env["SRC_FILTER"] = ""
@@ -142,7 +144,7 @@ class LibBuilderBase(object):
     def __contains__(self, path):
         p1 = self.path
         p2 = path
-        if WINDOWS:
+        if IS_WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
         if p1 == p2:
@@ -459,12 +461,22 @@ class LibBuilderBase(object):
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
                     self.env.PrependUnique(**{key: lb.env.get(key)})
 
-        if self.lib_archive:
-            libs.append(
-                self.env.BuildLibrary(self.build_dir, self.src_dir, self.src_filter)
+        do_not_archive = not self.lib_archive
+        if not do_not_archive:
+            nodes = self.env.CollectBuildFiles(
+                self.build_dir, self.src_dir, self.src_filter
             )
-        else:
+            if nodes:
+                libs.append(
+                    self.env.BuildLibrary(
+                        self.build_dir, self.src_dir, self.src_filter, nodes
+                    )
+                )
+            else:
+                do_not_archive = True
+        if do_not_archive:
             self.env.BuildSources(self.build_dir, self.src_dir, self.src_filter)
+
         return libs
 
 
@@ -544,6 +556,21 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     def is_platforms_compatible(self, platforms):
         return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
+
+    @property
+    def build_flags(self):
+        ldflags = [
+            LibBuilderBase.build_flags.fget(self),  # pylint: disable=no-member
+            self._manifest.get("ldflags"),
+        ]
+        if self._manifest.get("precompiled") in ("true", "full"):
+            # add to LDPATH {build.mcu} folder
+            board_config = self.env.BoardConfig()
+            self.env.PrependUnique(
+                LIBPATH=os.path.join(self.src_dir, board_config.get("build.cpu"))
+            )
+        ldflags = [flag for flag in ldflags if flag]  # remove empty
+        return " ".join(ldflags) if ldflags else None
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -671,7 +698,7 @@ class MbedLibBuilder(LibBuilderBase):
 
     def _mbed_conf_append_macros(self, mbed_config_path, macros):
         lines = []
-        with open(mbed_config_path) as fp:
+        with open(mbed_config_path, encoding="utf8") as fp:
             for line in fp.readlines():
                 line = line.strip()
                 if line == "#endif":
@@ -690,7 +717,7 @@ class MbedLibBuilder(LibBuilderBase):
                 if len(tokens) < 2 or tokens[1] not in macros:
                     lines.append(line)
         lines.append("")
-        with open(mbed_config_path, "w") as fp:
+        with open(mbed_config_path, mode="w", encoding="utf8") as fp:
             fp.write("\n".join(lines))
 
 

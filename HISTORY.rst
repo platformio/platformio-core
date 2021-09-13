@@ -8,6 +8,50 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.0 (2021-09-13)
+~~~~~~~~~~~~~~~~~~
+
+* **PlatformIO Debugging**
+
+  - Boosted `PlatformIO Debugging <https://docs.platformio.org/page/plus/debugging.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
+  - `Debug unit tests <https://docs.platformio.org/page/plus/debugging.html#debug-unit-tests>`__ created with `PlatformIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__ solution  (`issue #948 <https://github.com/platformio/platformio-core/issues/948>`_)
+  - Debug native (desktop) applications on a host machine (`issue #980 <https://github.com/platformio/platformio-core/issues/980>`_)
+  - Support debugging on Windows using Windows CMD/CLI (`pio debug <https://docs.platformio.org/page/core/userguide/cmd_debug.html>`__) (`issue #3793 <https://github.com/platformio/platformio-core/issues/3793>`_)
+  - Configure a custom pattern to determine when debugging server is started with a new `debug_server_ready_pattern <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-server-ready-pattern>`__ option
+  - Fixed an issue with silent hanging when a custom debug server is not found (`issue #3756 <https://github.com/platformio/platformio-core/issues/3756>`_)
+
+* **Package Management**
+
+  - Improved a package publishing process:
+
+    * Show package details
+    * Check for conflicting names in the PlatformIO Trusted Registry
+    * Check for duplicates and used version
+    * Validate package manifest
+
+  - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/page/core/userguide/package/cmd_publish.html>`__ command
+
+* **Build System**
+
+  - Process "precompiled" and "ldflags" properties of the "library.properties" manifest (`issue #3994 <https://github.com/platformio/platformio-core/issues/3994>`_)
+  - Upgraded build engine to the SCons 4.2 (`release notes <https://github.com/SCons/scons/blob/rel_4.2.0/CHANGES.txt>`__)
+  - Fixed an issue with broken binary file extension when a custom ``PROGNAME`` contains dot symbols (`issue #3906 <https://github.com/platformio/platformio-core/issues/3906>`_)
+  - Fixed an issue when PlatformIO archives a library that does not contain C/C++ source files (`issue #4019 <https://github.com/platformio/platformio-core/issues/4019>`_)
+
+* **Static Code Analysis**
+
+  - Updated analysis tools:
+
+    * `Clang-Tidy <https://docs.platformio.org/page/plus/check-tools/clang-tidy.html>`__ v12.0.1 with new modules and extended checks list
+    * `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.5.0 with improved code analysis and MISRA improvements
+    * `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ v7.14 with support for intermodular analysis, improved MISRA support and new diagnostics
+
+* **Miscellaneous**
+
+  - Ensure that a serial port is ready before running unit tests on a remote target (`issue #3742 <https://github.com/platformio/platformio-core/issues/3742>`_)
+  - Fixed an error "Unknown development platform" when running unit tests on a clean machine (`issue #3901 <https://github.com/platformio/platformio-core/issues/3901>`_)
+  - Fixed an issue when "main.cpp" was generated for a new project for 8-bit development platforms (`issue #3872 <https://github.com/platformio/platformio-core/issues/3872>`_)
+
 5.1.1 (2021-03-17)
 ~~~~~~~~~~~~~~~~~~
 
@@ -199,24 +243,24 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/page/
 PlatformIO Core 4
 -----------------
 
-See `PlatformIO Core 4.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-4>`__.
+See `PlatformIO Core 4.0 history <https://github.com/platformio/platformio-core/blob/v4.3.4/HISTORY.rst>`__.
 
 PlatformIO Core 3
 -----------------
 
-See `PlatformIO Core 3.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-3>`__.
+See `PlatformIO Core 3.0 history <https://github.com/platformio/platformio-core/blob/v3.6.7/HISTORY.rst>`__.
 
 PlatformIO Core 2
 -----------------
 
-See `PlatformIO Core 2.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-2>`__.
+See `PlatformIO Core 2.0 history <https://github.com/platformio/platformio-core/blob/v2.11.2/HISTORY.rst>`__.
 
 PlatformIO Core 1
 -----------------
 
-See `PlatformIO Core 1.0 history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-1>`__.
+See `PlatformIO Core 1.0 history <https://github.com/platformio/platformio-core/blob/v1.5.0/HISTORY.rst>`__.
 
 PlatformIO Core Preview
 -----------------------
 
-See `PlatformIO Core Preview history <https://docs.platformio.org/en/v4.3.4/core/history.html#platformio-core-preview>`__.
+See `PlatformIO Core Preview history <https://github.com/platformio/platformio-core/blob/v0.10.2/HISTORY.rst>`__.

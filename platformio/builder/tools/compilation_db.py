@@ -58,7 +58,7 @@ class __CompilationDbNode(SCons.Node.Python.Value):
 
 
 def changed_since_last_build_node(*args, **kwargs):
-    """ Dummy decider to force always building"""
+    """Dummy decider to force always building"""
     return True
 
 
@@ -152,7 +152,7 @@ def WriteCompilationDb(target, source, env):
         item["file"] = os.path.abspath(item["file"])
         entries.append(item)
 
-    with open(str(target[0]), "w") as target_file:
+    with open(str(target[0]), mode="w", encoding="utf8") as target_file:
         json.dump(
             entries, target_file, sort_keys=True, indent=4, separators=(",", ": ")
         )

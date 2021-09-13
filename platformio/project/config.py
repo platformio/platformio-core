@@ -12,21 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
+import hashlib
 import json
 import os
 import re
-from hashlib import sha1
 
 import click
 
 from platformio import fs
-from platformio.compat import (
-    PY2,
-    WINDOWS,
-    glob_recursive,
-    hashlib_encode_data,
-    string_types,
-)
+from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
@@ -93,11 +88,7 @@ class ProjectConfigBase(object):
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = (
-            ConfigParser.ConfigParser()
-            if PY2
-            else ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
-        )
+        self._parser = ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
@@ -111,7 +102,7 @@ class ProjectConfigBase(object):
             return
         self._parsed.append(path)
         try:
-            self._parser.read(path)
+            self._parser.read(path, "utf-8")
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConfError(path, str(e))
 
@@ -122,7 +113,7 @@ class ProjectConfigBase(object):
         for pattern in self.get("platformio", "extra_configs", []):
             if pattern.startswith("~"):
                 pattern = fs.expanduser(pattern)
-            for item in glob_recursive(pattern):
+            for item in glob.glob(pattern, recursive=True):
                 self.read(item)
 
     def _maintain_renaimed_options(self):
@@ -364,7 +355,7 @@ class ProjectConfigDirsMixin(object):
         default = ProjectOptions["platformio.core_dir"].default
         core_dir = self.get("platformio", "core_dir")
         win_core_dir = None
-        if WINDOWS and core_dir == default:
+        if IS_WINDOWS and core_dir == default:
             win_core_dir = os.path.splitdrive(core_dir)[0] + "\\.platformio"
             if os.path.isdir(win_core_dir):
                 core_dir = win_core_dir
@@ -402,7 +393,7 @@ class ProjectConfigDirsMixin(object):
                 "%s-%s"
                 % (
                     os.path.basename(project_dir),
-                    sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
+                    hashlib.sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
                 ),
             )
 
@@ -465,7 +456,7 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         path = path or self.path
         if path in self._instances:
             del self._instances[path]
-        with open(path or self.path, "w+") as fp:
+        with open(path or self.path, mode="w+", encoding="utf8") as fp:
             fp.write(CONFIG_HEADER.strip() + "\n\n")
             self._parser.write(fp)
             fp.seek(0)

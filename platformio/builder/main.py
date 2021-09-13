@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+import os
 import sys
-from os import environ, makedirs
-from os.path import isdir, join
 from time import time
 
 import click
@@ -29,7 +29,6 @@ from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import compat, fs
-from platformio.compat import dump_json_to_unicode
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
@@ -65,18 +64,18 @@ DEFAULT_ENV_OPTIONS = dict(
         "pioide",
         "piosize",
     ],
-    toolpath=[join(fs.get_source_dir(), "builder", "tools")],
+    toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
     # Propagating External Environment
-    ENV=environ,
+    ENV=os.environ,
     UNIX_TIME=int(time()),
-    BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
-    BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
-    BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=join("$BUILD_DIR", "compile_commands.json"),
+    BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
+    BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
+    BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
+    COMPILATIONDB_PATH=os.path.join("$BUILD_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
-    PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=get_pythonexe_path(),
     IDE_EXTRA_DATA={},
 )
@@ -124,26 +123,26 @@ env.Replace(
     BUILD_CACHE_DIR=config.get_optional_dir("build_cache"),
     LIBSOURCE_DIRS=[
         config.get_optional_dir("lib"),
-        join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
+        os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
         config.get_optional_dir("globallib"),
     ],
 )
 
 if (
-    compat.WINDOWS
+    compat.IS_WINDOWS
     and sys.version_info >= (3, 8)
     and env["PROJECT_DIR"].startswith("\\\\")
 ):
     click.secho(
         "There is a known issue with Python 3.8+ and mapped network drives on "
-        "Windows.\nPlease downgrade Python to the latest 3.7. More details at:\n"
+        "Windows.\nSee a solution at:\n"
         "https://github.com/platformio/platformio-core/issues/3417",
         fg="yellow",
     )
 
 if env.subst("$BUILD_CACHE_DIR"):
-    if not isdir(env.subst("$BUILD_CACHE_DIR")):
-        makedirs(env.subst("$BUILD_CACHE_DIR"))
+    if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
+        os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
 
 if int(ARGUMENTS.get("ISATTY", 0)):
@@ -160,15 +159,17 @@ elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 if "compiledb" in COMMAND_LINE_TARGETS:
     env.Tool("compilation_db")
 
-if not isdir(env.subst("$BUILD_DIR")):
-    makedirs(env.subst("$BUILD_DIR"))
+if not os.path.isdir(env.subst("$BUILD_DIR")):
+    os.makedirs(env.subst("$BUILD_DIR"))
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(
-    join("$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]))
+    os.path.join(
+        "$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1])
+    )
 )
 
 for item in env.GetExtraScripts("pre"):
@@ -209,7 +210,7 @@ env.AddPreAction(
     ),
 )
 
-AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
+AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 
 ##############################################################################
@@ -218,17 +219,20 @@ if "envdump" in COMMAND_LINE_TARGETS:
     click.echo(env.Dump())
     env.Exit(0)
 
-if "idedata" in COMMAND_LINE_TARGETS:
+if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
     try:
         Import("projenv")
     except:  # pylint: disable=bare-except
         projenv = env
-    click.echo(
-        "\n%s\n"
-        % dump_json_to_unicode(
-            projenv.DumpIDEData(env)  # pylint: disable=undefined-variable
-        )
-    )
+    data = projenv.DumpIDEData(env)
+    # dump to file for the further reading by project.helpers.load_project_ide_data
+    with open(
+        projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
+        mode="w",
+        encoding="utf8",
+    ) as fp:
+        json.dump(data, fp)
+    click.echo("\n%s\n" % json.dumps(data))  # pylint: disable=undefined-variable
     env.Exit(0)
 
 if "sizedata" in COMMAND_LINE_TARGETS:

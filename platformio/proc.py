@@ -20,11 +20,9 @@ from threading import Thread
 
 from platformio import exception
 from platformio.compat import (
-    PY2,
-    WINDOWS,
+    IS_WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
-    get_running_loop,
     string_types,
 )
 
@@ -32,10 +30,7 @@ from platformio.compat import (
 class AsyncPipeBase(object):
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
-        if PY2:
-            self._pipe_reader = os.fdopen(self._fd_read)
-        else:
-            self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
+        self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
         self._buffer = ""
         self._thread = Thread(target=self.run)
         self._thread.start()
@@ -114,33 +109,31 @@ def exec_command(*args, **kwargs):
     default.update(kwargs)
     kwargs = default
 
-    p = subprocess.Popen(*args, **kwargs)
-    try:
-        result["out"], result["err"] = p.communicate()
-        result["returncode"] = p.returncode
-    except KeyboardInterrupt:
-        raise exception.AbortedByUser()
-    finally:
-        for s in ("stdout", "stderr"):
-            if isinstance(kwargs[s], AsyncPipeBase):
-                kwargs[s].close()
+    with subprocess.Popen(*args, **kwargs) as p:
+        try:
+            result["out"], result["err"] = p.communicate()
+            result["returncode"] = p.returncode
+        except KeyboardInterrupt:
+            raise exception.AbortedByUser()
+        finally:
+            for s in ("stdout", "stderr"):
+                if isinstance(kwargs[s], AsyncPipeBase):
+                    kwargs[s].close()  # pylint: disable=no-member
 
     for s in ("stdout", "stderr"):
         if isinstance(kwargs[s], AsyncPipeBase):
-            result[s[3:]] = kwargs[s].get_buffer()
+            result[s[3:]] = kwargs[s].get_buffer()  # pylint: disable=no-member
 
-    for k, v in result.items():
-        if PY2 and isinstance(v, unicode):  # pylint: disable=undefined-variable
-            result[k] = v.encode()
-        elif not PY2 and isinstance(result[k], bytes):
+    for key, value in result.items():
+        if isinstance(value, bytes):
             try:
-                result[k] = result[k].decode(
+                result[key] = value.decode(
                     get_locale_encoding() or get_filesystem_encoding()
                 )
             except UnicodeDecodeError:
-                result[k] = result[k].decode("latin-1")
-        if v and isinstance(v, string_types):
-            result[k] = result[k].strip()
+                result[key] = value.decode("latin-1")
+        if value and isinstance(value, string_types):
+            result[key] = value.strip()
 
     return result
 
@@ -165,7 +158,7 @@ def is_container():
         return True
     if not os.path.isfile("/proc/1/cgroup"):
         return False
-    with open("/proc/1/cgroup") as fp:
+    with open("/proc/1/cgroup", encoding="utf8") as fp:
         return ":/docker/" in fp.read()
 
 
@@ -179,7 +172,7 @@ def copy_pythonpath_to_osenv():
         _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
     for p in os.sys.path:
         conditions = [p not in _PYTHONPATH]
-        if not WINDOWS:
+        if not IS_WINDOWS:
             conditions.append(
                 os.path.isdir(os.path.join(p, "click"))
                 or os.path.isdir(os.path.join(p, "platformio"))
@@ -196,7 +189,7 @@ def where_is_program(program, envpath=None):
 
     # try OS's built-in commands
     try:
-        result = exec_command(["where" if WINDOWS else "which", program], env=env)
+        result = exec_command(["where" if IS_WINDOWS else "which", program], env=env)
         if result["returncode"] == 0 and os.path.isfile(result["out"].strip()):
             return result["out"].strip()
     except OSError:
@@ -221,9 +214,4 @@ def append_env_path(name, value):
 
 
 def force_exit(code=0):
-    try:
-        get_running_loop().stop()
-    except:  # pylint: disable=bare-except
-        pass
-    finally:
-        sys.exit(code)
+    os._exit(code)  # pylint: disable=protected-access

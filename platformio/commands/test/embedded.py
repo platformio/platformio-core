@@ -117,13 +117,10 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 port = item["port"]
                 for hwid in board_hwids:
                     hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                    if hwid_str in item["hwid"]:
+                    if hwid_str in item["hwid"] and self.is_serial_port_ready(port):
                         return port
 
-            # check if port is already configured
-            try:
-                serial.Serial(port, timeout=self.SERIAL_TIMEOUT).close()
-            except serial.SerialException:
+            if port and not self.is_serial_port_ready(port):
                 port = None
 
             if not port:
@@ -136,3 +133,18 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 "global `--test-port` option."
             )
         return port
+
+    @staticmethod
+    def is_serial_port_ready(port, timeout=3):
+        if not port:
+            return False
+        elapsed = 0
+        while elapsed < timeout:
+            try:
+                serial.Serial(port, timeout=1).close()
+                return True
+            except:  # pylint: disable=bare-except
+                pass
+            sleep(1)
+            elapsed += 1
+        return False

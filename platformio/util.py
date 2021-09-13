@@ -19,14 +19,16 @@ import math
 import os
 import platform
 import re
+import shutil
 import time
 from functools import wraps
 from glob import glob
 
 import click
+import zeroconf
 
-from platformio import __version__, compat, exception, proc
-from platformio.compat import PY2, WINDOWS
+from platformio import __version__, exception, proc
+from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.fs import cd, load_json  # pylint: disable=unused-import
 from platformio.proc import exec_command  # pylint: disable=unused-import
 
@@ -76,7 +78,7 @@ class throttle(object):
 
 
 def singleton(cls):
-    """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
+    """From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples"""
     _instances = {}
 
     def get_instance(*args, **kwargs):
@@ -106,12 +108,6 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if WINDOWS and PY2:
-            try:
-                # pylint: disable=undefined-variable
-                d = unicode(d, errors="ignore")
-            except TypeError:
-                pass
         if not filter_hwid or "VID:PID" in h:
             result.append({"port": p, "description": d, "hwid": h})
 
@@ -119,7 +115,7 @@ def get_serial_ports(filter_hwid=False):
         return result
 
     # fix for PySerial
-    if not result and "darwin" in get_systype():
+    if not result and IS_MACOS:
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -131,7 +127,7 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if WINDOWS:
+    if IS_WINDOWS:
         try:
             result = proc.exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]
@@ -162,11 +158,6 @@ def get_logical_devices():
 
 
 def get_mdns_services():
-    compat.ensure_python3()
-
-    # pylint: disable=import-outside-toplevel
-    import zeroconf
-
     class mDNSListener(object):
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
@@ -241,7 +232,7 @@ def get_mdns_services():
 
 
 def pioversion_to_intstr():
-    """ Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
+    """Legacy for  framework-zephyr/scripts/platformio/platformio-build-pre.py"""
     vermatch = re.match(r"^([\d\.]+)", __version__)
     assert vermatch
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
@@ -279,7 +270,7 @@ def merge_dicts(d1, d2, path=None):
 
 
 def print_labeled_bar(label, is_error=False, fg=None):
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     width = len(click.unstyle(label))
     half_line = "=" * int((terminal_width - width - 2) / 2)
     click.secho("%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)

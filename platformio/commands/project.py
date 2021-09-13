@@ -240,7 +240,7 @@ def init_base_project(project_dir):
 
 
 def init_include_readme(include_dir):
-    with open(os.path.join(include_dir, "README"), "w") as fp:
+    with open(os.path.join(include_dir, "README"), mode="w", encoding="utf8") as fp:
         fp.write(
             """
 This directory is intended for project header files.
@@ -286,7 +286,7 @@ https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
 
 
 def init_lib_readme(lib_dir):
-    with open(os.path.join(lib_dir, "README"), "w") as fp:
+    with open(os.path.join(lib_dir, "README"), mode="w", encoding="utf8") as fp:
         fp.write(
             """
 This directory is intended for project specific (private) libraries.
@@ -339,7 +339,7 @@ More information about PlatformIO Library Dependency Finder
 
 
 def init_test_readme(test_dir):
-    with open(os.path.join(test_dir, "README"), "w") as fp:
+    with open(os.path.join(test_dir, "README"), mode="w", encoding="utf8") as fp:
         fp.write(
             """
 This directory is intended for PlatformIO Unit Testing and project tests.
@@ -360,7 +360,7 @@ def init_cvs_ignore(project_dir):
     conf_path = os.path.join(project_dir, ".gitignore")
     if os.path.isfile(conf_path):
         return
-    with open(conf_path, "w") as fp:
+    with open(conf_path, mode="w", encoding="utf8") as fp:
         fp.write(".pio\n")
 
 

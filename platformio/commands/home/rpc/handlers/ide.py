@@ -16,7 +16,7 @@ import time
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
-from platformio.compat import get_running_loop
+from platformio.compat import aio_get_running_loop
 
 
 class IDERPC:
@@ -36,7 +36,7 @@ class IDERPC:
     async def listen_commands(self, sid=0):
         if sid not in self._queue:
             self._queue[sid] = []
-        self._queue[sid].append(get_running_loop().create_future())
+        self._queue[sid].append(aio_get_running_loop().create_future())
         return await self._queue[sid][-1]
 
     def open_project(self, sid, project_dir):

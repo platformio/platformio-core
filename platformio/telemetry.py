@@ -17,13 +17,13 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 import threading
 from collections import deque
 from time import sleep, time
 from traceback import format_exc
 
-import click
 import requests
 
 from platformio import __version__, app, exception, util
@@ -74,7 +74,7 @@ class MeasurementProtocol(TelemetryBase):
         self["cid"] = app.get_cid()
 
         try:
-            self["sr"] = "%dx%d" % click.get_terminal_size()
+            self["sr"] = "%dx%d" % shutil.get_terminal_size()
         except ValueError:
             pass
 

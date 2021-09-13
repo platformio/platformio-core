@@ -27,7 +27,7 @@ from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
 from platformio import __version__, fs
-from platformio.compat import MACOS, string_types
+from platformio.compat import IS_MACOS, string_types
 from platformio.package.version import pepver_to_semver
 
 SRC_HEADER_EXT = ["h", "hpp"]
@@ -50,7 +50,7 @@ def GetBuildType(env):
     return (
         "debug"
         if (
-            set(["debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+            set(["__debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
             or env.GetProjectOption("build_type") == "debug"
         )
         else "release"
@@ -69,13 +69,14 @@ def BuildProgram(env):
     if (
         env.get("LIBS")
         and env.GetCompilerType() == "gcc"
-        and (env.PioPlatform().is_embedded() or not MACOS)
+        and (env.PioPlatform().is_embedded() or not IS_MACOS)
     ):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     program = env.Program(
-        os.path.join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]
+        os.path.join("$BUILD_DIR", env.subst("$PROGNAME$PROGSUFFIX")),
+        env["PIOBUILDFILES"],
     )
     env.Replace(PIOMAINPROG=program)
 
@@ -345,11 +346,10 @@ def BuildFrameworks(env, frameworks):
             env.Exit(1)
 
 
-def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
+def BuildLibrary(env, variant_dir, src_dir, src_filter=None, nodes=None):
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
-    return env.StaticLibrary(
-        env.subst(variant_dir), env.CollectBuildFiles(variant_dir, src_dir, src_filter)
-    )
+    nodes = nodes or env.CollectBuildFiles(variant_dir, src_dir, src_filter)
+    return env.StaticLibrary(env.subst(variant_dir), nodes)
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):

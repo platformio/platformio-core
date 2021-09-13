@@ -78,9 +78,9 @@ class ContentCache(object):
         if not os.path.isdir(os.path.dirname(cache_path)):
             os.makedirs(os.path.dirname(cache_path))
         try:
-            with codecs.open(cache_path, "wb", encoding="utf8") as fp:
+            with codecs.open(cache_path, mode="wb", encoding="utf8") as fp:
                 fp.write(data)
-            with open(self._db_path, "a") as fp:
+            with open(self._db_path, mode="a", encoding="utf8") as fp:
                 fp.write("%s=%s\n" % (str(expire_time), os.path.basename(cache_path)))
         except UnicodeError:
             if os.path.isfile(cache_path):
@@ -92,7 +92,7 @@ class ContentCache(object):
         return self._unlock_dbindex()
 
     def delete(self, keys=None):
-        """ Keys=None, delete expired items """
+        """Keys=None, delete expired items"""
         if not os.path.isfile(self._db_path):
             return None
         if not keys:
@@ -102,7 +102,7 @@ class ContentCache(object):
         paths_for_delete = [self.get_cache_path(k) for k in keys]
         found = False
         newlines = []
-        with open(self._db_path) as fp:
+        with open(self._db_path, encoding="utf8") as fp:
             for line in fp.readlines():
                 line = line.strip()
                 if "=" not in line:
@@ -129,7 +129,7 @@ class ContentCache(object):
                         pass
 
         if found and self._lock_dbindex():
-            with open(self._db_path, "w") as fp:
+            with open(self._db_path, mode="w", encoding="utf8") as fp:
                 fp.write("\n".join(newlines) + "\n")
             self._unlock_dbindex()
 

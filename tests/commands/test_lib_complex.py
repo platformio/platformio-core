@@ -232,9 +232,9 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update", "--dry-run", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["Adafruit PN532", "ESPAsyncTCP", "NeoPixelBus"]) == set(
-        lib["name"] for lib in output
-    )
+    assert set(
+        ["Adafruit PN532", "AsyncMqttClient", "ESPAsyncTCP", "NeoPixelBus"]
+    ) == set(lib["name"] for lib in output)
 
 
 def test_global_lib_update(clirunner, validate_cliresult):
@@ -254,7 +254,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
     assert result.output.count("[Detached]") == 1
-    assert result.output.count("[Up-to-date]") == 14
+    assert result.output.count("[Up-to-date]") == 13
 
     # update unknown library
     result = clirunner.invoke(cmd_lib, ["-g", "update", "Unknown"])

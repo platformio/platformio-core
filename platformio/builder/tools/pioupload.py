@@ -26,7 +26,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, fs, util
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command
 
 # pylint: disable=unused-argument
@@ -134,7 +134,7 @@ def AutodetectUploadPort(*args, **kwargs):
                 continue
             port = item["port"]
             if upload_protocol.startswith("blackmagic"):
-                if WINDOWS and port.startswith("COM") and len(port) > 4:
+                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
                     port = "\\\\.\\%s" % port
                 if "GDB" in item["description"]:
                     return port
@@ -236,9 +236,9 @@ def CheckUploadSize(_, target, source, env):
     def _format_availale_bytes(value, total):
         percent_raw = float(value) / float(total)
         blocks_per_progress = 10
-        used_blocks = int(round(blocks_per_progress * percent_raw))
-        if used_blocks > blocks_per_progress:
-            used_blocks = blocks_per_progress
+        used_blocks = min(
+            int(round(blocks_per_progress * percent_raw)), blocks_per_progress
+        )
         return "[{:{}}] {: 6.1%} (used {:d} bytes from {:d} bytes)".format(
             "=" * used_blocks, blocks_per_progress, percent_raw, value, total
         )

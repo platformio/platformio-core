@@ -695,6 +695,19 @@ ProjectOptions = OrderedDict(
                 ),
                 type=click.Path(exists=True, file_okay=True, dir_okay=False),
             ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_server_ready_pattern",
+                description=(
+                    "A pattern to determine when debugging server is ready "
+                    "for an incoming connection"
+                ),
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_test",
+                description=("A name of a unit test to be debugged"),
+            ),
             # Advanced
             ConfigEnvOption(
                 group="advanced",

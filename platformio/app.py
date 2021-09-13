@@ -24,7 +24,7 @@ import uuid
 from os.path import dirname, isdir, isfile, join, realpath
 
 from platformio import __version__, exception, fs, proc
-from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
+from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.helpers import get_default_projects_dir, get_project_core_dir
 
@@ -114,8 +114,8 @@ class State(object):
     def __exit__(self, type_, value, traceback):
         if self.modified:
             try:
-                with open(self.path, "w") as fp:
-                    fp.write(dump_json_to_unicode(self._storage))
+                with open(self.path, mode="w", encoding="utf8") as fp:
+                    fp.write(json.dumps(self._storage))
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
@@ -277,7 +277,7 @@ def get_cid():
         uid = uuid.getnode()
     cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())
     cid = str(cid)
-    if WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
+    if IS_WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
         set_state_item("cid", cid)
     return cid
 

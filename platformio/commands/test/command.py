@@ -14,18 +14,19 @@
 
 # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
 
-from fnmatch import fnmatch
-from os import getcwd, listdir
-from os.path import isdir, join
+import fnmatch
+import os
+import shutil
 from time import time
 
 import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
+from platformio.commands.platform import init_platform
 from platformio.commands.test.embedded import EmbeddedTestProcessor
+from platformio.commands.test.helpers import get_test_names
 from platformio.commands.test.native import NativeTestProcessor
-from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
@@ -50,7 +51,7 @@ from platformio.project.config import ProjectConfig
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(
         exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
     ),
@@ -102,11 +103,7 @@ def cli(  # pylint: disable=redefined-builtin
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(envs=environment)
-
-        test_dir = config.get_optional_dir("test")
-        if not isdir(test_dir):
-            raise exception.TestDirNotExists(test_dir)
-        test_names = get_test_names(test_dir)
+        test_names = get_test_names(config)
 
         if not verbose:
             click.echo("Verbose mode can be enabled via `-v, --verbose` option")
@@ -129,9 +126,11 @@ def cli(  # pylint: disable=redefined-builtin
                     not environment and default_envs and envname not in default_envs,
                     testname != "*"
                     and patterns["filter"]
-                    and not any(fnmatch(testname, p) for p in patterns["filter"]),
+                    and not any(
+                        fnmatch.fnmatch(testname, p) for p in patterns["filter"]
+                    ),
                     testname != "*"
-                    and any(fnmatch(testname, p) for p in patterns["ignore"]),
+                    and any(fnmatch.fnmatch(testname, p) for p in patterns["ignore"]),
                 ]
                 if any(skip_conditions):
                     results.append({"env": envname, "test": testname})
@@ -142,7 +141,8 @@ def cli(  # pylint: disable=redefined-builtin
 
                 cls = (
                     EmbeddedTestProcessor
-                    if is_embedded_platform(config.get(section, "platform"))
+                    if config.get(section, "platform")
+                    and init_platform(config.get(section, "platform")).is_embedded()
                     else NativeTestProcessor
                 )
                 tp = cls(
@@ -185,22 +185,6 @@ def cli(  # pylint: disable=redefined-builtin
         raise exception.ReturnErrorCode(1)
 
 
-def get_test_names(test_dir):
-    names = []
-    for item in sorted(listdir(test_dir)):
-        if isdir(join(test_dir, item)):
-            names.append(item)
-    if not names:
-        names = ["*"]
-    return names
-
-
-def is_embedded_platform(name):
-    if not name:
-        return False
-    return PlatformFactory.new(name).is_embedded()
-
-
 def print_processing_header(test, env):
     click.echo(
         "Processing %s in %s environment"
@@ -209,7 +193,7 @@ def print_processing_header(test, env):
             click.style(env, fg="cyan", bold=True),
         )
     )
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
 

@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import json
+import shutil
 
 import click
 from tabulate import tabulate
 
 from platformio import fs
-from platformio.compat import dump_json_to_unicode
 from platformio.package.manager.platform import PlatformPackageManager
 
 
@@ -41,7 +41,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
             grpboards[board["platform"]] = []
         grpboards[board["platform"]].append(board)
 
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     for (platform, boards) in sorted(grpboards.items()):
         click.echo("")
         click.echo("Platform: ", nl=False)
@@ -83,4 +83,4 @@ def _print_boards_json(query, installed=False):
             if query.lower() not in search_data.lower():
                 continue
         result.append(board)
-    click.echo(dump_json_to_unicode(result))
+    click.echo(json.dumps(result))

@@ -21,7 +21,7 @@ from os.path import dirname, isdir, isfile, join
 from click.testing import CliRunner
 
 from platformio import __version__, exception, fs
-from platformio.compat import WINDOWS, hashlib_encode_data
+from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
 
@@ -46,14 +46,14 @@ def find_project_dir_above(path):
 
 
 def get_project_core_dir():
-    """ Deprecated, use ProjectConfig.get_optional_dir("core") instead """
+    """Deprecated, use ProjectConfig.get_optional_dir("core") instead"""
     return ProjectConfig.get_instance(
         join(get_project_dir(), "platformio.ini")
     ).get_optional_dir("core", exists=True)
 
 
 def get_project_cache_dir():
-    """ Deprecated, use ProjectConfig.get_optional_dir("cache") instead """
+    """Deprecated, use ProjectConfig.get_optional_dir("cache") instead"""
     return ProjectConfig.get_instance(
         join(get_project_dir(), "platformio.ini")
     ).get_optional_dir("cache")
@@ -92,7 +92,7 @@ def get_project_libdeps_dir():
 def get_default_projects_dir():
     docs_dir = join(fs.expanduser("~"), "Documents")
     try:
-        assert WINDOWS
+        assert IS_WINDOWS
         import ctypes.wintypes  # pylint: disable=import-outside-toplevel
 
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
@@ -128,24 +128,37 @@ def compute_project_checksum(config):
         if not chunks:
             continue
         chunks_to_str = ",".join(sorted(chunks))
-        if WINDOWS:  # case insensitive OS
+        if IS_WINDOWS:  # case insensitive OS
             chunks_to_str = chunks_to_str.lower()
         checksum.update(hashlib_encode_data(chunks_to_str))
 
     return checksum.hexdigest()
 
 
-def load_project_ide_data(project_dir, env_or_envs):
+def load_project_ide_data(project_dir, env_or_envs, cache=False):
+    assert env_or_envs
+    env_names = env_or_envs
+    if not isinstance(env_names, list):
+        env_names = [env_names]
+
+    with fs.cd(project_dir):
+        result = _load_cached_project_ide_data(project_dir, env_names) if cache else {}
+        missed_env_names = set(env_names) - set(result.keys())
+        if missed_env_names:
+            result.update(_load_project_ide_data(project_dir, missed_env_names))
+
+    if not isinstance(env_or_envs, list) and env_or_envs in result:
+        return result[env_or_envs]
+    return result or None
+
+
+def _load_project_ide_data(project_dir, env_names):
     # pylint: disable=import-outside-toplevel
     from platformio.commands.run.command import cli as cmd_run
 
-    assert env_or_envs
-    envs = env_or_envs
-    if not isinstance(envs, list):
-        envs = [envs]
-    args = ["--project-dir", project_dir, "--target", "idedata"]
-    for env in envs:
-        args.extend(["-e", env])
+    args = ["--project-dir", project_dir, "--target", "_idedata"]
+    for name in env_names:
+        args.extend(["-e", name])
     result = CliRunner().invoke(cmd_run, args)
     if result.exit_code != 0 and not isinstance(
         result.exception, exception.ReturnErrorCode
@@ -153,14 +166,17 @@ def load_project_ide_data(project_dir, env_or_envs):
         raise result.exception
     if '"includes":' not in result.output:
         raise exception.PlatformioException(result.output)
+    return _load_cached_project_ide_data(project_dir, env_names)
 
-    data = {}
-    for line in result.output.split("\n"):
-        line = line.strip()
-        if line.startswith('{"') and line.endswith("}") and "env_name" in line:
-            _data = json.loads(line)
-            if "env_name" in _data:
-                data[_data["env_name"]] = _data
-    if not isinstance(env_or_envs, list) and env_or_envs in data:
-        return data[env_or_envs]
-    return data or None
+
+def _load_cached_project_ide_data(project_dir, env_names):
+    build_dir = ProjectConfig.get_instance(
+        join(project_dir, "platformio.ini")
+    ).get_optional_dir("build")
+    result = {}
+    for name in env_names:
+        if not os.path.isfile(os.path.join(build_dir, name, "idedata.json")):
+            continue
+        with open(os.path.join(build_dir, name, "idedata.json"), encoding="utf8") as fp:
+            result[name] = json.load(fp)
+    return result

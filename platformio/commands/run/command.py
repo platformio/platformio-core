@@ -14,6 +14,7 @@
 
 import operator
 import os
+import shutil
 from multiprocessing import cpu_count
 from time import time
 
@@ -200,7 +201,7 @@ def print_processing_header(env, config, verbose=False):
         "Processing %s (%s)"
         % (click.style(env, fg="cyan", bold=True), "; ".join(env_dump))
     )
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
 

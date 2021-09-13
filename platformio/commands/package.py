@@ -17,10 +17,14 @@ import tempfile
 from datetime import datetime
 
 import click
+from tabulate import tabulate
 
 from platformio import fs
+from platformio.clients.account import AccountClient
 from platformio.clients.registry import RegistryClient
-from platformio.compat import ensure_python3
+from platformio.exception import UserSideException
+from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.package.manifest.schema import ManifestSchema, ManifestValidationError
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.pack import PackagePacker
 from platformio.package.unpack import FileUnpacker, TARArchiver
@@ -34,6 +38,54 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     except ValueError as e:
         raise click.BadParameter(e)
     return value
+
+
+def load_manifest_from_archive(path):
+    return ManifestSchema().load_manifest(
+        ManifestParserFactory.new_from_archive(path).as_dict()
+    )
+
+
+def check_package_duplicates(
+    owner, type, name, version, system
+):  # pylint: disable=redefined-builtin
+    found = False
+    items = (
+        RegistryClient()
+        .list_packages(filters=dict(types=[type], names=[name]))
+        .get("items")
+    )
+    if not items:
+        return True
+    # duplicated version by owner / system
+    found = False
+    for item in items:
+        if item["owner"]["username"] != owner or item["version"]["name"] != version:
+            continue
+        if not system:
+            found = True
+            break
+        published_systems = []
+        for f in item["version"]["files"]:
+            published_systems.extend(f.get("system", []))
+        found = set(system).issubset(set(published_systems))
+    if found:
+        raise UserSideException(
+            "The package `%s/%s@%s` is already published in the registry"
+            % (owner, name, version)
+        )
+    other_owners = [
+        item["owner"]["username"]
+        for item in items
+        if item["owner"]["username"] != owner
+    ]
+    if other_owners:
+        click.secho(
+            "\nWarning! A package with the name `%s` is already published by the next "
+            "owners: %s\n" % (name, ", ".join(other_owners)),
+            fg="yellow",
+        )
+    return True
 
 
 @click.group("package", short_help="Package manager")
@@ -54,6 +106,12 @@ def cli():
 def package_pack(package, output):
     p = PackagePacker(package)
     archive_path = p.pack(output)
+    # validate manifest
+    try:
+        load_manifest_from_archive(archive_path)
+    except ManifestValidationError as e:
+        os.remove(archive_path)
+        raise e
     click.secho('Wrote a tarball to "%s"' % archive_path, fg="green")
 
 
@@ -80,28 +138,65 @@ def package_pack(package, output):
     default=True,
     help="Notify by email when package is processed",
 )
-def package_publish(package, owner, released_at, private, notify):
-    assert ensure_python3()
-
-    # publish .tar.gz instantly without repacking
-    if not os.path.isdir(package) and isinstance(
+@click.option(
+    "--non-interactive",
+    is_flag=True,
+    help="Do not show interactive prompt",
+)
+def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
+    package, owner, released_at, private, notify, non_interactive
+):
+    click.secho("Preparing a package...", fg="cyan")
+    owner = owner or AccountClient().get_logged_username()
+    do_not_pack = not os.path.isdir(package) and isinstance(
         FileUnpacker.new_archiver(package), TARArchiver
-    ):
-        response = RegistryClient().publish_package(
-            package, owner, released_at, private, notify
-        )
-        click.secho(response.get("message"), fg="green")
-        return
-
+    )
+    archive_path = None
     with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
-        with fs.cd(tmp_dir):
-            p = PackagePacker(package)
-            archive_path = p.pack()
-            response = RegistryClient().publish_package(
-                archive_path, owner, released_at, private, notify
+        # publish .tar.gz instantly without repacking
+        if do_not_pack:
+            archive_path = package
+        else:
+            with fs.cd(tmp_dir):
+                p = PackagePacker(package)
+                archive_path = p.pack()
+
+        type_ = PackageType.from_archive(archive_path)
+        manifest = load_manifest_from_archive(archive_path)
+        name = manifest.get("name")
+        version = manifest.get("version")
+        data = [
+            ("Type:", type_),
+            ("Owner:", owner),
+            ("Name:", name),
+            ("Version:", version),
+        ]
+        if manifest.get("system"):
+            data.insert(len(data) - 1, ("System:", ", ".join(manifest.get("system"))))
+        click.echo(tabulate(data, tablefmt="plain"))
+
+        # look for duplicates
+        check_package_duplicates(owner, type_, name, version, manifest.get("system"))
+
+        if not non_interactive:
+            click.confirm(
+                "Are you sure you want to publish the %s %s to the registry?\n"
+                % (
+                    type_,
+                    click.style(
+                        "%s/%s@%s" % (owner, name, version),
+                        fg="cyan",
+                    ),
+                ),
+                abort=True,
             )
+
+        response = RegistryClient().publish_package(
+            owner, type_, archive_path, released_at, private, notify
+        )
+        if not do_not_pack:
             os.remove(archive_path)
-            click.secho(response.get("message"), fg="green")
+        click.secho(response.get("message"), fg="green")
 
 
 @cli.command("unpublish", short_help="Remove a pushed package from the registry")
@@ -122,9 +217,9 @@ def package_publish(package, owner, released_at, private, notify):
 def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
     spec = PackageSpec(package)
     response = RegistryClient().unpublish_package(
+        owner=spec.owner or AccountClient().get_logged_username(),
         type=type,
         name=spec.name,
-        owner=spec.owner,
         version=str(spec.requirements),
         undo=undo,
     )

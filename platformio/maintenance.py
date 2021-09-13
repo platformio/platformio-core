@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import getenv
-from os.path import join
+import os
+import shutil
 from time import time
 
 import click
@@ -28,7 +28,6 @@ from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version
-from platformio.compat import ensure_python3
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
@@ -40,8 +39,6 @@ from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
-    ensure_python3(raise_exception=True)
-
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     set_caller(caller)
@@ -78,19 +75,19 @@ def on_platformio_exception(e):
 
 
 def set_caller(caller=None):
-    caller = caller or getenv("PLATFORMIO_CALLER")
+    caller = caller or os.getenv("PLATFORMIO_CALLER")
     if caller:
         return app.set_session_var("caller_id", caller)
-    if getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+    if os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
         caller = "vscode"
-    elif getenv("GITPOD_INSTANCE_ID") or getenv("GITPOD_WORKSPACE_URL"):
+    elif os.getenv("GITPOD_INSTANCE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
         caller = "gitpod"
     elif is_container():
-        if getenv("C9_UID"):
+        if os.getenv("C9_UID"):
             caller = "C9"
-        elif getenv("USER") == "cabox":
+        elif os.getenv("USER") == "cabox":
             caller = "CA"
-        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+        elif os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")):
             caller = "Che"
     return app.set_session_var("caller_id", caller)
 
@@ -142,7 +139,7 @@ class Upgrader(object):
 
 
 def after_upgrade(ctx):
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     last_version = app.get_state_item("last_version", "0.0.0")
     if last_version == __version__:
         return
@@ -207,7 +204,7 @@ def after_upgrade(ctx):
             click.style("https://github.com/platformio/platformio", fg="cyan"),
         )
     )
-    if not getenv("PLATFORMIO_IDE"):
+    if not os.getenv("PLATFORMIO_IDE"):
         click.echo(
             "- %s PlatformIO IDE for embedded development > %s"
             % (
@@ -238,7 +235,7 @@ def check_platformio_upgrade():
     if pepver_to_semver(latest_version) <= pepver_to_semver(__version__):
         return
 
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
 
     click.echo("")
     click.echo("*" * terminal_width)
@@ -248,10 +245,10 @@ def check_platformio_upgrade():
         fg="yellow",
         nl=False,
     )
-    if getenv("PLATFORMIO_IDE"):
+    if os.getenv("PLATFORMIO_IDE"):
         click.secho("PlatformIO IDE Menu: Upgrade PlatformIO", fg="cyan", nl=False)
         click.secho("`.", fg="yellow")
-    elif join("Cellar", "platformio") in fs.get_source_dir():
+    elif os.path.join("Cellar", "platformio") in fs.get_source_dir():
         click.secho("brew update && brew upgrade", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     else:
@@ -291,7 +288,7 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
     if not outdated_items:
         return
 
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
 
     click.echo("")
     click.echo("*" * terminal_width)
@@ -353,7 +350,7 @@ def check_prune_system():
     if (unnecessary_size / 1024) < threshold_mb:
         return
 
-    terminal_width, _ = click.get_terminal_size()
+    terminal_width, _ = shutil.get_terminal_size()
     click.echo()
     click.echo("*" * terminal_width)
     click.secho(

@@ -21,20 +21,20 @@ import re
 from SCons.Platform import TempFileMunge  # pylint: disable=import-error
 from SCons.Subst import quote_spaces  # pylint: disable=import-error
 
-from platformio.compat import WINDOWS, hashlib_encode_data
+from platformio.compat import IS_WINDOWS, hashlib_encode_data
 
 # There are the next limits depending on a platform:
 # - Windows = 8192
 # - Unix    = 131072
 # We need ~512 characters for compiler and temporary file paths
-MAX_LINE_LENGTH = (8192 if WINDOWS else 131072) - 512
+MAX_LINE_LENGTH = (8192 if IS_WINDOWS else 131072) - 512
 
 WINPATHSEP_RE = re.compile(r"\\([^\"'\\]|$)")
 
 
 def tempfile_arg_esc_func(arg):
     arg = quote_spaces(arg)
-    if not WINDOWS:
+    if not IS_WINDOWS:
         return arg
     # GCC requires double Windows slashes, let's use UNIX separator
     return WINPATHSEP_RE.sub(r"/\1", arg)
@@ -65,7 +65,7 @@ def _file_long_data(env, data):
     )
     if os.path.isfile(tmp_file):
         return tmp_file
-    with open(tmp_file, "w") as fp:
+    with open(tmp_file, mode="w", encoding="utf8") as fp:
         fp.write(data)
     return tmp_file
 

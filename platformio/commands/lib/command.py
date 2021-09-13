@@ -14,6 +14,7 @@
 
 # pylint: disable=too-many-branches, too-many-locals
 
+import json
 import os
 import time
 
@@ -23,7 +24,6 @@ from tabulate import tabulate
 from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.helpers import get_builtin_libs, save_project_libdeps
-from platformio.compat import dump_json_to_unicode
 from platformio.package.exception import NotGlobalLibDir, UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
@@ -286,7 +286,7 @@ def lib_update(  # pylint: disable=too-many-arguments
 
     if json_output:
         return click.echo(
-            dump_json_to_unicode(
+            json.dumps(
                 json_result[storage_dirs[0]] if len(storage_dirs) == 1 else json_result
             )
         )
@@ -315,7 +315,7 @@ def lib_list(ctx, json_output):
 
     if json_output:
         return click.echo(
-            dump_json_to_unicode(
+            json.dumps(
                 json_result[storage_dirs[0]] if len(storage_dirs) == 1 else json_result
             )
         )
@@ -359,7 +359,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
     )
 
     if json_output:
-        click.echo(dump_json_to_unicode(result))
+        click.echo(json.dumps(result))
         return
 
     if result["total"] == 0:
@@ -418,7 +418,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
 def lib_builtin(storage, json_output):
     items = get_builtin_libs(storage)
     if json_output:
-        return click.echo(dump_json_to_unicode(items))
+        return click.echo(json.dumps(items))
 
     for storage_ in items:
         if not storage_["items"]:
@@ -442,7 +442,7 @@ def lib_show(library, json_output):
     regclient = lm.get_registry_client_instance()
     lib = regclient.fetch_json_data("get", "/v2/lib/info/%d" % lib_id, cache_valid="1h")
     if json_output:
-        return click.echo(dump_json_to_unicode(lib))
+        return click.echo(json.dumps(lib))
 
     title = "{ownername}/{name}".format(**lib)
     click.secho(title, fg="cyan")
@@ -538,7 +538,7 @@ def lib_stats(json_output):
     result = regclient.fetch_json_data("get", "/v2/lib/stats", cache_valid="1h")
 
     if json_output:
-        return click.echo(dump_json_to_unicode(result))
+        return click.echo(json.dumps(result))
 
     for key in ("updated", "added"):
         tabular_data = [

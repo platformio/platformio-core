@@ -80,7 +80,7 @@ class EndpointSessionIterator(object):
         return self
 
     def next(self):
-        """ For Python 2 compatibility """
+        """For Python 2 compatibility"""
         return self.__next__()
 
     def __next__(self):
@@ -101,7 +101,10 @@ class HTTPClient(object):
     def __del__(self):
         if not self._session:
             return
-        self._session.close()
+        try:
+            self._session.close()
+        except:  # pylint: disable=bare-except
+            pass
         self._session = None
 
     def _next_session(self):

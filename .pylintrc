@@ -15,6 +15,7 @@ disable=
     useless-object-inheritance,
     useless-import-alias,
     bad-option-value,
+    consider-using-dict-items,
 
     ; PY2 Compat
     super-with-arguments,

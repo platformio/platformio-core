@@ -46,7 +46,7 @@ def test_download(isolated_pio_core):
     lm.cleanup_expired_downloads()
     assert not os.path.isfile(archive_path)
     # check that key is deleted from DB
-    with open(lm.get_download_usagedb_path()) as fp:
+    with open(lm.get_download_usagedb_path(), encoding="utf8") as fp:
         assert os.path.basename(archive_path) not in fp.read()
 
 

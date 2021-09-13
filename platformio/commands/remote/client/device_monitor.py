@@ -173,7 +173,11 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
         address = port.getHost()
         self.log.debug("Serial Bridge is started on {address!r}", address=address)
         if "sock" in self.cmd_options:
-            with open(os.path.join(self.cmd_options["sock"], "sock"), "w") as fp:
+            with open(
+                os.path.join(self.cmd_options["sock"], "sock"),
+                mode="w",
+                encoding="utf8",
+            ) as fp:
                 fp.write("socket://localhost:%d" % address.port)
 
     def client_terminal_stopped(self):

@@ -21,7 +21,7 @@ import click
 
 from platformio import VERSION, __version__, app, exception
 from platformio.clients.http import fetch_remote_content
-from platformio.compat import WINDOWS
+from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
@@ -40,7 +40,7 @@ def cli(dev):
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
     cmds = (
-        ["pip", "install", "--upgrade", get_pip_package(to_develop)],
+        ["pip", "install", "--upgrade", download_dist_package(to_develop)],
         ["platformio", "--version"],
     )
 
@@ -73,7 +73,7 @@ def cli(dev):
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
-        if any(m in r["err"].lower() for m in permission_errors) and not WINDOWS:
+        if any(m in r["err"].lower() for m in permission_errors) and not IS_WINDOWS:
             click.secho(
                 """
 -----------------
@@ -94,7 +94,7 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
     return True
 
 
-def get_pip_package(to_develop):
+def download_dist_package(to_develop):
     if not to_develop:
         return "platformio"
     dl_url = "https://github.com/platformio/platformio-core/archive/develop.zip"
@@ -103,7 +103,7 @@ def get_pip_package(to_develop):
         os.makedirs(cache_dir)
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
-        with open(pkg_name, "w") as fp:
+        with open(pkg_name, "wb") as fp:
             r = exec_command(
                 ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True
             )

@@ -16,6 +16,7 @@
 
 from __future__ import absolute_import
 
+import json
 import sys
 from os import environ, makedirs, remove
 from os.path import isdir, join, splitdrive
@@ -23,9 +24,8 @@ from os.path import isdir, join, splitdrive
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
-from platformio.compat import dump_json_to_unicode
+from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command
-from platformio.util import get_systype
 
 
 def _run_tool(cmd, env, tool_args):
@@ -37,7 +37,7 @@ def _run_tool(cmd, env, tool_args):
         makedirs(build_dir)
     tmp_file = join(build_dir, "size-data-longcmd.txt")
 
-    with open(tmp_file, "w") as fp:
+    with open(tmp_file, mode="w", encoding="utf8") as fp:
         fp.write("\n".join(tool_args))
 
     cmd.append("@" + tmp_file)
@@ -164,7 +164,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         location = symbol_locations.get(hex(symbol["addr"]))
         if not location or "?" in location:
             continue
-        if "windows" in get_systype():
+        if IS_WINDOWS:
             drive, tail = splitdrive(location)
             location = join(drive.upper(), tail)
         symbol["file"] = location
@@ -220,7 +220,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             "sections": sections,
         }
 
-        files = dict()
+        files = {}
         for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
             file_path = symbol.get("file") or "unknown"
             if not files.get(file_path, {}):
@@ -235,14 +235,16 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
             files[file_path]["symbols"].append(symbol)
 
-        data["memory"]["files"] = list()
+        data["memory"]["files"] = []
         for k, v in files.items():
             file_data = {"path": k}
             file_data.update(v)
             data["memory"]["files"].append(file_data)
 
-    with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
-        fp.write(dump_json_to_unicode(data))
+    with open(
+        join(env.subst("$BUILD_DIR"), "sizedata.json"), mode="w", encoding="utf8"
+    ) as fp:
+        fp.write(json.dumps(data))
 
 
 def exists(_):

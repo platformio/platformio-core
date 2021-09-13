@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import hashlib
 import io
 import json
@@ -24,7 +25,7 @@ import sys
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS, glob_escape, glob_recursive
+from platformio.compat import IS_WINDOWS
 
 
 class cd(object):
@@ -51,7 +52,7 @@ def get_source_dir():
 
 def load_json(file_path):
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, mode="r", encoding="utf8") as f:
             return json.load(f)
     except ValueError:
         raise exception.InvalidJSONFile(file_path)
@@ -101,7 +102,7 @@ def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
         result = set()
-        with open(rules_path) as fp:
+        with open(rules_path, encoding="utf8") as fp:
             for line in fp.readlines():
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -158,7 +159,9 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
     for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
         items = set()
-        for item in glob_recursive(os.path.join(glob_escape(src_dir), pattern)):
+        for item in glob.glob(
+            os.path.join(glob.escape(src_dir), pattern), recursive=True
+        ):
             if os.path.isdir(item):
                 for root, _, files in os.walk(item, followlinks=followlinks):
                     for f in files:
@@ -173,7 +176,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
 
 
 def to_unix_path(path):
-    if not WINDOWS or not path:
+    if not IS_WINDOWS or not path:
         return path
     return re.sub(r"[\\]+", "/", path)
 
@@ -182,7 +185,7 @@ def expanduser(path):
     """
     Be compatible with Python 3.8, on Windows skip HOME and check for USERPROFILE
     """
-    if not WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
+    if not IS_WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
         return os.path.expanduser(path)
     return os.environ["USERPROFILE"] + path[1:]
 

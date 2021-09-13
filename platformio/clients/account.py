@@ -207,6 +207,9 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         app.set_state_item("account", account)
         return result
 
+    def get_logged_username(self):
+        return self.get_account_info(offline=True).get("profile").get("username")
+
     def destroy_account(self):
         return self.send_auth_request("delete", "/v1/account")
 

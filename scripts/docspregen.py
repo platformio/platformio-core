@@ -625,6 +625,7 @@ def update_framework_docs():
 
 
 def update_boards():
+    print("Updating boards...")
     lines = []
 
     lines.append(RST_COPYRIGHT)
@@ -789,7 +790,7 @@ board manifest `{id}.json <{board_manifest_url}>`_. For example,
             """
 Uploading
 ---------
-%s supports the next uploading protocols:
+%s supports the following uploading protocols:
 """
             % board["name"]
         )
