@@ -547,6 +547,21 @@ class ArduinoLibBuilder(LibBuilderBase):
     def is_platforms_compatible(self, platforms):
         return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
 
+    @property
+    def build_flags(self):
+        ldflags = [
+            LibBuilderBase.build_flags.fget(self),  # pylint: disable=no-member
+            self._manifest.get("ldflags"),
+        ]
+        if self._manifest.get("precompiled") in ("true", "full"):
+            # add to LDPATH {build.mcu} folder
+            board_config = self.env.BoardConfig()
+            self.env.PrependUnique(
+                LIBPATH=os.path.join(self.src_dir, board_config.get("build.cpu"))
+            )
+        ldflags = [flag for flag in ldflags if flag]  # remove empty
+        return " ".join(ldflags) if ldflags else None
+
 
 class MbedLibBuilder(LibBuilderBase):
     def load_manifest(self):
