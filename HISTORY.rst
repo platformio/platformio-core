@@ -11,6 +11,8 @@ PlatformIO Core 5
 5.2.1 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Fixed a "KeyError: Invalid board option 'build.cpu'" when using a precompiled library with a board that does not have a CPU field in the manifest (`issue #4056 <https://github.com/platformio/platformio-core/issues/4056>`_)
+
 5.2.0 (2021-09-13)
 ~~~~~~~~~~~~~~~~~~
 
