@@ -566,9 +566,12 @@ class ArduinoLibBuilder(LibBuilderBase):
         if self._manifest.get("precompiled") in ("true", "full"):
             # add to LDPATH {build.mcu} folder
             board_config = self.env.BoardConfig()
-            self.env.PrependUnique(
-                LIBPATH=os.path.join(self.src_dir, board_config.get("build.cpu", ""))
-            )
+            for key in ("build.mcu", "build.cpu"):
+                libpath = os.path.join(self.src_dir, board_config.get(key, ""))
+                if not os.path.isdir(libpath):
+                    continue
+                self.env.PrependUnique(LIBPATH=libpath)
+                break
         ldflags = [flag for flag in ldflags if flag]  # remove empty
         return " ".join(ldflags) if ldflags else None
 
