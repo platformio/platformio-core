@@ -265,7 +265,8 @@ class ProjectRPC:
                 fp.write(main_content.strip())
         return project_dir
 
-    async def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
+    @staticmethod
+    async def import_arduino(board, use_arduino_libs, arduino_project_dir):
         board = str(board)
         # don't import PIO Project
         if is_platformio_project(arduino_project_dir):
