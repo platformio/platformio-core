@@ -27,18 +27,21 @@ class SerialPlotter(DeviceMonitorFilter):
         super(SerialPlotter, self).__init__(*args, **kwargs)
         self.buffer = ''
         self.plotter_py = os.path.expanduser('~') + '/.platformio/packages/tool-serialplotter/serialPlotter.py'
-        self.plot = subprocess.Popen(['python', self.plotter_py, '-s', str(PORT)])
-        self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.plot = None
+        self.plot_sock = ''
 
     def __call__(self):
+        self.plot = subprocess.Popen(['python', self.plotter_py, '-s', str(PORT)])
         try:
+            self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.plot_sock.connect(('localhost', PORT))
         except socket.error:
             pass
         return self
 
     def __del__(self):
-        self.plot.kill()
+        if self.plot:
+            self.plot.kill()
     
     def rx(self, text):
         self.buffer += text
@@ -51,6 +54,5 @@ class SerialPlotter(DeviceMonitorFilter):
                     self.plot_sock.connect(('localhost', PORT))
                 except socket.error:
                     print('\tplotter is not started.')
-                    pass
             self.buffer = ''
         return text
