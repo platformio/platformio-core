@@ -32,12 +32,12 @@ class SerialPlotter(DeviceMonitorFilter):
         self.plot = None
         self.plot_sock = ''
         self.plot = ''
+
+    def __call__(self):
         if not os.path.isfile(self.plotter_py):
             print("\nPREREQ : The plotter is not installed on this system")
             print("PREREQ : Please, install the serialPlotter to run with -f serial_plotter\n")
             exit(1)
-
-    def __call__(self):
         print('--- serialPlotter is starting')
         self.plot = subprocess.Popen(['python', self.plotter_py, '-s', str(PORT)])
         try:
