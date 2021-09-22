@@ -15,8 +15,10 @@
 #
 # This requires the ~/platformio/package/tool-serialplotter package
 #
+import subprocess
+import socket
+import os
 from platformio.commands.device import DeviceMonitorFilter
-import subprocess, socket, os
 
 PORT = 19200
 
@@ -29,8 +31,14 @@ class SerialPlotter(DeviceMonitorFilter):
         self.plotter_py = os.path.expanduser('~') + '/.platformio/packages/tool-serialplotter/serialPlotter.py'
         self.plot = None
         self.plot_sock = ''
+        self.plot = ''
+        if not os.path.isfile(self.plotter_py):
+            print("\nPREREQ : The plotter is not installed on this system")
+            print("PREREQ : Please, install the serialPlotter to run with -f serial_plotter\n")
+            exit(1)
 
     def __call__(self):
+        print('--- serialPlotter is starting')
         self.plot = subprocess.Popen(['python', self.plotter_py, '-s', str(PORT)])
         try:
             self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,6 +61,6 @@ class SerialPlotter(DeviceMonitorFilter):
                     self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     self.plot_sock.connect(('localhost', PORT))
                 except socket.error:
-                    print('\tplotter is not started.')
+                    print('--- serialPlotter is not started')
             self.buffer = ''
         return text
