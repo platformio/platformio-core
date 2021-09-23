@@ -12,6 +12,7 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Fixed a "KeyError: Invalid board option 'build.cpu'" when using a precompiled library with a board that does not have a CPU field in the manifest (`issue #4056 <https://github.com/platformio/platformio-core/issues/4056>`_)
+- Fixed a "FileExist" error when the `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with the ``--keep-build-dir`` option (`issue #4011 <https://github.com/platformio/platformio-core/issues/4011>`_)
 
 5.2.0 (2021-09-13)
 ~~~~~~~~~~~~~~~~~~
