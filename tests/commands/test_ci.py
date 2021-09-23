@@ -88,6 +88,69 @@ def test_ci_keep_build_dir(clirunner, tmpdir_factory, validate_cliresult):
     assert "board: metro" in result.output
 
 
+def test_ci_keep_build_dir_single_src_dir(
+    clirunner, tmpdir_factory, validate_cliresult
+):
+    build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
+
+    # Run two times to detect possible "AlreadyExists" errors
+    for _ in range(2):
+        result = clirunner.invoke(
+            cmd_ci,
+            [
+                join("examples", "wiring-blink", "src"),
+                "-b",
+                "uno",
+                "--build-dir",
+                build_dir,
+                "--keep-build-dir",
+            ],
+        )
+        validate_cliresult(result)
+
+
+def test_ci_keep_build_dir_nested_src_dirs(
+    clirunner, tmpdir_factory, validate_cliresult
+):
+
+    build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
+
+    # Split default Arduino project in two parts
+    src_dir1 = tmpdir_factory.mktemp("src_1")
+    src_dir1.join("src1.cpp").write(
+        """
+void setup() {}
+"""
+    )
+
+    src_dir2 = tmpdir_factory.mktemp("src_2")
+    src_dir2.join("src2.cpp").write(
+        """
+void loop() {}
+"""
+    )
+
+    src_dir1 = str(src_dir1)
+    src_dir2 = str(src_dir2)
+
+    # Run two times to detect possible "AlreadyExists" errors
+    for _ in range(2):
+        result = clirunner.invoke(
+            cmd_ci,
+            [
+                src_dir1,
+                src_dir2,
+                "-b",
+                "teensy40",
+                "--build-dir",
+                build_dir,
+                "--keep-build-dir",
+            ],
+        )
+
+        validate_cliresult(result)
+
+
 def test_ci_project_conf(clirunner, validate_cliresult):
     project_dir = join("examples", "wiring-blink")
     result = clirunner.invoke(

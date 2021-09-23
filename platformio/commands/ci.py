@@ -122,7 +122,7 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
             fs.rmtree(build_dir)
 
 
-def _copy_contents(dst_dir, contents):
+def _copy_contents(dst_dir, contents):  # pylint: disable=too-many-branches
     items = {"dirs": set(), "files": set()}
 
     for path in contents:
@@ -134,14 +134,15 @@ def _copy_contents(dst_dir, contents):
     dst_dir_name = os.path.basename(dst_dir)
 
     if dst_dir_name == "src" and len(items["dirs"]) == 1:
-        shutil.copytree(list(items["dirs"]).pop(), dst_dir, symlinks=True)
+        if not os.path.isdir(dst_dir):
+            shutil.copytree(list(items["dirs"]).pop(), dst_dir, symlinks=True)
     else:
         if not os.path.isdir(dst_dir):
             os.makedirs(dst_dir)
         for d in items["dirs"]:
-            shutil.copytree(
-                d, os.path.join(dst_dir, os.path.basename(d)), symlinks=True
-            )
+            src_dst_dir = os.path.join(dst_dir, os.path.basename(d))
+            if not os.path.isdir(src_dst_dir):
+                shutil.copytree(d, src_dst_dir, symlinks=True)
 
     if not items["files"]:
         return
