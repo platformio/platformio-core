@@ -59,6 +59,16 @@ class LibBuilderFactory(object):
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
         obj = getattr(sys.modules[__name__], clsname)(env, path, verbose=verbose)
+
+        # Handle PlatformIOLibBuilder.manifest.build.builder
+        # pylint: disable=protected-access
+        if isinstance(obj, PlatformIOLibBuilder) and obj._manifest.get("build", {}).get(
+            "builder"
+        ):
+            obj = getattr(
+                sys.modules[__name__], obj._manifest.get("build", {}).get("builder")
+            )(env, path, verbose=verbose)
+
         assert isinstance(obj, LibBuilderBase)
         return obj
 
