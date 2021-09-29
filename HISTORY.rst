@@ -14,6 +14,7 @@ PlatformIO Core 5
 - Allowed to override a default library builder via a new ``builder`` field in a ``build`` group of `library.json <https://docs.platformio.org/page/librarymanager/config.html#build>`__ manifest (`issue #3957 <https://github.com/platformio/platformio-core/issues/3957>`_)
 - Fixed a "KeyError: Invalid board option 'build.cpu'" when using a precompiled library with a board that does not have a CPU field in the manifest (`issue #4056 <https://github.com/platformio/platformio-core/issues/4056>`_)
 - Fixed a "FileExist" error when the `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with the ``--keep-build-dir`` option (`issue #4011 <https://github.com/platformio/platformio-core/issues/4011>`_)
+- Fixed an issue with draft values of C++ language standards that broke static analysis via Cppcheck (`issue #3944 <https://github.com/platformio/platformio-core/issues/3944>`_)
 
 5.2.0 (2021-09-13)
 ~~~~~~~~~~~~~~~~~~
