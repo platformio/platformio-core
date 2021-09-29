@@ -19,6 +19,7 @@ import subprocess
 import socket
 import os
 from platformio.commands.device import DeviceMonitorFilter
+from platformio.project.helpers import get_project_core_dir
 
 PORT = 19200
 
@@ -28,7 +29,7 @@ class SerialPlotter(DeviceMonitorFilter):
     def __init__(self, *args, **kwargs):
         super(SerialPlotter, self).__init__(*args, **kwargs)
         self.buffer = ''
-        self.plotter_py = os.path.expanduser('~') + '/.platformio/packages/tool-serialplotter/serialPlotter.py'
+        self.plotter_py = os.path.join(get_project_core_dir(), 'packages', 'tool-serialplotter', 'serialPlotter.py')
         self.plot = None
         self.plot_sock = ''
         self.plot = ''
