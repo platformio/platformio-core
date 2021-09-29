@@ -61,6 +61,12 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
     @staticmethod
     def find_library_root(path):
         for root, dirs, files in os.walk(path):
+            # check if Conan-based library
+            if os.path.isfile(os.path.join(root, "conanfile.py")):
+                return root
+            # check if CMake-based library
+            if os.path.isfile(os.path.join(root, "CMakeLists.txt")):
+                return root
             if not files and len(dirs) == 1:
                 continue
             for fname in files:

@@ -184,11 +184,11 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        if not all(
-            os.path.isdir(os.path.join(self.path, d)) for d in ("include", "src")
-        ):
-            return None
-        return os.path.join(self.path, "include")
+        return (
+            os.path.join(self.path, "include")
+            if os.path.isdir(os.path.join(self.path, "include"))
+            else None
+        )
 
     @property
     def src_dir(self):
@@ -500,6 +500,14 @@ class ArduinoLibBuilder(LibBuilderBase):
         if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
+
+    @property
+    def include_dir(self):
+        if not all(
+            os.path.isdir(os.path.join(self.path, d)) for d in ("include", "src")
+        ):
+            return None
+        return os.path.join(self.path, "include")
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
