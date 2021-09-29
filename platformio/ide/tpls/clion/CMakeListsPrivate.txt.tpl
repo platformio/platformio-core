@@ -115,7 +115,7 @@ endif()
 % end
 
 FILE(GLOB_RECURSE SRC_LIST
-%   for path in (project_src_dir, project_lib_dir):
+%   for path in (project_src_dir, project_lib_dir, project_test_dir):
     {{  _normalize_path(path) + "/*.*" }}
 %   end
 )

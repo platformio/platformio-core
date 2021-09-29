@@ -81,6 +81,7 @@ class ProjectGenerator(object):
                     "src_files": self.get_src_files(),
                     "project_src_dir": self.config.get_optional_dir("src"),
                     "project_lib_dir": self.config.get_optional_dir("lib"),
+                    "project_test_dir": self.config.get_optional_dir("test"),
                     "project_libdeps_dir": os.path.join(
                         self.config.get_optional_dir("libdeps"), self.env_name
                     ),
