@@ -13,13 +13,13 @@
 # limitations under the License.
 
 #
-# This requires the ~/platformio/package/tool-serialplotter package
+# This requires the 'arduplot'
 #
 import subprocess
 import socket
-import os
 from platformio.commands.device import DeviceMonitorFilter
 from platformio.project.helpers import get_project_core_dir
+from distutils.spawn import find_executable
 
 PORT = 19200
 
@@ -29,18 +29,20 @@ class SerialPlotter(DeviceMonitorFilter):
     def __init__(self, *args, **kwargs):
         super(SerialPlotter, self).__init__(*args, **kwargs)
         self.buffer = ''
-        self.plotter_py = os.path.join(get_project_core_dir(), 'packages', 'tool-serialplotter', 'serialPlotter.py')
+        self.arduplot = 'arduplot'
         self.plot = None
         self.plot_sock = ''
         self.plot = ''
 
     def __call__(self):
-        if not os.path.isfile(self.plotter_py):
-            print("\nPREREQ : The plotter is not installed on this system")
-            print("PREREQ : Please, install the serialPlotter to run with -f serial_plotter\n")
+        if find_executable(self.arduplot) == None:
+            print("\n\nThe 'arduplot' is not installed on this system")
+            print("Please, install the 'arduplot' to run with -f serial_plotter\n")
+            print("Run\n")
+            print("\tpip install arduplot\n")
             exit(1)
         print('--- serialPlotter is starting')
-        self.plot = subprocess.Popen(['python', self.plotter_py, '-s', str(PORT)])
+        self.plot = subprocess.Popen(['arduplot', '-s', str(PORT)])
         try:
             self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.plot_sock.connect(('localhost', PORT))
