@@ -17,9 +17,11 @@
 #
 import subprocess
 import socket
+import os
+import signal
+import sys
 from platformio.commands.device import DeviceMonitorFilter
 from platformio.project.helpers import get_project_core_dir
-from distutils.spawn import find_executable
 
 PORT = 19200
 
@@ -35,14 +37,20 @@ class SerialPlotter(DeviceMonitorFilter):
         self.plot = ''
 
     def __call__(self):
-        if find_executable(self.arduplot) == None:
+        pio_root = get_project_core_dir()
+        if sys.platform == 'win32':
+            self.arduplot = os.path.join(pio_root, 'penv', 'Scripts' , self.arduplot + '.cmd')
+        else:
+            self.arduplot = os.path.join(pio_root, 'penv', 'bin' , self.arduplot)
+
+        if not os.path.isfile(self.arduplot):
             print("\n\nThe 'arduplot' is not installed on this system")
             print("Please, install the 'arduplot' to run with -f serial_plotter\n")
             print("Run\n")
             print("\tpip install arduplot\n")
             exit(1)
-        print('--- serialPlotter is starting')
-        self.plot = subprocess.Popen(['arduplot', '-s', str(PORT)])
+        print('--- serial_plotter is starting')
+        self.plot = subprocess.Popen([self.arduplot, '-s', str(PORT)])
         try:
             self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.plot_sock.connect(('localhost', PORT))
@@ -52,18 +60,23 @@ class SerialPlotter(DeviceMonitorFilter):
 
     def __del__(self):
         if self.plot:
+            if sys.platform == 'win32':
+                self.plot.send_signal(signal.CTRL_C_EVENT)
             self.plot.kill()
     
     def rx(self, text):
-        self.buffer += text
-        if '\n' in self.buffer:
-            try:
-                self.plot_sock.send(bytes(self.buffer, 'utf-8'))
-            except BrokenPipeError:
+        if self.plot.poll() is None:    # None means the child is running
+            self.buffer += text
+            if '\n' in self.buffer:
                 try:
-                    self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    self.plot_sock.connect(('localhost', PORT))
-                except socket.error:
-                    print('--- serialPlotter is not started')
-            self.buffer = ''
+                    self.plot_sock.send(bytes(self.buffer, 'utf-8'))
+                except BrokenPipeError:
+                    try:
+                        self.plot_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        self.plot_sock.connect(('localhost', PORT))
+                    except socket.error:
+                        pass
+                self.buffer = ''
+        else:
+            os.kill(os.getpid(), signal.SIGINT)
         return text
