@@ -11,7 +11,8 @@ PlatformIO Core 5
 5.2.1 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Allowed to override a default library builder via a new ``builder`` field in a ``build`` group of `library.json <https://docs.platformio.org/page/librarymanager/config.html#build>`__ manifest (`issue #3957 <https://github.com/platformio/platformio-core/issues/3957>`_)
+- Clean a build environment and installed library dependencies using a new ``cleanall`` target (`issue #4062 <https://github.com/platformio/platformio-core/issues/4062>`_)
+- Override a default library builder via a new ``builder`` field in a ``build`` group of `library.json <https://docs.platformio.org/page/librarymanager/config.html#build>`__ manifest (`issue #3957 <https://github.com/platformio/platformio-core/issues/3957>`_)
 - Updated `Cppcheck <https://docs.platformio.org/page/plus/check-tools/cppcheck.html>`__ v2.6 with new checks, increased reliability of advanced addons (MISRA/CERT) and various improvements
 - Handle the "test" folder as a part of CLion project (`issue #4005 <https://github.com/platformio/platformio-core/issues/4005>`_)
 - Improved handling of a library root based on "Conan" or "CMake" build systems (`issue #3887 <https://github.com/platformio/platformio-core/issues/3887>`_)

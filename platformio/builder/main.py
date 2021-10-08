@@ -149,10 +149,12 @@ if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
 
-if env.GetOption("clean"):
-    env.PioClean(env.subst("$BUILD_DIR"))
+is_clean_all = "cleanall" in COMMAND_LINE_TARGETS
+if env.GetOption("clean") or is_clean_all:
+    env.PioClean(is_clean_all)
     env.Exit(0)
-elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
+
+if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
 # Dynamically load dependent tools
