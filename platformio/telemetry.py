@@ -187,7 +187,7 @@ class MeasurementProtocol(TelemetryBase):
     def _ignore_hit(self):
         if not app.get_setting("enable_telemetry"):
             return True
-        if all(c in sys.argv for c in ("run", "idedata")) or self["ea"] == "Idedata":
+        if self["ea"] in ("Idedata", "_Idedata"):
             return True
         return False
 
