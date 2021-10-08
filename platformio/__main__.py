@@ -67,9 +67,24 @@ def cli(ctx, force, caller, no_ansi):
     maintenance.on_platformio_start(ctx, force, caller)
 
 
-@cli.resultcallback()
-@click.pass_context
-def process_result(ctx, result, *_, **__):
+try:
+
+    @cli.result_callback()
+    @click.pass_context
+    def process_result(ctx, result, *_, **__):
+        _process_result(ctx, result)
+
+
+except (AttributeError, TypeError):  # legacy support for CLick > 8.0.1
+    print("legacy Click")
+
+    @cli.resultcallback()
+    @click.pass_context
+    def process_result(ctx, result, *_, **__):
+        _process_result(ctx, result)
+
+
+def _process_result(ctx, result):
     from platformio import maintenance
 
     maintenance.on_platformio_end(ctx, result)
