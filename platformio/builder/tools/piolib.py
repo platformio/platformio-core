@@ -184,19 +184,19 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        return (
-            os.path.join(self.path, "include")
-            if os.path.isdir(os.path.join(self.path, "include"))
-            else None
-        )
+        for name in ("include", "Include"):
+            d = os.path.join(self.path, name)
+            if os.path.isdir(d):
+                return d
+        return None
 
     @property
     def src_dir(self):
-        return (
-            os.path.join(self.path, "src")
-            if os.path.isdir(os.path.join(self.path, "src"))
-            else self.path
-        )
+        for name in ("src", "Src"):
+            d = os.path.join(self.path, name)
+            if os.path.isdir(d):
+                return d
+        return None
 
     def get_include_dirs(self):
         items = []
@@ -600,12 +600,6 @@ class MbedLibBuilder(LibBuilderBase):
         if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
-
-    @property
-    def include_dir(self):
-        if os.path.isdir(os.path.join(self.path, "include")):
-            return os.path.join(self.path, "include")
-        return None
 
     @property
     def src_dir(self):
