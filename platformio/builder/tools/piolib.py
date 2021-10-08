@@ -196,7 +196,7 @@ class LibBuilderBase(object):
             d = os.path.join(self.path, name)
             if os.path.isdir(d):
                 return d
-        return None
+        return self.path
 
     def get_include_dirs(self):
         items = []
