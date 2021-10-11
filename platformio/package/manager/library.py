@@ -75,11 +75,8 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
             if set(root_file_signs) & set(files):
                 return root
             for fname in files:
-                if not fname.endswith((".c", ".cpp", ".h", ".S")):
-                    continue
-                if os.path.isdir(os.path.join(os.path.dirname(root), "src")):
-                    return os.path.dirname(root)
-                return root
+                if fname.endswith((".c", ".cpp", ".h", ".hpp", ".S")):
+                    return root
         return path
 
     def _install(  # pylint: disable=too-many-arguments
