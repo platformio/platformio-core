@@ -162,6 +162,8 @@ void unittest_uart_end(){}
     validate_cliresult(native_result)
     validate_cliresult(embedded_result)
 
+    print("native_result.output", native_result.output)
+    print("embedded_result.output", embedded_result.output)
     assert all(f in native_result.output for f in ("setUp called", "tearDown called"))
     assert all(
         "[FAILED]" not in out for out in (native_result.output, embedded_result.output)

@@ -29,7 +29,7 @@ def VerboseAction(_, act, actstr):
     return Action(act, actstr)
 
 
-def PioClean(env, clean_dir):
+def PioClean(env, clean_all=False):
     def _relpath(path):
         if compat.IS_WINDOWS:
             prefix = os.getcwd()[:2].lower()
@@ -41,21 +41,30 @@ def PioClean(env, clean_dir):
                 return path
         return os.path.relpath(path)
 
-    if not os.path.isdir(clean_dir):
+    def _clean_dir(path):
+        clean_rel_path = _relpath(path)
+        for root, _, files in os.walk(path):
+            for f in files:
+                dst = os.path.join(root, f)
+                os.remove(dst)
+                print(
+                    "Removed %s"
+                    % (dst if not clean_rel_path.startswith(".") else _relpath(dst))
+                )
+
+    build_dir = env.subst("$BUILD_DIR")
+    libdeps_dir = env.subst("$PROJECT_LIBDEPS_DIR")
+    if os.path.isdir(build_dir):
+        _clean_dir(build_dir)
+        fs.rmtree(build_dir)
+    else:
         print("Build environment is clean")
-        env.Exit(0)
-    clean_rel_path = _relpath(clean_dir)
-    for root, _, files in os.walk(clean_dir):
-        for f in files:
-            dst = os.path.join(root, f)
-            os.remove(dst)
-            print(
-                "Removed %s"
-                % (dst if not clean_rel_path.startswith(".") else _relpath(dst))
-            )
+
+    if clean_all and os.path.isdir(libdeps_dir):
+        _clean_dir(libdeps_dir)
+        fs.rmtree(libdeps_dir)
+
     print("Done cleaning")
-    fs.rmtree(clean_dir)
-    env.Exit(0)
 
 
 def AddTarget(  # pylint: disable=too-many-arguments
@@ -65,7 +74,7 @@ def AddTarget(  # pylint: disable=too-many-arguments
     actions,
     title=None,
     description=None,
-    group="Generic",
+    group="General",
     always_build=True,
 ):
     if "__PIO_TARGETS" not in env:
@@ -101,7 +110,13 @@ def DumpTargets(env):
         description="Generate compilation database `compile_commands.json`",
         group="Advanced",
     )
-    targets["clean"] = dict(name="clean", title="Clean", group="Generic")
+    targets["clean"] = dict(name="clean", title="Clean", group="General")
+    targets["cleanall"] = dict(
+        name="cleanall",
+        title="Clean All",
+        group="General",
+        description="Clean a build environment and installed library dependencies",
+    )
     return list(targets.values())
 
 

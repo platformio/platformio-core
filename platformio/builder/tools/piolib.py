@@ -59,6 +59,16 @@ class LibBuilderFactory(object):
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
         obj = getattr(sys.modules[__name__], clsname)(env, path, verbose=verbose)
+
+        # Handle PlatformIOLibBuilder.manifest.build.builder
+        # pylint: disable=protected-access
+        if isinstance(obj, PlatformIOLibBuilder) and obj._manifest.get("build", {}).get(
+            "builder"
+        ):
+            obj = getattr(
+                sys.modules[__name__], obj._manifest.get("build", {}).get("builder")
+            )(env, path, verbose=verbose)
+
         assert isinstance(obj, LibBuilderBase)
         return obj
 
@@ -174,19 +184,19 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        if not all(
-            os.path.isdir(os.path.join(self.path, d)) for d in ("include", "src")
-        ):
-            return None
-        return os.path.join(self.path, "include")
+        for name in ("include", "Include"):
+            d = os.path.join(self.path, name)
+            if os.path.isdir(d):
+                return d
+        return None
 
     @property
     def src_dir(self):
-        return (
-            os.path.join(self.path, "src")
-            if os.path.isdir(os.path.join(self.path, "src"))
-            else self.path
-        )
+        for name in ("src", "Src"):
+            d = os.path.join(self.path, name)
+            if os.path.isdir(d):
+                return d
+        return self.path
 
     def get_include_dirs(self):
         items = []
@@ -491,6 +501,14 @@ class ArduinoLibBuilder(LibBuilderBase):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
+    @property
+    def include_dir(self):
+        if not all(
+            os.path.isdir(os.path.join(self.path, d)) for d in ("include", "src")
+        ):
+            return None
+        return os.path.join(self.path, "include")
+
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
         if os.path.isdir(os.path.join(self.path, "src")):
@@ -566,9 +584,12 @@ class ArduinoLibBuilder(LibBuilderBase):
         if self._manifest.get("precompiled") in ("true", "full"):
             # add to LDPATH {build.mcu} folder
             board_config = self.env.BoardConfig()
-            self.env.PrependUnique(
-                LIBPATH=os.path.join(self.src_dir, board_config.get("build.cpu"))
-            )
+            for key in ("build.mcu", "build.cpu"):
+                libpath = os.path.join(self.src_dir, board_config.get(key, ""))
+                if not os.path.isdir(libpath):
+                    continue
+                self.env.PrependUnique(LIBPATH=libpath)
+                break
         ldflags = [flag for flag in ldflags if flag]  # remove empty
         return " ".join(ldflags) if ldflags else None
 
@@ -579,12 +600,6 @@ class MbedLibBuilder(LibBuilderBase):
         if not os.path.isfile(manifest_path):
             return {}
         return ManifestParserFactory.new_from_file(manifest_path).as_dict()
-
-    @property
-    def include_dir(self):
-        if os.path.isdir(os.path.join(self.path, "include")):
-            return os.path.join(self.path, "include")
-        return None
 
     @property
     def src_dir(self):

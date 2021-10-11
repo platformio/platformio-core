@@ -336,7 +336,10 @@ def device_monitor(ctx, agents, **kwargs):
     kwargs["baud"] = kwargs["baud"] or 9600
 
     def _tx_target(sock_dir):
-        subcmd_argv = ["remote", "device", "monitor"]
+        subcmd_argv = ["remote"]
+        for agent in agents:
+            subcmd_argv.extend(["--agent", agent])
+        subcmd_argv.extend(["device", "monitor"])
         subcmd_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
         subcmd_argv.extend(["--sock", sock_dir])
         subprocess.call([proc.where_is_program("platformio")] + subcmd_argv)

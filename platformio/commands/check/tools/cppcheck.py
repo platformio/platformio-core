@@ -141,10 +141,11 @@ class CppcheckCheckTool(CheckToolBase):
 
         build_flags = self.cxx_flags if language == "c++" else self.cc_flags
 
-        for flag in build_flags:
-            if "-std" in flag:
-                # Standards with GNU extensions are not allowed
-                cmd.append("-" + flag.replace("gnu", "c"))
+        if not self.is_flag_set("--std", flags):
+            # Try to guess the standard version from the build flags
+            for flag in build_flags:
+                if "-std" in flag:
+                    cmd.append("-" + self.convert_language_standard(flag))
 
         cmd.extend(
             ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines[language]]
@@ -223,6 +224,21 @@ class CppcheckCheckTool(CheckToolBase):
     def is_check_successful(cmd_result):
         # Cppcheck is configured to return '3' if a defect is found
         return cmd_result["returncode"] in (0, 3)
+
+    @staticmethod
+    def convert_language_standard(flag):
+        cpp_standards_map = {
+            "0x": "11",
+            "1y": "14",
+            "1z": "17",
+            "2a": "20",
+        }
+
+        standard = flag[-2:]
+        # Note: GNU extensions are not supported and converted to regular standards
+        return flag.replace("gnu", "c").replace(
+            standard, cpp_standards_map.get(standard, standard)
+        )
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback

@@ -60,15 +60,23 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
     @staticmethod
     def find_library_root(path):
+        root_dir_signs = set(["include", "Include", "src", "Src"])
+        root_file_signs = set(
+            [
+                "conanfile.py",  # Conan-based library
+                "CMakeLists.txt",  # CMake-based library
+            ]
+        )
         for root, dirs, files in os.walk(path):
             if not files and len(dirs) == 1:
                 continue
-            for fname in files:
-                if not fname.endswith((".c", ".cpp", ".h", ".S")):
-                    continue
-                if os.path.isdir(os.path.join(os.path.dirname(root), "src")):
-                    return os.path.dirname(root)
+            if set(root_dir_signs) & set(dirs):
                 return root
+            if set(root_file_signs) & set(files):
+                return root
+            for fname in files:
+                if fname.endswith((".c", ".cpp", ".h", ".hpp", ".S")):
+                    return root
         return path
 
     def _install(  # pylint: disable=too-many-arguments

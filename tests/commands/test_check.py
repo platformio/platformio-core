@@ -15,7 +15,6 @@
 # pylint: disable=redefined-outer-name
 
 import json
-import sys
 from os.path import isfile, join
 
 import pytest
@@ -130,6 +129,47 @@ def test_check_language_standard_definition_passed(clirunner, tmpdir):
 
     assert "__cplusplus=201703L" in result.output
     assert "--std=c++17" in result.output
+
+
+def test_check_language_standard_option_is_converted(clirunner, tmpdir):
+    config = (
+        DEFAULT_CONFIG
+        + """
+build_flags = -std=gnu++1y
+    """
+    )
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert "--std=c++14" in result.output
+
+
+def test_check_language_standard_is_prioritized_over_build_flags(clirunner, tmpdir):
+    config = (
+        DEFAULT_CONFIG
+        + """
+check_flags = --std=c++03
+build_flags = -std=c++17
+    """
+    )
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert "--std=c++03" in result.output
+    assert "--std=c++17" not in result.output
+
+
+def test_check_language_standard_for_c_language(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\nbuild_flags = -std=c11"
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert "--std=c11" in result.output
+    assert "__STDC_VERSION__=201112L" in result.output
+    assert "__cplusplus" not in result.output
 
 
 def test_check_severity_threshold(clirunner, validate_cliresult, check_dir):
@@ -451,12 +491,11 @@ int main() {
 """
     )
 
-    frameworks = ["arduino", "stm32cube"]
-    if sys.version_info[0] == 3:
-        # Zephyr only supports Python 3
-        frameworks.append("zephyr")
-
-    for framework in frameworks:
+    for framework in (
+        "arduino",
+        "stm32cube",
+        "zephyr",
+    ):
         for tool in ("cppcheck", "clangtidy", "pvs-studio"):
             tmpdir.join("platformio.ini").write(config % (framework, tool))
             result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
