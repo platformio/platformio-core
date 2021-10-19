@@ -31,6 +31,7 @@ from platformio.debug.process.gdb import GDBClientProcess
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project
+from platformio.project.options import ProjectOptions
 
 
 @click.command(
@@ -54,11 +55,21 @@ from platformio.project.helpers import is_platformio_project
     ),
 )
 @click.option("--environment", "-e", metavar="<environment>")
+@click.option("--load-mode", type=ProjectOptions["env.debug_load_mode"].type)
 @click.option("--verbose", "-v", is_flag=True)
 @click.option("--interface", type=click.Choice(["gdb"]))
 @click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unprocessed):
+def cli(
+    ctx,
+    project_dir,
+    project_conf,
+    environment,
+    load_mode,
+    verbose,
+    interface,
+    __unprocessed,
+):
     app.set_session_var("custom_project_conf", project_conf)
 
     # use env variables from Eclipse or CLion
@@ -104,7 +115,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
 
     rebuild_prog = False
     preload = debug_config.load_cmds == ["preload"]
-    load_mode = debug_config.load_mode
+    load_mode = load_mode or debug_config.load_mode
     if load_mode == "always":
         rebuild_prog = preload or not helpers.has_debug_symbols(
             debug_config.program_path

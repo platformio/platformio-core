@@ -30,7 +30,10 @@
 %    "type": "PlatformIO",
 %    "task": ("Pre-Debug (%s)" % env_name) if len(config.envs()) > 1 else "Pre-Debug",
 %  }
-%  return [debug, predebug]
+%  noloading = predebug.copy()
+%  noloading["name"] = "PIO Debug (without uploading)"
+%  noloading["loadMode"] = "manual"
+%  return [debug, predebug, noloading]
 % end
 %
 % def _remove_comments(lines):

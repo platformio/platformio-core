@@ -8,6 +8,11 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.2 (2021-??-??)
+~~~~~~~~~~~~~~~~~~
+
+- Override debugging firmware loading mode using ``--load-mode`` option for `pio debug <https://docs.platformio.org/en/latest/core/userguide/cmd_debug.html>`__ command
+
 5.2.1 (2021-10-11)
 ~~~~~~~~~~~~~~~~~~
 
