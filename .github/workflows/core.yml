@@ -8,10 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9, 3.10]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
         exclude:
           - os: macos-latest
-            python-version: '3.6'
+            python-version: "3.6"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
