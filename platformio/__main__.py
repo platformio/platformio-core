@@ -76,7 +76,6 @@ try:
 
 
 except (AttributeError, TypeError):  # legacy support for CLick > 8.0.1
-    print("legacy Click")
 
     @cli.resultcallback()
     @click.pass_context

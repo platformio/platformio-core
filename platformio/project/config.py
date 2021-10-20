@@ -295,7 +295,10 @@ class ProjectConfigBase(object):
         section, option = match.group(1), match.group(2)
         if section == "sysenv":
             return os.getenv(option)
-        return self.getraw(section, option)
+        value = self.getraw(section, option)
+        if isinstance(value, list):
+            return "\n".join(value)
+        return value
 
     def get(self, section, option, default=MISSING):
         value = None
