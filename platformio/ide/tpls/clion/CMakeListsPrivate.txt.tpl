@@ -75,7 +75,7 @@ set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 
 if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
 % for define in defines:
-    add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
+    add_definitions(-D{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}})
 % end
 
 % for include in filter_includes(includes):
@@ -99,7 +99,7 @@ endif()
 % for env, data in ide_data.items():
 if (CMAKE_BUILD_TYPE MATCHES "{{ env }}")
 %   for define in data["defines"]:
-    add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
+    add_definitions(-D{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}})
 %   end
 
 %   for include in filter_includes(data["includes"]):
