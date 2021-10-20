@@ -12,6 +12,8 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Override debugging firmware loading mode using ``--load-mode`` option for `pio debug <https://docs.platformio.org/en/latest/core/userguide/cmd_debug.html>`__ command
+- Removed debugging "legacy Click" message from CLI (`issue #4083 <https://github.com/platformio/platformio-core/issues/4083>`_)
+- Fixed a "TypeError: sequence item 1: expected str instance, list found" issue when extending configuration option in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ with the multi-line default value (`issue #4082 <https://github.com/platformio/platformio-core/issues/4082>`_)
 
 5.2.1 (2021-10-11)
 ~~~~~~~~~~~~~~~~~~

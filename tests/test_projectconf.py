@@ -63,6 +63,10 @@ targets =
 [env:test_extends]
 extends = strict_settings
 
+[env:inject_base_env]
+debug_build_flags =
+    ${env.debug_build_flags}
+    -D CUSTOM_DEBUG_FLAG
 
 """
 
@@ -150,13 +154,20 @@ def test_sections(config):
         "custom",
         "env:base",
         "env:test_extends",
+        "env:inject_base_env",
         "env:extra_1",
         "env:extra_2",
     ]
 
 
 def test_envs(config):
-    assert config.envs() == ["base", "test_extends", "extra_1", "extra_2"]
+    assert config.envs() == [
+        "base",
+        "test_extends",
+        "inject_base_env",
+        "extra_1",
+        "extra_2",
+    ]
     assert config.default_envs() == ["base", "extra_2"]
 
 
@@ -273,6 +284,14 @@ def test_get_value(config):
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
     assert config.get("env:extra_2", "monitor_speed") == 9600
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
+
+    # get default value from ConfigOption
+    assert config.get("env:inject_base_env", "debug_build_flags") == [
+        "-Og",
+        "-g2",
+        "-ggdb2",
+        "-D CUSTOM_DEBUG_FLAG",
+    ]
 
 
 def test_items(config):
@@ -445,4 +464,13 @@ def test_dump(tmpdir_factory):
             ],
         ),
         ("env:test_extends", [("extends", ["strict_settings"])]),
+        (
+            "env:inject_base_env",
+            [
+                (
+                    "debug_build_flags",
+                    ["${env.debug_build_flags}", "-D CUSTOM_DEBUG_FLAG"],
+                )
+            ],
+        ),
     ]
