@@ -17,6 +17,7 @@
 
 import asyncio
 import os
+import signal
 import subprocess
 
 import click
@@ -166,6 +167,7 @@ def cli(
         client = GDBClientProcess(project_dir, debug_config)
         coro = client.run(__unprocessed)
         try:
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
             loop.run_until_complete(coro)
             if IS_WINDOWS:
                 # an issue with `asyncio` executor and STIDIN,
