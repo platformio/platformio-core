@@ -48,7 +48,7 @@ class SerialPlotter(DeviceMonitorFilter):
             print("Please, install the 'arduplot' to run with -f serial_plotter\n")
             print("Run\n")
             print("\tpip install arduplot\n")
-            exit(1)
+            sys.exit(1)
         print('--- serial_plotter is starting')
         self.plot = subprocess.Popen([self.arduplot, '-s', str(PORT)])
         try:
@@ -63,7 +63,7 @@ class SerialPlotter(DeviceMonitorFilter):
             if sys.platform == 'win32':
                 self.plot.send_signal(signal.CTRL_C_EVENT)
             self.plot.kill()
-    
+
     def rx(self, text):
         if self.plot.poll() is None:    # None means the child is running
             self.buffer += text
