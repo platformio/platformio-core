@@ -180,7 +180,7 @@ class PackageManageRegistryMixin(object):
             )
         self.print_message(
             "Please specify detailed REQUIREMENTS using package owner and version "
-            "(showed above) to avoid name conflicts",
+            "(shown above) to avoid name conflicts",
             fg="yellow",
         )
 
