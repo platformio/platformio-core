@@ -210,7 +210,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         patterns = {
             "PLATFORMIO_CORE_DIR": get_project_core_dir(),
             "PYTHONEXE": proc.get_pythonexe_path(),
-            "PROJECT_DIR": self.project_config.path,
+            "PROJECT_DIR": os.getcwd(),
             "PROG_PATH": program_path,
             "PROG_DIR": os.path.dirname(program_path),
             "PROG_NAME": os.path.basename(os.path.splitext(program_path)[0]),

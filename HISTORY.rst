@@ -8,6 +8,11 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.3 (2021-??-??)
+~~~~~~~~~~~~~~~~~~
+
+- Fixed an issue when the "$PROJECT_DIR" gets the full path to "platformio.ini", not the directory name (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
+
 5.2.2 (2021-10-20)
 ~~~~~~~~~~~~~~~~~~
 
