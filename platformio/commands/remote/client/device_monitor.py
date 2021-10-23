@@ -219,7 +219,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
             self._d_acwrite.cancel()
             self._d_acwrite = None
 
-        self._acwrite_buffer += data
+        self._acwrite_buffer = data
         if len(self._acwrite_buffer) > self.MAX_BUFFER_SIZE:
             self._acwrite_buffer = self._acwrite_buffer[-1 * self.MAX_BUFFER_SIZE :]
         if (self._d_acwrite and not self._d_acwrite.called) or not self._acwrite_buffer:
