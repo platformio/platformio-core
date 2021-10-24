@@ -245,8 +245,9 @@ def test_sysenv_options(config):
     ]
 
     # sysenv
-    os.environ["PLATFORMIO_HOME_DIR"] = "/custom/core/dir"
-    assert config.get("platformio", "core_dir") == "/custom/core/dir"
+    custom_core_dir = os.path.join(os.getcwd(), "custom")
+    os.environ["PLATFORMIO_HOME_DIR"] = custom_core_dir
+    assert config.get("platformio", "core_dir") == os.path.realpath(custom_core_dir)
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
@@ -315,7 +316,7 @@ def test_get_value(config):
         DEFAULT_CORE_DIR, "packages"
     )
     assert config.get("env:extra_2", "debug_server") == [
-        os.path.join(DEFAULT_CORE_DIR, "packages", "tool-openocd", "openocd"),
+        os.path.join(DEFAULT_CORE_DIR, "packages/tool-openocd/openocd"),
         "--help",
     ]
 
@@ -467,7 +468,10 @@ def test_dump(tmpdir_factory):
                 (
                     "build_dir",
                     "%s-%s"
-                    % (fs.expanduser("~/tmp/pio"), calculate_path_hash(os.getcwd())),
+                    % (
+                        os.path.realpath(fs.expanduser("~/tmp/pio")),
+                        calculate_path_hash(os.getcwd()),
+                    ),
                 ),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
                 ("default_envs", ["base", "extra_2"]),
