@@ -294,7 +294,12 @@ class ProjectConfigBase(object):
         section, option = match.group(1), match.group(2)
         if section == "sysenv":
             return os.getenv(option)
-        value = self.getraw(section, option)
+        try:
+            value = self.getraw(section, option)
+        except RecursionError:
+            raise exception.ProjectOptionValueError(
+                "Infinite recursion has been detected", option, section
+            )
         if isinstance(value, list):
             return "\n".join(value)
         return value
