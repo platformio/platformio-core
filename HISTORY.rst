@@ -11,14 +11,15 @@ PlatformIO Core 5
 5.2.3 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Improved PlatformIO directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
-- Fixed an issue when the "$PROJECT_DIR" gets the full path to "platformio.ini", not the directory name (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
+- Improved directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
+- Disabled resolving of SCons variables (e.g., ``${SOURCE.get_abspath()}``) when preprocessing `Interpolation of Values <https://docs.platformio.org/page/projectconf/interpolation.html>`__ (`issue #3933 <https://github.com/platformio/platformio-core/issues/3933>`_)
+- Fixed an issue when the "$PROJECT_DIR" variable was not properly replaced in the ``debug_server`` option (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
 
 
 5.2.2 (2021-10-20)
 ~~~~~~~~~~~~~~~~~~
 
-- Override debugging firmware loading mode using ``--load-mode`` option for `pio debug <https://docs.platformio.org/en/latest/core/userguide/cmd_debug.html>`__ command
+- Override debugging firmware loading mode using ``--load-mode`` option for `pio debug <https://docs.platformio.org/page/core/userguide/cmd_debug.html>`__ command
 - Added support for CLion IDE 2021.3 (`pull #4085 <https://github.com/platformio/platformio-core/issues/4085>`_)
 - Removed debugging "legacy Click" message from CLI (`issue #4083 <https://github.com/platformio/platformio-core/issues/4083>`_)
 - Fixed a "TypeError: sequence item 1: expected str instance, list found" issue when extending configuration option in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ with the multi-line default value (`issue #4082 <https://github.com/platformio/platformio-core/issues/4082>`_)
@@ -32,7 +33,7 @@ PlatformIO Core 5
 - Handle the "test" folder as a part of CLion project (`issue #4005 <https://github.com/platformio/platformio-core/issues/4005>`_)
 - Improved handling of a library root based on "Conan" or "CMake" build systems (`issue #3887 <https://github.com/platformio/platformio-core/issues/3887>`_)
 - Fixed a "KeyError: Invalid board option 'build.cpu'" when using a precompiled library with a board that does not have a CPU field in the manifest (`issue #4056 <https://github.com/platformio/platformio-core/issues/4056>`_)
-- Fixed a "FileExist" error when the `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with the ``--keep-build-dir`` option (`issue #4011 <https://github.com/platformio/platformio-core/issues/4011>`_)
+- Fixed a "FileExist" error when the `platformio ci <https://docs.platformio.org/page/userguide/cmd_ci.html>`__ command is used in pair with the ``--keep-build-dir`` option (`issue #4011 <https://github.com/platformio/platformio-core/issues/4011>`_)
 - Fixed an issue with draft values of C++ language standards that broke static analysis via Cppcheck (`issue #3944 <https://github.com/platformio/platformio-core/issues/3944>`_)
 
 5.2.0 (2021-09-13)

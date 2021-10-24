@@ -48,7 +48,7 @@ MISSING = object()
 class ProjectConfigBase(object):
 
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
-    VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
+    VARTPL_RE = re.compile(r"\$\{([^\.\}\()]+)\.([^\}]+)\}")
 
     expand_interpolations = True
     warnings = []
