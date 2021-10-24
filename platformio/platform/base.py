@@ -45,7 +45,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         self._custom_packages = None
 
         self.config = ProjectConfig.get_instance()
-        self.pm = ToolPackageManager(self.config.get_optional_dir("packages"))
+        self.pm = ToolPackageManager(self.config.get("platformio", "packages_dir"))
 
     @property
     def name(self):
@@ -145,8 +145,8 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
             self._BOARDS_CACHE[board_id] = config
 
         bdirs = [
-            self.config.get_optional_dir("boards"),
-            os.path.join(self.config.get_optional_dir("core"), "boards"),
+            self.config.get("platformio", "boards_dir"),
+            os.path.join(self.config.get("platformio", "core_dir"), "boards"),
             os.path.join(self.get_dir(), "boards"),
         ]
 

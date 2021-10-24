@@ -486,5 +486,5 @@ def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
     # update
     lm = LibraryPackageManager(str(storage_dir))
     new_pkg = lm.update(pkg, silent=True)
-    assert len(lm.get_installed()) == 3
+    assert len(lm.get_installed()) == 4
     assert new_pkg.metadata.spec.owner == "ottowinter"

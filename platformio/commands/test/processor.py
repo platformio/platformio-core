@@ -124,7 +124,7 @@ class TestProcessorBase(object):
     def build_or_upload(self, target):
         if not self._output_file_generated:
             self.generate_output_file(
-                self.options["project_config"].get_optional_dir("test")
+                self.options["project_config"].get("platformio", "test_dir")
             )
             self._output_file_generated = True
 

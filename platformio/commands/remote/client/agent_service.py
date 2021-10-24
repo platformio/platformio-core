@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-from os.path import getatime, getmtime, isdir, isfile, join
 
 from twisted.logger import LogLevel  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
@@ -25,15 +24,16 @@ from platformio.commands.remote.ac.serial import SerialPortAsyncCmd
 from platformio.commands.remote.client.base import RemoteClientBase
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
-from platformio.project.helpers import get_project_core_dir
 
 
 class RemoteAgentService(RemoteClientBase):
     def __init__(self, name, share, working_dir=None):
         RemoteClientBase.__init__(self)
         self.log_level = LogLevel.info
-        self.working_dir = working_dir or join(get_project_core_dir(), "remote")
-        if not isdir(self.working_dir):
+        self.working_dir = working_dir or os.path.join(
+            ProjectConfig.get_instance().get("platformio", "core_dir"), "remote"
+        )
+        if not os.path.isdir(self.working_dir):
             os.makedirs(self.working_dir)
         if name:
             self.name = str(name)[:50]
@@ -138,14 +138,14 @@ class RemoteAgentService(RemoteClientBase):
         self, command, options
     ):
         assert options and "project_id" in options
-        project_dir = join(self.working_dir, "projects", options["project_id"])
-        origin_pio_ini = join(project_dir, "platformio.ini")
-        back_pio_ini = join(project_dir, "platformio.ini.bak")
+        project_dir = os.path.join(self.working_dir, "projects", options["project_id"])
+        origin_pio_ini = os.path.join(project_dir, "platformio.ini")
+        back_pio_ini = os.path.join(project_dir, "platformio.ini.bak")
 
         # remove insecure project options
         try:
             conf = ProjectConfig(origin_pio_ini)
-            if isfile(back_pio_ini):
+            if os.path.isfile(back_pio_ini):
                 os.remove(back_pio_ini)
             os.rename(origin_pio_ini, back_pio_ini)
             # cleanup
@@ -159,7 +159,10 @@ class RemoteAgentService(RemoteClientBase):
             conf.save(origin_pio_ini)
 
             # restore A/M times
-            os.utime(origin_pio_ini, (getatime(back_pio_ini), getmtime(back_pio_ini)))
+            os.utime(
+                origin_pio_ini,
+                (os.path.getatime(back_pio_ini), os.path.getmtime(back_pio_ini)),
+            )
         except NotPlatformIOProjectError as e:
             raise pb.Error(str(e))
 
@@ -194,8 +197,8 @@ class RemoteAgentService(RemoteClientBase):
             paused_acs.append(ac)
 
         def _cb_on_end():
-            if isfile(back_pio_ini):
-                if isfile(origin_pio_ini):
+            if os.path.isfile(back_pio_ini):
+                if os.path.isfile(origin_pio_ini):
                     os.remove(origin_pio_ini)
                 os.rename(back_pio_ini, origin_pio_ini)
             for ac in paused_acs:

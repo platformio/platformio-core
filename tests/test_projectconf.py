@@ -18,12 +18,15 @@ import os
 
 import pytest
 
+from platformio import fs
 from platformio.project.config import ConfigParser, ProjectConfig
 from platformio.project.exception import InvalidProjectConfError, UnknownEnvNamesError
+from platformio.project.options import calculate_path_hash
 
 BASE_CONFIG = """
 [platformio]
 env_default = base, extra_2
+build_dir = ~/tmp/pio-$PROJECT_HASH
 extra_configs =
   extra_envs.ini
   extra_debug.ini
@@ -83,16 +86,22 @@ lib_install = 574
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
 lib_ignore = ${env.lib_ignore}, Lib3
 upload_port = /dev/extra_2/port
+debug_server = ${custom.debug_server}
 """
 
 EXTRA_DEBUG_CONFIG = """
 # Override original "custom.debug_flags"
 [custom]
 debug_flags = -D DEBUG=1
+debug_server =
+    ${platformio.packages_dir}/tool-openocd/openocd
+    --help
 
 [env:extra_2]
 build_flags = -Og
 """
+
+DEFAULT_CORE_DIR = os.path.join(fs.expanduser("~"), ".platformio")
 
 
 @pytest.fixture(scope="module")
@@ -124,7 +133,7 @@ def test_warnings(config):
 
 
 def test_defaults(config):
-    assert config.get_optional_dir("core") == os.path.join(
+    assert config.get("platformio", "core_dir") == os.path.join(
         os.path.expanduser("~"), ".platformio"
     )
     assert config.get("strict_ldf", "lib_deps", ["Empty"]) == ["Empty"]
@@ -272,6 +281,14 @@ def test_getraw_value(config):
     assert config.getraw("env", "monitor_speed") == "9600"
     assert config.getraw("env:test_extends", "monitor_speed") == "115200"
 
+    # dir options
+    packages_dir = os.path.join(DEFAULT_CORE_DIR, "packages")
+    assert config.get("platformio", "packages_dir") == packages_dir
+    assert (
+        config.getraw("custom", "debug_server")
+        == f"\n{packages_dir}/tool-openocd/openocd\n--help"
+    )
+
 
 def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
@@ -293,6 +310,15 @@ def test_get_value(config):
         "-D CUSTOM_DEBUG_FLAG",
     ]
 
+    # dir options
+    assert config.get("platformio", "packages_dir") == os.path.join(
+        DEFAULT_CORE_DIR, "packages"
+    )
+    assert config.get("env:extra_2", "debug_server") == [
+        os.path.join(DEFAULT_CORE_DIR, "packages", "tool-openocd", "openocd"),
+        "--help",
+    ]
+
 
 def test_items(config):
     assert config.items("custom") == [
@@ -300,6 +326,11 @@ def test_items(config):
         ("lib_flags", "-lc -lm"),
         ("extra_flags", ""),
         ("lib_ignore", "LibIgnoreCustom"),
+        (
+            "debug_server",
+            "\n%s/tool-openocd/openocd\n--help"
+            % os.path.join(DEFAULT_CORE_DIR, "packages"),
+        ),
     ]
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
@@ -326,6 +357,13 @@ def test_items(config):
         ("build_flags", ["-Og"]),
         ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
         ("upload_port", "/dev/extra_2/port"),
+        (
+            "debug_server",
+            [
+                "%s/tool-openocd/openocd" % os.path.join(DEFAULT_CORE_DIR, "packages"),
+                "--help",
+            ],
+        ),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
@@ -426,6 +464,11 @@ def test_dump(tmpdir_factory):
         (
             "platformio",
             [
+                (
+                    "build_dir",
+                    "%s-%s"
+                    % (fs.expanduser("~/tmp/pio"), calculate_path_hash(os.getcwd())),
+                ),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
                 ("default_envs", ["base", "extra_2"]),
             ],

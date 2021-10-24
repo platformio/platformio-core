@@ -63,7 +63,7 @@ def _dump_includes(env):
     # include Unity framework if there are tests in project
     includes["unity"] = []
     auto_install_unity = False
-    test_dir = env.GetProjectConfig().get_optional_dir("test")
+    test_dir = env.GetProjectConfig().get("platformio", "test_dir")
     if os.path.isdir(test_dir) and os.listdir(test_dir) != ["README"]:
         auto_install_unity = True
     unity_dir = get_core_package_dir(

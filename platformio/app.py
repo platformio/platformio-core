@@ -21,17 +21,17 @@ import os
 import platform
 import socket
 import uuid
-from os.path import dirname, isdir, isfile, join, realpath
 
 from platformio import __version__, exception, fs, proc
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.package.lockfile import LockFile
-from platformio.project.helpers import get_default_projects_dir, get_project_core_dir
+from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_default_projects_dir
 
 
 def projects_dir_validate(projects_dir):
-    assert isdir(projects_dir)
-    return realpath(projects_dir)
+    assert os.path.isdir(projects_dir)
+    return os.path.realpath(projects_dir)
 
 
 DEFAULT_SETTINGS = {
@@ -91,7 +91,10 @@ class State(object):
         self.path = path
         self.lock = lock
         if not self.path:
-            self.path = join(get_project_core_dir(), "appstate.json")
+            core_dir = ProjectConfig.get_instance().get("platformio", "core_dir")
+            if not os.path.isdir(core_dir):
+                os.makedirs(core_dir)
+            self.path = os.path.join(core_dir, "appstate.json")
         self._storage = {}
         self._lockfile = None
         self.modified = False
@@ -99,7 +102,7 @@ class State(object):
     def __enter__(self):
         try:
             self._lock_state_file()
-            if isfile(self.path):
+            if os.path.isfile(self.path):
                 self._storage = fs.load_json(self.path)
             assert isinstance(self._storage, dict)
         except (
@@ -117,7 +120,7 @@ class State(object):
                 with open(self.path, mode="w", encoding="utf8") as fp:
                     fp.write(json.dumps(self._storage))
             except IOError:
-                raise exception.HomeDirPermissionsError(get_project_core_dir())
+                raise exception.HomeDirPermissionsError(os.path.dirname(self.path))
         self._unlock_state_file()
 
     def _lock_state_file(self):
@@ -127,7 +130,7 @@ class State(object):
         try:
             self._lockfile.acquire()
         except IOError:
-            raise exception.HomeDirPermissionsError(dirname(self.path))
+            raise exception.HomeDirPermissionsError(os.path.dirname(self.path))
 
     def _unlock_state_file(self):
         if hasattr(self, "_lockfile") and self._lockfile:

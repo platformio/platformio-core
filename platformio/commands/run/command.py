@@ -101,7 +101,7 @@ def cli(
 
         # clean obsolete build dir
         if not disable_auto_clean:
-            build_dir = config.get_optional_dir("build")
+            build_dir = config.get("platformio", "build_dir")
             try:
                 clean_build_dir(build_dir, config)
             except:  # pylint: disable=bare-except

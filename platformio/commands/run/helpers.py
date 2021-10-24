@@ -23,8 +23,8 @@ from platformio.project.helpers import compute_project_checksum, get_project_dir
 
 def handle_legacy_libdeps(project_dir, config):
     legacy_libdeps_dir = join(project_dir, ".piolibdeps")
-    if not isdir(legacy_libdeps_dir) or legacy_libdeps_dir == config.get_optional_dir(
-        "libdeps"
+    if not isdir(legacy_libdeps_dir) or legacy_libdeps_dir == config.get(
+        "platformio", "libdeps_dir"
     ):
         return
     if not config.has_section("env"):

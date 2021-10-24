@@ -40,7 +40,7 @@
 % end
 %
 % def _get_lib_dirs(envname):
-%   env_libdeps_dir = os.path.join(config.get_optional_dir("libdeps"), envname)
+%   env_libdeps_dir = os.path.join(config.get("platformio", "libdeps_dir"), envname)
 %   env_lib_extra_dirs = config.get("env:" + envname, "lib_extra_dirs", [])
 %   return _fix_lib_dirs([env_libdeps_dir] + env_lib_extra_dirs)
 % end

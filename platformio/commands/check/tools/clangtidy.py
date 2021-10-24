@@ -77,7 +77,7 @@ class ClangtidyCheckTool(CheckToolBase):
         includes = []
         for inc in self.cpp_includes:
             if self.options.get("skip_packages") and inc.lower().startswith(
-                self.config.get_optional_dir("packages").lower()
+                self.config.get("platformio", "packages_dir").lower()
             ):
                 continue
             includes.append(inc)

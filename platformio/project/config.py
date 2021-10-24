@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import glob
-import hashlib
 import json
 import os
 import re
@@ -21,7 +20,7 @@ import re
 import click
 
 from platformio import fs
-from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
+from platformio.compat import string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
@@ -311,8 +310,11 @@ class ProjectConfigBase(object):
         if not option_meta:
             return value
 
+        if option_meta.validate:
+            value = option_meta.validate(value)
         if option_meta.multiple:
             value = self.parse_multi_values(value or [])
+
         try:
             return self.cast_to(value, option_meta.type)
         except click.BadParameter as e:
@@ -353,74 +355,7 @@ class ProjectConfigBase(object):
         return True
 
 
-class ProjectConfigDirsMixin(object):
-    def _get_core_dir(self, exists=False):
-        default = ProjectOptions["platformio.core_dir"].default
-        core_dir = self.get("platformio", "core_dir")
-        win_core_dir = None
-        if IS_WINDOWS and core_dir == default:
-            win_core_dir = os.path.splitdrive(core_dir)[0] + "\\.platformio"
-            if os.path.isdir(win_core_dir):
-                core_dir = win_core_dir
-
-        if exists and not os.path.isdir(core_dir):
-            try:
-                os.makedirs(core_dir)
-            except OSError as e:
-                if win_core_dir:
-                    os.makedirs(win_core_dir)
-                    core_dir = win_core_dir
-                else:
-                    raise e
-
-        return core_dir
-
-    def get_optional_dir(self, name, exists=False):
-        if not ProjectOptions.get("platformio.%s_dir" % name):
-            raise ValueError("Unknown optional directory -> " + name)
-
-        if name == "core":
-            result = self._get_core_dir(exists)
-        else:
-            result = self.get("platformio", name + "_dir")
-
-        if result is None:
-            return None
-
-        project_dir = os.getcwd()
-
-        # patterns
-        if "$PROJECT_HASH" in result:
-            result = result.replace(
-                "$PROJECT_HASH",
-                "%s-%s"
-                % (
-                    os.path.basename(project_dir),
-                    hashlib.sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
-                ),
-            )
-
-        if "$PROJECT_DIR" in result:
-            result = result.replace("$PROJECT_DIR", project_dir)
-        if "$PROJECT_CORE_DIR" in result:
-            result = result.replace("$PROJECT_CORE_DIR", self.get_optional_dir("core"))
-        if "$PROJECT_WORKSPACE_DIR" in result:
-            result = result.replace(
-                "$PROJECT_WORKSPACE_DIR", self.get_optional_dir("workspace")
-            )
-
-        if result.startswith("~"):
-            result = fs.expanduser(result)
-
-        result = os.path.realpath(result)
-
-        if exists and not os.path.isdir(result):
-            os.makedirs(result)
-
-        return result
-
-
-class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
+class ProjectConfig(ProjectConfigBase):
 
     _instances = {}
 

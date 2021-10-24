@@ -11,7 +11,9 @@ PlatformIO Core 5
 5.2.3 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Improved PlatformIO directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
 - Fixed an issue when the "$PROJECT_DIR" gets the full path to "platformio.ini", not the directory name (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
+
 
 5.2.2 (2021-10-20)
 ~~~~~~~~~~~~~~~~~~

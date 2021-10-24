@@ -14,15 +14,14 @@
 
 from __future__ import absolute_import
 
-from os.path import join
+import os
 
 from platformio import __version__, app, fs, util
-from platformio.project.helpers import get_project_core_dir, is_platformio_project
+from platformio.project.config import ProjectConfig
+from platformio.project.helpers import is_platformio_project
 
 
 class AppRPC:
-
-    APPSTATE_PATH = join(get_project_core_dir(), "homestate.json")
 
     IGNORE_STORAGE_KEYS = [
         "cid",
@@ -35,8 +34,15 @@ class AppRPC:
     ]
 
     @staticmethod
+    def get_state_path():
+        core_dir = ProjectConfig.get_instance().get("platformio", "core_dir")
+        if not os.path.isdir(core_dir):
+            os.makedirs(core_dir)
+        return os.path.join(core_dir, "homestate.json")
+
+    @staticmethod
     def load_state():
-        with app.State(AppRPC.APPSTATE_PATH, lock=True) as state:
+        with app.State(AppRPC.get_state_path(), lock=True) as state:
             storage = state.get("storage", {})
 
             # base data
@@ -72,7 +78,7 @@ class AppRPC:
 
     @staticmethod
     def save_state(state):
-        with app.State(AppRPC.APPSTATE_PATH, lock=True) as s:
+        with app.State(AppRPC.get_state_path(), lock=True) as s:
             s.clear()
             s.update(state)
             storage = s.get("storage", {})

@@ -79,11 +79,11 @@ class ProjectGenerator(object):
             tpl_vars.update(
                 {
                     "src_files": self.get_src_files(),
-                    "project_src_dir": self.config.get_optional_dir("src"),
-                    "project_lib_dir": self.config.get_optional_dir("lib"),
-                    "project_test_dir": self.config.get_optional_dir("test"),
+                    "project_src_dir": self.config.get("platformio", "src_dir"),
+                    "project_lib_dir": self.config.get("platformio", "lib_dir"),
+                    "project_test_dir": self.config.get("platformio", "test_dir"),
                     "project_libdeps_dir": os.path.join(
-                        self.config.get_optional_dir("libdeps"), self.env_name
+                        self.config.get("platformio", "libdeps_dir"), self.env_name
                     ),
                 }
             )
@@ -103,7 +103,7 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with fs.cd(self.project_dir):
-            for root, _, files in os.walk(self.config.get_optional_dir("src")):
+            for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
                 for f in files:
                     result.append(os.path.relpath(os.path.join(root, f)))
         return result

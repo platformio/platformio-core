@@ -226,10 +226,10 @@ def init_base_project(project_dir):
         config = ProjectConfig()
         config.save()
         dir_to_readme = [
-            (config.get_optional_dir("src"), None),
-            (config.get_optional_dir("include"), init_include_readme),
-            (config.get_optional_dir("lib"), init_lib_readme),
-            (config.get_optional_dir("test"), init_test_readme),
+            (config.get("platformio", "src_dir"), None),
+            (config.get("platformio", "include_dir"), init_include_readme),
+            (config.get("platformio", "lib_dir"), init_lib_readme),
+            (config.get("platformio", "test_dir"), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
             if os.path.isdir(path):
