@@ -89,7 +89,7 @@ class StrictListField(fields.List):
 class AuthorSchema(StrictSchema):
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     email = fields.Email(validate=validate.Length(min=1, max=50))
-    maintainer = fields.Bool(default=False)
+    maintainer = fields.Bool(dump_default=False)
     url = fields.Url(validate=validate.Length(min=1, max=255))
 
 
