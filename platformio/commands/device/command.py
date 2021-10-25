@@ -238,7 +238,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
             "--- Available filters and text transformations: %s"
             % ", ".join(sorted(miniterm.TRANSFORMATIONS.keys()))
         )
-        click.echo("--- More details at http://bit.ly/pio-monitor-filters")
+        click.echo("--- More details at https://bit.ly/pio-monitor-filters")
     try:
         miniterm.main(
             default_port=kwargs["port"],

@@ -64,7 +64,7 @@ DEFAULT_SETTINGS = {
         "value": True,
     },
     "enable_telemetry": {
-        "description": ("Telemetry service <http://bit.ly/pio-telemetry> (Yes/No)"),
+        "description": ("Telemetry service <https://bit.ly/pio-telemetry> (Yes/No)"),
         "value": True,
     },
     "force_verbose": {

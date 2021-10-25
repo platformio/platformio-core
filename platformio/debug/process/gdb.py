@@ -98,7 +98,7 @@ class GDBClientProcess(DebugClientProcess):
             ]
 
         banner = [
-            "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
+            "echo PlatformIO Unified Debugger -> https://bit.ly/pio-debug\\n",
             "echo PlatformIO: debug_tool = %s\\n" % self.debug_config.tool_name,
             "echo PlatformIO: Initializing remote target...\\n",
         ]
@@ -157,7 +157,7 @@ class GDBClientProcess(DebugClientProcess):
             % self.debug_config.init_break
         )
         self.console_log(
-            "PlatformIO: More configuration options -> http://bit.ly/pio-debug\n"
+            "PlatformIO: More configuration options -> https://bit.ly/pio-debug\n"
         )
         if self.debug_config.platform.is_embedded():
             self.transport.get_pipe_transport(0).write(

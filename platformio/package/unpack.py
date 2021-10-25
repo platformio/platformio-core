@@ -27,7 +27,7 @@ class ExtractArchiveItemError(PackageException):
 
     MESSAGE = (
         "Could not extract `{0}` to `{1}`. Try to disable antivirus "
-        "tool or check this solution -> http://bit.ly/faq-package-manager"
+        "tool or check this solution -> https://bit.ly/faq-package-manager"
     )
 
 
