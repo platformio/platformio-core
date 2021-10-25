@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.2.3 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Added support for custom `device monitor filters <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #3924 <https://github.com/platformio/platformio-core/issues/3924>`_)
 - Show human-readable message when infinite recursion is detected while processing `Interpolation of Values <https://docs.platformio.org/page/projectconf/interpolation.html>`__ (`issue #3883 <https://github.com/platformio/platformio-core/issues/3883>`_)
 - Improved directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
 - Ignore resolving of SCons variables (e.g., ``${(SOURCE.get_abspath())}``) when preprocessing interpolations (`issue #3933 <https://github.com/platformio/platformio-core/issues/3933>`_)

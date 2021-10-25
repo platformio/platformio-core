@@ -314,9 +314,17 @@ ProjectOptions = OrderedDict(
             ConfigPlatformioOption(
                 group="directory",
                 name="boards_dir",
-                description="A global storage for custom board manifests",
+                description="A storage for custom board manifests",
                 sysenvvar="PLATFORMIO_BOARDS_DIR",
                 default=os.path.join("$PROJECT_DIR", "boards"),
+                validate=validate_dir,
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="monitor_dir",
+                description="A storage for custom monitor filters",
+                sysenvvar="PLATFORMIO_MONITOR_DIR",
+                default=os.path.join("$PROJECT_DIR", "monitor"),
                 validate=validate_dir,
             ),
             ConfigPlatformioOption(

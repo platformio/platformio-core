@@ -92,11 +92,9 @@ def load_monitor_filter(path, options=None):
     return True
 
 
-def register_platform_filters(platform, options=None):
-    monitor_dir = os.path.join(platform.get_dir(), "monitor")
+def register_filters(monitor_dir, options=None):
     if not os.path.isdir(monitor_dir):
         return
-
     for name in os.listdir(monitor_dir):
         if not name.startswith("filter_") or not name.endswith(".py"):
             continue

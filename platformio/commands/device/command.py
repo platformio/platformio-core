@@ -23,6 +23,7 @@ from serial.tools import miniterm
 from platformio import exception, fs, util
 from platformio.commands.device import helpers as device_helpers
 from platformio.platform.factory import PlatformFactory
+from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 
 
@@ -182,18 +183,24 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         )
 
     project_options = {}
+    platform = None
     try:
         with fs.cd(kwargs["project_dir"]):
             project_options = device_helpers.get_project_options(kwargs["environment"])
-        kwargs = device_helpers.apply_project_monitor_options(kwargs, project_options)
+            device_helpers.register_filters(
+                ProjectConfig.get_instance().get("platformio", "monitor_dir"),
+                options=kwargs,
+            )
+            if "platform" in project_options:
+                platform = PlatformFactory.new(project_options["platform"])
+                device_helpers.register_filters(
+                    os.path.join(platform.get_dir(), "monitor"), options=kwargs
+                )
+            kwargs = device_helpers.apply_project_monitor_options(
+                kwargs, project_options
+            )
     except NotPlatformIOProjectError:
         pass
-
-    platform = None
-    if "platform" in project_options:
-        with fs.cd(kwargs["project_dir"]):
-            platform = PlatformFactory.new(project_options["platform"])
-            device_helpers.register_platform_filters(platform, options=kwargs)
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
