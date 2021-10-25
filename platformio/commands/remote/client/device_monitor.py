@@ -84,7 +84,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
         self._ac_id = None
         self._d_acread = None
         self._d_acwrite = None
-        self._acwrite_buffer = ""
+        self._acwrite_buffer = b""
 
     def agent_pool_ready(self):
         d = task.deferLater(
@@ -226,7 +226,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
             return
 
         data = self._acwrite_buffer
-        self._acwrite_buffer = ""
+        self._acwrite_buffer = b""
         try:
             d = self.agentpool.callRemote("acwrite", self._agent_id, self._ac_id, data)
             d.addCallback(self.cb_acwrite_result)
@@ -237,4 +237,4 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
     def cb_acwrite_result(self, result):
         assert result > 0
         if self._acwrite_buffer:
-            self.acwrite_data("")
+            self.acwrite_data(b"")

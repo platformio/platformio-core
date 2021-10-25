@@ -15,6 +15,7 @@ PlatformIO Core 5
 - Improved directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
 - Ignore resolving of SCons variables (e.g., ``${SOURCE.get_abspath()}``) when preprocessing interpolations (`issue #3933 <https://github.com/platformio/platformio-core/issues/3933>`_)
 - Fixed an issue when the "$PROJECT_DIR" variable was not properly replaced in the `debug_server <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-server>`__ option (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
+- Fixed an issue when `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html>`__ device monitor crashes on the first keypress (`issue #3832 <https://github.com/platformio/platformio-core/issues/3832>`_)
 
 
 5.2.2 (2021-10-20)
