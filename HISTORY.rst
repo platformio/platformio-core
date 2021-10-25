@@ -18,7 +18,7 @@ PlatformIO Core 5
 - Fixed an issue when the ``$PROJECT_DIR`` variable was not properly replaced in the `debug_server <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-server>`__ option (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
 - Fixed an issue when `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html>`__ device monitor crashes on the first keypress (`issue #3832 <https://github.com/platformio/platformio-core/issues/3832>`_)
 - Fixed "Do not know how to make File target 'debug'" issue when debugging project using `CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ (`pull #4089 <https://github.com/platformio/platformio-core/issues/4089>`_)
-
+- Fixed "UnicodeEncodeError" when a build output contains non-ASCII characters (`issue #3971 <https://github.com/platformio/platformio-core/issues/3971>`_)
 
 5.2.2 (2021-10-20)
 ~~~~~~~~~~~~~~~~~~
