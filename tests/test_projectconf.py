@@ -466,14 +466,7 @@ def test_dump(tmpdir_factory):
         (
             "platformio",
             [
-                (
-                    "build_dir",
-                    "%s-%s"
-                    % (
-                        os.path.realpath(fs.expanduser("~/tmp/pio")),
-                        calculate_path_hash(os.getcwd()),
-                    ),
-                ),
+                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
                 ("default_envs", ["base", "extra_2"]),
             ],
@@ -536,6 +529,9 @@ def test_win_core_root_dir(tmpdir_factory):
         # Default config
         config = ProjectConfig()
         assert config.get("platformio", "core_dir") == win_core_root_dir
+        assert config.get("platformio", "packages_dir") == os.path.join(
+            win_core_root_dir, "packages"
+        )
 
         # Override in config
         tmpdir = tmpdir_factory.mktemp("project")

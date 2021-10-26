@@ -107,6 +107,9 @@ def expand_dir_templates(path):
 def validate_dir(path):
     if not path:
         return path
+    # if not all values expanded, ignore validation
+    if "${" in path and "}" in path:
+        return path
     if path.startswith("~"):
         path = fs.expanduser(path)
     if "$" in path:

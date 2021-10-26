@@ -279,6 +279,9 @@ class ProjectConfigBase(object):
         if value == MISSING:
             return None
 
+        if option_meta.validate:
+            value = option_meta.validate(value)
+
         return self._expand_interpolations(value)
 
     def _expand_interpolations(self, value):
@@ -315,11 +318,8 @@ class ProjectConfigBase(object):
         if not option_meta:
             return value
 
-        if option_meta.validate:
-            value = option_meta.validate(value)
         if option_meta.multiple:
             value = self.parse_multi_values(value or [])
-
         try:
             return self.cast_to(value, option_meta.type)
         except click.BadParameter as e:
