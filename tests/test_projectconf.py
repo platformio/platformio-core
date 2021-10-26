@@ -22,7 +22,6 @@ import pytest
 from platformio import fs
 from platformio.project.config import ConfigParser, ProjectConfig
 from platformio.project.exception import InvalidProjectConfError, UnknownEnvNamesError
-from platformio.project.options import calculate_path_hash
 
 BASE_CONFIG = """
 [platformio]
