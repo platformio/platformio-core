@@ -139,14 +139,12 @@ class PlatformRunMixin(object):
                     line_callback=self._on_stderr_line,
                     data_callback=lambda data: _write_and_flush(sys.stderr, data),
                 ),
-                stdin=sys.stdin,
             )
 
         return proc.exec_command(
             args,
             stdout=proc.LineBufferedAsyncPipe(line_callback=self._on_stdout_line),
             stderr=proc.LineBufferedAsyncPipe(line_callback=self._on_stderr_line),
-            stdin=sys.stdin,
         )
 
     def _on_stdout_line(self, line):
