@@ -360,7 +360,16 @@ class ProjectConfigBase(object):
         return True
 
 
-class ProjectConfig(ProjectConfigBase):
+class ProjectConfigDirsMixin(object):
+    def get_optional_dir(self, name):
+        """
+        Deprecated, used by platformio-node-helpers.project.observer.fetchLibDirs
+        PlatformIO IDE for Atom depends on platformio-node-helpers@~7.2.0
+        """
+        return self.get("platformio", f"{name}_dir")
+
+
+class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
 
     _instances = {}
 
