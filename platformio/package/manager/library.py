@@ -21,13 +21,15 @@ from platformio.package.exception import (
 )
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.meta import PackageItem, PackageSpec, PackageType
-from platformio.project.helpers import get_project_global_lib_dir
+from platformio.project.config import ProjectConfig
 
 
 class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
         super(LibraryPackageManager, self).__init__(
-            PackageType.LIBRARY, package_dir or get_project_global_lib_dir()
+            PackageType.LIBRARY,
+            package_dir
+            or ProjectConfig.get_instance().get("platformio", "globallib_dir"),
         )
 
     @property

@@ -15,6 +15,7 @@
 # pylint: disable=redefined-outer-name
 
 import os
+import sys
 
 import pytest
 
@@ -521,3 +522,36 @@ def test_dump(tmpdir_factory):
             ],
         ),
     ]
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="runs only on windows")
+def test_win_core_root_dir(tmpdir_factory):
+    try:
+        win_core_root_dir = os.path.splitdrive(fs.expanduser("~"))[0] + "\\.platformio"
+        remove_dir_at_exit = False
+        if not os.path.isdir(win_core_root_dir):
+            remove_dir_at_exit = True
+            os.makedirs(win_core_root_dir)
+
+        # Default config
+        config = ProjectConfig()
+        assert config.get("platformio", "core_dir") == win_core_root_dir
+
+        # Override in config
+        tmpdir = tmpdir_factory.mktemp("project")
+        tmpdir.join("platformio.ini").write(
+            """
+[platformio]
+core_dir = ~/.pio
+        """
+        )
+        config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
+        assert config.get("platformio", "core_dir") != win_core_root_dir
+        assert config.get("platformio", "core_dir") == os.path.realpath(
+            fs.expanduser("~/.pio")
+        )
+
+        if remove_dir_at_exit:
+            fs.rmtree(win_core_root_dir)
+    except PermissionError:
+        pass

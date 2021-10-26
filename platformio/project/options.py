@@ -115,9 +115,9 @@ def validate_dir(path):
 
 
 def validate_core_dir(path):
-    default = ProjectOptions["platformio.core_dir"].default
+    default_dir = ProjectOptions["platformio.core_dir"].default
     win_core_dir = None
-    if IS_WINDOWS and path == default:
+    if IS_WINDOWS and path == default_dir:
         win_core_dir = os.path.splitdrive(path)[0] + "\\.platformio"
         if os.path.isdir(win_core_dir):
             path = win_core_dir
