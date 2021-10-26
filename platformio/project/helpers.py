@@ -48,30 +48,6 @@ def get_project_cache_dir():
     return ProjectConfig.get_instance().get("platformio", "cache_dir")
 
 
-def get_project_global_lib_dir():
-    """
-    Deprecated, use ProjectConfig.get("platformio", "globallib_dir") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance().get("platformio", "globallib_dir")
-
-
-def get_project_lib_dir():
-    """
-    Deprecated, use ProjectConfig.get("platformio", "lib_dir") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance().get("platformio", "lib_dir")
-
-
-def get_project_libdeps_dir():
-    """
-    Deprecated, use ProjectConfig.get("platformio", "libdeps_dir") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance().get("platformio", "libdeps_dir")
-
-
 def get_default_projects_dir():
     docs_dir = os.path.join(fs.expanduser("~"), "Documents")
     try:
