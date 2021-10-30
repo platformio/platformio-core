@@ -62,7 +62,7 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
     @staticmethod
     def find_library_root(path):
-        root_dir_signs = set(["include", "Include", "src", "Src"])
+        root_dir_signs = set(["inc", "include", "Include", "src", "Src"])
         root_file_signs = set(
             [
                 "conanfile.py",  # Conan-based library
