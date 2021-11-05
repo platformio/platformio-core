@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.2.3 (2021-??-??)
+5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~
 
 - Automatically synchronize active projects between IDE and `PlatformIO Home <https://docs.platformio.org/en/latest/home/index.html>`__
