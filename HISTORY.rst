@@ -16,10 +16,12 @@ PlatformIO Core 5
 - Show human-readable message when infinite recursion is detected while processing `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__ (`issue #3883 <https://github.com/platformio/platformio-core/issues/3883>`_)
 - Improved directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
 - Ignore resolving of SCons variables (e.g., ``${(SOURCE.get_abspath())}``) when preprocessing interpolations (`issue #3933 <https://github.com/platformio/platformio-core/issues/3933>`_)
+- Added "inc" as sign that it's the root of the library (`issue #4093 <https://github.com/platformio/platformio-core/issues/4093>`_)
 - Fixed an issue when the ``$PROJECT_DIR`` variable was not properly replaced in the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
 - Fixed an issue when `PIO Remote <https://docs.platformio.org/en/latest/plus/pio-remote.html>`__ device monitor crashes on the first keypress (`issue #3832 <https://github.com/platformio/platformio-core/issues/3832>`_)
 - Fixed "Do not know how to make File target 'debug'" issue when debugging project using `CLion IDE <https://docs.platformio.org/en/latest/integration/ide/clion.html>`__ (`pull #4089 <https://github.com/platformio/platformio-core/issues/4089>`_)
 - Fixed "UnicodeEncodeError" when a build output contains non-ASCII characters (`issue #3971 <https://github.com/platformio/platformio-core/issues/3971>`_)
+- Fixed an issue when VSCode's debugger does not honor default environment (`issue #4098 <https://github.com/platformio/platformio-core/issues/4098>`_)
 
 5.2.2 (2021-10-20)
 ~~~~~~~~~~~~~~~~~~

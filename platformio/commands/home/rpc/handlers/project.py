@@ -23,10 +23,10 @@ from ajsonrpc.core import JSONRPC20DispatchException
 from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
+from platformio.project.generator import ProjectGenerator
 from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 

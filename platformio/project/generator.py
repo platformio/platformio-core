@@ -24,15 +24,34 @@ from platformio.project.helpers import load_project_ide_data
 
 
 class ProjectGenerator(object):
-    def __init__(self, config, env_name, ide):
+    def __init__(self, config, env_name, ide, board_ids=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
-        self.env_name = str(env_name)
+        self.original_env_name = env_name
+        self.env_name = str(env_name or self.get_best_envname(board_ids))
         self.ide = str(ide)
+
+    def get_best_envname(self, board_ids=None):
+        envname = None
+        default_envs = self.config.default_envs()
+        if default_envs:
+            envname = default_envs[0]
+            if not board_ids:
+                return envname
+
+        for env in self.config.envs():
+            if not board_ids:
+                return env
+            if not envname:
+                envname = env
+            items = self.config.items(env=env, as_dict=True)
+            if "board" in items and items.get("board") in board_ids:
+                return env
+        return envname
 
     @staticmethod
     def get_supported_ides():
-        tpls_dir = os.path.join(fs.get_source_dir(), "ide", "tpls")
+        tpls_dir = os.path.join(fs.get_source_dir(), "project", "tpls")
         return sorted(
             [
                 d
@@ -61,6 +80,7 @@ class ProjectGenerator(object):
             "systype": util.get_systype(),
             "project_name": os.path.basename(self.project_dir),
             "project_dir": self.project_dir,
+            "original_env_name": self.original_env_name,
             "env_name": self.env_name,
             "user_home_dir": os.path.realpath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
@@ -110,7 +130,7 @@ class ProjectGenerator(object):
 
     def get_tpls(self):
         tpls = []
-        tpls_dir = os.path.join(fs.get_source_dir(), "ide", "tpls", self.ide)
+        tpls_dir = os.path.join(fs.get_source_dir(), "project", "tpls", self.ide)
         for root, _, files in os.walk(tpls_dir):
             for f in files:
                 if not f.endswith(".tpl"):

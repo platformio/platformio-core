@@ -22,11 +22,11 @@ from tabulate import tabulate
 
 from platformio import fs
 from platformio.commands.platform import platform_install as cli_platform_install
-from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.exception import UnknownBoard
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
+from platformio.project.generator import ProjectGenerator
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
@@ -191,10 +191,7 @@ def project_init(
                 os.path.join(project_dir, "platformio.ini")
             )
         config.validate()
-        pg = ProjectGenerator(
-            config, environment or get_best_envname(config, board), ide
-        )
-        pg.generate()
+        ProjectGenerator(config, environment, ide, board).generate()
 
     if is_new_project:
         init_cvs_ignore(project_dir)
@@ -441,23 +438,3 @@ def update_project_env(project_dir, environment, project_option):
         config.set(section, _name.strip(), _value.strip())
 
     config.save()
-
-
-def get_best_envname(config, board_ids=None):
-    envname = None
-    default_envs = config.default_envs()
-    if default_envs:
-        envname = default_envs[0]
-        if not board_ids:
-            return envname
-
-    for env in config.envs():
-        if not board_ids:
-            return env
-        if not envname:
-            envname = env
-        items = config.items(env=env, as_dict=True)
-        if "board" in items and items.get("board") in board_ids:
-            return env
-
-    return envname
