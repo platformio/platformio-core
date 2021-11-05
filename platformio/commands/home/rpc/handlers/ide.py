@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import time
+from pathlib import Path
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
@@ -53,7 +53,7 @@ class IDERPC:
         if cmd_id not in self._cmd_queue:
             return
         if self._cmd_queue[cmd_id]["method"] == "get_pio_project_dirs":
-            value = [os.path.normpath(p) for p in value]
+            value = [str(Path(p).resolve()) for p in value]
         self._cmd_queue[cmd_id]["future"].set_result(value)
         del self._cmd_queue[cmd_id]
 

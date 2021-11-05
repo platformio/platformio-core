@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import os
+from pathlib import Path
 
 from platformio import __version__, app, fs, util
 from platformio.project.config import ProjectConfig
@@ -66,7 +67,7 @@ class AppRPC:
             # skip non-existing recent projects
             storage["recentProjects"] = list(
                 set(
-                    os.path.normpath(p)
+                    str(Path(p).resolve())
                     for p in storage.get("recentProjects", [])
                     if is_platformio_project(p)
                 )
