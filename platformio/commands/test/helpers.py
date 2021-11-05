@@ -18,7 +18,7 @@ from platformio import exception
 
 
 def get_test_names(config):
-    test_dir = config.get_optional_dir("test")
+    test_dir = config.get("platformio", "test_dir")
     if not os.path.isdir(test_dir):
         raise exception.TestDirNotExists(test_dir)
     names = []

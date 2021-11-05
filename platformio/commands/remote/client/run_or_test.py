@@ -69,8 +69,8 @@ class RunOrTestClient(AsyncClientBase):
                 os.path.join(self.options["project_dir"], "platformio.ini")
             )
             psync.add_item(cfg.path, "platformio.ini")
-            psync.add_item(cfg.get_optional_dir("shared"), "shared")
-            psync.add_item(cfg.get_optional_dir("boards"), "boards")
+            psync.add_item(cfg.get("platformio", "shared_dir"), "shared")
+            psync.add_item(cfg.get("platformio", "boards_dir"), "boards")
 
             if self.options["force_remote"]:
                 self._add_project_source_items(cfg, psync)
@@ -78,26 +78,26 @@ class RunOrTestClient(AsyncClientBase):
                 self._add_project_binary_items(cfg, psync)
 
             if self.command == "test":
-                psync.add_item(cfg.get_optional_dir("test"), "test")
+                psync.add_item(cfg.get("platformio", "test_dir"), "test")
 
     def _add_project_source_items(self, cfg, psync):
-        psync.add_item(cfg.get_optional_dir("lib"), "lib")
+        psync.add_item(cfg.get("platformio", "lib_dir"), "lib")
         psync.add_item(
-            cfg.get_optional_dir("include"),
+            cfg.get("platformio", "include_dir"),
             "include",
             cb_filter=self._cb_tarfile_filter,
         )
         psync.add_item(
-            cfg.get_optional_dir("src"), "src", cb_filter=self._cb_tarfile_filter
+            cfg.get("platformio", "src_dir"), "src", cb_filter=self._cb_tarfile_filter
         )
         if set(["buildfs", "uploadfs", "uploadfsota"]) & set(
             self.options.get("target", [])
         ):
-            psync.add_item(cfg.get_optional_dir("data"), "data")
+            psync.add_item(cfg.get("platformio", "data_dir"), "data")
 
     @staticmethod
     def _add_project_binary_items(cfg, psync):
-        build_dir = cfg.get_optional_dir("build")
+        build_dir = cfg.get("platformio", "build_dir")
         for env_name in os.listdir(build_dir):
             env_dir = os.path.join(build_dir, env_name)
             if not os.path.isdir(env_dir):

@@ -1095,7 +1095,7 @@ def ConfigureProjectLibBuilder(env):
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
-    click.echo("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
+    click.echo("LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf")
     click.echo(
         "LDF Modes: Finder ~ %s, Compatibility ~ %s"
         % (ldf_mode, project.lib_compat_mode)

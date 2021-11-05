@@ -106,8 +106,8 @@ def cli(
                 )
 
             default_patterns = [
-                config.get_optional_dir("src"),
-                config.get_optional_dir("include"),
+                config.get("platformio", "src_dir"),
+                config.get("platformio", "include_dir"),
             ]
             tool_options = dict(
                 verbose=verbose,

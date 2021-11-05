@@ -109,22 +109,22 @@ env.Replace(
 config = env.GetProjectConfig()
 env.Replace(
     PROJECT_DIR=get_project_dir(),
-    PROJECT_CORE_DIR=config.get_optional_dir("core"),
-    PROJECT_PACKAGES_DIR=config.get_optional_dir("packages"),
-    PROJECT_WORKSPACE_DIR=config.get_optional_dir("workspace"),
-    PROJECT_LIBDEPS_DIR=config.get_optional_dir("libdeps"),
-    PROJECT_INCLUDE_DIR=config.get_optional_dir("include"),
-    PROJECT_SRC_DIR=config.get_optional_dir("src"),
-    PROJECTSRC_DIR=config.get_optional_dir("src"),  # legacy for dev/platform
-    PROJECT_TEST_DIR=config.get_optional_dir("test"),
-    PROJECT_DATA_DIR=config.get_optional_dir("data"),
-    PROJECTDATA_DIR=config.get_optional_dir("data"),  # legacy for dev/platform
-    PROJECT_BUILD_DIR=config.get_optional_dir("build"),
-    BUILD_CACHE_DIR=config.get_optional_dir("build_cache"),
+    PROJECT_CORE_DIR=config.get("platformio", "core_dir"),
+    PROJECT_PACKAGES_DIR=config.get("platformio", "packages_dir"),
+    PROJECT_WORKSPACE_DIR=config.get("platformio", "workspace_dir"),
+    PROJECT_LIBDEPS_DIR=config.get("platformio", "libdeps_dir"),
+    PROJECT_INCLUDE_DIR=config.get("platformio", "include_dir"),
+    PROJECT_SRC_DIR=config.get("platformio", "src_dir"),
+    PROJECTSRC_DIR=config.get("platformio", "src_dir"),  # legacy for dev/platform
+    PROJECT_TEST_DIR=config.get("platformio", "test_dir"),
+    PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
+    PROJECTDATA_DIR=config.get("platformio", "data_dir"),  # legacy for dev/platform
+    PROJECT_BUILD_DIR=config.get("platformio", "build_dir"),
+    BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
     LIBSOURCE_DIRS=[
-        config.get_optional_dir("lib"),
+        config.get("platformio", "lib_dir"),
         os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
-        config.get_optional_dir("globallib"),
+        config.get("platformio", "globallib_dir"),
     ],
 )
 

@@ -76,7 +76,7 @@ class PackageManagerDownloadMixin(object):
                             raise_error = True
                     if raise_error:
                         self.print_message(
-                            "Error: Please read http://bit.ly/package-manager-ioerror",
+                            "Error: Please read https://bit.ly/package-manager-ioerror",
                             fg="red",
                             err=True,
                         )

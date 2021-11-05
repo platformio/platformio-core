@@ -43,7 +43,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         with open(self._tmp_cfg_file, mode="w", encoding="utf8") as fp:
             fp.write(
                 "exclude-path = "
-                + self.config.get_optional_dir("packages").replace("\\", "/")
+                + self.config.get("platformio", "packages_dir").replace("\\", "/")
             )
 
         with open(self._tmp_cmd_file, mode="w", encoding="utf8") as fp:

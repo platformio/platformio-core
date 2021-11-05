@@ -31,7 +31,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         self.config = ProjectConfig.get_instance()
         super(PlatformPackageManager, self).__init__(
             PackageType.PLATFORM,
-            package_dir or self.config.get_optional_dir("platforms"),
+            package_dir or self.config.get("platformio", "platforms_dir"),
         )
 
     @property

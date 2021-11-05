@@ -172,28 +172,21 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
-    # load default monitor filters
-    filters_dir = os.path.join(fs.get_source_dir(), "commands", "device", "filters")
-    for name in os.listdir(filters_dir):
-        if not name.endswith(".py"):
-            continue
-        device_helpers.load_monitor_filter(
-            os.path.join(filters_dir, name), options=kwargs
-        )
-
     project_options = {}
+    platform = None
     try:
         with fs.cd(kwargs["project_dir"]):
             project_options = device_helpers.get_project_options(kwargs["environment"])
-        kwargs = device_helpers.apply_project_monitor_options(kwargs, project_options)
+            kwargs = device_helpers.apply_project_monitor_options(
+                kwargs, project_options
+            )
+            if "platform" in project_options:
+                platform = PlatformFactory.new(project_options["platform"])
     except NotPlatformIOProjectError:
         pass
 
-    platform = None
-    if "platform" in project_options:
-        with fs.cd(kwargs["project_dir"]):
-            platform = PlatformFactory.new(project_options["platform"])
-            device_helpers.register_platform_filters(platform, options=kwargs)
+    with fs.cd(kwargs["project_dir"]):
+        device_helpers.register_filters(platform=platform, options=kwargs)
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
@@ -231,7 +224,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
             "--- Available filters and text transformations: %s"
             % ", ".join(sorted(miniterm.TRANSFORMATIONS.keys()))
         )
-        click.echo("--- More details at http://bit.ly/pio-monitor-filters")
+        click.echo("--- More details at https://bit.ly/pio-monitor-filters")
     try:
         miniterm.main(
             default_port=kwargs["port"],

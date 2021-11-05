@@ -67,7 +67,7 @@ def pytest_generate_tests(metafunc):
 def test_run(pioproject_dir):
     with fs.cd(pioproject_dir):
         config = ProjectConfig()
-        build_dir = config.get_optional_dir("build")
+        build_dir = config.get("platformio", "build_dir")
         if os.path.isdir(build_dir):
             fs.rmtree(build_dir)
 

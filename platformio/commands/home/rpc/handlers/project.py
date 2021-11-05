@@ -23,10 +23,10 @@ from ajsonrpc.core import JSONRPC20DispatchException
 from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
+from platformio.project.generator import ProjectGenerator
 from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 
@@ -81,7 +81,7 @@ class ProjectRPC:
             data["description"] = config.get("platformio", "description")
             data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))
 
-            libdeps_dir = config.get_optional_dir("libdeps")
+            libdeps_dir = config.get("platformio", "libdeps_dir")
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
@@ -253,7 +253,7 @@ class ProjectRPC:
 
         with fs.cd(project_dir):
             config = ProjectConfig()
-            src_dir = config.get_optional_dir("src")
+            src_dir = config.get("platformio", "src_dir")
             main_path = os.path.join(
                 src_dir, "main.%s" % ("cpp" if is_cpp_project else "c")
             )
@@ -308,7 +308,7 @@ class ProjectRPC:
         )
         with fs.cd(project_dir):
             config = ProjectConfig()
-            src_dir = config.get_optional_dir("src")
+            src_dir = config.get("platformio", "src_dir")
             if os.path.isdir(src_dir):
                 fs.rmtree(src_dir)
             shutil.copytree(arduino_project_dir, src_dir, symlinks=True)

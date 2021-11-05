@@ -15,8 +15,6 @@
 import json
 import os
 from hashlib import sha1
-from os import walk
-from os.path import dirname, isdir, isfile, join
 
 from click.testing import CliRunner
 
@@ -32,65 +30,43 @@ def get_project_dir():
 def is_platformio_project(project_dir=None):
     if not project_dir:
         project_dir = get_project_dir()
-    return isfile(join(project_dir, "platformio.ini"))
+    return os.path.isfile(os.path.join(project_dir, "platformio.ini"))
 
 
 def find_project_dir_above(path):
-    if isfile(path):
-        path = dirname(path)
+    if os.path.isfile(path):
+        path = os.path.dirname(path)
     if is_platformio_project(path):
         return path
-    if isdir(dirname(path)):
-        return find_project_dir_above(dirname(path))
+    if os.path.isdir(os.path.dirname(path)):
+        return find_project_dir_above(os.path.dirname(path))
     return None
 
 
-def get_project_core_dir():
-    """Deprecated, use ProjectConfig.get_optional_dir("core") instead"""
-    return ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini")
-    ).get_optional_dir("core", exists=True)
+def get_project_all_lib_dirs():
+    """Used by platformio-node-helpers.project.observer.fetchLibDirs"""
+    config = ProjectConfig.get_instance()
+    libdeps_dir = config.get("platformio", "libdeps_dir")
+    result = [
+        config.get("platformio", "globallib_dir"),
+        config.get("platformio", "lib_dir"),
+        libdeps_dir,
+    ]
+    if not os.path.isdir(libdeps_dir):
+        return result
+    for d in os.listdir(libdeps_dir):
+        if os.path.isdir(os.path.join(libdeps_dir, d)):
+            result.append(os.path.join(libdeps_dir, d))
+    return result
 
 
 def get_project_cache_dir():
-    """Deprecated, use ProjectConfig.get_optional_dir("cache") instead"""
-    return ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini")
-    ).get_optional_dir("cache")
-
-
-def get_project_global_lib_dir():
-    """
-    Deprecated, use ProjectConfig.get_optional_dir("globallib") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini")
-    ).get_optional_dir("globallib")
-
-
-def get_project_lib_dir():
-    """
-    Deprecated, use ProjectConfig.get_optional_dir("lib") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini")
-    ).get_optional_dir("lib")
-
-
-def get_project_libdeps_dir():
-    """
-    Deprecated, use ProjectConfig.get_optional_dir("libdeps") instead
-    "platformio-node-helpers" depends on it
-    """
-    return ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini")
-    ).get_optional_dir("libdeps")
+    """Deprecated, use ProjectConfig.get("platformio", "cache_dir") instead"""
+    return ProjectConfig.get_instance().get("platformio", "cache_dir")
 
 
 def get_default_projects_dir():
-    docs_dir = join(fs.expanduser("~"), "Documents")
+    docs_dir = os.path.join(fs.expanduser("~"), "Documents")
     try:
         assert IS_WINDOWS
         import ctypes.wintypes  # pylint: disable=import-outside-toplevel
@@ -100,7 +76,7 @@ def get_default_projects_dir():
         docs_dir = buf.value
     except:  # pylint: disable=bare-except
         pass
-    return join(docs_dir, "PlatformIO", "Projects")
+    return os.path.join(docs_dir, "PlatformIO", "Projects")
 
 
 def compute_project_checksum(config):
@@ -113,16 +89,16 @@ def compute_project_checksum(config):
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
     for d in (
-        config.get_optional_dir("include"),
-        config.get_optional_dir("src"),
-        config.get_optional_dir("lib"),
+        config.get("platformio", "include_dir"),
+        config.get("platformio", "src_dir"),
+        config.get("platformio", "lib_dir"),
     ):
-        if not isdir(d):
+        if not os.path.isdir(d):
             continue
         chunks = []
-        for root, _, files in walk(d):
+        for root, _, files in os.walk(d):
             for f in files:
-                path = join(root, f)
+                path = os.path.join(root, f)
                 if path.endswith(check_suffixes):
                     chunks.append(path)
         if not chunks:
@@ -171,8 +147,8 @@ def _load_project_ide_data(project_dir, env_names):
 
 def _load_cached_project_ide_data(project_dir, env_names):
     build_dir = ProjectConfig.get_instance(
-        join(project_dir, "platformio.ini")
-    ).get_optional_dir("build")
+        os.path.join(project_dir, "platformio.ini")
+    ).get("platformio", "build_dir")
     result = {}
     for name in env_names:
         if not os.path.isfile(os.path.join(build_dir, name, "idedata.json")):

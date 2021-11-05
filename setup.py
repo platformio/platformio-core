@@ -44,7 +44,7 @@ if not PY2:
 home_requirements = [
     "aiofiles==0.7.*",
     "ajsonrpc==1.*",
-    "starlette==0.16.*",
+    "starlette==0.17.*",
     "uvicorn==0.15.*",
     "wsproto==1.0.*",
 ]
@@ -62,10 +62,10 @@ setup(
     packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
     package_data={
         "platformio": [
-            "ide/tpls/*/.*.tpl",
-            "ide/tpls/*/*.tpl",
-            "ide/tpls/*/*/*.tpl",
-            "ide/tpls/*/.*/*.tpl",
+            "project/tpls/*/.*.tpl",
+            "project/tpls/*/*.tpl",
+            "project/tpls/*/*/*.tpl",
+            "project/tpls/*/.*/*.tpl",
         ],
         "scripts": ["99-platformio-udev.rules"],
     },

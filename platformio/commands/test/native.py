@@ -31,7 +31,7 @@ class NativeTestProcessor(TestProcessorBase):
         return self.run()
 
     def run(self):
-        build_dir = self.options["project_config"].get_optional_dir("build")
+        build_dir = self.options["project_config"].get("platformio", "build_dir")
         result = proc.exec_command(
             [join(build_dir, self.env_name, "program")],
             stdout=LineBufferedAsyncPipe(self.on_run_out),

@@ -30,7 +30,9 @@ from platformio.compat import (
 class AsyncPipeBase(object):
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
-        self._pipe_reader = os.fdopen(self._fd_read, errors="backslashreplace")
+        self._pipe_reader = os.fdopen(
+            self._fd_read, encoding="utf-8", errors="backslashreplace"
+        )
         self._buffer = ""
         self._thread = Thread(target=self.run)
         self._thread.start()

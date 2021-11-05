@@ -14,12 +14,14 @@
 
 # pylint: disable=redefined-builtin, too-many-arguments
 
+import hashlib
 import os
 from collections import OrderedDict
 
 import click
 
 from platformio import fs
+from platformio.compat import IS_WINDOWS, hashlib_encode_data
 
 
 class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
@@ -35,6 +37,7 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
         buildenvvar=None,
         oldnames=None,
         default=None,
+        validate=None,
     ):
         self.scope = scope
         self.group = group
@@ -46,6 +49,7 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
         self.buildenvvar = buildenvvar
         self.oldnames = oldnames
         self.default = default
+        self.validate = validate
 
     def as_dict(self):
         result = dict(
@@ -60,13 +64,11 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
         )
         if isinstance(self.type, click.ParamType):
             result["type"] = self.type.name
-
         if isinstance(self.type, (click.IntRange, click.FloatRange)):
             result["min"] = self.type.min
             result["max"] = self.type.max
         if isinstance(self.type, click.Choice):
             result["choices"] = self.type.choices
-
         return result
 
 
@@ -76,6 +78,53 @@ def ConfigPlatformioOption(*args, **kwargs):
 
 def ConfigEnvOption(*args, **kwargs):
     return ConfigOption("env", *args, **kwargs)
+
+
+def calculate_path_hash(path):
+    return "%s-%s" % (
+        os.path.basename(path),
+        hashlib.sha1(hashlib_encode_data(path)).hexdigest()[:10],
+    )
+
+
+def expand_dir_templates(path):
+    project_dir = os.getcwd()
+    tpls = {
+        "$PROJECT_DIR": lambda: project_dir,
+        "$PROJECT_HASH": lambda: calculate_path_hash(project_dir),
+    }
+    done = False
+    while not done:
+        done = True
+        for tpl, cb in tpls.items():
+            if tpl not in path:
+                continue
+            path = path.replace(tpl, cb())
+            done = False
+    return path
+
+
+def validate_dir(path):
+    if not path:
+        return path
+    # if not all values expanded, ignore validation
+    if "${" in path and "}" in path:
+        return path
+    if path.startswith("~"):
+        path = fs.expanduser(path)
+    if "$" in path:
+        path = expand_dir_templates(path)
+    return os.path.realpath(path)
+
+
+def validate_core_dir(path):
+    default_dir = ProjectOptions["platformio.core_dir"].default
+    win_core_dir = None
+    if IS_WINDOWS and path == default_dir:
+        win_core_dir = os.path.splitdrive(path)[0] + "\\.platformio"
+        if os.path.isdir(win_core_dir):
+            path = win_core_dir
+    return validate_dir(path)
 
 
 ProjectOptions = OrderedDict(
@@ -121,6 +170,7 @@ ProjectOptions = OrderedDict(
                 oldnames=["home_dir"],
                 sysenvvar="PLATFORMIO_CORE_DIR",
                 default=os.path.join(fs.expanduser("~"), ".platformio"),
+                validate=validate_core_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -130,7 +180,8 @@ ProjectOptions = OrderedDict(
                     "Finder (LDF) looks for global libraries"
                 ),
                 sysenvvar="PLATFORMIO_GLOBALLIB_DIR",
-                default=os.path.join("$PROJECT_CORE_DIR", "lib"),
+                default=os.path.join("${platformio.core_dir}", "lib"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -140,7 +191,8 @@ ProjectOptions = OrderedDict(
                     "platforms"
                 ),
                 sysenvvar="PLATFORMIO_PLATFORMS_DIR",
-                default=os.path.join("$PROJECT_CORE_DIR", "platforms"),
+                default=os.path.join("${platformio.core_dir}", "platforms"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -149,7 +201,8 @@ ProjectOptions = OrderedDict(
                     "A location where PlatformIO Core keeps installed packages"
                 ),
                 sysenvvar="PLATFORMIO_PACKAGES_DIR",
-                default=os.path.join("$PROJECT_CORE_DIR", "packages"),
+                default=os.path.join("${platformio.core_dir}", "packages"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -160,7 +213,8 @@ ProjectOptions = OrderedDict(
                     "other service information)"
                 ),
                 sysenvvar="PLATFORMIO_CACHE_DIR",
-                default=os.path.join("$PROJECT_CORE_DIR", ".cache"),
+                default=os.path.join("${platformio.core_dir}", ".cache"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -171,6 +225,7 @@ ProjectOptions = OrderedDict(
                     "build environments"
                 ),
                 sysenvvar="PLATFORMIO_BUILD_CACHE_DIR",
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -182,6 +237,7 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_WORKSPACE_DIR",
                 default=os.path.join("$PROJECT_DIR", ".pio"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -192,7 +248,8 @@ ProjectOptions = OrderedDict(
                     "and other cached information"
                 ),
                 sysenvvar="PLATFORMIO_BUILD_DIR",
-                default=os.path.join("$PROJECT_WORKSPACE_DIR", "build"),
+                default=os.path.join("${platformio.workspace_dir}", "build"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -202,7 +259,8 @@ ProjectOptions = OrderedDict(
                     "dependencies declared via `lib_deps` option"
                 ),
                 sysenvvar="PLATFORMIO_LIBDEPS_DIR",
-                default=os.path.join("$PROJECT_WORKSPACE_DIR", "libdeps"),
+                default=os.path.join("${platformio.workspace_dir}", "libdeps"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -213,6 +271,7 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_INCLUDE_DIR",
                 default=os.path.join("$PROJECT_DIR", "include"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -223,6 +282,7 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_SRC_DIR",
                 default=os.path.join("$PROJECT_DIR", "src"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -230,6 +290,7 @@ ProjectOptions = OrderedDict(
                 description="A storage for the custom/private project libraries",
                 sysenvvar="PLATFORMIO_LIB_DIR",
                 default=os.path.join("$PROJECT_DIR", "lib"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -240,6 +301,7 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_DATA_DIR",
                 default=os.path.join("$PROJECT_DIR", "data"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -250,13 +312,23 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_TEST_DIR",
                 default=os.path.join("$PROJECT_DIR", "test"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="boards_dir",
-                description="A global storage for custom board manifests",
+                description="A storage for custom board manifests",
                 sysenvvar="PLATFORMIO_BOARDS_DIR",
                 default=os.path.join("$PROJECT_DIR", "boards"),
+                validate=validate_dir,
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="monitor_dir",
+                description="A storage for custom monitor filters",
+                sysenvvar="PLATFORMIO_MONITOR_DIR",
+                default=os.path.join("$PROJECT_DIR", "monitor"),
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",
@@ -267,6 +339,7 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_SHARED_DIR",
                 default=os.path.join("$PROJECT_DIR", "shared"),
+                validate=validate_dir,
             ),
             #
             # [env]

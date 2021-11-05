@@ -20,7 +20,7 @@ from platformio.compat import string_types
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.helpers import reveal_debug_port
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_core_dir, load_project_ide_data
+from platformio.project.helpers import load_project_ide_data
 from platformio.project.options import ProjectOptions
 
 
@@ -208,9 +208,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
     def reveal_patterns(self, source, recursive=True):
         program_path = self.program_path or ""
         patterns = {
-            "PLATFORMIO_CORE_DIR": get_project_core_dir(),
+            "PLATFORMIO_CORE_DIR": self.project_config.get("platformio", "core_dir"),
             "PYTHONEXE": proc.get_pythonexe_path(),
-            "PROJECT_DIR": self.project_config.path,
+            "PROJECT_DIR": os.getcwd(),
             "PROG_PATH": program_path,
             "PROG_DIR": os.path.dirname(program_path),
             "PROG_NAME": os.path.basename(os.path.splitext(program_path)[0]),

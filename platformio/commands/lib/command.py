@@ -43,7 +43,7 @@ CTX_META_STORAGE_LIBDEPS_KEY = __name__ + ".storage_lib_deps"
 
 
 def get_project_global_lib_dir():
-    return ProjectConfig.get_instance().get_optional_dir("globallib")
+    return ProjectConfig.get_instance().get("platformio", "globallib_dir")
 
 
 @click.group(short_help="Library manager")
@@ -111,7 +111,7 @@ def cli(ctx, **options):
                 os.path.join(storage_dir, "platformio.ini")
             )
             config.validate(options["environment"], silent=in_silence)
-            libdeps_dir = config.get_optional_dir("libdeps")
+            libdeps_dir = config.get("platformio", "libdeps_dir")
             for env in config.envs():
                 if options["environment"] and env not in options["environment"]:
                     continue

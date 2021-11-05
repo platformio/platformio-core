@@ -64,7 +64,7 @@ def system_info(json_output):
     }
     data["core_dir"] = {
         "title": "PlatformIO Core Directory",
-        "value": project_config.get_optional_dir("core"),
+        "value": project_config.get("platformio", "core_dir"),
     }
     data["platformio_exe"] = {
         "title": "PlatformIO Core Executable",
@@ -88,7 +88,7 @@ def system_info(json_output):
         "title": "Tools & Toolchains",
         "value": len(
             ToolPackageManager(
-                project_config.get_optional_dir("packages")
+                project_config.get("platformio", "packages_dir")
             ).get_installed()
         ),
     }

@@ -84,7 +84,7 @@ class CppcheckCheckTool(CheckToolBase):
         if (
             args.get("file", "")
             .lower()
-            .startswith(self.config.get_optional_dir("packages").lower())
+            .startswith(self.config.get("platformio", "packages_dir").lower())
         ):
             if args["id"] in breaking_defect_ids:
                 if self.options.get("verbose"):
@@ -201,7 +201,7 @@ class CppcheckCheckTool(CheckToolBase):
         result = []
         for inc in self.cpp_includes:
             if self.options.get("skip_packages") and inc.lower().startswith(
-                self.config.get_optional_dir("packages").lower()
+                self.config.get("platformio", "packages_dir").lower()
             ):
                 continue
             result.append(inc)
