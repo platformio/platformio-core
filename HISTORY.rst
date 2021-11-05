@@ -8,6 +8,9 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.4 (2021-??-??)
+~~~~~~~~~~~~~~~~~~
+
 5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~
 
