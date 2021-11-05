@@ -20,6 +20,7 @@ from serial.tools import miniterm
 from platformio import fs
 from platformio.commands.device import DeviceMonitorFilter
 from platformio.compat import get_object_members, load_python_module
+from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig
 
 
@@ -92,13 +93,40 @@ def load_monitor_filter(path, options=None):
     return True
 
 
-def register_filters(monitor_dir, options=None):
+def load_monitor_filters(monitor_dir, prefix=None, options=None):
     if not os.path.isdir(monitor_dir):
         return
     for name in os.listdir(monitor_dir):
-        if not name.startswith("filter_") or not name.endswith(".py"):
+        if (prefix and not name.startswith(prefix)) or not name.endswith(".py"):
             continue
         path = os.path.join(monitor_dir, name)
         if not os.path.isfile(path):
             continue
         load_monitor_filter(path, options)
+
+
+def register_filters(platform=None, options=None):
+    # project filters
+    load_monitor_filters(
+        ProjectConfig.get_instance().get("platformio", "monitor_dir"),
+        prefix="filter_",
+        options=options,
+    )
+    # platform filters
+    if platform:
+        load_monitor_filters(
+            os.path.join(platform.get_dir(), "monitor"),
+            prefix="filter_",
+            options=options,
+        )
+    # load package filters
+    pm = ToolPackageManager()
+    for pkg in pm.get_installed():
+        load_monitor_filters(
+            os.path.join(pkg.path, "monitor"), prefix="filter_", options=options
+        )
+    # default filters
+    load_monitor_filters(
+        os.path.join(fs.get_source_dir(), "commands", "device", "filters"),
+        options=options,
+    )

@@ -23,7 +23,6 @@ from serial.tools import miniterm
 from platformio import exception, fs, util
 from platformio.commands.device import helpers as device_helpers
 from platformio.platform.factory import PlatformFactory
-from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 
 
@@ -173,34 +172,21 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
-    # load default monitor filters
-    filters_dir = os.path.join(fs.get_source_dir(), "commands", "device", "filters")
-    for name in os.listdir(filters_dir):
-        if not name.endswith(".py"):
-            continue
-        device_helpers.load_monitor_filter(
-            os.path.join(filters_dir, name), options=kwargs
-        )
-
     project_options = {}
     platform = None
     try:
         with fs.cd(kwargs["project_dir"]):
             project_options = device_helpers.get_project_options(kwargs["environment"])
-            device_helpers.register_filters(
-                ProjectConfig.get_instance().get("platformio", "monitor_dir"),
-                options=kwargs,
-            )
-            if "platform" in project_options:
-                platform = PlatformFactory.new(project_options["platform"])
-                device_helpers.register_filters(
-                    os.path.join(platform.get_dir(), "monitor"), options=kwargs
-                )
             kwargs = device_helpers.apply_project_monitor_options(
                 kwargs, project_options
             )
+            if "platform" in project_options:
+                platform = PlatformFactory.new(project_options["platform"])
     except NotPlatformIOProjectError:
         pass
+
+    with fs.cd(kwargs["project_dir"]):
+        device_helpers.register_filters(platform=platform, options=kwargs)
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
