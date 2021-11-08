@@ -214,8 +214,8 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
 
     # test conflicted names
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("conflicted-storage")))
-    lm.install("4@2.6.1", silent=True)
-    lm.install("5357@2.6.1", silent=True)
+    lm.install("z3t0/IRremote@2.6.1", silent=True)
+    lm.install("mbed-yuhki50/IRremote", silent=True)
     assert len(lm.get_installed()) == 2
 
     # Tools
