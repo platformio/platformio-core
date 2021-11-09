@@ -11,6 +11,8 @@ PlatformIO Core 5
 5.2.4 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
+
 5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~
 
