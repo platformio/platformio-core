@@ -82,7 +82,7 @@ class ProjectGenerator(object):
             "project_dir": self.project_dir,
             "original_env_name": self.original_env_name,
             "env_name": self.env_name,
-            "user_home_dir": os.path.realpath(fs.expanduser("~")),
+            "user_home_dir": os.path.abspath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
             if os.path.isfile(sys.argv[0])
             else where_is_program("platformio"),
@@ -125,7 +125,9 @@ class ProjectGenerator(object):
         with fs.cd(self.project_dir):
             for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
                 for f in files:
-                    result.append(os.path.relpath(os.path.join(root, f)))
+                    result.append(
+                        os.path.relpath(os.path.join(os.path.realpath(root), f))
+                    )
         return result
 
     def get_tpls(self):

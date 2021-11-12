@@ -48,7 +48,7 @@ class LockFile(object):
     def __init__(self, path, timeout=LOCKFILE_TIMEOUT, delay=LOCKFILE_DELAY):
         self.timeout = timeout
         self.delay = delay
-        self._lock_path = os.path.realpath(path) + ".lock"
+        self._lock_path = os.path.abspath(path) + ".lock"
         self._fp = None
 
     def _lock(self):

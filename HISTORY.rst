@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.2.4 (2021-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Improved support for projects located on a network share (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_, `issue #3926 <https://github.com/platformio/platformio-core/issues/3926>`_, `issue #4099 <https://github.com/platformio/platformio-core/issues/4099>`_)
 - Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
 
 5.2.3 (2021-11-05)

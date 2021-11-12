@@ -252,9 +252,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         # external "URL" mismatch
         if spec.external:
             # local folder mismatch
-            if os.path.realpath(spec.url) == os.path.realpath(pkg.path) or (
+            if os.path.abspath(spec.url) == os.path.abspath(pkg.path) or (
                 spec.url.startswith("file://")
-                and os.path.realpath(pkg.path) == os.path.realpath(spec.url[7:])
+                and os.path.abspath(pkg.path) == os.path.abspath(spec.url[7:])
             ):
                 return True
             if spec.url != pkg.metadata.spec.url:
