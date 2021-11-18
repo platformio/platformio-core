@@ -12,6 +12,7 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Improved support for projects located on a network share (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_, `issue #3926 <https://github.com/platformio/platformio-core/issues/3926>`_, `issue #4099 <https://github.com/platformio/platformio-core/issues/4099>`_)
+- Upgraded build engine to the SCons 4.3 (`release notes <https://github.com/SCons/scons/blob/rel_4.3.0/CHANGES.txt>`__)
 - Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
 - Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
 
