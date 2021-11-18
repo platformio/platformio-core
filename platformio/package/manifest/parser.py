@@ -167,7 +167,7 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
-    def str_to_list(value, sep=",", lowercase=True):
+    def str_to_list(value, sep=",", lowercase=False):
         if isinstance(value, string_types):
             value = value.split(sep)
         assert isinstance(value, list)
@@ -323,8 +323,10 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[str, list] fields
         for k in ("keywords", "platforms", "frameworks"):
             if k in data:
-                data[k] = self.str_to_list(data[k], sep=",")
+                data[k] = self.str_to_list(data[k], sep=",", lowercase=True)
 
+        if "headers" in data:
+            data["headers"] = self.str_to_list(data["headers"], sep=",")
         if "authors" in data:
             data["authors"] = self._parse_authors(data["authors"])
         if "platforms" in data:
@@ -430,7 +432,9 @@ class ModuleJsonManifestParser(BaseManifestParser):
         if "dependencies" in data:
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
         if "keywords" in data:
-            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
+            data["keywords"] = self.str_to_list(
+                data["keywords"], sep=",", lowercase=True
+            )
         return data
 
     def _parse_authors(self, raw):
@@ -480,6 +484,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 export=self._parse_export(),
             )
         )
+        if "includes" in data:
+            data["headers"] = self.str_to_list(data["includes"], ",")
+            del data["includes"]
         if "author" in data:
             data["authors"] = self._parse_authors(data)
             for key in ("author", "maintainer"):
@@ -674,7 +681,9 @@ class PackageJsonManifestParser(BaseManifestParser):
     def parse(self, contents):
         data = json.loads(contents)
         if "keywords" in data:
-            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
+            data["keywords"] = self.str_to_list(
+                data["keywords"], sep=",", lowercase=True
+            )
         data = self._parse_system(data)
         data = self._parse_homepage(data)
         data = self._parse_repository(data)

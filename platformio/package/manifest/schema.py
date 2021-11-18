@@ -209,6 +209,13 @@ class ManifestSchema(BaseSchema):
             ]
         )
     )
+    headers = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=255),
+            ]
+        )
+    )
 
     # platform.json specific
     title = fields.Str(validate=validate.Length(min=1, max=100))

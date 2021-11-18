@@ -29,6 +29,7 @@ def test_library_json_parser():
 {
     "name": "TestPackage",
     "keywords": "kw1, KW2, kw3",
+    "headers": "include1.h, Include2.hpp",
     "platforms": ["atmelavr", "espressif"],
     "repository": {
         "type": "git",
@@ -62,6 +63,7 @@ def test_library_json_parser():
             },
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
+            "headers": ["include1.h", "Include2.hpp"],
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
             "dependencies": [
@@ -76,6 +78,7 @@ def test_library_json_parser():
     contents = """
 {
     "keywords": ["sound", "audio", "music", "SD", "card", "playback"],
+    "headers": ["include 1.h", "include Space.hpp"],
     "frameworks": "arduino",
     "platforms": "atmelavr",
     "export": {
@@ -94,6 +97,7 @@ def test_library_json_parser():
         raw_data,
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
+            "headers": ["include 1.h", "include Space.hpp"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
@@ -205,6 +209,7 @@ sentence=This is Arduino library
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 ignore_empty_field=
+includes=Arduino.h, Arduino Space.hpp
 """
     raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
     raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
@@ -225,6 +230,7 @@ ignore_empty_field=
                 {"name": "Maintainer Author", "maintainer": True},
             ],
             "keywords": ["uncategorized"],
+            "headers": ["Arduino.h", "Arduino Space.hpp"],
             "customField": "Custom Value",
             "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
             "dependencies": [
@@ -530,6 +536,7 @@ includes=MozziGuts.h
             },
             "platforms": ["*"],
             "frameworks": ["arduino"],
+            "headers": ["MozziGuts.h"],
             "export": {
                 "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
