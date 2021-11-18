@@ -576,6 +576,7 @@ def test_platform_json_schema():
   "packages": {
     "toolchain-atmelavr": {
       "type": "toolchain",
+      "owner": "platformio",
       "version": "~1.50400.0"
     },
     "framework-arduinoavr": {
@@ -623,7 +624,11 @@ def test_platform_json_schema():
             "dependencies": [
                 {"name": "framework-arduinoavr", "version": "~4.2.0"},
                 {"name": "tool-avrdude", "version": "~1.60300.0"},
-                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
+                {
+                    "name": "toolchain-atmelavr",
+                    "owner": "platformio",
+                    "version": "~1.50400.0",
+                },
             ],
         },
     )

@@ -658,9 +658,14 @@ class PlatformJsonManifestParser(BaseManifestParser):
 
     @staticmethod
     def _parse_dependencies(raw):
-        return [
-            dict(name=name, version=opts.get("version")) for name, opts in raw.items()
-        ]
+        result = []
+        for name, opts in raw.items():
+            item = {"name": name}
+            for k in ("owner", "version"):
+                if k in opts:
+                    item[k] = opts[k]
+            result.append(item)
+        return result
 
 
 class PackageJsonManifestParser(BaseManifestParser):
