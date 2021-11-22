@@ -92,6 +92,6 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
     async def _handle_rpc(self, websocket, data):
         # pylint: disable=no-member
         response = await self.factory.manager.get_response_for_payload(data)
-        if response.error:
+        if response.error and response.error.data:
             click.secho("Error: %s" % response.error.data, fg="red", err=True)
         await websocket.send_text(self.factory.manager.serialize(response.body))
