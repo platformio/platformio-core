@@ -440,7 +440,7 @@ sentence=A library for monochrome TFTs and OLEDs
 paragraph=Supported display controller: SSD1306, SSD1309, SSD1322, SSD1325
 category=Display
 url=https://github.com/olikraus/u8glib
-architectures=avr,sam
+architectures=avr,sam,samd
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
     raw_data = parser.ManifestParserFactory.new(

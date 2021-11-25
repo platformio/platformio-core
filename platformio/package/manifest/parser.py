@@ -557,7 +557,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 continue
             if arch == "*":
                 return ["*"]
-            if arch in platforms_map:
+            if arch in platforms_map and platforms_map[arch] not in result:
                 result.append(platforms_map[arch])
         return result
 
