@@ -28,7 +28,7 @@ def test_library_json_parser():
     contents = """
 {
     "name": "TestPackage",
-    "keywords": "kw1, KW2, kw3",
+    "keywords": "kw1, KW2, kw3, KW2",
     "headers": "include1.h, Include2.hpp",
     "platforms": ["atmelavr", "espressif"],
     "repository": {

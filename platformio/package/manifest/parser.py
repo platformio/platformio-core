@@ -167,7 +167,7 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
-    def str_to_list(value, sep=",", lowercase=False):
+    def str_to_list(value, sep=",", lowercase=False, unique=False):
         if isinstance(value, string_types):
             value = value.split(sep)
         assert isinstance(value, list)
@@ -178,6 +178,8 @@ class BaseManifestParser(object):
                 continue
             if lowercase:
                 item = item.lower()
+            if unique and item in result:
+                continue
             result.append(item)
         return result
 
@@ -323,10 +325,12 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[str, list] fields
         for k in ("keywords", "platforms", "frameworks"):
             if k in data:
-                data[k] = self.str_to_list(data[k], sep=",", lowercase=True)
+                data[k] = self.str_to_list(
+                    data[k], sep=",", lowercase=True, unique=True
+                )
 
         if "headers" in data:
-            data["headers"] = self.str_to_list(data["headers"], sep=",")
+            data["headers"] = self.str_to_list(data["headers"], sep=",", unique=True)
         if "authors" in data:
             data["authors"] = self._parse_authors(data["authors"])
         if "platforms" in data:
@@ -370,7 +374,8 @@ class LibraryJsonManifestParser(BaseManifestParser):
         for item in raw:
             if item == "espressif":
                 item = "espressif8266"
-            result.append(item)
+            if item not in result:
+                result.append(item)
         return result
 
     @staticmethod
@@ -433,7 +438,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             data["dependencies"] = self._parse_dependencies(data["dependencies"])
         if "keywords" in data:
             data["keywords"] = self.str_to_list(
-                data["keywords"], sep=",", lowercase=True
+                data["keywords"], sep=",", lowercase=True, unique=True
             )
         return data
 
@@ -485,7 +490,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             )
         )
         if "includes" in data:
-            data["headers"] = self.str_to_list(data["includes"], ",")
+            data["headers"] = self.str_to_list(data["includes"], sep=",", unique=True)
             del data["includes"]
         if "author" in data:
             data["authors"] = self._parse_authors(data)
@@ -650,7 +655,7 @@ class PlatformJsonManifestParser(BaseManifestParser):
     def parse(self, contents):
         data = json.loads(contents)
         if "keywords" in data:
-            data["keywords"] = self.str_to_list(data["keywords"], sep=",")
+            data["keywords"] = self.str_to_list(data["keywords"], sep=",", unique=True)
         if "frameworks" in data:
             data["frameworks"] = self._parse_frameworks(data["frameworks"])
         if "packages" in data:
@@ -682,7 +687,7 @@ class PackageJsonManifestParser(BaseManifestParser):
         data = json.loads(contents)
         if "keywords" in data:
             data["keywords"] = self.str_to_list(
-                data["keywords"], sep=",", lowercase=True
+                data["keywords"], sep=",", lowercase=True, unique=True
             )
         data = self._parse_system(data)
         data = self._parse_homepage(data)
