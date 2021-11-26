@@ -206,6 +206,7 @@ version=1.2.3
 author=SomeAuthor <info AT author.com>, Maintainer Author (nickname) <www.example.com>
 maintainer=Maintainer Author (nickname) <www.example.com>
 sentence=This is Arduino library
+category=Signal Input/Output
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 ignore_empty_field=
@@ -229,7 +230,8 @@ includes=Arduino.h, Arduino Space.hpp
                 {"name": "SomeAuthor", "email": "info@author.com"},
                 {"name": "Maintainer Author", "maintainer": True},
             ],
-            "keywords": ["uncategorized"],
+            "category": "Signal Input/Output",
+            "keywords": ["signal", "input", "output"],
             "headers": ["Arduino.h", "Arduino Space.hpp"],
             "customField": "Custom Value",
             "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
@@ -297,6 +299,7 @@ maintainer=Rocket Scream Electronics
     assert data["authors"] == [
         {"name": "Rocket Scream Electronics", "maintainer": True}
     ]
+    assert "keywords" not in data
 
 
 def test_library_json_schema():
@@ -559,7 +562,7 @@ def test_platform_json_schema():
   "name": "atmelavr",
   "title": "Atmel AVR",
   "description": "Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.",
-  "keywords": "arduino, atmel, avr",
+  "keywords": "arduino, atmel, avr, MCU",
   "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
   "license": "Apache-2.0",
   "engines": {
@@ -619,7 +622,7 @@ def test_platform_json_schema():
                 "on the industrys most code-efficient architecture for C and "
                 "assembly programming."
             ),
-            "keywords": ["arduino", "atmel", "avr"],
+            "keywords": ["arduino", "atmel", "avr", "mcu"],
             "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
             "license": "Apache-2.0",
             "repository": {
@@ -648,7 +651,7 @@ def test_package_json_schema():
     "description": "SCons software construction tool",
     "keywords": "SCons, build",
     "homepage": "http://www.scons.org",
-    "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l"],
+    "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l", "LINUX_ARMV7L"],
     "version": "3.30101.0"
 }
 """

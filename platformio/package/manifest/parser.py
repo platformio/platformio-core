@@ -334,7 +334,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         if "authors" in data:
             data["authors"] = self._parse_authors(data["authors"])
         if "platforms" in data:
-            data["platforms"] = self._parse_platforms(data["platforms"]) or None
+            data["platforms"] = self._fix_platforms(data["platforms"]) or None
         if "export" in data:
             data["export"] = self._parse_export(data["export"])
         if "dependencies" in data:
@@ -367,16 +367,11 @@ class LibraryJsonManifestParser(BaseManifestParser):
         return [self.cleanup_author(author) for author in raw]
 
     @staticmethod
-    def _parse_platforms(raw):
-        assert isinstance(raw, list)
-        result = []
-        # renamed platforms
-        for item in raw:
-            if item == "espressif":
-                item = "espressif8266"
-            if item not in result:
-                result.append(item)
-        return result
+    def _fix_platforms(items):
+        assert isinstance(items, list)
+        if "espressif" in items:
+            items[items.index("espressif")] = "espressif8266"
+        return items
 
     @staticmethod
     def _parse_export(raw):
@@ -485,7 +480,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 repository=repository or None,
                 description=self._parse_description(data),
                 platforms=self._parse_platforms(data) or ["*"],
-                keywords=self._parse_keywords(data),
+                keywords=self._parse_keywords(data) or None,
                 export=self._parse_export(),
             )
         )
@@ -527,18 +522,17 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             lines[0] += "."
         return " ".join(lines)
 
-    @staticmethod
-    def _parse_keywords(properties):
-        result = []
-        for item in re.split(r"[\s/]+", properties.get("category", "uncategorized")):
-            item = item.strip()
-            if not item:
-                continue
-            result.append(item.lower())
-        return result
+    def _parse_keywords(self, properties):
+        return self.str_to_list(
+            re.split(
+                r"[\s/]+",
+                properties.get("category", ""),
+            ),
+            lowercase=True,
+            unique=True,
+        )
 
-    @staticmethod
-    def _parse_platforms(properties):
+    def _parse_platforms(self, properties):
         result = []
         platforms_map = {
             "avr": "atmelavr",
@@ -557,9 +551,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 continue
             if arch == "*":
                 return ["*"]
-            if arch in platforms_map and platforms_map[arch] not in result:
+            if arch in platforms_map:
                 result.append(platforms_map[arch])
-        return result
+        return self.str_to_list(result, lowercase=True, unique=True)
 
     def _parse_authors(self, properties):
         if "author" not in properties:
@@ -655,18 +649,16 @@ class PlatformJsonManifestParser(BaseManifestParser):
     def parse(self, contents):
         data = json.loads(contents)
         if "keywords" in data:
-            data["keywords"] = self.str_to_list(data["keywords"], sep=",", unique=True)
-        if "frameworks" in data:
-            data["frameworks"] = self._parse_frameworks(data["frameworks"])
+            data["keywords"] = self.str_to_list(
+                data["keywords"], sep=",", lowercase=True, unique=True
+            )
+        if "frameworks" in data and not isinstance(data["frameworks"], dict):
+            data["frameworks"] = self.str_to_list(
+                data["frameworks"].keys(), lowercase=True, unique=True
+            )
         if "packages" in data:
             data["dependencies"] = self._parse_dependencies(data["packages"])
         return data
-
-    @staticmethod
-    def _parse_frameworks(raw):
-        if not isinstance(raw, dict):
-            return None
-        return [name.lower() for name in raw.keys()]
 
     @staticmethod
     def _parse_dependencies(raw):
@@ -694,16 +686,13 @@ class PackageJsonManifestParser(BaseManifestParser):
         data = self._parse_repository(data)
         return data
 
-    @staticmethod
-    def _parse_system(data):
+    def _parse_system(self, data):
         if "system" not in data:
             return data
         if data["system"] in ("*", ["*"], "all"):
             del data["system"]
             return data
-        if not isinstance(data["system"], list):
-            data["system"] = [data["system"]]
-        data["system"] = [s.strip().lower() for s in data["system"]]
+        data["system"] = self.str_to_list(data["system"], lowercase=True, unique=True)
         return data
 
     @staticmethod
