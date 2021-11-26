@@ -652,9 +652,13 @@ class PlatformJsonManifestParser(BaseManifestParser):
             data["keywords"] = self.str_to_list(
                 data["keywords"], sep=",", lowercase=True, unique=True
             )
-        if "frameworks" in data and not isinstance(data["frameworks"], dict):
-            data["frameworks"] = self.str_to_list(
-                data["frameworks"].keys(), lowercase=True, unique=True
+        if "frameworks" in data:
+            data["frameworks"] = (
+                self.str_to_list(
+                    list(data["frameworks"].keys()), lowercase=True, unique=True
+                )
+                if isinstance(data["frameworks"], dict)
+                else None
             )
         if "packages" in data:
             data["dependencies"] = self._parse_dependencies(data["packages"])
