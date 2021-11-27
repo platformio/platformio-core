@@ -202,7 +202,7 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
     assert len(lm.get_installed()) == 3
     pkg = lm.get_package("AsyncTCP-esphome")
-    assert pkg.metadata.spec.owner == "esphome"
+    assert pkg.metadata.spec.owner == "ottowinter"
     assert not lm.get_package("non-existing-package")
     # mbed library
     assert lm.install("wolfSSL", silent=True)

@@ -117,7 +117,7 @@ class RegistryClient(HTTPClient):
         if page:
             params["page"] = int(page)
         return self.fetch_json_data(
-            "get", "/v3/packages", params=params, cache_valid="1h"
+            "get", "/v3/search", params=params, cache_valid="1h"
         )
 
     def get_package(self, type_, owner, name, version=None):
