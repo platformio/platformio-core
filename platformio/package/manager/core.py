@@ -218,7 +218,7 @@ def get_contrib_pysite_deps():
     result.extend(
         [
             # pyopenssl depends on it, use RUST-less version
-            "cryptography >= 3.3, < 35.0.0",
+            "cryptography == 3.3.2",
             "pyopenssl >= 16.0.0",
             "service_identity >= 18.1.0",
             "idna >= 0.6, != 2.3",
