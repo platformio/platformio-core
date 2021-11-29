@@ -42,7 +42,7 @@ if not PY2:
     minimal_requirements.append("zeroconf==0.37.*")
 
 home_requirements = [
-    "aiofiles==0.7.*",
+    "aiofiles==0.8.*",
     "ajsonrpc==1.*",
     "starlette==0.17.*",
     "uvicorn==0.15.*",
