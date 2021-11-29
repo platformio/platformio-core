@@ -479,14 +479,13 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 homepage=homepage,
                 repository=repository or None,
                 description=self._parse_description(data),
-                platforms=self._parse_platforms(data) or ["*"],
+                platforms=self._parse_platforms(data) or None,
                 keywords=self._parse_keywords(data) or None,
                 export=self._parse_export(),
             )
         )
         if "includes" in data:
             data["headers"] = self.str_to_list(data["includes"], sep=",", unique=True)
-            del data["includes"]
         if "author" in data:
             data["authors"] = self._parse_authors(data)
             for key in ("author", "maintainer"):

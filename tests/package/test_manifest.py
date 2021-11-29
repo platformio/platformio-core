@@ -80,7 +80,6 @@ def test_library_json_parser():
     "keywords": ["sound", "audio", "music", "SD", "card", "playback"],
     "headers": ["include 1.h", "include Space.hpp"],
     "frameworks": "arduino",
-    "platforms": "atmelavr",
     "export": {
         "exclude": "audio_samples"
     },
@@ -100,7 +99,6 @@ def test_library_json_parser():
             "headers": ["include 1.h", "include Space.hpp"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
-            "platforms": ["atmelavr"],
             "dependencies": [
                 {"name": "deps1", "version": "1.0.0"},
                 {
@@ -221,7 +219,6 @@ includes=Arduino.h, Arduino Space.hpp
             "version": "1.2.3",
             "description": "This is Arduino library",
             "sentence": "This is Arduino library",
-            "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
                 "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
@@ -233,6 +230,7 @@ includes=Arduino.h, Arduino Space.hpp
             "category": "Signal Input/Output",
             "keywords": ["signal", "input", "output"],
             "headers": ["Arduino.h", "Arduino Space.hpp"],
+            "includes": "Arduino.h, Arduino Space.hpp",
             "customField": "Custom Value",
             "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
             "dependencies": [
