@@ -24,13 +24,6 @@ from platformio import __version__, exception
 from platformio.commands import PlatformioCLI
 from platformio.compat import IS_CYGWIN, ensure_python3
 
-try:
-    import click_completion  # pylint: disable=import-error
-
-    click_completion.init()
-except:  # pylint: disable=bare-except
-    pass
-
 
 @click.command(
     cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
