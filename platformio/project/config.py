@@ -276,6 +276,8 @@ class ProjectConfigBase(object):
 
         if value == MISSING:
             value = default if default != MISSING else option_meta.default
+        if callable(value):
+            value = value()
         if value == MISSING:
             return None
 

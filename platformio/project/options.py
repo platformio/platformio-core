@@ -60,7 +60,7 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
             type="string",
             multiple=self.multiple,
             sysenvvar=self.sysenvvar,
-            default=self.default,
+            default=self.default() if callable(self.default) else self.default,
         )
         if isinstance(self.type, click.ParamType):
             result["type"] = self.type.name
@@ -168,7 +168,7 @@ ProjectOptions = OrderedDict(
                 ),
                 oldnames=["home_dir"],
                 sysenvvar="PLATFORMIO_CORE_DIR",
-                default=get_default_core_dir(),
+                default=get_default_core_dir,
                 validate=validate_dir,
             ),
             ConfigPlatformioOption(

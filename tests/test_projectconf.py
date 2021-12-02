@@ -254,9 +254,15 @@ def test_sysenv_options(config):
     os.environ["PLATFORMIO_HOME_DIR"] = custom_core_dir
     os.environ["PLATFORMIO_SRC_DIR"] = custom_src_dir
     os.environ["PLATFORMIO_BUILD_DIR"] = custom_build_dir
-    assert config.get("platformio", "core_dir") == os.path.realpath(custom_core_dir)
-    assert config.get("platformio", "src_dir") == os.path.realpath(custom_src_dir)
-    assert config.get("platformio", "build_dir") == os.path.realpath(custom_build_dir)
+    assert os.path.realpath(config.get("platformio", "core_dir")) == os.path.realpath(
+        custom_core_dir
+    )
+    assert os.path.realpath(config.get("platformio", "src_dir")) == os.path.realpath(
+        custom_src_dir
+    )
+    assert os.path.realpath(config.get("platformio", "build_dir")) == os.path.realpath(
+        custom_build_dir
+    )
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
