@@ -16,7 +16,8 @@ PlatformIO Core 5
 - Upgraded build engine to the SCons 4.3 (`release notes <https://github.com/SCons/scons/blob/rel_4.3.0/CHANGES.txt>`__)
 - Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
 - Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
-- Fixed a bug when the system environment variable does not override a project configuration option (`issue #4125 <https://github.com/platformio/platformio-core/issues/4125>`_)
+- Fixed an issue when the system environment variable does not override a project configuration option (`issue #4125 <https://github.com/platformio/platformio-core/issues/4125>`_)
+- Fixed an issue when referencing "*_dir" option from a custom project configuration environment (`issue #4110 <https://github.com/platformio/platformio-core/issues/4110>`_)
 
 5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~

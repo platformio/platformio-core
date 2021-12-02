@@ -26,7 +26,8 @@ from platformio.project.exception import InvalidProjectConfError, UnknownEnvName
 BASE_CONFIG = """
 [platformio]
 env_default = base, extra_2
-build_dir = ~/tmp/pio-$PROJECT_HASH
+src_dir = ${custom.src_dir}
+build_dir = ${custom.build_dir}
 extra_configs =
   extra_envs.ini
   extra_debug.ini
@@ -53,6 +54,8 @@ extends = strict_ldf, monitor_custom
 build_flags = -D RELEASE
 
 [custom]
+src_dir = source
+build_dir = ~/tmp/pio-$PROJECT_HASH
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
 extra_flags = ${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}
@@ -297,6 +300,7 @@ def test_getraw_value(config):
         config.getraw("custom", "debug_server")
         == f"\n{packages_dir}/tool-openocd/openocd\n--help"
     )
+    assert config.getraw("platformio", "build_dir") == "~/tmp/pio-$PROJECT_HASH"
 
 
 def test_get_value(config):
@@ -327,10 +331,16 @@ def test_get_value(config):
         os.path.join(DEFAULT_CORE_DIR, "packages/tool-openocd/openocd"),
         "--help",
     ]
+    # test relative dir
+    assert config.get("platformio", "src_dir") == os.path.abspath(
+        os.path.join(os.getcwd(), "source")
+    )
 
 
 def test_items(config):
     assert config.items("custom") == [
+        ("src_dir", "source"),
+        ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
         ("debug_flags", "-D DEBUG=1"),
         ("lib_flags", "-lc -lm"),
         ("extra_flags", ""),
@@ -473,7 +483,8 @@ def test_dump(tmpdir_factory):
         (
             "platformio",
             [
-                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
+                ("src_dir", "${custom.src_dir}"),
+                ("build_dir", "${custom.build_dir}"),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
                 ("default_envs", ["base", "extra_2"]),
             ],
@@ -497,6 +508,8 @@ def test_dump(tmpdir_factory):
         (
             "custom",
             [
+                ("src_dir", "source"),
+                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
                 ("debug_flags", "-D RELEASE"),
                 ("lib_flags", "-lc -lm"),
                 ("extra_flags", "${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}"),
