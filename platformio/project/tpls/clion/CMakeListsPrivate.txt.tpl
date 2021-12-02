@@ -53,6 +53,11 @@ set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "Build Types 
 set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
 % end
 
+# Convert "Home Directory" that may contain unescaped backslashes on Windows
+% if "windows" in systype:
+file(TO_CMAKE_PATH $ENV{HOMEDRIVE}$ENV{HOMEPATH} ENV_HOME_PATH)
+% end
+
 % if svd_path:
 set(CLION_SVD_FILE_PATH "{{ _normalize_path(svd_path) }}" CACHE FILEPATH "Peripheral Registers Definitions File" FORCE)
 % end
@@ -61,11 +66,6 @@ SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
 SET(CMAKE_CXX_FLAGS "{{ _normalize_path(to_unix_path(cxx_flags)) }}")
 SET(CMAKE_C_FLAGS "{{ _normalize_path(to_unix_path(cc_flags)) }}")
-
-# Convert "Home Directory" that may contain unescaped backslashes on Windows
-% if "windows" in systype:
-file(TO_CMAKE_PATH $ENV{HOMEDRIVE}$ENV{HOMEPATH} ENV_HOME_PATH)
-% end
 
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
 % cc_stds = STD_RE.findall(cc_flags)
