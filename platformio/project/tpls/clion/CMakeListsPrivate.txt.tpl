@@ -8,15 +8,14 @@
 % import os
 % import re
 %
-% from platformio.compat import WINDOWS
-% from platformio.project.helpers import (load_project_ide_data)
+% from platformio.project.helpers import load_project_ide_data
 %
 % def _normalize_path(path):
 %   if project_dir in path:
 %     path = path.replace(project_dir, "${CMAKE_CURRENT_LIST_DIR}")
 %   elif user_home_dir in path:
 %     if "windows" in systype:
-%       path = path.replace(user_home_dir, "$ENV{HOMEDRIVE}$ENV{HOMEPATH}")
+%       path = path.replace(user_home_dir, "${ENV_HOME_PATH}")
 %     else:
 %       path = path.replace(user_home_dir, "$ENV{HOME}")
 %     end
@@ -62,6 +61,11 @@ SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
 SET(CMAKE_CXX_FLAGS "{{ _normalize_path(to_unix_path(cxx_flags)) }}")
 SET(CMAKE_C_FLAGS "{{ _normalize_path(to_unix_path(cc_flags)) }}")
+
+# Convert "Home Directory" that may contain unescaped backslashes on Windows
+% if "windows" in systype:
+file(TO_CMAKE_PATH $ENV{HOMEDRIVE}$ENV{HOMEPATH} ENV_HOME_PATH)
+% end
 
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
 % cc_stds = STD_RE.findall(cc_flags)

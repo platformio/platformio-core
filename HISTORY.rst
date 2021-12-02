@@ -19,6 +19,7 @@ PlatformIO Core 5
 - Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
 - Fixed an issue when the system environment variable does not override a project configuration option (`issue #4125 <https://github.com/platformio/platformio-core/issues/4125>`_)
 - Fixed an issue when referencing ``*_dir`` option from a custom project configuration environment (`issue #4110 <https://github.com/platformio/platformio-core/issues/4110>`_)
+- Fixed an issue with the CLion template that generated a broken CMake file if user's home directory contained an unescaped backslash (`issue #4071 <https://github.com/platformio/platformio-core/issues/4071>`_)
 
 5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~
