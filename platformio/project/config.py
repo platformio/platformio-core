@@ -271,7 +271,7 @@ class ProjectConfigBase(object):
                 if value == MISSING:
                     value = ""
                 value += ("\n" if value else "") + envvar_value
-            elif envvar_value and value == MISSING:
+            elif envvar_value:
                 value = envvar_value
 
         if value == MISSING:

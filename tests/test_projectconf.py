@@ -226,7 +226,7 @@ def test_sysenv_options(config):
         "-DSYSENVDEPS1 -DSYSENVDEPS2",
     ]
     assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
-    assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
+    assert config.get("env:extra_2", "upload_port") == "/dev/sysenv/port"
     assert config.get("env:base", "build_unflags") == ["-DREMOVE_MACRO"]
 
     # env var as option
@@ -244,10 +244,16 @@ def test_sysenv_options(config):
         "upload_port",
     ]
 
-    # sysenv
-    custom_core_dir = os.path.join(os.getcwd(), "custom")
+    # sysenv dirs
+    custom_core_dir = os.path.join(os.getcwd(), "custom-core")
+    custom_src_dir = os.path.join(os.getcwd(), "custom-src")
+    custom_build_dir = os.path.join(os.getcwd(), "custom-build")
     os.environ["PLATFORMIO_HOME_DIR"] = custom_core_dir
+    os.environ["PLATFORMIO_SRC_DIR"] = custom_src_dir
+    os.environ["PLATFORMIO_BUILD_DIR"] = custom_build_dir
     assert config.get("platformio", "core_dir") == os.path.realpath(custom_core_dir)
+    assert config.get("platformio", "src_dir") == os.path.realpath(custom_src_dir)
+    assert config.get("platformio", "build_dir") == os.path.realpath(custom_build_dir)
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
@@ -255,6 +261,8 @@ def test_sysenv_options(config):
     del os.environ["PLATFORMIO_UPLOAD_PORT"]
     del os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"]
     del os.environ["PLATFORMIO_HOME_DIR"]
+    del os.environ["PLATFORMIO_SRC_DIR"]
+    del os.environ["PLATFORMIO_BUILD_DIR"]
 
 
 def test_getraw_value(config):
