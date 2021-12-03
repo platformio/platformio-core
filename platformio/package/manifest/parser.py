@@ -517,8 +517,11 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         for k in ("sentence", "paragraph"):
             if k in properties and properties[k] not in lines:
                 lines.append(properties[k])
-        if len(lines) == 2 and not lines[0].endswith("."):
-            lines[0] += "."
+        if len(lines) == 2:
+            if not lines[0].endswith("."):
+                lines[0] += "."
+            if len(lines[0]) + len(lines[1]) >= 1000:
+                del lines[1]
         return " ".join(lines)
 
     def _parse_keywords(self, properties):
