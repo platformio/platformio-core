@@ -115,7 +115,7 @@ env.Replace(
     PROJECT_LIBDEPS_DIR=config.get("platformio", "libdeps_dir"),
     PROJECT_INCLUDE_DIR=config.get("platformio", "include_dir"),
     PROJECT_SRC_DIR=config.get("platformio", "src_dir"),
-    PROJECTSRC_DIR="PROJECT_SRC_DIR",  # legacy for dev/platform
+    PROJECTSRC_DIR="$PROJECT_SRC_DIR",  # legacy for dev/platform
     PROJECT_TEST_DIR=config.get("platformio", "test_dir"),
     PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
     PROJECTDATA_DIR="$PROJECT_DATA_DIR",  # legacy for dev/platform
