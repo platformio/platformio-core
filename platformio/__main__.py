@@ -67,7 +67,6 @@ try:
     def process_result(ctx, result, *_, **__):
         _process_result(ctx, result)
 
-
 except (AttributeError, TypeError):  # legacy support for CLick > 8.0.1
 
     @cli.resultcallback()

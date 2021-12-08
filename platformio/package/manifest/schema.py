@@ -33,7 +33,6 @@ if MARSHMALLOW_2:
     class CompatSchema(Schema):
         pass
 
-
 else:
 
     class CompatSchema(Schema):
