@@ -16,6 +16,10 @@ import json
 from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
+import pytest
+
+from platformio import proc
+from platformio.commands import platform as cli_platform
 from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.project import project_init as cmd_init
 from platformio.project.config import ProjectConfig
@@ -177,3 +181,83 @@ def test_init_incorrect_board(clirunner):
     assert result.exit_code == 2
     assert "Error: Invalid value for" in result.output
     assert isinstance(result.exception, SystemExit)
+
+
+@pytest.mark.skipif(not proc.is_ci(), reason="runs on CI")
+def test_init_ide_clion(clirunner, isolated_pio_core, validate_cliresult, tmpdir):
+    result = clirunner.invoke(
+        cli_platform.platform_install,
+        [
+            "ststm32",
+            "--skip-default-package",
+            "--with-package",
+            "tool-cmake",
+            "--with-package",
+            "tool-ninja",
+        ],
+    )
+
+    # Add extra libraries to cover cases with possible unwanted backslashes
+    lib_extra_dirs = isolated_pio_core.join("extra_libs").mkdir()
+    extra_lib = lib_extra_dirs.join("extra_lib").mkdir()
+    extra_lib.join("extra_lib.h").write(" ")
+    extra_lib.join("extra_lib.cpp").write(" ")
+
+    with tmpdir.as_cwd():
+        result = clirunner.invoke(
+            cmd_init,
+            [
+                "-b",
+                "nucleo_f401re",
+                "--ide",
+                "clion",
+                "--project-option",
+                "framework=arduino",
+                "--project-option",
+                "lib_extra_dirs=%s" % str(lib_extra_dirs),
+            ],
+        )
+
+        validate_cliresult(result)
+        assert all(isfile(f) for f in ("CMakeLists.txt", "CMakeListsPrivate.txt"))
+
+        tmpdir.join("src").join("main.cpp").write(
+            """#include <Arduino.h>
+#include "extra_lib.h"
+void setup(){}
+void loop(){}
+"""
+        )
+        cmake_path = str(
+            isolated_pio_core.join("packages")
+            .join("tool-cmake")
+            .join("bin")
+            .join("cmake")
+        )
+        tmpdir.join("build_dir").mkdir()
+        result = proc.exec_command(
+            [
+                cmake_path,
+                "-DCMAKE_BUILD_TYPE=nucleo_f401re",
+                "-DCMAKE_MAKE_PROGRAM=%s"
+                % str(
+                    isolated_pio_core.join("packages").join("tool-ninja").join("ninja")
+                ),
+                "-G",
+                "Ninja",
+                "-S",
+                str(tmpdir),
+                "-B",
+                "build_dir",
+            ]
+        )
+
+        # Check if CMake was able to generate a native project for Ninja
+        assert result["returncode"] == 0, result["out"]
+
+        result = proc.exec_command(
+            [cmake_path, "--build", "build_dir", "--target", "Debug"]
+        )
+
+        assert result["returncode"] == 0
+        assert "[SUCCESS]" in str(result["out"])
