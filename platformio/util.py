@@ -92,8 +92,6 @@ def singleton(cls):
 def get_systype():
     type_ = platform.system().lower()
     arch = platform.machine().lower()
-    if type_ == "windows":
-        arch = "amd64" if platform.architecture()[0] == "64bit" else "x86"
     return "%s_%s" % (type_, arch) if arch else type_
 
 
