@@ -1,5 +1,5 @@
-PlatformIO
-==========
+PlatformIO Core
+===============
 
 .. image:: https://github.com/platformio/platformio-core/workflows/Core/badge.svg
     :target: https://docs.platformio.org/page/core/index.html
