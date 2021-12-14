@@ -20,6 +20,7 @@ import sys
 from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
+from platformio.exception import UserSideException
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
@@ -152,7 +153,15 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
     ]
     if "linux" in systype:
         args.extend(["--no-binary", ":all:"])
-    subprocess.check_call(args + get_contrib_pysite_deps())
+    try:
+        subprocess.run(args + get_contrib_pysite_deps(), check=True)
+    except subprocess.CalledProcessError as exc:
+        if "linux" in systype:
+            raise UserSideException(
+                "\n\nPlease ensure that the next packages are installed:\n\n"
+                "sudo apt install python3-dev libffi-dev libssl-dev\n"
+            )
+        raise exc
 
     # build manifests
     with open(
@@ -212,7 +221,8 @@ def get_contrib_pysite_deps():
         # pyopenssl depends on it, use RUST-less version
         "cryptography >= 3.3, < 35.0.0",
         "pyopenssl >= 16.0.0, <= 21.0.0",
-        "service_identity >= 18.1.0, <= 21.1.0 ",
+        "service_identity >= 18.1.0, <= 21.1.0",
+        "asdasdasdasdasdas",
     ]
 
     sys_type = util.get_systype()
