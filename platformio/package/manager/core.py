@@ -209,7 +209,7 @@ def get_contrib_pysite_deps():
     sys_type = util.get_systype()
     py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
-    twisted_version = "20.3.0"
+    twisted_version = "21.7.0"
     result = [
         "twisted == %s" % twisted_version,
     ]
@@ -218,7 +218,7 @@ def get_contrib_pysite_deps():
     result.extend(
         [
             # pyopenssl depends on it, use RUST-less version
-            "cryptography == 3.3.2",
+            "cryptography >= 3.3, < 35.0.0",
             "pyopenssl >= 16.0.0",
             "service_identity >= 18.1.0",
             "idna >= 0.6, != 2.3",
