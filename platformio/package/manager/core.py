@@ -152,8 +152,7 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
     ]
     if "linux" in systype:
         args.extend(["--no-binary", ":all:"])
-    for dep in get_contrib_pysite_deps():
-        subprocess.check_call(args + [dep])
+    subprocess.check_call(args + get_contrib_pysite_deps())
 
     # build manifests
     with open(
@@ -206,25 +205,18 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
 
 
 def get_contrib_pysite_deps():
-    sys_type = util.get_systype()
-    py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
-
-    twisted_version = "21.7.0"
+    twisted_version = "20.3.0"
     result = [
+        # twisted[tls], see setup.py for %twisted_version%
         "twisted == %s" % twisted_version,
+        # pyopenssl depends on it, use RUST-less version
+        "cryptography >= 3.3, < 35.0.0",
+        "pyopenssl >= 16.0.0, <= 21.0.0",
+        "service_identity >= 18.1.0, <= 21.1.0 ",
     ]
 
-    # twisted[tls], see setup.py for %twisted_version%
-    result.extend(
-        [
-            # pyopenssl depends on it, use RUST-less version
-            "cryptography >= 3.3, < 35.0.0",
-            "pyopenssl >= 16.0.0",
-            "service_identity >= 18.1.0",
-            "idna >= 0.6, != 2.3",
-        ]
-    )
-
+    sys_type = util.get_systype()
+    py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
     if "windows" in sys_type:
         result.append("pypiwin32 == 223")
         # workaround for twisted wheels
