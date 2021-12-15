@@ -608,7 +608,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return None
 
     def _parse_export(self):
-        result = {"exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]}
+        result = {}
         include = None
         if self.remote_url:
             url_attrs = urlparse(self.remote_url)

@@ -22,7 +22,11 @@ import tempfile
 from platformio import fs
 from platformio.compat import IS_WINDOWS
 from platformio.package.exception import PackageException, UserSideException
-from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
+from platformio.package.manifest.parser import (
+    LibraryPropertiesManifestParser,
+    ManifestFileType,
+    ManifestParserFactory,
+)
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.package.meta import PackageItem
 from platformio.package.unpack import FileUnpacker
@@ -55,6 +59,10 @@ class PackagePacker(object):
         "doc",
         "docs",
         "mkdocs",
+        "doxygen",
+        "*.doxyfile",
+        "html",
+        "media",
         "**/*.[pP][dD][fF]",
         "**/*.[dD][oO][cC]?",
         "**/*.[pP][pP][tT]?",
@@ -79,10 +87,8 @@ class PackagePacker(object):
     EXCLUDE_LIBRARY_EXTRA = [
         "assets",
         "extra",
+        "extras",
         "resources",
-        "html",
-        "media",
-        "doxygen",
         "**/build/",
         "**/*.flat",
         "**/*.[jJ][aA][rR]",
@@ -97,6 +103,7 @@ class PackagePacker(object):
     def __init__(self, package, manifest_uri=None):
         self.package = package
         self.manifest_uri = manifest_uri
+        self.manifest_parser = None
 
     @staticmethod
     def get_archive_name(name, version, system=None):
@@ -128,7 +135,8 @@ class PackagePacker(object):
                 src = tmp_dir
 
             src = self.find_source_root(src)
-            manifest = self.load_manifest(src)
+            self.manifest_parser = ManifestParserFactory.new_from_dir(src)
+            manifest = ManifestSchema().load_manifest(self.manifest_parser.as_dict())
             filename = self.get_archive_name(
                 manifest["name"],
                 manifest["version"],
@@ -143,11 +151,6 @@ class PackagePacker(object):
             return self._create_tarball(src, dst, manifest)
         finally:
             shutil.rmtree(tmp_dir)
-
-    @staticmethod
-    def load_manifest(src):
-        mp = ManifestParserFactory.new_from_dir(src)
-        return ManifestSchema().load_manifest(mp.as_dict())
 
     def find_source_root(self, src):
         if self.manifest_uri:
@@ -214,7 +217,9 @@ class PackagePacker(object):
         # exclude items declared in manifest
         result += ["-<%s>" % p for p in exclude or []]
         # apply extra excludes if no custom "export" field in manifest
-        if not include and not exclude:
+        if (not include and not exclude) or isinstance(
+            self.manifest_parser, LibraryPropertiesManifestParser
+        ):
             result += ["-<%s>" % p for p in exclude_extra]
         # automatically include manifests
         result += ["+<%s>" % p for p in self.INCLUDE_DEFAULT]
