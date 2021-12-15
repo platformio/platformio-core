@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.2.4 (2021-??-??)
+5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
 
 - Added support for a new ``headers`` field in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html>`__ (declare a list of header files that can be included in a project source files using ``#include <...>`` directive)
