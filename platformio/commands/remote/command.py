@@ -37,7 +37,7 @@ from platformio.project.exception import NotPlatformIOProjectError
 @click.pass_context
 def cli(ctx, agent):
     ctx.obj = agent
-    inject_contrib_pysite(verify_openssl=True)
+    inject_contrib_pysite()
 
 
 @cli.group("agent", short_help="Start a new agent or list active")

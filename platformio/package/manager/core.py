@@ -102,7 +102,7 @@ def remove_unnecessary_core_packages(dry_run=False):
     return candidates
 
 
-def inject_contrib_pysite(verify_openssl=False):
+def inject_contrib_pysite():
     # pylint: disable=import-outside-toplevel
     from site import addsitedir
 
@@ -120,12 +120,10 @@ def inject_contrib_pysite(verify_openssl=False):
     addsitedir(contrib_pysite_dir)
     sys.path.insert(0, contrib_pysite_dir)
 
-    if not verify_openssl:
-        return True
-
     try:
         # pylint: disable=import-error,unused-import,unused-variable
         from OpenSSL import SSL
+
     except:  # pylint: disable=bare-except
         build_contrib_pysite_package(contrib_pysite_dir)
 
@@ -222,7 +220,6 @@ def get_contrib_pysite_deps():
         "cryptography >= 3.3, < 35.0.0",
         "pyopenssl >= 16.0.0, <= 21.0.0",
         "service_identity >= 18.1.0, <= 21.1.0",
-        "asdasdasdasdasdas",
     ]
 
     sys_type = util.get_systype()
