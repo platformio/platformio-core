@@ -271,16 +271,15 @@ class ProjectConfigBase(object):
                 if value == MISSING:
                     value = ""
                 value += ("\n" if value else "") + envvar_value
-            elif envvar_value and value == MISSING:
+            elif envvar_value:
                 value = envvar_value
 
         if value == MISSING:
             value = default if default != MISSING else option_meta.default
+        if callable(value):
+            value = value()
         if value == MISSING:
             return None
-
-        if option_meta.validate:
-            value = option_meta.validate(value)
 
         return self._expand_interpolations(value)
 
@@ -318,6 +317,8 @@ class ProjectConfigBase(object):
         if not option_meta:
             return value
 
+        if option_meta.validate:
+            value = option_meta.validate(value)
         if option_meta.multiple:
             value = self.parse_multi_values(value or [])
         try:

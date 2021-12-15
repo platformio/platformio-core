@@ -86,7 +86,7 @@ class DefectItem(object):
             "severity": self.SEVERITY_LABELS[self.severity],
             "category": self.category,
             "message": self.message,
-            "file": os.path.realpath(self.file),
+            "file": os.path.abspath(self.file),
             "line": self.line,
             "column": self.column,
             "callstack": self.callstack,

@@ -125,7 +125,7 @@ class LibBuilderBase(object):
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
         self.envorigin = env.Clone()
-        self.path = os.path.realpath(env.subst(path))
+        self.path = os.path.abspath(env.subst(path))
         self.verbose = verbose
 
         try:
@@ -290,7 +290,7 @@ class LibBuilderBase(object):
             if self.extra_script:
                 self.env.SConscriptChdir(1)
                 self.env.SConscript(
-                    os.path.realpath(self.extra_script),
+                    os.path.abspath(self.extra_script),
                     exports={"env": self.env, "pio_lib_builder": self},
                 )
             self.env.ProcessUnFlags(self.build_unflags)
@@ -750,14 +750,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return os.path.realpath(self._manifest.get("build").get("includeDir"))
+                return os.path.abspath(self._manifest.get("build").get("includeDir"))
         return LibBuilderBase.include_dir.fget(self)  # pylint: disable=no-member
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return os.path.realpath(self._manifest.get("build").get("srcDir"))
+                return os.path.abspath(self._manifest.get("build").get("srcDir"))
         return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     @property
@@ -1024,7 +1024,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     found_incompat = False
 
     for storage_dir in env.GetLibSourceDirs():
-        storage_dir = os.path.realpath(storage_dir)
+        storage_dir = os.path.abspath(storage_dir)
         if not os.path.isdir(storage_dir):
             continue
         for item in sorted(os.listdir(storage_dir)):

@@ -13,61 +13,75 @@
 # limitations under the License.
 
 import os
-import subprocess
+from enum import Enum
 
 import click
+
+from platformio.compat import IS_MACOS
+
+
+class ShellType(Enum):
+    FISH = "fish"
+    ZSH = "zsh"
+    BASH = "bash"
 
 
 def get_completion_install_path(shell):
     home_dir = os.path.expanduser("~")
     prog_name = click.get_current_context().find_root().info_name
-    if shell == "fish":
+    if shell == ShellType.FISH:
         return os.path.join(
             home_dir, ".config", "fish", "completions", "%s.fish" % prog_name
         )
-    if shell == "bash":
-        return os.path.join(home_dir, ".bash_completion")
-    if shell == "zsh":
+    if shell == ShellType.ZSH:
         return os.path.join(home_dir, ".zshrc")
-    if shell == "powershell":
-        return subprocess.check_output(
-            ["powershell", "-NoProfile", "echo $profile"]
-        ).strip()
+    if shell == ShellType.BASH:
+        return os.path.join(home_dir, ".bash_completion")
+    raise click.ClickException("%s is not supported." % shell)
+
+
+def get_completion_code(shell):
+    if shell == ShellType.FISH:
+        return "eval (env _PIO_COMPLETE=fish_source pio)"
+    if shell == ShellType.ZSH:
+        code = "autoload -Uz compinit\ncompinit\n" if IS_MACOS else ""
+        return code + 'eval "$(_PIO_COMPLETE=zsh_source pio)"'
+    if shell == ShellType.BASH:
+        return 'eval "$(_PIO_COMPLETE=bash_source pio)"'
     raise click.ClickException("%s is not supported." % shell)
 
 
 def is_completion_code_installed(shell, path):
-    if shell == "fish" or not os.path.exists(path):
+    if shell == ShellType.FISH or not os.path.exists(path):
         return False
-
-    import click_completion  # pylint: disable=import-error,import-outside-toplevel
-
     with open(path, encoding="utf8") as fp:
-        return click_completion.get_code(shell=shell) in fp.read()
+        return get_completion_code(shell) in fp.read()
 
 
 def install_completion_code(shell, path):
-    import click_completion  # pylint: disable=import-error,import-outside-toplevel
-
     if is_completion_code_installed(shell, path):
         return None
-
-    return click_completion.install(shell=shell, path=path, append=shell != "fish")
+    append = shell != ShellType.FISH
+    with open(path, mode="a" if append else "w", encoding="utf8") as fp:
+        if append:
+            fp.write("\n\n# Begin: PlatformIO Core completion support\n")
+        fp.write(get_completion_code(shell))
+        if append:
+            fp.write("\n# End: PlatformIO Core completion support\n\n")
+    return True
 
 
 def uninstall_completion_code(shell, path):
     if not os.path.exists(path):
         return True
-    if shell == "fish":
+    if shell == ShellType.FISH:
         os.remove(path)
         return True
-
-    import click_completion  # pylint: disable=import-error,import-outside-toplevel
 
     with open(path, "r+", encoding="utf8") as fp:
         contents = fp.read()
         fp.seek(0)
         fp.truncate()
-        fp.write(contents.replace(click_completion.get_code(shell=shell), ""))
+        fp.write(contents.replace(get_completion_code(shell), ""))
 
     return True

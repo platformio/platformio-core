@@ -28,7 +28,8 @@ def test_library_json_parser():
     contents = """
 {
     "name": "TestPackage",
-    "keywords": "kw1, KW2, kw3",
+    "keywords": "kw1, KW2, kw3, KW2",
+    "headers": "include1.h, Include2.hpp",
     "platforms": ["atmelavr", "espressif"],
     "repository": {
         "type": "git",
@@ -62,6 +63,7 @@ def test_library_json_parser():
             },
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
+            "headers": ["include1.h", "Include2.hpp"],
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
             "dependencies": [
@@ -76,8 +78,8 @@ def test_library_json_parser():
     contents = """
 {
     "keywords": ["sound", "audio", "music", "SD", "card", "playback"],
+    "headers": ["include 1.h", "include Space.hpp"],
     "frameworks": "arduino",
-    "platforms": "atmelavr",
     "export": {
         "exclude": "audio_samples"
     },
@@ -94,9 +96,9 @@ def test_library_json_parser():
         raw_data,
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
+            "headers": ["include 1.h", "include Space.hpp"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
-            "platforms": ["atmelavr"],
             "dependencies": [
                 {"name": "deps1", "version": "1.0.0"},
                 {
@@ -202,9 +204,11 @@ version=1.2.3
 author=SomeAuthor <info AT author.com>, Maintainer Author (nickname) <www.example.com>
 maintainer=Maintainer Author (nickname) <www.example.com>
 sentence=This is Arduino library
+category=Signal Input/Output
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 ignore_empty_field=
+includes=Arduino.h, Arduino Space.hpp
 """
     raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
     raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
@@ -215,7 +219,6 @@ ignore_empty_field=
             "version": "1.2.3",
             "description": "This is Arduino library",
             "sentence": "This is Arduino library",
-            "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
                 "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
@@ -224,7 +227,10 @@ ignore_empty_field=
                 {"name": "SomeAuthor", "email": "info@author.com"},
                 {"name": "Maintainer Author", "maintainer": True},
             ],
-            "keywords": ["uncategorized"],
+            "category": "Signal Input/Output",
+            "keywords": ["signal", "input", "output"],
+            "headers": ["Arduino.h", "Arduino Space.hpp"],
+            "includes": "Arduino.h, Arduino Space.hpp",
             "customField": "Custom Value",
             "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
             "dependencies": [
@@ -291,6 +297,7 @@ maintainer=Rocket Scream Electronics
     assert data["authors"] == [
         {"name": "Rocket Scream Electronics", "maintainer": True}
     ]
+    assert "keywords" not in data
 
 
 def test_library_json_schema():
@@ -434,7 +441,7 @@ sentence=A library for monochrome TFTs and OLEDs
 paragraph=Supported display controller: SSD1306, SSD1309, SSD1322, SSD1325
 category=Display
 url=https://github.com/olikraus/u8glib
-architectures=avr,sam
+architectures=avr,sam,samd
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
     raw_data = parser.ManifestParserFactory.new(
@@ -530,6 +537,7 @@ includes=MozziGuts.h
             },
             "platforms": ["*"],
             "frameworks": ["arduino"],
+            "headers": ["MozziGuts.h"],
             "export": {
                 "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
@@ -552,7 +560,7 @@ def test_platform_json_schema():
   "name": "atmelavr",
   "title": "Atmel AVR",
   "description": "Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.",
-  "keywords": "arduino, atmel, avr",
+  "keywords": "arduino, atmel, avr, MCU",
   "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
   "license": "Apache-2.0",
   "engines": {
@@ -576,6 +584,7 @@ def test_platform_json_schema():
   "packages": {
     "toolchain-atmelavr": {
       "type": "toolchain",
+      "owner": "platformio",
       "version": "~1.50400.0"
     },
     "framework-arduinoavr": {
@@ -611,7 +620,7 @@ def test_platform_json_schema():
                 "on the industrys most code-efficient architecture for C and "
                 "assembly programming."
             ),
-            "keywords": ["arduino", "atmel", "avr"],
+            "keywords": ["arduino", "atmel", "avr", "mcu"],
             "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
             "license": "Apache-2.0",
             "repository": {
@@ -623,7 +632,11 @@ def test_platform_json_schema():
             "dependencies": [
                 {"name": "framework-arduinoavr", "version": "~4.2.0"},
                 {"name": "tool-avrdude", "version": "~1.60300.0"},
-                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
+                {
+                    "name": "toolchain-atmelavr",
+                    "owner": "platformio",
+                    "version": "~1.50400.0",
+                },
             ],
         },
     )
@@ -636,7 +649,7 @@ def test_package_json_schema():
     "description": "SCons software construction tool",
     "keywords": "SCons, build",
     "homepage": "http://www.scons.org",
-    "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l"],
+    "system": ["linux_armv6l", "linux_armv7l", "linux_armv8l", "LINUX_ARMV7L"],
     "version": "3.30101.0"
 }
 """

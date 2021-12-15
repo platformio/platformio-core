@@ -61,7 +61,7 @@ class GDBClientProcess(DebugClientProcess):
     def _get_data_dir(gdb_path):
         if "msp430" in gdb_path:
             return None
-        gdb_data_dir = os.path.realpath(
+        gdb_data_dir = os.path.abspath(
             os.path.join(os.path.dirname(gdb_path), "..", "share", "gdb")
         )
         return gdb_data_dir if os.path.isdir(gdb_data_dir) else None

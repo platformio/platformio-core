@@ -31,7 +31,7 @@ from platformio.project.helpers import get_default_projects_dir
 
 def projects_dir_validate(projects_dir):
     assert os.path.isdir(projects_dir)
-    return os.path.realpath(projects_dir)
+    return os.path.abspath(projects_dir)
 
 
 DEFAULT_SETTINGS = {

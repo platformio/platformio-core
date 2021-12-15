@@ -115,10 +115,10 @@ env.Replace(
     PROJECT_LIBDEPS_DIR=config.get("platformio", "libdeps_dir"),
     PROJECT_INCLUDE_DIR=config.get("platformio", "include_dir"),
     PROJECT_SRC_DIR=config.get("platformio", "src_dir"),
-    PROJECTSRC_DIR=config.get("platformio", "src_dir"),  # legacy for dev/platform
+    PROJECTSRC_DIR="$PROJECT_SRC_DIR",  # legacy for dev/platform
     PROJECT_TEST_DIR=config.get("platformio", "test_dir"),
     PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
-    PROJECTDATA_DIR=config.get("platformio", "data_dir"),  # legacy for dev/platform
+    PROJECTDATA_DIR="$PROJECT_DATA_DIR",  # legacy for dev/platform
     PROJECT_BUILD_DIR=config.get("platformio", "build_dir"),
     BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
     LIBSOURCE_DIRS=[
@@ -128,15 +128,20 @@ env.Replace(
     ],
 )
 
-if (
-    compat.IS_WINDOWS
-    and sys.version_info >= (3, 8)
-    and env["PROJECT_DIR"].startswith("\\\\")
-):
+if int(ARGUMENTS.get("ISATTY", 0)):
+    # pylint: disable=protected-access
+    click._compat.isatty = lambda stream: True
+
+if compat.IS_WINDOWS and sys.version_info >= (3, 8) and os.getcwd().startswith("\\\\"):
+    click.secho("!!! WARNING !!!\t\t" * 3, fg="red")
     click.secho(
-        "There is a known issue with Python 3.8+ and mapped network drives on "
-        "Windows.\nSee a solution at:\n"
-        "https://github.com/platformio/platformio-core/issues/3417",
+        "Your project is located on a mapped network drive but the "
+        "current command-line shell does not support the UNC paths.",
+        fg="yellow",
+    )
+    click.secho(
+        "Please move your project to a physical drive or check this workaround: "
+        "https://bit.ly/3kuU5mP\n",
         fg="yellow",
     )
 
@@ -144,10 +149,6 @@ if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
         os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
-
-if int(ARGUMENTS.get("ISATTY", 0)):
-    # pylint: disable=protected-access
-    click._compat.isatty = lambda stream: True
 
 is_clean_all = "cleanall" in COMMAND_LINE_TARGETS
 if env.GetOption("clean") or is_clean_all:

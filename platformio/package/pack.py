@@ -42,6 +42,7 @@ class PackagePacker(object):
         ".vscode",
         ".cache",
         "**/.cache",
+        "**/__pycache__",
         # VCS
         ".git/",
         ".hg/",

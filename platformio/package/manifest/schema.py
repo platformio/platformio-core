@@ -33,7 +33,6 @@ if MARSHMALLOW_2:
     class CompatSchema(Schema):
         pass
 
-
 else:
 
     class CompatSchema(Schema):
@@ -209,6 +208,13 @@ class ManifestSchema(BaseSchema):
             ]
         )
     )
+    headers = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=255),
+            ]
+        )
+    )
 
     # platform.json specific
     title = fields.Str(validate=validate.Length(min=1, max=100))
@@ -253,7 +259,7 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.14"
+        version = "3.15"
         spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data/"
             "v%s/json/licenses.json" % version

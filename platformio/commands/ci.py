@@ -33,7 +33,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     for i, p in enumerate(value):
         if p.startswith("~"):
             value[i] = fs.expanduser(p)
-        value[i] = os.path.realpath(value[i])
+        value[i] = os.path.abspath(value[i])
         if not glob.glob(value[i], recursive=True):
             invalid_path = p
             break
@@ -162,7 +162,7 @@ def _exclude_contents(dst_dir, patterns):
     for p in patterns:
         contents += glob.glob(os.path.join(glob.escape(dst_dir), p), recursive=True)
     for path in contents:
-        path = os.path.realpath(path)
+        path = os.path.abspath(path)
         if os.path.isdir(path):
             fs.rmtree(path)
         elif os.path.isfile(path):

@@ -93,7 +93,7 @@ class ProjectRPC:
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
                 data[key] = [
-                    fs.expanduser(d) if d.startswith("~") else os.path.realpath(d)
+                    fs.expanduser(d) if d.startswith("~") else os.path.abspath(d)
                     for d in data[key]
                     if os.path.isdir(d)
                 ]

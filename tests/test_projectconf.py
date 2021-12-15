@@ -26,7 +26,8 @@ from platformio.project.exception import InvalidProjectConfError, UnknownEnvName
 BASE_CONFIG = """
 [platformio]
 env_default = base, extra_2
-build_dir = ~/tmp/pio-$PROJECT_HASH
+src_dir = ${custom.src_dir}
+build_dir = ${custom.build_dir}
 extra_configs =
   extra_envs.ini
   extra_debug.ini
@@ -53,6 +54,8 @@ extends = strict_ldf, monitor_custom
 build_flags = -D RELEASE
 
 [custom]
+src_dir = source
+build_dir = ~/tmp/pio-$PROJECT_HASH
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
 extra_flags = ${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}
@@ -226,7 +229,7 @@ def test_sysenv_options(config):
         "-DSYSENVDEPS1 -DSYSENVDEPS2",
     ]
     assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
-    assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
+    assert config.get("env:extra_2", "upload_port") == "/dev/sysenv/port"
     assert config.get("env:base", "build_unflags") == ["-DREMOVE_MACRO"]
 
     # env var as option
@@ -244,10 +247,22 @@ def test_sysenv_options(config):
         "upload_port",
     ]
 
-    # sysenv
-    custom_core_dir = os.path.join(os.getcwd(), "custom")
+    # sysenv dirs
+    custom_core_dir = os.path.join(os.getcwd(), "custom-core")
+    custom_src_dir = os.path.join(os.getcwd(), "custom-src")
+    custom_build_dir = os.path.join(os.getcwd(), "custom-build")
     os.environ["PLATFORMIO_HOME_DIR"] = custom_core_dir
-    assert config.get("platformio", "core_dir") == os.path.realpath(custom_core_dir)
+    os.environ["PLATFORMIO_SRC_DIR"] = custom_src_dir
+    os.environ["PLATFORMIO_BUILD_DIR"] = custom_build_dir
+    assert os.path.realpath(config.get("platformio", "core_dir")) == os.path.realpath(
+        custom_core_dir
+    )
+    assert os.path.realpath(config.get("platformio", "src_dir")) == os.path.realpath(
+        custom_src_dir
+    )
+    assert os.path.realpath(config.get("platformio", "build_dir")) == os.path.realpath(
+        custom_build_dir
+    )
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
@@ -255,6 +270,8 @@ def test_sysenv_options(config):
     del os.environ["PLATFORMIO_UPLOAD_PORT"]
     del os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"]
     del os.environ["PLATFORMIO_HOME_DIR"]
+    del os.environ["PLATFORMIO_SRC_DIR"]
+    del os.environ["PLATFORMIO_BUILD_DIR"]
 
 
 def test_getraw_value(config):
@@ -289,6 +306,7 @@ def test_getraw_value(config):
         config.getraw("custom", "debug_server")
         == f"\n{packages_dir}/tool-openocd/openocd\n--help"
     )
+    assert config.getraw("platformio", "build_dir") == "~/tmp/pio-$PROJECT_HASH"
 
 
 def test_get_value(config):
@@ -319,10 +337,16 @@ def test_get_value(config):
         os.path.join(DEFAULT_CORE_DIR, "packages/tool-openocd/openocd"),
         "--help",
     ]
+    # test relative dir
+    assert config.get("platformio", "src_dir") == os.path.abspath(
+        os.path.join(os.getcwd(), "source")
+    )
 
 
 def test_items(config):
     assert config.items("custom") == [
+        ("src_dir", "source"),
+        ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
         ("debug_flags", "-D DEBUG=1"),
         ("lib_flags", "-lc -lm"),
         ("extra_flags", ""),
@@ -465,7 +489,8 @@ def test_dump(tmpdir_factory):
         (
             "platformio",
             [
-                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
+                ("src_dir", "${custom.src_dir}"),
+                ("build_dir", "${custom.build_dir}"),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
                 ("default_envs", ["base", "extra_2"]),
             ],
@@ -489,6 +514,8 @@ def test_dump(tmpdir_factory):
         (
             "custom",
             [
+                ("src_dir", "source"),
+                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
                 ("debug_flags", "-D RELEASE"),
                 ("lib_flags", "-lc -lm"),
                 ("extra_flags", "${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}"),

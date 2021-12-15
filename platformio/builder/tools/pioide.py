@@ -32,14 +32,14 @@ def _dump_includes(env):
         env.subst("$PROJECT_SRC_DIR"),
     ]
     includes["build"].extend(
-        [os.path.realpath(env.subst(item)) for item in env.get("CPPPATH", [])]
+        [os.path.abspath(env.subst(item)) for item in env.get("CPPPATH", [])]
     )
 
     # installed libs
     includes["compatlib"] = []
     for lb in env.GetLibBuilders():
         includes["compatlib"].extend(
-            [os.path.realpath(inc) for inc in lb.get_include_dirs()]
+            [os.path.abspath(inc) for inc in lb.get_include_dirs()]
         )
 
     # includes from toolchains
@@ -56,9 +56,7 @@ def _dump_includes(env):
             os.path.join(toolchain_dir, "*", "include*"),
         ]
         for g in toolchain_incglobs:
-            includes["toolchain"].extend(
-                [os.path.realpath(inc) for inc in glob.glob(g)]
-            )
+            includes["toolchain"].extend([os.path.abspath(inc) for inc in glob.glob(g)])
 
     # include Unity framework if there are tests in project
     includes["unity"] = []
@@ -132,7 +130,7 @@ def _dump_defines(env):
 def _get_svd_path(env):
     svd_path = env.GetProjectOption("debug_svd_path")
     if svd_path:
-        return os.path.realpath(svd_path)
+        return os.path.abspath(svd_path)
 
     if "BOARD" not in env:
         return None
@@ -147,7 +145,7 @@ def _get_svd_path(env):
     # default file from ./platform/misc/svd folder
     p = env.PioPlatform()
     if os.path.isfile(os.path.join(p.get_dir(), "misc", "svd", svd_path)):
-        return os.path.realpath(os.path.join(p.get_dir(), "misc", "svd", svd_path))
+        return os.path.abspath(os.path.join(p.get_dir(), "misc", "svd", svd_path))
     return None
 
 

@@ -30,8 +30,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
-          <buildCommand>{{platformio_path}} -f -c netbeans run</buildCommand>
-          <cleanCommand>{{platformio_path}} -f -c netbeans run --target clean</cleanCommand>
+          <buildCommand>"{{platformio_path}}" -f -c netbeans run</buildCommand>
+          <cleanCommand>"{{platformio_path}}" -f -c netbeans run --target clean</cleanCommand>
           <executablePath></executablePath>
           <cTool>
             % cleaned_includes = filter_includes(includes)

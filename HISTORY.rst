@@ -8,6 +8,21 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.4 (2021-12-15)
+~~~~~~~~~~~~~~~~~~
+
+- Added support for a new ``headers`` field in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html>`__ (declare a list of header files that can be included in a project source files using ``#include <...>`` directive)
+- Improved tab completion support for Bash, ZSH, and Fish shells (`issue #4114 <https://github.com/platformio/platformio-core/issues/4114>`_)
+- Improved support for projects located on a network share (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_, `issue #3926 <https://github.com/platformio/platformio-core/issues/3926>`_, `issue #4099 <https://github.com/platformio/platformio-core/issues/4099>`_)
+- Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
+- Upgraded build engine to the SCons 4.3 (`release notes <https://github.com/SCons/scons/blob/rel_4.3.0/CHANGES.txt>`__)
+- Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
+- Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
+- Fixed an issue when the system environment variable does not override a project configuration option (`issue #4125 <https://github.com/platformio/platformio-core/issues/4125>`_)
+- Fixed an issue when referencing ``*_dir`` option from a custom project configuration environment (`issue #4110 <https://github.com/platformio/platformio-core/issues/4110>`_)
+- Fixed an issue with the CLion template that generated a broken CMake file if user's home directory contained an unescaped backslash (`issue #4071 <https://github.com/platformio/platformio-core/issues/4071>`_)
+- Fixed an issue with wrong detecting Windows architecture when Python 32bit is used (`issue #4134 <https://github.com/platformio/platformio-core/issues/4134>`_)
+
 5.2.3 (2021-11-05)
 ~~~~~~~~~~~~~~~~~~
 

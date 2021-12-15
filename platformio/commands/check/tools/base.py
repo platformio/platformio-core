@@ -201,11 +201,11 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
 
         def _add_file(path):
             if path.endswith(header_extensions):
-                result["headers"].append(os.path.realpath(path))
+                result["headers"].append(os.path.abspath(path))
             elif path.endswith(c_extension):
-                result["c"].append(os.path.realpath(path))
+                result["c"].append(os.path.abspath(path))
             elif path.endswith(cpp_extensions):
-                result["c++"].append(os.path.realpath(path))
+                result["c++"].append(os.path.abspath(path))
 
         for pattern in patterns:
             for item in glob.glob(pattern, recursive=True):

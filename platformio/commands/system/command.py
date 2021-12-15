@@ -14,7 +14,6 @@
 
 import json
 import platform
-import subprocess
 import sys
 
 import click
@@ -22,6 +21,7 @@ from tabulate import tabulate
 
 from platformio import __version__, compat, fs, proc, util
 from platformio.commands.system.completion import (
+    ShellType,
     get_completion_install_path,
     install_completion_code,
     uninstall_completion_code,
@@ -150,23 +150,11 @@ def system_prune(force, dry_run, cache, core_packages, platform_packages):
 
 @cli.group("completion", short_help="Shell completion support")
 def completion():
-    # pylint: disable=import-error,import-outside-toplevel
-    try:
-        import click_completion  # pylint: disable=unused-import,unused-variable
-    except ImportError:
-        click.echo("Installing dependent packages...")
-        subprocess.check_call(
-            [proc.get_pythonexe_path(), "-m", "pip", "install", "click-completion"],
-        )
+    pass
 
 
 @completion.command("install", short_help="Install shell completion files/code")
-@click.option(
-    "--shell",
-    default=None,
-    type=click.Choice(["fish", "bash", "zsh", "powershell", "auto"]),
-    help="The shell type, default=auto",
-)
+@click.argument("shell", type=click.Choice([t.value for t in ShellType]))
 @click.option(
     "--path",
     type=click.Path(file_okay=True, dir_okay=False, readable=True, resolve_path=True),
@@ -174,26 +162,18 @@ def completion():
     "The standard installation path is used by default.",
 )
 def completion_install(shell, path):
-
-    import click_completion  # pylint: disable=import-outside-toplevel,import-error
-
-    shell = shell or click_completion.get_auto_shell()
+    shell = ShellType(shell)
     path = path or get_completion_install_path(shell)
     install_completion_code(shell, path)
     click.echo(
         "PlatformIO CLI completion has been installed for %s shell to %s \n"
         "Please restart a current shell session."
-        % (click.style(shell, fg="cyan"), click.style(path, fg="blue"))
+        % (click.style(shell.name, fg="cyan"), click.style(path, fg="blue"))
     )
 
 
 @completion.command("uninstall", short_help="Uninstall shell completion files/code")
-@click.option(
-    "--shell",
-    default=None,
-    type=click.Choice(["fish", "bash", "zsh", "powershell", "auto"]),
-    help="The shell type, default=auto",
-)
+@click.argument("shell", type=click.Choice([t.value for t in ShellType]))
 @click.option(
     "--path",
     type=click.Path(file_okay=True, dir_okay=False, readable=True, resolve_path=True),
@@ -201,14 +181,11 @@ def completion_install(shell, path):
     "The standard installation path is used by default.",
 )
 def completion_uninstall(shell, path):
-
-    import click_completion  # pylint: disable=import-outside-toplevel,import-error
-
-    shell = shell or click_completion.get_auto_shell()
+    shell = ShellType(shell)
     path = path or get_completion_install_path(shell)
     uninstall_completion_code(shell, path)
     click.echo(
         "PlatformIO CLI completion has been uninstalled for %s shell from %s \n"
         "Please restart a current shell session."
-        % (click.style(shell, fg="cyan"), click.style(path, fg="blue"))
+        % (click.style(shell.name, fg="cyan"), click.style(path, fg="blue"))
     )

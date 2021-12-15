@@ -60,7 +60,7 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
             type="string",
             multiple=self.multiple,
             sysenvvar=self.sysenvvar,
-            default=self.default,
+            default=self.default() if callable(self.default) else self.default,
         )
         if isinstance(self.type, click.ParamType):
             result["type"] = self.type.name
@@ -114,17 +114,16 @@ def validate_dir(path):
         path = fs.expanduser(path)
     if "$" in path:
         path = expand_dir_templates(path)
-    return os.path.realpath(path)
+    return fs.normalize_path(path)
 
 
-def validate_core_dir(path):
-    default_dir = ProjectOptions["platformio.core_dir"].default
-    win_core_dir = None
-    if IS_WINDOWS and path == default_dir:
+def get_default_core_dir():
+    path = os.path.join(fs.expanduser("~"), ".platformio")
+    if IS_WINDOWS:
         win_core_dir = os.path.splitdrive(path)[0] + "\\.platformio"
         if os.path.isdir(win_core_dir):
-            path = win_core_dir
-    return validate_dir(path)
+            return win_core_dir
+    return path
 
 
 ProjectOptions = OrderedDict(
@@ -169,8 +168,8 @@ ProjectOptions = OrderedDict(
                 ),
                 oldnames=["home_dir"],
                 sysenvvar="PLATFORMIO_CORE_DIR",
-                default=os.path.join(fs.expanduser("~"), ".platformio"),
-                validate=validate_core_dir,
+                default=get_default_core_dir,
+                validate=validate_dir,
             ),
             ConfigPlatformioOption(
                 group="directory",

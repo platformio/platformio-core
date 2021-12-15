@@ -20,6 +20,7 @@ import sys
 from datetime import date
 
 from platformio import __core_packages__, exception, fs, util
+from platformio.exception import UserSideException
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
@@ -101,7 +102,7 @@ def remove_unnecessary_core_packages(dry_run=False):
     return candidates
 
 
-def inject_contrib_pysite(verify_openssl=False):
+def inject_contrib_pysite():
     # pylint: disable=import-outside-toplevel
     from site import addsitedir
 
@@ -119,12 +120,10 @@ def inject_contrib_pysite(verify_openssl=False):
     addsitedir(contrib_pysite_dir)
     sys.path.insert(0, contrib_pysite_dir)
 
-    if not verify_openssl:
-        return True
-
     try:
         # pylint: disable=import-error,unused-import,unused-variable
         from OpenSSL import SSL
+
     except:  # pylint: disable=bare-except
         build_contrib_pysite_package(contrib_pysite_dir)
 
@@ -152,8 +151,15 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
     ]
     if "linux" in systype:
         args.extend(["--no-binary", ":all:"])
-    for dep in get_contrib_pysite_deps():
-        subprocess.check_call(args + [dep])
+    try:
+        subprocess.run(args + get_contrib_pysite_deps(), check=True)
+    except subprocess.CalledProcessError as exc:
+        if "linux" in systype:
+            raise UserSideException(
+                "\n\nPlease ensure that the next packages are installed:\n\n"
+                "sudo apt install python3-dev libffi-dev libssl-dev\n"
+            )
+        raise exc
 
     # build manifests
     with open(
@@ -206,25 +212,18 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
 
 
 def get_contrib_pysite_deps():
-    sys_type = util.get_systype()
-    py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
-
     twisted_version = "20.3.0"
     result = [
+        # twisted[tls], see setup.py for %twisted_version%
         "twisted == %s" % twisted_version,
+        # pyopenssl depends on it, use RUST-less version
+        "cryptography >= 3.3, < 35.0.0",
+        "pyopenssl >= 16.0.0, <= 21.0.0",
+        "service_identity >= 18.1.0, <= 21.1.0",
     ]
 
-    # twisted[tls], see setup.py for %twisted_version%
-    result.extend(
-        [
-            # pyopenssl depends on it, use RUST-less version
-            "cryptography >= 3.3, < 35.0.0",
-            "pyopenssl >= 16.0.0",
-            "service_identity >= 18.1.0",
-            "idna >= 0.6, != 2.3",
-        ]
-    )
-
+    sys_type = util.get_systype()
+    py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
     if "windows" in sys_type:
         result.append("pypiwin32 == 223")
         # workaround for twisted wheels
