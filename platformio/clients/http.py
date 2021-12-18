@@ -21,7 +21,7 @@ import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
 from platformio import __check_internet_hosts__, __default_requests_timeout__, app, util
-from platformio.cache import ContentCache
+from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
 
 try:
@@ -134,6 +134,8 @@ class HTTPClient(object):
                     raise HTTPClientError(str(e))
 
     def fetch_json_data(self, method, path, **kwargs):
+        if method != "get":
+            cleanup_content_cache("http")
         cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None
         if not cache_valid:
             return self._parse_json_response(self.send_request(method, path, **kwargs))

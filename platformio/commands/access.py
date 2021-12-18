@@ -136,6 +136,14 @@ def access_list(owner, urn_type, json_output):
         table_data.append(("Owner:", resource.get("owner")))
         table_data.append(
             (
+                "Access:",
+                click.style("Private", fg="red")
+                if resource.get("private", False)
+                else "Public",
+            )
+        )
+        table_data.append(
+            (
                 "Access level(s):",
                 ", ".join(
                     (level.capitalize() for level in resource.get("access_levels"))

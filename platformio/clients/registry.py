@@ -23,6 +23,21 @@ class RegistryClient(HTTPClient):
     def __init__(self):
         super(RegistryClient, self).__init__(__registry_api__)
 
+    @staticmethod
+    def allowed_private_packages():
+        private_permissions = set(
+            [
+                "service.registry.publish-private-tool",
+                "service.registry.publish-private-platform",
+                "service.registry.publish-private-library",
+            ]
+        )
+        info = AccountClient().get_account_info() or {}
+        for item in info.get("packages", []):
+            if set(item.keys()) & private_permissions:
+                return True
+        return False
+
     def send_auth_request(self, *args, **kwargs):
         headers = kwargs.get("headers", {})
         if "Authorization" not in headers:
@@ -116,13 +131,24 @@ class RegistryClient(HTTPClient):
         params = dict(query=" ".join(search_query))
         if page:
             params["page"] = int(page)
-        return self.fetch_json_data(
-            "get", "/v3/search", params=params, cache_valid="1h"
+        return (
+            self.send_auth_request
+            if self.allowed_private_packages()
+            else self.fetch_json_data
+        )(
+            "get",
+            "/v3/search",
+            params=params,
+            cache_valid="1h",
         )
 
     def get_package(self, type_, owner, name, version=None):
         try:
-            return self.fetch_json_data(
+            return (
+                self.send_auth_request
+                if self.allowed_private_packages()
+                else self.fetch_json_data
+            )(
                 "get",
                 "/v3/packages/{owner}/{type}/{name}".format(
                     type=type_, owner=owner.lower(), name=name.lower()

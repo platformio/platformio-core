@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.2.5 (2021-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
 
 5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
