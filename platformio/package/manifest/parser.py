@@ -608,7 +608,6 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return None
 
     def _parse_export(self):
-        result = {}
         include = None
         if self.remote_url:
             url_attrs = urlparse(self.remote_url)
@@ -621,8 +620,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     or None
                 )
         if include:
-            result["include"] = [include]
-        return result
+            return dict(include=[include])
+        return None
 
     @staticmethod
     def _parse_dependencies(raw):
