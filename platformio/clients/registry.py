@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from platformio import __registry_api__, fs
-from platformio.clients.account import AccountClient
+from platformio.clients.account import AccountClient, AccountNotAuthorized
 from platformio.clients.http import HTTPClient, HTTPClientError
 
 # pylint: disable=too-many-arguments
@@ -32,10 +32,13 @@ class RegistryClient(HTTPClient):
                 "service.registry.publish-private-library",
             ]
         )
-        info = AccountClient().get_account_info() or {}
-        for item in info.get("packages", []):
-            if set(item.keys()) & private_permissions:
-                return True
+        try:
+            info = AccountClient().get_account_info() or {}
+            for item in info.get("packages", []):
+                if set(item.keys()) & private_permissions:
+                    return True
+        except AccountNotAuthorized:
+            pass
         return False
 
     def send_auth_request(self, *args, **kwargs):
