@@ -16,7 +16,7 @@ import os
 import time
 
 from platformio import __accounts_api__, app
-from platformio.clients.http import HTTPClient
+from platformio.clients.http import HTTPClient, HTTPClientError
 from platformio.exception import PlatformioException
 
 
@@ -68,6 +68,12 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
             headers["Authorization"] = "Bearer %s" % token
         kwargs["headers"] = headers
         return self.fetch_json_data(*args, **kwargs)
+
+    def fetch_json_data(self, *args, **kwargs):
+        try:
+            return super(AccountClient, self).fetch_json_data(*args, **kwargs)
+        except HTTPClientError as exc:
+            raise AccountError(str(HTTPClientError)) from exc
 
     def login(self, username, password):
         try:
