@@ -191,6 +191,12 @@ def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
                 abort=True,
             )
 
+        click.secho(
+            "The package publishing may take some time depending "
+            "on your Internet connection and the package size.",
+            fg="yellow",
+        )
+        click.echo("Publishing...")
         response = RegistryClient().publish_package(
             owner, type_, archive_path, released_at, private, notify
         )
