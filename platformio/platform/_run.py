@@ -189,7 +189,7 @@ class PlatformRunMixin(object):
             filename=filename,
             filename_styled=click.style(filename, fg="cyan"),
             link=click.style(
-                "https://platformio.org/lib/search?query=header:%s"
+                "https://registry.platformio.org/search?q=header:%s"
                 % quote(filename, safe=""),
                 fg="blue",
             ),
