@@ -47,6 +47,7 @@ class PackagePacker(object):
         ".cache",
         "**/.cache",
         "**/__pycache__",
+        "**/*.pyc",
         # VCS
         ".git/",
         ".hg/",
@@ -54,7 +55,8 @@ class PackagePacker(object):
     ]
     EXCLUDE_EXTRA = [
         # Tests
-        "tests?",
+        "test",
+        "tests",
         # Docs
         "doc",
         "docs",
@@ -64,10 +66,15 @@ class PackagePacker(object):
         "html",
         "media",
         "**/*.[pP][dD][fF]",
-        "**/*.[dD][oO][cC]?",
-        "**/*.[pP][pP][tT]?",
+        "**/*.[dD][oO][cC]",
+        "**/*.[dD][oO][cC][xX]",
+        "**/*.[pP][pP][tT]",
+        "**/*.[pP][pP][tT][xX]",
+        "**/*.[xX][lL][sS]",
+        "**/*.[xX][lL][sS][xX]",
         "**/*.[dD][oO][xX]",
-        "**/*.[hH][tT][mM]?",
+        "**/*.[hH][tT][mM]",
+        "**/*.[hH][tT][mM][lL]",
         "**/*.[tT][eE][xX]",
         "**/*.[jJ][sS]",
         "**/*.[cC][sS][sS]",
@@ -83,6 +90,7 @@ class PackagePacker(object):
         "**/*.[mM][pP][34]",
         "**/*.[pP][sS][dD]",
         "**/*.[wW][aA][wW]",
+        "**/*.sqlite",
     ]
     EXCLUDE_LIBRARY_EXTRA = [
         "assets",
