@@ -73,7 +73,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         try:
             return super(AccountClient, self).fetch_json_data(*args, **kwargs)
         except HTTPClientError as exc:
-            raise AccountError(str(HTTPClientError)) from exc
+            raise AccountError(exc) from exc
 
     def login(self, username, password):
         try:
