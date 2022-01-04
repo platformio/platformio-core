@@ -355,7 +355,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         "get",
         "/v2/lib/search",
         params=dict(query=" ".join(query), page=page),
-        cache_valid="1d",
+        x_cache_valid="1d",
     )
 
     if json_output:
@@ -408,7 +408,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             "get",
             "/v2/lib/search",
             params=dict(query=" ".join(query), page=int(result["page"]) + 1),
-            cache_valid="1d",
+            x_cache_valid="1d",
         )
 
 
@@ -440,7 +440,9 @@ def lib_show(library, json_output):
     lm = LibraryPackageManager()
     lib_id = lm.reveal_registry_package_id(library, silent=json_output)
     regclient = lm.get_registry_client_instance()
-    lib = regclient.fetch_json_data("get", "/v2/lib/info/%d" % lib_id, cache_valid="1h")
+    lib = regclient.fetch_json_data(
+        "get", "/v2/lib/info/%d" % lib_id, x_cache_valid="1h"
+    )
     if json_output:
         return click.echo(json.dumps(lib))
 
@@ -535,7 +537,7 @@ def lib_register(config_url):  # pylint: disable=unused-argument
 @click.option("--json-output", is_flag=True)
 def lib_stats(json_output):
     regclient = LibraryPackageManager().get_registry_client_instance()
-    result = regclient.fetch_json_data("get", "/v2/lib/stats", cache_valid="1h")
+    result = regclient.fetch_json_data("get", "/v2/lib/stats", x_cache_valid="1h")
 
     if json_output:
         return click.echo(json.dumps(result))

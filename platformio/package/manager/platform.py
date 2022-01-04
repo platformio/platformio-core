@@ -140,7 +140,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
 
     def get_registered_boards(self):
         return self.get_registry_client_instance().fetch_json_data(
-            "get", "/v2/boards", cache_valid="1d"
+            "get", "/v2/boards", x_cache_valid="1d"
         )
 
     def get_all_boards(self):

@@ -42,7 +42,7 @@ def test_api_internet_offline(without_internet, isolated_pio_core):
 
 def test_api_cache(monkeypatch, isolated_pio_core):
     regclient = RegistryClient()
-    api_kwargs = {"method": "get", "path": "/v2/stats", "cache_valid": "10s"}
+    api_kwargs = {"method": "get", "path": "/v2/stats", "x_cache_valid": "10s"}
     result = regclient.fetch_json_data(**api_kwargs)
     assert result and "boards" in result
     monkeypatch.setattr(http, "_internet_on", lambda: False)
