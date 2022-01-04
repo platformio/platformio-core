@@ -151,7 +151,7 @@ class HTTPClient(object):
     def fetch_json_data(self, method, path, **kwargs):
         if method != "get":
             cleanup_content_cache("http")
-        cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None
+        cache_valid = kwargs.pop("x_cache_valid") if "x_cache_valid" in kwargs else None
         if not cache_valid:
             return self._parse_json_response(self.send_request(method, path, **kwargs))
         cache_key = ContentCache.key_from_args(

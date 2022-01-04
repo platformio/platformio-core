@@ -135,7 +135,7 @@ class RegistryClient(HTTPClient):
             "get",
             "/v3/search",
             params=params,
-            cache_valid="1h",
+            x_cache_valid="1h",
             x_with_authorization=self.allowed_private_packages(),
         )
 
@@ -147,7 +147,7 @@ class RegistryClient(HTTPClient):
                     type=type_, owner=owner.lower(), name=name.lower()
                 ),
                 params=dict(version=version) if version else None,
-                cache_valid="1h",
+                x_cache_valid="1h",
                 x_with_authorization=self.allowed_private_packages(),
             )
         except HTTPClientError as e:
