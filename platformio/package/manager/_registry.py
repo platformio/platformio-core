@@ -54,6 +54,7 @@ class RegistryFileMirrorIterator(object):
             params=dict(bypass=",".join(self._visited_mirrors))
             if self._visited_mirrors
             else None,
+            x_with_authorization=RegistryClient.allowed_private_packages(),
         )
         stop_conditions = [
             response.status_code not in (302, 307),
