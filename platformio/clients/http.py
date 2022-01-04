@@ -117,6 +117,21 @@ class HTTPClient(object):
         # check Internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
+        headers = kwargs.get("headers", {})
+        with_authorization = (
+            kwargs.pop("x_with_authorization")
+            if "x_with_authorization" in kwargs
+            else False
+        )
+        if with_authorization and "Authorization" not in headers:
+            # pylint: disable=import-outside-toplevel
+            from platformio.clients.account import AccountClient
+
+            headers["Authorization"] = (
+                "Bearer %s" % AccountClient().fetch_authentication_token()
+            )
+        kwargs["headers"] = headers
+
         # set default timeout
         if "timeout" not in kwargs:
             kwargs["timeout"] = __default_requests_timeout__

@@ -41,19 +41,11 @@ class RegistryClient(HTTPClient):
             pass
         return False
 
-    def send_auth_request(self, *args, **kwargs):
-        headers = kwargs.get("headers", {})
-        if "Authorization" not in headers:
-            token = AccountClient().fetch_authentication_token()
-            headers["Authorization"] = "Bearer %s" % token
-        kwargs["headers"] = headers
-        return self.fetch_json_data(*args, **kwargs)
-
     def publish_package(  # pylint: disable=redefined-builtin
         self, owner, type, archive_path, released_at=None, private=False, notify=True
     ):
         with open(archive_path, "rb") as fp:
-            return self.send_auth_request(
+            return self.fetch_json_data(
                 "post",
                 "/v3/packages/%s/%s" % (owner, type),
                 params={
@@ -68,6 +60,7 @@ class RegistryClient(HTTPClient):
                     ),
                 },
                 data=fp,
+                x_with_authorization=True,
             )
 
     def unpublish_package(  # pylint: disable=redefined-builtin
@@ -76,36 +69,40 @@ class RegistryClient(HTTPClient):
         path = "/v3/packages/%s/%s/%s" % (owner, type, name)
         if version:
             path += "/" + version
-        return self.send_auth_request(
-            "delete",
-            path,
-            params={"undo": 1 if undo else 0},
+        return self.fetch_json_data(
+            "delete", path, params={"undo": 1 if undo else 0}, x_with_authorization=True
         )
 
     def update_resource(self, urn, private):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "put",
             "/v3/resources/%s" % urn,
             data={"private": int(private)},
+            x_with_authorization=True,
         )
 
     def grant_access_for_resource(self, urn, client, level):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "put",
             "/v3/resources/%s/access" % urn,
             data={"client": client, "level": level},
+            x_with_authorization=True,
         )
 
     def revoke_access_from_resource(self, urn, client):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "delete",
             "/v3/resources/%s/access" % urn,
             data={"client": client},
+            x_with_authorization=True,
         )
 
     def list_resources(self, owner):
-        return self.send_auth_request(
-            "get", "/v3/resources", params={"owner": owner} if owner else None
+        return self.fetch_json_data(
+            "get",
+            "/v3/resources",
+            params={"owner": owner} if owner else None,
+            x_with_authorization=True,
         )
 
     def list_packages(self, query=None, filters=None, page=None):
@@ -134,30 +131,24 @@ class RegistryClient(HTTPClient):
         params = dict(query=" ".join(search_query))
         if page:
             params["page"] = int(page)
-        return (
-            self.send_auth_request
-            if self.allowed_private_packages()
-            else self.fetch_json_data
-        )(
+        return self.fetch_json_data(
             "get",
             "/v3/search",
             params=params,
             cache_valid="1h",
+            x_with_authorization=self.allowed_private_packages(),
         )
 
     def get_package(self, type_, owner, name, version=None):
         try:
-            return (
-                self.send_auth_request
-                if self.allowed_private_packages()
-                else self.fetch_json_data
-            )(
+            return self.fetch_json_data(
                 "get",
                 "/v3/packages/{owner}/{type}/{name}".format(
                     type=type_, owner=owner.lower(), name=name.lower()
                 ),
                 params=dict(version=version) if version else None,
                 cache_valid="1h",
+                x_with_authorization=self.allowed_private_packages(),
             )
         except HTTPClientError as e:
             if e.response is not None and e.response.status_code == 404:
