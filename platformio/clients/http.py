@@ -196,8 +196,16 @@ def _internet_on():
                     continue
                 requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
                 return True
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, 80))
+            try:
+                # Try IPv4 connection:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((host, 80))
+            except OSError:
+                # On IPv6-only machine, previous request fail with "[Errno 101] Network is unreachable"
+                s = None
+                # Try IPv6 connection:
+                s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                s.connect((host, 80))
             s.close()
             return True
         except:  # pylint: disable=bare-except
