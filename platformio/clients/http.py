@@ -196,8 +196,9 @@ def _internet_on():
                     continue
                 requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
                 return True
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, 80))
+            # try to resolve `host` for both AF_INET and AF_INET6, and then try to connect
+            # to all possible addresses (IPv4 and IPv6) in turn until a connection succeeds:
+            s = socket.create_connection((host, 80))
             s.close()
             return True
         except:  # pylint: disable=bare-except
