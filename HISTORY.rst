@@ -12,6 +12,7 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
+- Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/issues/4151>`_)
 
 5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
