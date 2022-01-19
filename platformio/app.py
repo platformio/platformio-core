@@ -253,29 +253,14 @@ def is_disabled_progressbar():
 
 
 def get_cid():
-    # pylint: disable=import-outside-toplevel
-    from platformio.clients.http import fetch_remote_content
-
     cid = get_state_item("cid")
     if cid:
         return cid
     uid = None
-    if os.getenv("C9_UID"):
-        uid = os.getenv("C9_UID")
+    if os.getenv("GITHUB_USER"):
+        uid = os.getenv("GITHUB_USER")
     elif os.getenv("GITPOD_GIT_USER_NAME"):
         uid = os.getenv("GITPOD_GIT_USER_NAME")
-    elif os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")):
-        try:
-            uid = json.loads(
-                fetch_remote_content(
-                    "{api}/user?token={token}".format(
-                        api=os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")),
-                        token=os.getenv("USER_TOKEN"),
-                    )
-                )
-            ).get("id")
-        except:  # pylint: disable=bare-except
-            pass
     if not uid:
         uid = uuid.getnode()
     cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())

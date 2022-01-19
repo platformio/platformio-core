@@ -35,7 +35,6 @@ from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.package.version import pepver_to_semver
 from platformio.platform.factory import PlatformFactory
-from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
@@ -78,17 +77,12 @@ def set_caller(caller=None):
     caller = caller or os.getenv("PLATFORMIO_CALLER")
     if caller:
         return app.set_session_var("caller_id", caller)
-    if os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
+    if os.getenv("CODESPACES"):
+        caller = "codespaces"
+    elif os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
         caller = "vscode"
-    elif os.getenv("GITPOD_INSTANCE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
+    elif os.getenv("GITPOD_WORKSPACE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
         caller = "gitpod"
-    elif is_container():
-        if os.getenv("C9_UID"):
-            caller = "C9"
-        elif os.getenv("USER") == "cabox":
-            caller = "CA"
-        elif os.getenv("CHE_API", os.getenv("CHE_API_ENDPOINT")):
-            caller = "Che"
     return app.set_session_var("caller_id", caller)
 
 
