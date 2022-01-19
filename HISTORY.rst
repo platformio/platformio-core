@@ -13,6 +13,7 @@ PlatformIO Core 5
 
 - Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
 - Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/issues/4151>`_)
+- Respect disabling debugging server from "platformio.ini" passing an empty value to the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option
 
 5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
