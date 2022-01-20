@@ -14,12 +14,13 @@
 
 import json
 import os
+import subprocess
 from hashlib import sha1
 
 from click.testing import CliRunner
 
 from platformio import __version__, exception, fs
-from platformio.compat import IS_WINDOWS, hashlib_encode_data
+from platformio.compat import IS_MACOS, IS_WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
 
@@ -66,7 +67,7 @@ def get_project_cache_dir():
 
 
 def get_default_projects_dir():
-    docs_dir = ""
+    docs_dir = os.path.join(fs.expanduser("~"), "Documents")
     try:
         assert IS_WINDOWS
         import ctypes.wintypes  # pylint: disable=import-outside-toplevel
@@ -75,11 +76,13 @@ def get_default_projects_dir():
         ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
         docs_dir = buf.value
     except:  # pylint: disable=bare-except
-        try:
-            docs_dir = subprocess.check_output(['xdg-user-dir', 'DOCUMENTS']).decode('utf-8')
-        except FileNotFoundError: # command not found
-            docs_dir = os.path.join(fs.expanduser("~"), "Documents")
-        pass
+        if not IS_MACOS:
+            try:
+                docs_dir = subprocess.check_output(
+                    ["xdg-user-dir", "DOCUMENTS"]
+                ).decode("utf-8")
+            except FileNotFoundError:  # command not found
+                pass
     return os.path.join(docs_dir, "PlatformIO", "Projects")
 
 
