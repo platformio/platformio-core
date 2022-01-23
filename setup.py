@@ -44,7 +44,7 @@ if not PY2:
 home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
-    "starlette==0.17.*",
+    "starlette==0.18.*",
     "uvicorn==0.17.*",
     "wsproto==1.0.*",
 ]
