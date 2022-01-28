@@ -531,12 +531,13 @@ def generate_framework(type_, data, rst_dir=None):
     lines.append("  :ref:`projectconf_env_framework` = ``%s``" % type_)
     lines.append("")
     lines.append(data["description"])
-    lines.append(
-        """
+    if data["url"]:
+        lines.append(
+            """
 For more detailed information please visit `vendor site <%s>`_.
 """
-        % campaign_url(data["url"])
-    )
+            % campaign_url(data["url"])
+        )
 
     lines.append(
         """
