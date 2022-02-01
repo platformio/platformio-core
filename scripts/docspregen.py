@@ -12,17 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
+import json
 import os
-from sys import exit as sys_exit
-from sys import path
+import sys
+import tempfile
 
-path.append("..")
+sys.path.append("..")
 
-import click
+import click  # noqa: E402
 
-from platformio import fs, util
-from platformio.package.manager.platform import PlatformPackageManager
-from platformio.platform.factory import PlatformFactory
+from platformio import fs, util  # noqa: E402
+from platformio.package.manager.platform import PlatformPackageManager  # noqa: E402
+from platformio.platform.factory import PlatformFactory  # noqa: E402
 
 try:
     from urlparse import ParseResult, urlparse, urlunparse
@@ -45,7 +47,6 @@ DOCS_ROOT_DIR = os.path.realpath(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "docs")
 )
 REGCLIENT = PlatformPackageManager().get_registry_client_instance()
-API_FRAMEWORKS = REGCLIENT.fetch_json_data("get", "/v2/frameworks")
 
 
 def reg_package_url(type_, owner, name):
@@ -67,6 +68,43 @@ def campaign_url(url, source="platformio.org", medium="docs"):
             data.scheme, data.netloc, data.path, data.params, query, data.fragment
         )
     )
+
+
+def install_platforms():
+    print("Installing platforms...")
+    page = 1
+    pm = PlatformPackageManager()
+    while True:
+        result = REGCLIENT.list_packages(filters=dict(types=["platform"]), page=page)
+        for item in result["items"]:
+            spec = "%s/%s" % (item["owner"]["username"], item["name"])
+            skip_conds = [
+                item["owner"]["username"] != "platformio",
+                item["tier"] == "community",
+            ]
+            if all(skip_conds):
+                click.secho("Skip community platform: %s" % spec, fg="yellow")
+                continue
+            pm.install(spec, skip_default_package=True)
+        page += 1
+        if not result["items"] or result["page"] * result["limit"] >= result["total"]:
+            break
+
+
+@functools.cache
+def get_frameworks():
+    items = {}
+    for pkg in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(pkg)
+        for name, options in (p.frameworks or {}).items():
+            if name in items or not set(options.keys()).issuperset(
+                set(["title", "description"])
+            ):
+                continue
+            items[name] = dict(
+                name=name, title=options["title"], description=options["description"]
+            )
+    return sorted(items.values(), key=lambda item: item["name"])
 
 
 def is_compat_platform_and_framework(platform, framework):
@@ -147,7 +185,7 @@ Frameworks
       - Description"""
     )
     known = set()
-    for framework in API_FRAMEWORKS:
+    for framework in get_frameworks():
         known.add(framework["name"])
         if framework["name"] not in frameworks:
             continue
@@ -336,7 +374,8 @@ Packages
     return "\n".join(lines)
 
 
-def generate_platform(name, rst_dir):
+def generate_platform(pkg, rst_dir):
+    name = pkg.metadata.name
     print("Processing platform: %s" % name)
 
     compatible_boards = [
@@ -346,11 +385,12 @@ def generate_platform(name, rst_dir):
     ]
 
     lines = []
-
     lines.append(RST_COPYRIGHT)
+
     p = PlatformFactory.new(name)
     assert p.repository_url.endswith(".git")
     github_url = p.repository_url[:-4]
+    registry_url = reg_package_url("platform", pkg.metadata.spec.owner, name)
 
     lines.append(".. _platform_%s:" % p.name)
     lines.append("")
@@ -358,6 +398,8 @@ def generate_platform(name, rst_dir):
     lines.append(p.title)
     lines.append("=" * len(p.title))
     lines.append("")
+    lines.append(":Registry:")
+    lines.append("  `%s <%s>`__" % (registry_url, registry_url))
     lines.append(":Configuration:")
     lines.append("  :ref:`projectconf_env_platform` = ``%s``" % p.name)
     lines.append("")
@@ -467,7 +509,7 @@ Upstream
     # Frameworks
     #
     compatible_frameworks = []
-    for framework in API_FRAMEWORKS:
+    for framework in get_frameworks():
         if is_compat_platform_and_framework(name, framework["name"]):
             compatible_frameworks.append(framework["name"])
     lines.extend(generate_frameworks_contents(compatible_frameworks))
@@ -507,7 +549,7 @@ def update_platform_docs():
     for pkg in PlatformPackageManager().get_installed():
         rst_path = os.path.join(platforms_dir, "%s.rst" % pkg.metadata.name)
         with open(rst_path, "w") as f:
-            f.write(generate_platform(pkg.metadata.name, platforms_dir))
+            f.write(generate_platform(pkg, platforms_dir))
 
 
 def generate_framework(type_, framework, rst_dir=None):
@@ -537,14 +579,6 @@ def generate_framework(type_, framework, rst_dir=None):
     lines.append("  :ref:`projectconf_env_framework` = ``%s``" % type_)
     lines.append("")
     lines.append(framework["description"])
-    if framework["url"]:
-        lines.append(
-            """
-For more detailed information please visit `vendor site <%s>`_.
-"""
-            % campaign_url(framework["url"])
-        )
-
     lines.append(
         """
 .. contents:: Contents
@@ -556,20 +590,14 @@ For more detailed information please visit `vendor site <%s>`_.
     if os.path.isfile(os.path.join(rst_dir, "%s_extra.rst" % type_)):
         lines.append(".. include:: %s_extra.rst" % type_)
 
-    #
-    # Debugging
-    #
-    if compatible_boards:
+    if compatible_platforms:
+        # Platforms
         lines.extend(
-            generate_debug_contents(
-                compatible_boards,
-                extra_rst="%s_debug.rst" % type_
-                if os.path.isfile(os.path.join(rst_dir, "%s_debug.rst" % type_))
-                else None,
+            generate_platforms_contents(
+                [pkg.metadata.name for pkg in compatible_platforms]
             )
         )
 
-    if compatible_platforms:
         # examples
         lines.append(
             """
@@ -588,10 +616,16 @@ Examples
                 )
             )
 
-        # Platforms
+    #
+    # Debugging
+    #
+    if compatible_boards:
         lines.extend(
-            generate_platforms_contents(
-                [pkg.metadata.name for pkg in compatible_platforms]
+            generate_debug_contents(
+                compatible_boards,
+                extra_rst="%s_debug.rst" % type_
+                if os.path.isfile(os.path.join(rst_dir, "%s_debug.rst" % type_))
+                else None,
             )
         )
 
@@ -622,9 +656,9 @@ Boards
 
 
 def update_framework_docs():
-    for framework in API_FRAMEWORKS:
+    frameworks_dir = os.path.join(DOCS_ROOT_DIR, "frameworks")
+    for framework in get_frameworks():
         name = framework["name"]
-        frameworks_dir = os.path.join(DOCS_ROOT_DIR, "frameworks")
         rst_path = os.path.join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_framework(name, framework, frameworks_dir))
@@ -1054,7 +1088,7 @@ def update_project_examples():
             )
 
         # Framework README
-        for framework in API_FRAMEWORKS:
+        for framework in get_frameworks():
             if not is_compat_platform_and_framework(p.name, framework["name"]):
                 continue
             if framework["name"] not in framework_examples_md_lines:
@@ -1074,7 +1108,7 @@ def update_project_examples():
 
     # Frameworks
     frameworks = []
-    for framework in API_FRAMEWORKS:
+    for framework in get_frameworks():
         if framework["name"] not in framework_examples_md_lines:
             continue
         readme_dir = os.path.join(project_examples_dir, "frameworks", framework["name"])
@@ -1125,12 +1159,16 @@ def update_project_examples():
 
 
 def main():
-    update_platform_docs()
-    update_framework_docs()
-    update_boards()
-    update_debugging()
-    update_project_examples()
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        print("Core directory: %s" % tmp_dir)
+        os.environ["PLATFORMIO_CORE_DIR"] = tmp_dir
+        install_platforms()
+        update_platform_docs()
+        update_framework_docs()
+        update_boards()
+        update_debugging()
+        update_project_examples()
 
 
 if __name__ == "__main__":
-    sys_exit(main())
+    sys.exit(main())
