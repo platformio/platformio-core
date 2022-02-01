@@ -42,12 +42,12 @@ RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio
     limitations under the License.
 """
 
-REGCLIENT = regclient = PlatformPackageManager().get_registry_client_instance()
+DOCS_ROOT_DIR = realpath(join(dirname(realpath(__file__)), "..", "docs"))
+regclient = PlatformPackageManager().get_registry_client_instance()
 API_PACKAGES = regclient.fetch_json_data("get", "/v2/packages")
 API_FRAMEWORKS = regclient.fetch_json_data("get", "/v2/frameworks")
 BOARDS = PlatformPackageManager().get_installed_boards()
 PLATFORM_MANIFESTS = PlatformPackageManager().legacy_get_installed()
-DOCS_ROOT_DIR = realpath(join(dirname(realpath(__file__)), "..", "docs"))
 
 
 def is_compat_platform_and_framework(platform, framework):
@@ -484,8 +484,7 @@ Boards
 ------
 
 .. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
+    * You can list pre-configured boards by :ref:`cmd_boards` command
     * For more detailed ``board`` information please scroll the tables below by
       horizontally.
 """
@@ -500,21 +499,20 @@ Boards
 
 
 def update_platform_docs():
-    for manifest in PLATFORM_MANIFESTS:
-        name = manifest["name"]
-        platforms_dir = join(DOCS_ROOT_DIR, "platforms")
-        rst_path = join(platforms_dir, "%s.rst" % name)
+    platforms_dir = join(DOCS_ROOT_DIR, "platforms")
+    for pkg in PlatformPackageManager().get_installed():
+        rst_path = join(platforms_dir, "%s.rst" % pkg.metadata.name)
         with open(rst_path, "w") as f:
-            f.write(generate_platform(name, platforms_dir))
+            f.write(generate_platform(pkg.metadata.name, platforms_dir))
 
 
-def generate_framework(type_, data, rst_dir=None):
+def generate_framework(type_, framework, rst_dir=None):
     print("Processing framework: %s" % type_)
 
     compatible_platforms = [
-        m
-        for m in PLATFORM_MANIFESTS
-        if is_compat_platform_and_framework(m["name"], type_)
+        pkg
+        for pkg in PlatformPackageManager().get_installed()
+        if is_compat_platform_and_framework(pkg.metadata.name, type_)
     ]
     compatible_boards = [board for board in BOARDS if type_ in board["frameworks"]]
 
@@ -524,19 +522,19 @@ def generate_framework(type_, data, rst_dir=None):
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
-    lines.append(data["title"])
-    lines.append("=" * len(data["title"]))
+    lines.append(framework["title"])
+    lines.append("=" * len(framework["title"]))
     lines.append("")
     lines.append(":Configuration:")
     lines.append("  :ref:`projectconf_env_framework` = ``%s``" % type_)
     lines.append("")
-    lines.append(data["description"])
-    if data["url"]:
+    lines.append(framework["description"])
+    if framework["url"]:
         lines.append(
             """
 For more detailed information please visit `vendor site <%s>`_.
 """
-            % campaign_url(data["url"])
+            % campaign_url(framework["url"])
         )
 
     lines.append(
@@ -571,13 +569,13 @@ Examples
 --------
 """
         )
-        for manifest in compatible_platforms:
-            p = PlatformFactory.new(manifest["name"])
+        for pkg in compatible_platforms:
+            p = PlatformFactory.new(pkg)
             lines.append(
                 "* `%s for %s <%s>`_"
                 % (
-                    data["title"],
-                    manifest["title"],
+                    framework["title"],
+                    p.title,
                     campaign_url("%s/tree/master/examples" % p.repository_url[:-4]),
                 )
             )
@@ -585,7 +583,7 @@ Examples
         # Platforms
         lines.extend(
             generate_platforms_contents(
-                [manifest["name"] for manifest in compatible_platforms]
+                [pkg.metadata.name for pkg in compatible_platforms]
             )
         )
 
@@ -604,8 +602,7 @@ Boards
 ------
 
 .. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
+    * You can list pre-configured boards by :ref:`cmd_boards` command
     * For more detailed ``board`` information please scroll the tables below by horizontally.
 """
         )
@@ -640,11 +637,10 @@ def update_boards():
         """
 Rapid Embedded Development, Continuous and IDE integration in a few
 steps with PlatformIO thanks to built-in project generator for the most
-popular embedded boards and IDE.
+popular embedded boards and IDEs.
 
 .. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
+    * You can list pre-configured boards by :ref:`cmd_boards` command
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """
     )
@@ -677,8 +673,6 @@ popular embedded boards and IDE.
 
     # individual board page
     for data in BOARDS:
-        # if data['id'] != "m5stack-core-esp32":
-        #     continue
         rst_path = join(
             DOCS_ROOT_DIR, "boards", data["platform"], "%s.rst" % data["id"]
         )
@@ -1018,8 +1012,8 @@ def update_project_examples():
     embedded = []
     desktop = []
 
-    for manifest in PLATFORM_MANIFESTS:
-        p = PlatformFactory.new(manifest["name"])
+    for pkg in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(pkg)
         github_url = p.repository_url[:-4]
 
         # Platform README
@@ -1054,7 +1048,7 @@ def update_project_examples():
                 framework_examples_md_lines[framework["name"]] = []
             lines = []
             lines.append("- [%s](%s)" % (p.title, github_url))
-            lines.extend("  %s" % l for l in examples_md_lines)
+            lines.extend("  %s" % line for line in examples_md_lines)
             lines.append("")
             framework_examples_md_lines[framework["name"]].extend(lines)
 
