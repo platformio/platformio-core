@@ -15,6 +15,7 @@ PlatformIO Core 5
 - Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/pull/4151>`_)
 - Better detecting of default PlatformIO project directory on Linux OS (`pull #4158 <https://github.com/platformio/platformio-core/pull/4158>`_)
 - Respect disabling debugging server from "platformio.ini" passing an empty value to the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option
+- Run library extra script only at a build process (`issue #3915 <https://github.com/platformio/platformio-core/issues/3915>`_)
 
 5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
