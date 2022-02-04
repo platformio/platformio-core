@@ -11,6 +11,7 @@ PlatformIO Core 5
 5.2.5 (2021-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+- Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
 - Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
 - Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/pull/4151>`_)
 - Better detecting of default PlatformIO project directory on Linux OS (`pull #4158 <https://github.com/platformio/platformio-core/pull/4158>`_)
