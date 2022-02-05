@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -45,7 +46,7 @@ home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
     "starlette==0.18.*",
-    "uvicorn==0.17.*",
+    "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
     "wsproto==1.0.*",
 ]
 
