@@ -44,7 +44,7 @@ PlatformIO Core
 * Cross-platform IDE and Unified Debugger
 * Static Code Analyzer and Remote Unit Testing
 * Multi-platform and Multi-architecture Build System
-* Firmware File Explorer and Memory Inspection.
+* Firmware File Explorer and Memory Inspection
 
 Get Started
 -----------
