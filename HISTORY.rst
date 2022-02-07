@@ -297,7 +297,7 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/en/la
   - Remove unused data using a new `pio system prune <https://docs.platformio.org/en/latest/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
   - Show ignored project environments only in the verbose mode (`issue #3641 <https://github.com/platformio/platformio-core/issues/3641>`_)
   - Do not escape compiler arguments in VSCode template on Windows
-  - Drop support for Python 2 and 3.5.
+  - Drop support for Python 2 and 3.5
 
 .. _release_notes_4:
 
