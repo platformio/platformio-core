@@ -29,13 +29,13 @@ from platformio.compat import PY2
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click>=8,<9,!=8.0.2",
+    "click>=8.0.3,<9",
     "colorama",
     "marshmallow%s" % (">=2,<3" if PY2 else ">=2,<4"),
     "pyelftools>=0.27,<1",
     "pyserial==3.*",
     "requests==2.*",
-    "semantic_version==2.8.*",
+    "semantic_version==2.9.*",
     "tabulate==0.8.*",
 ]
 
