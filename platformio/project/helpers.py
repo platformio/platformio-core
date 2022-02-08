@@ -78,9 +78,11 @@ def get_default_projects_dir():
     except:  # pylint: disable=bare-except
         if not IS_MACOS:
             try:
-                docs_dir = subprocess.check_output(
-                    ["xdg-user-dir", "DOCUMENTS"]
-                ).decode("utf-8")
+                docs_dir = (
+                    subprocess.check_output(["xdg-user-dir", "DOCUMENTS"])
+                    .decode("utf-8")
+                    .strip()
+                )
             except FileNotFoundError:  # command not found
                 pass
     return os.path.join(docs_dir, "PlatformIO", "Projects")
