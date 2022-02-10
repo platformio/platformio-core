@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=unused-import
+import click
 
-import platformio.package.commands.pack
-import platformio.package.commands.publish
-import platformio.package.commands.unpublish
-from platformio.package.commands import cli
+
+@click.group("package", short_help="Package manager")
+def cli():
+    pass
