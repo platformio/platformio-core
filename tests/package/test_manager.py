@@ -437,10 +437,10 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     lm = LibraryPackageManager(str(storage_dir))
 
     # test non SemVer in registry
-    pkg = lm.install("RadioHead @ <1.90", silent=True)
+    pkg = lm.install("adafruit/Adafruit NeoPixel @ <1.9", silent=True)
     outdated = lm.outdated(pkg)
-    assert str(outdated.current) == "1.89.0"
-    assert outdated.latest > semantic_version.Version("1.100.0")
+    assert str(outdated.current) == "1.8.7"
+    assert outdated.latest > semantic_version.Version("1.10.0")
 
     pkg = lm.install("ArduinoJson @ 5.10.1", silent=True)
     # tesy latest

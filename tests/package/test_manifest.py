@@ -220,9 +220,6 @@ includes=Arduino.h, Arduino Space.hpp
             "description": "This is Arduino library",
             "sentence": "This is Arduino library",
             "frameworks": ["arduino"],
-            "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
-            },
             "authors": [
                 {"name": "SomeAuthor", "email": "info@author.com"},
                 {"name": "Maintainer Author", "maintainer": True},
@@ -270,7 +267,6 @@ includes=Arduino.h, Arduino Space.hpp
         ),
     ).as_dict()
     assert data["export"] == {
-        "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
         "include": ["libraries/TestPackage"],
     }
     assert data["repository"] == {
@@ -465,9 +461,6 @@ depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
             "frameworks": ["arduino"],
             "platforms": ["atmelavr", "atmelsam"],
             "version": "1.19.1",
-            "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
-            },
             "authors": [
                 {"maintainer": True, "email": "olikraus@gmail.com", "name": "oliver"}
             ],
@@ -538,9 +531,6 @@ includes=MozziGuts.h
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "headers": ["MozziGuts.h"],
-            "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
-            },
             "authors": [
                 {
                     "maintainer": True,

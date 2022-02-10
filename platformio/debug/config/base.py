@@ -153,7 +153,14 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         raise DebugInvalidOptionsError("Could not load a build configuration")
 
     def _configure_server(self):
+        # user disabled server in platformio.ini
+        if "debug_server" in self.env_options and not self.env_options.get(
+            "debug_server"
+        ):
+            return None
+
         result = None
+
         # specific server per a system
         if isinstance(self.tool_settings.get("server", {}), list):
             for item in self.tool_settings["server"][:]:

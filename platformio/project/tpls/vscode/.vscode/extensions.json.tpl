@@ -19,5 +19,8 @@
 % for i, item in enumerate(sorted(recommendations)):
         "{{ item }}"{{ ("," if (i + 1) < len(recommendations) else "") }}
 % end
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cpptools-extension-pack"
     ]
 }

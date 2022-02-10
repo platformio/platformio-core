@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -28,24 +29,24 @@ from platformio.compat import PY2
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click>=8,<9,!=8.0.2",
+    "click>=8.0.3,<9",
     "colorama",
     "marshmallow%s" % (">=2,<3" if PY2 else ">=2,<4"),
     "pyelftools>=0.27,<1",
     "pyserial==3.*",
     "requests==2.*",
-    "semantic_version==2.8.*",
+    "semantic_version==2.9.*",
     "tabulate==0.8.*",
 ]
 
 if not PY2:
-    minimal_requirements.append("zeroconf==0.37.*")
+    minimal_requirements.append("zeroconf==0.38.*")
 
 home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
-    "starlette==0.17.*",
-    "uvicorn==0.16.*",
+    "starlette==0.18.*",
+    "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
     "wsproto==1.0.*",
 ]
 

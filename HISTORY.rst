@@ -8,6 +8,15 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
+5.2.5 (2022-02-10)
+~~~~~~~~~~~~~~~~~~
+
+- Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
+- Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/pull/4151>`_)
+- Better detecting of default PlatformIO project directory on Linux OS (`pull #4158 <https://github.com/platformio/platformio-core/pull/4158>`_)
+- Respect disabling debugging server from "platformio.ini" passing an empty value to the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option
+- Fixed a "module 'asyncio' has no attribute 'run'" error when launching PIO Home using Python 3.6 (`issue #4169 <https://github.com/platformio/platformio-core/issues/4169>`_)
+
 5.2.4 (2021-12-15)
 ~~~~~~~~~~~~~~~~~~
 
@@ -286,7 +295,7 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/en/la
   - Remove unused data using a new `pio system prune <https://docs.platformio.org/en/latest/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
   - Show ignored project environments only in the verbose mode (`issue #3641 <https://github.com/platformio/platformio-core/issues/3641>`_)
   - Do not escape compiler arguments in VSCode template on Windows
-  - Drop support for Python 2 and 3.5.
+  - Drop support for Python 2 and 3.5
 
 .. _release_notes_4:
 

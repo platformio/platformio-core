@@ -212,7 +212,7 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
 
 
 def get_contrib_pysite_deps():
-    twisted_version = "20.3.0"
+    twisted_version = "21.7.0"
     result = [
         # twisted[tls], see setup.py for %twisted_version%
         "twisted == %s" % twisted_version,
@@ -221,21 +221,6 @@ def get_contrib_pysite_deps():
         "pyopenssl >= 16.0.0, <= 21.0.0",
         "service_identity >= 18.1.0, <= 21.1.0",
     ]
-
-    sys_type = util.get_systype()
-    py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
-    if "windows" in sys_type:
-        result.append("pypiwin32 == 223")
-        # workaround for twisted wheels
-        twisted_wheel = (
-            "https://download.lfd.uci.edu/pythonlibs/x2tqcw5k/Twisted-"
-            "%s-cp%s-cp%s-win%s.whl"
-            % (
-                twisted_version,
-                py_version,
-                py_version,
-                "_amd64" if "amd64" in sys_type else "32",
-            )
-        )
-        result[0] = twisted_wheel
+    if "windows" in util.get_systype():
+        result.append("pywin32 != 226")
     return result

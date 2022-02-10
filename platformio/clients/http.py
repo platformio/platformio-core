@@ -21,7 +21,7 @@ import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
 from platformio import __check_internet_hosts__, __default_requests_timeout__, app, util
-from platformio.cache import ContentCache
+from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
 
 try:
@@ -117,6 +117,21 @@ class HTTPClient(object):
         # check Internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
+        headers = kwargs.get("headers", {})
+        with_authorization = (
+            kwargs.pop("x_with_authorization")
+            if "x_with_authorization" in kwargs
+            else False
+        )
+        if with_authorization and "Authorization" not in headers:
+            # pylint: disable=import-outside-toplevel
+            from platformio.clients.account import AccountClient
+
+            headers["Authorization"] = (
+                "Bearer %s" % AccountClient().fetch_authentication_token()
+            )
+        kwargs["headers"] = headers
+
         # set default timeout
         if "timeout" not in kwargs:
             kwargs["timeout"] = __default_requests_timeout__
@@ -134,7 +149,9 @@ class HTTPClient(object):
                     raise HTTPClientError(str(e))
 
     def fetch_json_data(self, method, path, **kwargs):
-        cache_valid = kwargs.pop("cache_valid") if "cache_valid" in kwargs else None
+        if method != "get":
+            cleanup_content_cache("http")
+        cache_valid = kwargs.pop("x_cache_valid") if "x_cache_valid" in kwargs else None
         if not cache_valid:
             return self._parse_json_response(self.send_request(method, path, **kwargs))
         cache_key = ContentCache.key_from_args(
@@ -179,8 +196,9 @@ def _internet_on():
                     continue
                 requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
                 return True
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, 80))
+            # try to resolve `host` for both AF_INET and AF_INET6, and then try to connect
+            # to all possible addresses (IPv4 and IPv6) in turn until a connection succeeds:
+            s = socket.create_connection((host, 80))
             s.close()
             return True
         except:  # pylint: disable=bare-except

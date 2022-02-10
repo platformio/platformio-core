@@ -16,7 +16,7 @@ import os
 import time
 
 from platformio import __accounts_api__, app
-from platformio.clients.http import HTTPClient
+from platformio.clients.http import HTTPClient, HTTPClientError
 from platformio.exception import PlatformioException
 
 
@@ -61,13 +61,33 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         del account[key]
         app.set_state_item("account", account)
 
-    def send_auth_request(self, *args, **kwargs):
-        headers = kwargs.get("headers", {})
-        if "Authorization" not in headers:
-            token = self.fetch_authentication_token()
-            headers["Authorization"] = "Bearer %s" % token
-        kwargs["headers"] = headers
-        return self.fetch_json_data(*args, **kwargs)
+    def fetch_json_data(self, *args, **kwargs):
+        try:
+            return super(AccountClient, self).fetch_json_data(*args, **kwargs)
+        except HTTPClientError as exc:
+            raise AccountError(exc) from exc
+
+    def fetch_authentication_token(self):
+        if os.environ.get("PLATFORMIO_AUTH_TOKEN"):
+            return os.environ.get("PLATFORMIO_AUTH_TOKEN")
+        auth = app.get_state_item("account", {}).get("auth", {})
+        if auth.get("access_token") and auth.get("access_token_expire"):
+            if auth.get("access_token_expire") > time.time():
+                return auth.get("access_token")
+            if auth.get("refresh_token"):
+                try:
+                    data = self.fetch_json_data(
+                        "post",
+                        "/v1/login",
+                        headers={
+                            "Authorization": "Bearer %s" % auth.get("refresh_token")
+                        },
+                    )
+                    app.set_state_item("account", data)
+                    return data.get("auth").get("access_token")
+                except AccountError:
+                    self.delete_local_session()
+        raise AccountNotAuthorized()
 
     def login(self, username, password):
         try:
@@ -119,10 +139,11 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         return True
 
     def change_password(self, old_password, new_password):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/password",
             data={"old_password": old_password, "new_password": new_password},
+            x_with_authorization=True,
         )
 
     def registration(
@@ -150,10 +171,11 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         )
 
     def auth_token(self, password, regenerate):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/token",
             data={"password": password, "regenerate": 1 if regenerate else 0},
+            x_with_authorization=True,
         ).get("auth_token")
 
     def forgot_password(self, username):
@@ -164,18 +186,20 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         )
 
     def get_profile(self):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "get",
             "/v1/profile",
+            x_with_authorization=True,
         )
 
     def update_profile(self, profile, current_password):
         profile["current_password"] = current_password
         self.delete_local_state("summary")
-        response = self.send_auth_request(
+        response = self.fetch_json_data(
             "put",
             "/v1/profile",
             data=profile,
+            x_with_authorization=True,
         )
         return response
 
@@ -193,9 +217,10 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
                     "username": account.get("username"),
                 }
             }
-        result = self.send_auth_request(
+        result = self.fetch_json_data(
             "get",
             "/v1/summary",
+            x_with_authorization=True,
         )
         account["summary"] = dict(
             profile=result.get("profile"),
@@ -211,119 +236,121 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         return self.get_account_info(offline=True).get("profile").get("username")
 
     def destroy_account(self):
-        return self.send_auth_request("delete", "/v1/account")
+        return self.fetch_json_data(
+            "delete",
+            "/v1/account",
+            x_with_authorization=True,
+        )
 
     def create_org(self, orgname, email, displayname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/orgs",
             data={"orgname": orgname, "email": email, "displayname": displayname},
+            x_with_authorization=True,
         )
 
     def get_org(self, orgname):
-        return self.send_auth_request("get", "/v1/orgs/%s" % orgname)
+        return self.fetch_json_data(
+            "get",
+            "/v1/orgs/%s" % orgname,
+            x_with_authorization=True,
+        )
 
     def list_orgs(self):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "get",
             "/v1/orgs",
+            x_with_authorization=True,
         )
 
     def update_org(self, orgname, data):
-        return self.send_auth_request(
-            "put", "/v1/orgs/%s" % orgname, data={k: v for k, v in data.items() if v}
+        return self.fetch_json_data(
+            "put",
+            "/v1/orgs/%s" % orgname,
+            data={k: v for k, v in data.items() if v},
+            x_with_authorization=True,
         )
 
     def destroy_org(self, orgname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s" % orgname,
+            x_with_authorization=True,
         )
 
     def add_org_owner(self, orgname, username):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/orgs/%s/owners" % orgname,
             data={"username": username},
+            x_with_authorization=True,
         )
 
     def list_org_owners(self, orgname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "get",
             "/v1/orgs/%s/owners" % orgname,
+            x_with_authorization=True,
         )
 
     def remove_org_owner(self, orgname, username):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s/owners" % orgname,
             data={"username": username},
+            x_with_authorization=True,
         )
 
     def create_team(self, orgname, teamname, description):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/orgs/%s/teams" % orgname,
             data={"name": teamname, "description": description},
+            x_with_authorization=True,
         )
 
     def destroy_team(self, orgname, teamname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            x_with_authorization=True,
         )
 
     def get_team(self, orgname, teamname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "get",
             "/v1/orgs/%s/teams/%s" % (orgname, teamname),
+            x_with_authorization=True,
         )
 
     def list_teams(self, orgname):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "get",
             "/v1/orgs/%s/teams" % orgname,
+            x_with_authorization=True,
         )
 
     def update_team(self, orgname, teamname, data):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "put",
             "/v1/orgs/%s/teams/%s" % (orgname, teamname),
             data={k: v for k, v in data.items() if v},
+            x_with_authorization=True,
         )
 
     def add_team_member(self, orgname, teamname, username):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "post",
             "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
             data={"username": username},
+            x_with_authorization=True,
         )
 
     def remove_team_member(self, orgname, teamname, username):
-        return self.send_auth_request(
+        return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
             data={"username": username},
+            x_with_authorization=True,
         )
-
-    def fetch_authentication_token(self):
-        if os.environ.get("PLATFORMIO_AUTH_TOKEN"):
-            return os.environ.get("PLATFORMIO_AUTH_TOKEN")
-        auth = app.get_state_item("account", {}).get("auth", {})
-        if auth.get("access_token") and auth.get("access_token_expire"):
-            if auth.get("access_token_expire") > time.time():
-                return auth.get("access_token")
-            if auth.get("refresh_token"):
-                try:
-                    data = self.fetch_json_data(
-                        "post",
-                        "/v1/login",
-                        headers={
-                            "Authorization": "Bearer %s" % auth.get("refresh_token")
-                        },
-                    )
-                    app.set_state_item("account", data)
-                    return data.get("auth").get("access_token")
-                except AccountError:
-                    self.delete_local_session()
-        raise AccountNotAuthorized()

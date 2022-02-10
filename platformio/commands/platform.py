@@ -61,7 +61,7 @@ def platform_frameworks(query, json_output):
     regclient = PlatformPackageManager().get_registry_client_instance()
     frameworks = []
     for framework in regclient.fetch_json_data(
-        "get", "/v2/frameworks", cache_valid="1d"
+        "get", "/v2/frameworks", x_cache_valid="1d"
     ):
         if query == "all":
             query = ""
@@ -354,7 +354,7 @@ def _print_platforms(platforms):
 
 def _get_registry_platforms():
     regclient = PlatformPackageManager().get_registry_client_instance()
-    return regclient.fetch_json_data("get", "/v2/platforms", cache_valid="1d")
+    return regclient.fetch_json_data("get", "/v2/platforms", x_cache_valid="1d")
 
 
 def _get_platform_data(*args, **kwargs):

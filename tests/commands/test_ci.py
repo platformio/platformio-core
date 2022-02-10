@@ -119,6 +119,7 @@ def test_ci_keep_build_dir_nested_src_dirs(
     src_dir1 = tmpdir_factory.mktemp("src_1")
     src_dir1.join("src1.cpp").write(
         """
+#include <Arduino.h>
 void setup() {}
 """
     )
@@ -126,6 +127,7 @@ void setup() {}
     src_dir2 = tmpdir_factory.mktemp("src_2")
     src_dir2.join("src2.cpp").write(
         """
+#include <Arduino.h>
 void loop() {}
 """
     )
