@@ -8,7 +8,7 @@ PlatformIO Core 5
 
 **A professional collaborative platform for embedded development**
 
-5.2.5 (2021-12-??)
+5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~
 
 - Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
