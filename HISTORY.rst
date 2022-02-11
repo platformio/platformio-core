@@ -12,7 +12,6 @@ PlatformIO Core 5
 ~~~~~~~~~~~~~~~~~~
 
 - Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
-- Run library extra script only at a build process (`issue #3915 <https://github.com/platformio/platformio-core/issues/3915>`_)
 - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 
 5.2.5 (2022-02-10)

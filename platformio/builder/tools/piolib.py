@@ -285,8 +285,15 @@ class LibBuilderBase(object):
         return {}
 
     def process_extra_options(self):
-        self.env.ProcessFlags(self.build_flags)
-        self.env.ProcessUnFlags(self.build_unflags)
+        with fs.cd(self.path):
+            self.env.ProcessFlags(self.build_flags)
+            if self.extra_script:
+                self.env.SConscriptChdir(1)
+                self.env.SConscript(
+                    os.path.abspath(self.extra_script),
+                    exports={"env": self.env, "pio_lib_builder": self},
+                )
+            self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
         if not self.dependencies:
@@ -440,15 +447,7 @@ class LibBuilderBase(object):
         for lb, lb_search_files in lib_inc_map.items():
             self.depend_recursive(lb, lb_search_files)
 
-    def build(self):  # pylint: disable=too-many-branches
-        if self.extra_script and not self._is_built:
-            with fs.cd(self.path):
-                self.env.SConscriptChdir(1)
-                self.env.SConscript(
-                    os.path.abspath(self.extra_script),
-                    exports={"env": self.env, "pio_lib_builder": self},
-                )
-
+    def build(self):
         libs = []
         for lb in self._depbuilders:
             libs.extend(lb.build())
@@ -461,8 +460,8 @@ class LibBuilderBase(object):
 
         if self._is_built:
             return libs
-
         self._is_built = True
+
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
 
         if self.lib_ldf_mode == "off":
