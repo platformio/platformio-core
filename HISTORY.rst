@@ -13,6 +13,7 @@ PlatformIO Core 5
 
 - Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
 - Run library extra script only at a build process (`issue #3915 <https://github.com/platformio/platformio-core/issues/3915>`_)
+- Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~
@@ -29,7 +30,6 @@ PlatformIO Core 5
 - Added support for a new ``headers`` field in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html>`__ (declare a list of header files that can be included in a project source files using ``#include <...>`` directive)
 - Improved tab completion support for Bash, ZSH, and Fish shells (`issue #4114 <https://github.com/platformio/platformio-core/issues/4114>`_)
 - Improved support for projects located on a network share (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_, `issue #3926 <https://github.com/platformio/platformio-core/issues/3926>`_, `issue #4099 <https://github.com/platformio/platformio-core/issues/4099>`_)
-- Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 - Upgraded build engine to the SCons 4.3 (`release notes <https://github.com/SCons/scons/blob/rel_4.3.0/CHANGES.txt>`__)
 - Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
 - Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
