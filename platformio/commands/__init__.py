@@ -77,4 +77,10 @@ class PlatformioCLI(click.MultiCommand):
             from platformio.commands.project import project_init
 
             return project_init
+
+        if name == "package":
+            from platformio.commands.pkg import cli
+
+            return cli
+
         raise AttributeError()

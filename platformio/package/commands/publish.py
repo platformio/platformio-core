@@ -23,7 +23,6 @@ from platformio import fs
 from platformio.clients.account import AccountClient
 from platformio.clients.registry import RegistryClient
 from platformio.exception import UserSideException
-from platformio.package.commands import cli
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.package.meta import PackageType
@@ -41,7 +40,7 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
-@cli.command("publish", short_help="Publish a package to the registry")
+@click.command("publish", short_help="Publish a package to the registry")
 @click.argument(
     "package",
     required=True,
@@ -69,7 +68,7 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     is_flag=True,
     help="Do not show interactive prompt",
 )
-def package_publish(  # pylint: disable=too-many-arguments, too-many-locals
+def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
     package, owner, released_at, private, notify, non_interactive
 ):
     click.secho("Preparing a package...", fg="cyan")

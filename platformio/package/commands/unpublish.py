@@ -16,11 +16,10 @@ import click
 
 from platformio.clients.account import AccountClient
 from platformio.clients.registry import RegistryClient
-from platformio.package.commands import cli
 from platformio.package.meta import PackageSpec, PackageType
 
 
-@cli.command("unpublish", short_help="Remove a pushed package from the registry")
+@click.command("unpublish", short_help="Remove a pushed package from the registry")
 @click.argument(
     "package", required=True, metavar="[<organization>/]<pkgname>[@<version>]"
 )
@@ -35,7 +34,7 @@ from platformio.package.meta import PackageSpec, PackageType
     is_flag=True,
     help="Undo a remove, putting a version back into the registry",
 )
-def package_unpublish(package, type, undo):  # pylint: disable=redefined-builtin
+def package_unpublish_cmd(package, type, undo):  # pylint: disable=redefined-builtin
     spec = PackageSpec(package)
     response = RegistryClient().unpublish_package(
         owner=spec.owner or AccountClient().get_logged_username(),
