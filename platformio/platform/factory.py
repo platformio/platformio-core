@@ -44,7 +44,7 @@ class PlatformFactory(object):
         if isinstance(pkg_or_spec, PackageItem):
             platform_dir = pkg_or_spec.path
             platform_name = pkg_or_spec.metadata.name
-        elif os.path.isdir(pkg_or_spec):
+        elif isinstance(pkg_or_spec, (str, bytes)) and os.path.isdir(pkg_or_spec):
             platform_dir = pkg_or_spec
         else:
             from platformio.package.manager.platform import PlatformPackageManager
