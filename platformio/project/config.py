@@ -347,7 +347,7 @@ class ProjectConfigBase(object):
 
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
-            raise exception.NotPlatformIOProjectError(self.path)
+            raise exception.NotPlatformIOProjectError(os.path.dirname(self.path))
         # check envs
         known = set(self.envs())
         if not known:
