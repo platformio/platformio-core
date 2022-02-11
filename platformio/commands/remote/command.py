@@ -32,7 +32,7 @@ from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 
 
-@click.group("remote", short_help="Remote development")
+@click.group("remote", short_help="Remote Development")
 @click.option("-a", "--agent", multiple=True)
 @click.pass_context
 def cli(ctx, agent):

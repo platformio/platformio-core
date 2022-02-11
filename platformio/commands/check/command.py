@@ -32,7 +32,7 @@ from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, get_project_dir
 
 
-@click.command("check", short_help="Static code analysis")
+@click.command("check", short_help="Static Code Analysis")
 @click.option("-e", "--environment", multiple=True)
 @click.option(
     "-d",

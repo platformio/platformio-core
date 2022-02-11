@@ -38,7 +38,7 @@ from platformio.project.options import ProjectOptions
 @click.command(
     "debug",
     context_settings=dict(ignore_unknown_options=True),
-    short_help="Unified debugger",
+    short_help="Unified Debugger",
 )
 @click.option(
     "-d",

@@ -30,7 +30,7 @@ from platformio.project.generator import ProjectGenerator
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
-@click.group(short_help="Project manager")
+@click.group(short_help="Project Manager")
 def cli():
     pass
 
