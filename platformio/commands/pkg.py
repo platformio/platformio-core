@@ -14,6 +14,7 @@
 
 import click
 
+from platformio.package.commands.outdated import package_outdated_cmd
 from platformio.package.commands.pack import package_pack_cmd
 from platformio.package.commands.publish import package_publish_cmd
 from platformio.package.commands.unpublish import package_unpublish_cmd
@@ -22,6 +23,7 @@ from platformio.package.commands.unpublish import package_unpublish_cmd
 @click.group(
     "pkg",
     commands=[
+        package_outdated_cmd,
         package_pack_cmd,
         package_publish_cmd,
         package_unpublish_cmd,

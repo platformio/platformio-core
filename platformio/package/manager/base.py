@@ -59,6 +59,12 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
         self._tmp_dir = None
         self._registry_client = None
 
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__} <type={self.pkg_type} "
+            f"package_dir={self.package_dir}>"
+        )
+
     def lock(self):
         if self._lockfile:
             return

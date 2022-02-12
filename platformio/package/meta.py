@@ -67,6 +67,10 @@ class PackageType(object):
 
 
 class PackageOutdatedResult(object):
+    UPDATE_INCREMENT_MAJOR = "major"
+    UPDATE_INCREMENT_MINOR = "minor"
+    UPDATE_INCREMENT_PATCH = "patch"
+
     def __init__(self, current, latest=None, wanted=None, detached=False):
         self.current = current
         self.latest = latest
@@ -92,6 +96,24 @@ class PackageOutdatedResult(object):
         ):
             value = cast_version_to_semver(str(value))
         return super(PackageOutdatedResult, self).__setattr__(name, value)
+
+    @property
+    def update_increment_type(self):
+        if not self.current or not self.latest:
+            return None
+        patch_conds = [
+            self.current.major == self.latest.major,
+            self.current.minor == self.latest.minor,
+        ]
+        if all(patch_conds):
+            return self.UPDATE_INCREMENT_PATCH
+        minor_conds = [
+            self.current.major == self.latest.major,
+            self.current.major > 0,
+        ]
+        if all(minor_conds):
+            return self.UPDATE_INCREMENT_MINOR
+        return self.UPDATE_INCREMENT_MAJOR
 
     def is_outdated(self, allow_incompatible=False):
         if self.detached or not self.latest or self.current == self.latest:

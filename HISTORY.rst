@@ -11,8 +11,15 @@ PlatformIO Core 5
 5.3.0 (2022-02-??)
 ~~~~~~~~~~~~~~~~~~
 
-- Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
-- Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
+* **Package Management**
+
+  - New unified Package Management CLI (``pio pkg``):
+
+    * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ - check for project outdated packages
+
+  - Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
+
+* Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~
@@ -93,7 +100,7 @@ PlatformIO Core 5
     * Check for duplicates and used version
     * Validate package manifest
 
-  - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_publish.html>`__ command
+  - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command
 
 * **Build System**
 
@@ -187,7 +194,7 @@ PlatformIO Core 5
 - Force VSCode's intelliSenseMode to "gcc-x64" when GCC toolchain is used
 - Print ignored test suites and environments in the test summary report only in verbose mode (`issue #3726 <https://github.com/platformio/platformio-core/issues/3726>`_)
 - Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
-- Fixed an issue when `pio package pack <https://docs.platformio.org/en/latest/core/userguide/package/cmd_pack.html>`__ ignores some folders (`issue #3730 <https://github.com/platformio/platformio-core/issues/3730>`_)
+- Fixed an issue when `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ ignores some folders (`issue #3730 <https://github.com/platformio/platformio-core/issues/3730>`_)
 
 5.0.2 (2020-10-30)
 ~~~~~~~~~~~~~~~~~~
@@ -199,7 +206,7 @@ PlatformIO Core 5
 - Fixed a "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
 - Fixed an issue with GCC linker when "native" dev-platform is used in pair with library dependencies (`issue #3669 <https://github.com/platformio/platformio-core/issues/3669>`_)
 - Fixed an "AssertionError: ensure_dir_exists" when checking library updates from simultaneous subprocesses (`issue #3677 <https://github.com/platformio/platformio-core/issues/3677>`_)
-- Fixed an issue when `pio package publish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_publish.html>`__ command removes original archive after submitting to the registry (`issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
+- Fixed an issue when `pio package publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command removes original archive after submitting to the registry (`issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
 - Fixed an issue when multiple `pio lib install <https://docs.platformio.org/en/latest/core/userguide/lib/cmd_install.html>`__ command with the same local library results in duplicates in ``lib_deps`` (`issue #3715 <https://github.com/platformio/platformio-core/issues/3715>`_)
 - Fixed an issue with a "wrong" timestamp in device monitor output using `"time" filter <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #3712 <https://github.com/platformio/platformio-core/issues/3712>`_)
 
@@ -209,7 +216,7 @@ PlatformIO Core 5
 - Added support for "owner" requirement when declaring ``dependencies`` using `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`__
 - Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
 - Fixed an issue with "ImportError: cannot import name '_get_backend' from 'cryptography.hazmat.backends'" when using `Remote Development <https://docs.platformio.org/en/latest/plus/pio-remote.html>`__ on RaspberryPi device (`issue #3652 <https://github.com/platformio/platformio-core/issues/3652>`_)
-- Fixed an issue when `pio package unpublish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
+- Fixed an issue when `pio package unpublish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
 - Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
 - Fixed an issue with incorrect value for C++ language standard in IDE projects when an in-progress language standard is used (`issue #3653 <https://github.com/platformio/platformio-core/issues/3653>`_)
 - Fixed an issue with "Invalid simple block (semantic_version)" from library dependency that refs to an external source (repository, ZIP/Tar archives) (`issue #3658 <https://github.com/platformio/platformio-core/issues/3658>`_)
@@ -233,7 +240,7 @@ Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/en/la
   - Built-in fine-grained access control (role-based, teams, organizations)
   - New CLI commands:
 
-    * `pio package <https://docs.platformio.org/en/latest/core/userguide/package/index.html>`__ – manage packages in the registry
+    * `pio package <https://docs.platformio.org/en/latest/core/userguide/pkg/index.html>`__ – manage packages in the registry
     * `pio access <https://docs.platformio.org/en/latest/core/userguide/access/index.html>`__ – manage package access for users, teams, and maintainers
 
 * Integration with the new **Account Management System**
