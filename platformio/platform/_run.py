@@ -52,14 +52,10 @@ class PlatformRunMixin(object):
 
         self.ensure_engine_compatible()
 
-        options = self.config.items(env=variables["pioenv"], as_dict=True)
-        if "framework" in options:
-            # support PIO Core 3.0 dev/platforms
-            options["pioframework"] = options["framework"]
-        self.configure_default_packages(options, targets)
-        self.autoinstall_runtime_packages()
+        self.configure_project_packages(variables["pioenv"], targets)
+        self.autoinstall_required_packages()
 
-        self._report_non_sensitive_data(options, targets)
+        self._report_non_sensitive_data(variables["pioenv"], targets)
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
@@ -79,14 +75,14 @@ class PlatformRunMixin(object):
 
         return result
 
-    def _report_non_sensitive_data(self, options, targets):
-        topts = options.copy()
-        topts["platform_packages"] = [
+    def _report_non_sensitive_data(self, env, targets):
+        options = self.config.items(env=env, as_dict=True)
+        options["platform_packages"] = [
             dict(name=item["name"], version=item["version"])
             for item in self.dump_used_packages()
         ]
-        topts["platform"] = {"name": self.name, "version": self.version}
-        telemetry.send_run_environment(topts, targets)
+        options["platform"] = {"name": self.name, "version": self.version}
+        telemetry.send_run_environment(options, targets)
 
     def _run_scons(self, variables, targets, jobs):
         scons_dir = get_core_package_dir("tool-scons")

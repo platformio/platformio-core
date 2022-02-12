@@ -33,12 +33,8 @@ from platformio.project.config import ProjectOptions
 
 @util.memoized()
 def PioPlatform(env):
-    variables = env.GetProjectOptions(as_dict=True)
-    if "framework" in variables:
-        # support PIO Core 3.0 dev/platforms
-        variables["pioframework"] = variables["framework"]
     p = PlatformFactory.new(os.path.dirname(env["PLATFORM_MANIFEST"]))
-    p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
+    p.configure_project_packages(env["PIOENV"], COMMAND_LINE_TARGETS)
     return p
 
 

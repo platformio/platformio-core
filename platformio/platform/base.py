@@ -178,10 +178,16 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     def get_package_type(self, name):
         return self.packages[name].get("type")
 
-    def configure_default_packages(self, options, targets):
+    def configure_project_packages(self, env, targets=None):
+        options = self.config.items(env=env, as_dict=True)
+        if "framework" in options:
+            # support PIO Core 3.0 dev/platforms
+            options["pioframework"] = options["framework"]
         # override user custom packages
         self._custom_packages = options.get("platform_packages")
+        self.configure_default_packages(options, targets)
 
+    def configure_default_packages(self, options, targets):
         # enable used frameworks
         for framework in options.get("framework", []):
             if not self.frameworks:

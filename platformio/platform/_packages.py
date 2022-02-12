@@ -65,7 +65,7 @@ class PlatformPackagesMixin(object):
             result.append(item)
         return result
 
-    def autoinstall_runtime_packages(self):
+    def autoinstall_required_packages(self):
         for name, options in self.packages.items():
             if options.get("optional", False):
                 continue
