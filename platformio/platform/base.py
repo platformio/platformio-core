@@ -185,7 +185,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
             options["pioframework"] = options["framework"]
         # override user custom packages
         self._custom_packages = options.get("platform_packages")
-        self.configure_default_packages(options, targets)
+        self.configure_default_packages(options, targets or [])
 
     def configure_default_packages(self, options, targets):
         # enable used frameworks
