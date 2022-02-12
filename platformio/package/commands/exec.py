@@ -20,13 +20,14 @@ import click
 from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.exception import UserSideException
 from platformio.package.manager.tool import ToolPackageManager
+from platformio.proc import get_pythonexe_path
 
 
-@click.command("exec", short_help="Run command from package")
+@click.command("exec", short_help="Run command from package tool")
 @click.option("-p", "--package", metavar="<pkg>[@<version>]")
 @click.option("-c", "--call", metavar="<cmd> [args...]")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def cli(package, call, args):
+def package_exec_cmd(package, call, args):
     if not call and not args:
         raise click.BadArgumentUsage("Please provide command name")
     pkg = None
@@ -47,8 +48,9 @@ def cli(package, call, args):
         "Using %s package"
         % click.style("%s@%s" % (pkg.metadata.name, pkg.metadata.version), fg="green")
     )
-    inject_pkg_to_environ(pkg)
 
+    inject_pkg_to_environ(pkg)
+    os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
     try:
         subprocess.run(  # pylint: disable=subprocess-run-check
             call or args, shell=call is not None, env=os.environ

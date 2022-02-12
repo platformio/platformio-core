@@ -16,8 +16,7 @@ PlatformIO Core 5
   - New unified Package Management CLI (``pio pkg``):
 
     * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ - check for project outdated packages
-
-  - Run command from a PlatformIO package with a new `pio exec <https://docs.platformio.org/en/latest/core/userguide/cmd_exec.html>`__ (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
+    * `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`_ - run command from package tool (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
 
 * Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 
