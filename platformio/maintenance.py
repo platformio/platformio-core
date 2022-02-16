@@ -331,7 +331,7 @@ def check_internal_updates(ctx, what):  # pylint: disable=too-many-branches
 def check_prune_system():
     last_check = app.get_state_item("last_check", {})
     interval = 30 * 3600 * 24  # 1 time per month
-    if (time() - interval) < last_check.get("prune_system", 0):
+    if (time() - interval) < last_check.get("prune_system", time()):
         return
 
     last_check["prune_system"] = int(time())
