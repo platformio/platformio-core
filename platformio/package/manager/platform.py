@@ -47,7 +47,9 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         with_all_packages=False,
         silent=False,
         force=False,
+        project_env=None,
     ):
+        already_installed = self.get_package(spec)
         pkg = super(PlatformPackageManager, self).install(
             spec, silent=silent, force=force, skip_dependencies=True
         )
@@ -60,6 +62,9 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             )
             raise e
 
+        if project_env:
+            p.configure_project_packages(project_env)
+
         if with_all_packages:
             with_packages = list(p.packages)
 
@@ -70,8 +75,8 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             silent=silent,
             force=force,
         )
-        p.install_python_packages()
-        p.on_installed()
+        if not already_installed:
+            p.on_installed()
         return pkg
 
     def uninstall(self, spec, silent=False, skip_dependencies=False):
@@ -83,7 +88,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             pkg, silent=silent, skip_dependencies=True
         )
         if not skip_dependencies:
-            p.uninstall_python_packages()
             p.on_uninstalled()
         return pkg
 

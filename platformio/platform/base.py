@@ -13,12 +13,10 @@
 # limitations under the License.
 
 import os
-import subprocess
 
-import click
 import semantic_version
 
-from platformio import __version__, fs, proc
+from platformio import __version__, fs
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.version import pepver_to_semver
 from platformio.platform._packages import PlatformPackagesMixin
@@ -103,10 +101,6 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
                 packages[spec.name] = {}
             packages[spec.name].update(**options)
         return packages
-
-    @property
-    def python_packages(self):
-        return self._manifest.get("pythonPackages")
 
     def ensure_engine_compatible(self):
         if not self.engines or "platformio" not in self.engines:
@@ -238,37 +232,3 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
 
     def on_uninstalled(self):
         pass
-
-    def install_python_packages(self):
-        if not self.python_packages:
-            return None
-        click.echo(
-            "Installing Python packages: %s"
-            % ", ".join(list(self.python_packages.keys())),
-        )
-        args = [proc.get_pythonexe_path(), "-m", "pip", "install", "--upgrade"]
-        for name, requirements in self.python_packages.items():
-            if any(c in requirements for c in ("<", ">", "=")):
-                args.append("%s%s" % (name, requirements))
-            else:
-                args.append("%s==%s" % (name, requirements))
-        try:
-            return subprocess.call(args) == 0
-        except Exception as e:  # pylint: disable=broad-except
-            click.secho(
-                "Could not install Python packages -> %s" % e, fg="red", err=True
-            )
-        return None
-
-    def uninstall_python_packages(self):
-        if not self.python_packages:
-            return
-        click.echo("Uninstalling Python packages")
-        args = [proc.get_pythonexe_path(), "-m", "pip", "uninstall", "--yes"]
-        args.extend(list(self.python_packages.keys()))
-        try:
-            subprocess.call(args) == 0
-        except Exception as e:  # pylint: disable=broad-except
-            click.secho(
-                "Could not install Python packages -> %s" % e, fg="red", err=True
-            )
