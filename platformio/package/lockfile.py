@@ -70,7 +70,8 @@ class LockFile(object):
                 fcntl.flock(self._fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             elif LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_MSVCRT:
                 msvcrt.locking(self._fp.fileno(), msvcrt.LK_NBLCK, 1)
-        except IOError:
+        except (BlockingIOError, IOError):
+            self._fp.close()
             self._fp = None
             raise LockFileExists
         return True
