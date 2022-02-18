@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
+import sys
 from datetime import datetime
 
 import click
@@ -39,7 +41,7 @@ from platformio.package.meta import (
 from platformio.project.helpers import get_project_cache_dir
 
 
-class BasePackageManager(  # pylint: disable=too-many-public-methods
+class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     PackageManagerDownloadMixin,
     PackageManageRegistryMixin,
     PackageManagerInstallMixin,
@@ -52,8 +54,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     def __init__(self, pkg_type, package_dir):
         self.pkg_type = pkg_type
         self.package_dir = package_dir
-        self._MEMORY_CACHE = {}
+        self.log = self._setup_logger()
 
+        self._MEMORY_CACHE = {}
         self._lockfile = None
         self._download_dir = None
         self._tmp_dir = None
@@ -64,6 +67,19 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
             f"{self.__class__.__name__} <type={self.pkg_type} "
             f"package_dir={self.package_dir}>"
         )
+
+    def _setup_logger(self):
+        logger = logging.getLogger(str(self.__class__.__name__).replace("Package", " "))
+        logger.setLevel(logging.ERROR if PlatformioCLI.in_silence() else logging.INFO)
+        formatter = logging.Formatter("%(name)s: %(message)s")
+        sh = logging.StreamHandler(sys.stdout)
+        sh.setFormatter(formatter)
+        logger.handlers.clear()
+        logger.addHandler(sh)
+        return logger
+
+    def set_log_level(self, level):
+        self.log.setLevel(level)
 
     def lock(self):
         if self._lockfile:
@@ -110,12 +126,6 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
     @property
     def manifest_names(self):
         raise NotImplementedError
-
-    def print_message(self, message, **kwargs):
-        click.echo(
-            "%s: " % str(self.__class__.__name__).replace("Package", " "), nl=False
-        )
-        click.secho(message, **kwargs)
 
     def get_download_dir(self):
         if not self._download_dir:
@@ -171,7 +181,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods
                 return result
             except ManifestException as e:
                 if not PlatformioCLI.in_silence():
-                    self.print_message(str(e), fg="yellow")
+                    self.log.warning(click.style(str(e), fg="yellow"))
         raise MissingPackageManifestError(", ".join(self.manifest_names))
 
     @staticmethod

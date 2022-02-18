@@ -13,9 +13,12 @@
 # limitations under the License.
 
 import hashlib
+import logging
 import os
 import tempfile
 import time
+
+import click
 
 from platformio import app, compat
 from platformio.package.download import FileDownloader
@@ -51,7 +54,8 @@ class PackageManagerDownloadMixin(object):
                 if os.path.isfile(dl_path):
                     os.remove(dl_path)
 
-    def download(self, url, checksum=None, silent=False):
+    def download(self, url, checksum=None):
+        silent = not self.log.isEnabledFor(logging.INFO)
         dl_path = self.compute_download_path(url, checksum or "")
         if os.path.isfile(dl_path):
             self.set_download_utime(dl_path)
@@ -75,10 +79,11 @@ class PackageManagerDownloadMixin(object):
                         except IOError:
                             raise_error = True
                     if raise_error:
-                        self.print_message(
-                            "Error: Please read https://bit.ly/package-manager-ioerror",
-                            fg="red",
-                            err=True,
+                        self.log.error(
+                            click.style(
+                                "Error: Please read https://bit.ly/package-manager-ioerror",
+                                fg="red",
+                            )
                         )
                         raise e
             if checksum:

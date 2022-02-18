@@ -15,6 +15,8 @@
 import json
 import os
 
+import click
+
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -85,7 +87,6 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         self,
         spec,
         search_filters=None,
-        silent=False,
         skip_dependencies=False,
         force=False,
     ):
@@ -93,7 +94,6 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
             return super(LibraryPackageManager, self)._install(
                 spec,
                 search_filters=search_filters,
-                silent=silent,
                 skip_dependencies=skip_dependencies,
                 force=force,
             )
@@ -103,27 +103,28 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
             spec = self.ensure_spec(spec)
             if is_builtin_lib(spec.name):
-                self.print_message("Already installed, built-in library", fg="yellow")
+                self.log.info("Already installed, built-in library", fg="yellow")
                 return True
 
             raise e
 
-    def install_dependencies(self, pkg, silent=False):
+    def install_dependencies(self, pkg):
         assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):
             return
-        if not silent:
-            self.print_message("Installing dependencies...")
+        self.log.info("Installing dependencies...")
         for dependency in manifest.get("dependencies"):
-            if not self._install_dependency(dependency, silent) and not silent:
-                self.print_message(
-                    "Warning! Could not install dependency %s for package '%s'"
-                    % (dependency, pkg.metadata.name),
-                    fg="yellow",
+            if not self._install_dependency(dependency):
+                self.log.warning(
+                    click.style(
+                        "Warning! Could not install dependency %s for package '%s'"
+                        % (dependency, pkg.metadata.name),
+                        fg="yellow",
+                    )
                 )
 
-    def _install_dependency(self, dependency, silent=False):
+    def _install_dependency(self, dependency):
         spec = PackageSpec(
             owner=dependency.get("owner"),
             name=dependency.get("name"),
@@ -135,20 +136,17 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
             if key in ("authors", "platforms", "frameworks")
         }
         try:
-            return self._install(
-                spec, search_filters=search_filters or None, silent=silent
-            )
+            return self._install(spec, search_filters=search_filters or None)
         except UnknownPackageError:
             pass
         return None
 
-    def uninstall_dependencies(self, pkg, silent=False):
+    def uninstall_dependencies(self, pkg):
         assert isinstance(pkg, PackageItem)
         manifest = self.load_manifest(pkg)
         if not manifest.get("dependencies"):
             return
-        if not silent:
-            self.print_message("Removing dependencies...", fg="yellow")
+        self.log.info(click.style("Removing dependencies...", fg="yellow"))
         for dependency in manifest.get("dependencies"):
             spec = PackageSpec(
                 owner=dependency.get("owner"),
@@ -158,4 +156,4 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
             pkg = self.get_package(spec)
             if not pkg:
                 continue
-            self._uninstall(pkg, silent=silent)
+            self._uninstall(pkg)

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import logging
 import os
 
 import click
@@ -208,6 +209,7 @@ def _platform_install(  # pylint: disable=too-many-arguments
     force=False,
 ):
     pm = PlatformPackageManager()
+    pm.set_log_level(logging.WARN if silent else logging.DEBUG)
     for platform in platforms:
         pkg = pm.install(
             spec=platform,
@@ -215,7 +217,6 @@ def _platform_install(  # pylint: disable=too-many-arguments
             without_packages=without_package or [],
             skip_default_package=skip_default_package,
             with_all_packages=with_all_packages,
-            silent=silent,
             force=force,
         )
         if pkg and not silent:
@@ -231,6 +232,7 @@ def _platform_install(  # pylint: disable=too-many-arguments
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
 def platform_uninstall(platforms):
     pm = PlatformPackageManager()
+    pm.set_log_level(logging.DEBUG)
     for platform in platforms:
         if pm.uninstall(platform):
             click.secho(
@@ -259,6 +261,7 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
     platforms, only_packages, only_check, dry_run, silent, json_output
 ):
     pm = PlatformPackageManager()
+    pm.set_log_level(logging.WARN if silent else logging.DEBUG)
     platforms = platforms or pm.get_installed()
     only_check = dry_run or only_check
 
@@ -304,9 +307,7 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
             )
         )
         click.echo("--------")
-        pm.update(
-            platform, only_packages=only_packages, only_check=only_check, silent=silent
-        )
+        pm.update(platform, only_packages=only_packages, only_check=only_check)
         click.echo()
 
     return True

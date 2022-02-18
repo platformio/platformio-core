@@ -45,22 +45,22 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         without_packages=None,
         skip_default_package=False,
         with_all_packages=False,
-        silent=False,
         force=False,
         project_env=None,
     ):
         already_installed = self.get_package(spec)
         pkg = super(PlatformPackageManager, self).install(
-            spec, silent=silent, force=force, skip_dependencies=True
+            spec, force=force, skip_dependencies=True
         )
         try:
             p = PlatformFactory.new(pkg)
             p.ensure_engine_compatible()
         except IncompatiblePlatform as e:
-            super(PlatformPackageManager, self).uninstall(
-                pkg, silent=silent, skip_dependencies=True
-            )
+            super(PlatformPackageManager, self).uninstall(pkg, skip_dependencies=True)
             raise e
+
+        # set logging level for underlying tool manager
+        p.pm.set_log_level(self.log.getEffectiveLevel())
 
         if project_env:
             p.configure_project_packages(project_env)
@@ -72,20 +72,21 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             with_packages,
             without_packages,
             skip_default_package,
-            silent=silent,
             force=force,
         )
         if not already_installed:
             p.on_installed()
         return pkg
 
-    def uninstall(self, spec, silent=False, skip_dependencies=False):
+    def uninstall(self, spec, skip_dependencies=False):
         pkg = self.get_package(spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(spec)
         p = PlatformFactory.new(pkg)
+        # set logging level for underlying tool manager
+        p.pm.set_log_level(self.log.getEffectiveLevel())
         assert super(PlatformPackageManager, self).uninstall(
-            pkg, silent=silent, skip_dependencies=True
+            pkg, skip_dependencies=True
         )
         if not skip_dependencies:
             p.on_uninstalled()
@@ -96,7 +97,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         from_spec,
         to_spec=None,
         only_check=False,
-        silent=False,
         show_incompatible=True,
         only_packages=False,
     ):
@@ -104,6 +104,8 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
         p = PlatformFactory.new(pkg)
+        # set logging level for underlying tool manager
+        p.pm.set_log_level(self.log.getEffectiveLevel())
         pkgs_before = [item.metadata.name for item in p.get_installed_packages()]
 
         new_pkg = None
@@ -113,7 +115,6 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
                 from_spec,
                 to_spec,
                 only_check=only_check,
-                silent=silent,
                 show_incompatible=show_incompatible,
             )
             p = PlatformFactory.new(new_pkg)

@@ -79,7 +79,7 @@ class RegistryFileMirrorIterator(object):
 
 
 class PackageManageRegistryMixin(object):
-    def install_from_registry(self, spec, search_filters=None, silent=False):
+    def install_from_registry(self, spec, search_filters=None):
         if spec.owner and spec.name and not search_filters:
             package = self.fetch_registry_package(spec)
             if not package:
@@ -89,7 +89,7 @@ class PackageManageRegistryMixin(object):
             packages = self.search_registry_packages(spec, search_filters)
             if not packages:
                 raise UnknownPackageError(spec.humanize())
-            if len(packages) > 1 and not silent:
+            if len(packages) > 1:
                 self.print_multi_package_issue(packages, spec)
             package, version = self.find_best_registry_version(packages, spec)
 
@@ -110,11 +110,14 @@ class PackageManageRegistryMixin(object):
                         name=package["name"],
                     ),
                     checksum or pkgfile["checksum"]["sha256"],
-                    silent=silent,
                 )
             except Exception as e:  # pylint: disable=broad-except
-                self.print_message("Warning! Package Mirror: %s" % e, fg="yellow")
-                self.print_message("Looking for another mirror...", fg="yellow")
+                self.log.warning(
+                    click.style("Warning! Package Mirror: %s" % e, fg="yellow")
+                )
+                self.log.warning(
+                    click.style("Looking for another mirror...", fg="yellow")
+                )
 
         return None
 
@@ -153,36 +156,41 @@ class PackageManageRegistryMixin(object):
             raise UnknownPackageError(spec.humanize())
         return result
 
-    def reveal_registry_package_id(self, spec, silent=False):
+    def reveal_registry_package_id(self, spec):
         spec = self.ensure_spec(spec)
         if spec.id:
             return spec.id
         packages = self.search_registry_packages(spec)
         if not packages:
             raise UnknownPackageError(spec.humanize())
-        if len(packages) > 1 and not silent:
+        if len(packages) > 1:
             self.print_multi_package_issue(packages, spec)
-            click.echo("")
+            self.log.info("")
         return packages[0]["id"]
 
     def print_multi_package_issue(self, packages, spec):
-        self.print_message(
-            "Warning! More than one package has been found by ", fg="yellow", nl=False
+        self.log.warning(
+            click.style(
+                "Warning! More than one package has been found by ", fg="yellow"
+            )
+            + click.style(spec.humanize(), fg="cyan")
+            + click.style(" requirements:", fg="yellow")
         )
-        click.secho(spec.humanize(), fg="cyan", nl=False)
-        click.secho(" requirements:", fg="yellow")
+
         for item in packages:
-            click.echo(
+            self.log.warning(
                 " - {owner}/{name} @ {version}".format(
                     owner=click.style(item["owner"]["username"], fg="cyan"),
                     name=item["name"],
                     version=item["version"]["name"],
                 )
             )
-        self.print_message(
-            "Please specify detailed REQUIREMENTS using package owner and version "
-            "(shown above) to avoid name conflicts",
-            fg="yellow",
+        self.log.warning(
+            click.style(
+                "Please specify detailed REQUIREMENTS using package owner and version "
+                "(shown above) to avoid name conflicts",
+                fg="yellow",
+            )
         )
 
     def find_best_registry_version(self, packages, spec):

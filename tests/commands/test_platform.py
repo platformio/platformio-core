@@ -66,14 +66,17 @@ def test_install_core_3_dev_platform(clirunner, validate_cliresult, isolated_pio
     assert result.exit_code == 0
 
 
-def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core):
+def test_install_known_version(
+    clirunner, validate_cliresult, isolated_pio_core, strip_ansi
+):
     result = clirunner.invoke(
         cli_platform.platform_install,
         ["atmelavr@2.0.0", "--skip-default-package", "--with-package", "tool-avrdude"],
     )
     validate_cliresult(result)
-    assert "atmelavr @ 2.0.0" in result.output
-    assert "Installing tool-avrdude @" in result.output
+    output = strip_ansi(result.output)
+    assert "atmelavr @ 2.0.0" in output
+    assert "Installing tool-avrdude @" in output
     assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
@@ -117,11 +120,12 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
     assert len(isolated_pio_core.join("packages").listdir()) == 1
 
 
-def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
+def test_update_raw(clirunner, validate_cliresult, isolated_pio_core, strip_ansi):
     result = clirunner.invoke(cli_platform.platform_update)
     validate_cliresult(result)
-    assert "Removing atmelavr @ 2.0.0" in result.output
-    assert "Platform Manager: Installing platformio/atmelavr @" in result.output
+    output = strip_ansi(result.output)
+    assert "Removing atmelavr @ 2.0.0" in output
+    assert "Platform Manager: Installing platformio/atmelavr @" in output
     assert len(isolated_pio_core.join("packages").listdir()) == 2
 
 

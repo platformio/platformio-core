@@ -42,23 +42,20 @@ class PackageManagerInstallMixin(object):
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 
-    def install(self, spec, silent=False, skip_dependencies=False, force=False):
+    def install(self, spec, skip_dependencies=False, force=False):
         try:
             self.lock()
-            pkg = self._install(
-                spec, silent=silent, skip_dependencies=skip_dependencies, force=force
-            )
+            pkg = self._install(spec, skip_dependencies=skip_dependencies, force=force)
             self.memcache_reset()
             self.cleanup_expired_downloads()
             return pkg
         finally:
             self.unlock()
 
-    def _install(  # pylint: disable=too-many-arguments
+    def _install(
         self,
         spec,
         search_filters=None,
-        silent=False,
         skip_dependencies=False,
         force=False,
     ):
@@ -75,28 +72,26 @@ class PackageManagerInstallMixin(object):
 
         # if a forced installation
         if pkg and force:
-            self.uninstall(pkg, silent=silent)
+            self.uninstall(pkg)
             pkg = None
 
         if pkg:
-            if not silent:
-                self.print_message(
+            self.log.debug(
+                click.style(
                     "{name} @ {version} is already installed".format(
                         **pkg.metadata.as_dict()
                     ),
                     fg="yellow",
                 )
+            )
             return pkg
 
-        if not silent:
-            self.print_message(
-                "Installing %s" % click.style(spec.humanize(), fg="cyan")
-            )
+        self.log.info("Installing %s" % click.style(spec.humanize(), fg="cyan"))
 
         if spec.external:
-            pkg = self.install_from_url(spec.url, spec, silent=silent)
+            pkg = self.install_from_url(spec.url, spec)
         else:
-            pkg = self.install_from_registry(spec, search_filters, silent=silent)
+            pkg = self.install_from_registry(spec, search_filters)
 
         if not pkg or not pkg.metadata:
             raise PackageException(
@@ -104,24 +99,25 @@ class PackageManagerInstallMixin(object):
                 % (spec.humanize(), util.get_systype())
             )
 
-        if not silent:
-            self.print_message(
+        self.log.info(
+            click.style(
                 "{name} @ {version} has been installed!".format(
                     **pkg.metadata.as_dict()
                 ),
                 fg="green",
             )
+        )
 
         self.memcache_reset()
         if not skip_dependencies:
-            self.install_dependencies(pkg, silent)
+            self.install_dependencies(pkg)
         self._INSTALL_HISTORY[spec] = pkg
         return pkg
 
-    def install_dependencies(self, pkg, silent=False):
+    def install_dependencies(self, pkg):
         pass
 
-    def install_from_url(self, url, spec, checksum=None, silent=False):
+    def install_from_url(self, url, spec, checksum=None):
         spec = self.ensure_spec(spec)
         tmp_dir = tempfile.mkdtemp(prefix="pkg-installing-", dir=self.get_tmp_dir())
         vcs = None
@@ -134,7 +130,7 @@ class PackageManagerInstallMixin(object):
                     fs.rmtree(tmp_dir)
                     shutil.copytree(_url, tmp_dir, symlinks=True)
             elif url.startswith(("http://", "https://")):
-                dl_path = self.download(url, checksum, silent=silent)
+                dl_path = self.download(url, checksum)
                 assert os.path.isfile(dl_path)
                 self.unpack(dl_path, tmp_dir)
             else:

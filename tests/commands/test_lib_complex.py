@@ -237,7 +237,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     ) == set(lib["name"] for lib in output)
 
 
-def test_global_lib_update(clirunner, validate_cliresult):
+def test_global_lib_update(clirunner, validate_cliresult, strip_ansi):
     # update library using package directory
     result = clirunner.invoke(
         cmd_lib, ["-g", "update", "NeoPixelBus", "--dry-run", "--json-output"]
@@ -248,7 +248,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert "__pkg_dir" in oudated[0]
     result = clirunner.invoke(cmd_lib, ["-g", "update", oudated[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert "Removing NeoPixelBus @ 2.2.4" in result.output
+    assert "Removing NeoPixelBus @ 2.2.4" in strip_ansi(result.output)
 
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
@@ -262,7 +262,9 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert isinstance(result.exception, UnknownPackageError)
 
 
-def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
+def test_global_lib_uninstall(
+    clirunner, validate_cliresult, isolated_pio_core, strip_ansi
+):
     # uninstall using package directory
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     validate_cliresult(result)
@@ -270,7 +272,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     items = sorted(items, key=lambda item: item["__pkg_dir"])
     result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert ("Removing %s" % items[0]["name"]) in result.output
+    assert ("Removing %s" % items[0]["name"]) in strip_ansi(result.output)
 
     # uninstall the rest libraries
     result = clirunner.invoke(

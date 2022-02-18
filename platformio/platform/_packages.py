@@ -79,7 +79,6 @@ class PlatformPackagesMixin(object):
         with_packages=None,
         without_packages=None,
         skip_default_package=False,
-        silent=False,
         force=False,
     ):
         with_packages = set(self._find_pkg_names(with_packages or []))
@@ -96,7 +95,7 @@ class PlatformPackagesMixin(object):
             if name in with_packages or not (
                 skip_default_package or options.get("optional", False)
             ):
-                self.pm.install(self.get_package_spec(name), silent=silent, force=force)
+                self.pm.install(self.get_package_spec(name), force=force)
 
         return True
 

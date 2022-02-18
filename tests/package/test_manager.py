@@ -14,6 +14,7 @@
 
 # pylint: disable=unused-argument
 
+import logging
 import os
 import time
 
@@ -37,7 +38,8 @@ def test_download(isolated_pio_core):
     url = "https://github.com/platformio/platformio-core/archive/v4.3.4.zip"
     checksum = "69d59642cb91e64344f2cdc1d3b98c5cd57679b5f6db7accc7707bd4c5d9664a"
     lm = LibraryPackageManager()
-    archive_path = lm.download(url, checksum, silent=True)
+    lm.set_log_level(logging.ERROR)
+    archive_path = lm.download(url, checksum)
     assert fs.calculate_file_hashsum("sha256", archive_path) == checksum
     lm.cleanup_expired_downloads()
     assert os.path.isfile(archive_path)
@@ -150,12 +152,13 @@ def test_install_from_url(isolated_pio_core, tmpdir_factory):
     tmp_dir = tmpdir_factory.mktemp("tmp")
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
 
     # install from local directory
     src_dir = tmp_dir.join("local-lib-dir").mkdir()
     src_dir.join("main.cpp").write("")
     spec = PackageSpec("file://%s" % src_dir)
-    pkg = lm.install(spec, silent=True)
+    pkg = lm.install(spec)
     assert os.path.isfile(os.path.join(pkg.path, "main.cpp"))
     manifest = lm.load_manifest(pkg)
     assert manifest["name"] == "local-lib-dir"
@@ -171,7 +174,7 @@ def test_install_from_url(isolated_pio_core, tmpdir_factory):
     )
     tarball_path = PackagePacker(str(src_dir)).pack(str(tmp_dir))
     spec = PackageSpec("file://%s" % tarball_path)
-    pkg = lm.install(spec, silent=True)
+    pkg = lm.install(spec)
     assert os.path.isfile(os.path.join(pkg.path, "src", "main.cpp"))
     assert pkg == lm.get_package(spec)
     assert spec == pkg.metadata.spec
@@ -198,38 +201,41 @@ version = 5.2.7
 def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     # Libraries
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
+    lm.set_log_level(logging.ERROR)
     # library with dependencies
-    lm.install("AsyncMqttClient-esphome @ 0.8.6", silent=True)
+    lm.install("AsyncMqttClient-esphome @ 0.8.6")
     assert len(lm.get_installed()) == 3
     pkg = lm.get_package("AsyncTCP-esphome")
     assert pkg.metadata.spec.owner == "esphome"
     assert not lm.get_package("non-existing-package")
     # mbed library
-    assert lm.install("wolfSSL", silent=True)
+    assert lm.install("wolfSSL")
     assert len(lm.get_installed()) == 4
     # case sensitive author name
-    assert lm.install("DallasTemperature", silent=True)
+    assert lm.install("DallasTemperature")
     assert lm.get_package("OneWire").metadata.version.major >= 2
     assert len(lm.get_installed()) == 6
 
     # test conflicted names
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("conflicted-storage")))
-    lm.install("z3t0/IRremote@2.6.1", silent=True)
-    lm.install("mbed-yuhki50/IRremote", silent=True)
+    lm.set_log_level(logging.ERROR)
+    lm.install("z3t0/IRremote@2.6.1")
+    lm.install("mbed-yuhki50/IRremote")
     assert len(lm.get_installed()) == 2
 
     # Tools
     tm = ToolPackageManager(str(tmpdir_factory.mktemp("tool-storage")))
-    pkg = tm.install("platformio/tool-stlink @ ~1.10400.0", silent=True)
+    tm.set_log_level(logging.ERROR)
+    pkg = tm.install("platformio/tool-stlink @ ~1.10400.0")
     manifest = tm.load_manifest(pkg)
     assert tm.is_system_compatible(manifest.get("system"))
     assert util.get_systype() in manifest.get("system", [])
 
     # Test unknown
     with pytest.raises(UnknownPackageError):
-        tm.install("unknown-package-tool @ 9.1.1", silent=True)
+        tm.install("unknown-package-tool @ 9.1.1")
     with pytest.raises(UnknownPackageError):
-        tm.install("owner/unknown-package-tool", silent=True)
+        tm.install("owner/unknown-package-tool")
 
 
 def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
@@ -259,7 +265,8 @@ def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
     )
 
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
-    lm.install("file://%s" % str(src_dir), silent=True)
+    lm.set_log_level(logging.ERROR)
+    lm.install("file://%s" % str(src_dir))
     installed = lm.get_installed()
     assert len(installed) == 4
     assert set(["external-repo", "ArduinoJson", "lib-with-deps", "OneWire"]) == set(
@@ -269,15 +276,16 @@ def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
 
 def test_install_force(isolated_pio_core, tmpdir_factory):
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("lib-storage")))
+    lm.set_log_level(logging.ERROR)
     # install #64 ArduinoJson
-    pkg = lm.install("64 @ ^5", silent=True)
+    pkg = lm.install("64 @ ^5")
     assert pkg.metadata.version.major == 5
     # try install the latest without specification
-    pkg = lm.install("64", silent=True)
+    pkg = lm.install("64")
     assert pkg.metadata.version.major == 5
     assert len(lm.get_installed()) == 1
     # re-install the latest
-    pkg = lm.install(64, silent=True, force=True)
+    pkg = lm.install(64, force=True)
     assert len(lm.get_installed()) == 1
     assert pkg.metadata.version.major > 5
 
@@ -364,6 +372,7 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     tmp_dir = tmpdir_factory.mktemp("tmp")
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
 
     # foo @ 1.0.0
     pkg_dir = tmp_dir.join("foo").mkdir()
@@ -376,42 +385,44 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     # bar
     pkg_dir = tmp_dir.join("bar").mkdir()
     pkg_dir.join("library.json").write('{"name": "bar", "version": "1.0.0"}')
-    bar_pkg = lm.install("file://%s" % pkg_dir, silent=True)
+    bar_pkg = lm.install("file://%s" % pkg_dir)
 
     assert len(lm.get_installed()) == 3
     assert os.path.isdir(os.path.join(str(storage_dir), "foo"))
     assert os.path.isdir(os.path.join(str(storage_dir), "foo@1.0.0"))
 
     # check detaching
-    assert lm.uninstall("FOO", silent=True)
+    assert lm.uninstall("FOO")
     assert len(lm.get_installed()) == 2
     assert os.path.isdir(os.path.join(str(storage_dir), "foo"))
     assert not os.path.isdir(os.path.join(str(storage_dir), "foo@1.0.0"))
 
     # uninstall the rest
-    assert lm.uninstall(foo_1_0_0_pkg.path, silent=True)
-    assert lm.uninstall(bar_pkg, silent=True)
+    assert lm.uninstall(foo_1_0_0_pkg.path)
+    assert lm.uninstall(bar_pkg)
 
     assert not lm.get_installed()
 
     # test uninstall dependencies
-    assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
+    assert lm.install("AsyncMqttClient-esphome @ 0.8.4")
     assert len(lm.get_installed()) == 3
-    assert lm.uninstall("AsyncMqttClient-esphome", silent=True, skip_dependencies=True)
+    assert lm.uninstall("AsyncMqttClient-esphome", skip_dependencies=True)
     assert len(lm.get_installed()) == 2
 
     lm = LibraryPackageManager(str(storage_dir))
-    assert lm.install("AsyncMqttClient-esphome @ 0.8.4", silent=True)
-    assert lm.uninstall("AsyncMqttClient-esphome", silent=True)
+    lm.set_log_level(logging.ERROR)
+    assert lm.install("AsyncMqttClient-esphome @ 0.8.4")
+    assert lm.uninstall("AsyncMqttClient-esphome")
     assert not lm.get_installed()
 
 
 def test_registry(isolated_pio_core):
     lm = LibraryPackageManager()
+    lm.set_log_level(logging.ERROR)
 
     # reveal ID
     assert lm.reveal_registry_package_id(PackageSpec(id=13)) == 13
-    assert lm.reveal_registry_package_id(PackageSpec(name="OneWire"), silent=True) == 1
+    assert lm.reveal_registry_package_id(PackageSpec(name="OneWire")) == 1
     with pytest.raises(UnknownPackageError):
         lm.reveal_registry_package_id(PackageSpec(name="/non-existing-package/"))
 
@@ -435,14 +446,15 @@ def test_registry(isolated_pio_core):
 def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
 
     # test non SemVer in registry
-    pkg = lm.install("adafruit/Adafruit NeoPixel @ <1.9", silent=True)
+    pkg = lm.install("adafruit/Adafruit NeoPixel @ <1.9")
     outdated = lm.outdated(pkg)
     assert str(outdated.current) == "1.8.7"
     assert outdated.latest > semantic_version.Version("1.10.0")
 
-    pkg = lm.install("ArduinoJson @ 5.10.1", silent=True)
+    pkg = lm.install("ArduinoJson @ 5.10.1")
     # tesy latest
     outdated = lm.outdated(pkg)
     assert str(outdated.current) == "5.10.1"
@@ -457,14 +469,15 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     assert outdated.latest > semantic_version.Version("6.16.0")
 
     # update to the wanted 5.x
-    new_pkg = lm.update("ArduinoJson@^5", PackageSpec("ArduinoJson@^5"), silent=True)
+    new_pkg = lm.update("ArduinoJson@^5", PackageSpec("ArduinoJson@^5"))
     assert str(new_pkg.metadata.version) == "5.13.4"
     # check that old version is removed
     assert len(lm.get_installed()) == 2
 
     # update to the latest
     lm = LibraryPackageManager(str(storage_dir))
-    pkg = lm.update("ArduinoJson", silent=True)
+    lm.set_log_level(logging.ERROR)
+    pkg = lm.update("ArduinoJson")
     assert pkg.metadata.version == outdated.latest
 
 
@@ -485,6 +498,7 @@ def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
 
     # update
     lm = LibraryPackageManager(str(storage_dir))
-    new_pkg = lm.update(pkg, silent=True)
+    lm.set_log_level(logging.ERROR)
+    new_pkg = lm.update(pkg)
     assert len(lm.get_installed()) == 4
     assert new_pkg.metadata.spec.owner == "ottowinter"

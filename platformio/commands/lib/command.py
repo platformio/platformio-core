@@ -15,6 +15,7 @@
 # pylint: disable=too-many-branches, too-many-locals
 
 import json
+import logging
 import os
 import time
 
@@ -152,16 +153,16 @@ def lib_install(  # pylint: disable=too-many-arguments,unused-argument
         if not silent and (libraries or storage_dir in storage_libdeps):
             print_storage_header(storage_dirs, storage_dir)
         lm = LibraryPackageManager(storage_dir)
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
 
         if libraries:
             installed_pkgs = {
-                library: lm.install(library, silent=silent, force=force)
-                for library in libraries
+                library: lm.install(library, force=force) for library in libraries
             }
 
         elif storage_dir in storage_libdeps:
             for library in storage_libdeps[storage_dir]:
-                lm.install(library, silent=silent, force=force)
+                lm.install(library, force=force)
 
     if save and installed_pkgs:
         _save_deps(ctx, installed_pkgs)
@@ -212,9 +213,8 @@ def lib_uninstall(ctx, libraries, save, silent):
     for storage_dir in storage_dirs:
         print_storage_header(storage_dirs, storage_dir)
         lm = LibraryPackageManager(storage_dir)
-        uninstalled_pkgs = {
-            library: lm.uninstall(library, silent=silent) for library in libraries
-        }
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
+        uninstalled_pkgs = {library: lm.uninstall(library) for library in libraries}
 
     if save and uninstalled_pkgs:
         _save_deps(ctx, uninstalled_pkgs, action="remove")
@@ -245,6 +245,7 @@ def lib_update(  # pylint: disable=too-many-arguments
             print_storage_header(storage_dirs, storage_dir)
         lib_deps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, {}).get(storage_dir, [])
         lm = LibraryPackageManager(storage_dir)
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
         _libraries = libraries or lib_deps or lm.get_installed()
 
         if only_check and json_output:
@@ -277,9 +278,7 @@ def lib_update(  # pylint: disable=too-many-arguments
                     None if isinstance(library, PackageItem) else PackageSpec(library)
                 )
                 try:
-                    lm.update(
-                        library, to_spec=to_spec, only_check=only_check, silent=silent
-                    )
+                    lm.update(library, to_spec=to_spec, only_check=only_check)
                 except UnknownPackageError as e:
                     if library not in lib_deps:
                         raise e
@@ -438,7 +437,8 @@ def lib_builtin(storage, json_output):
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
     lm = LibraryPackageManager()
-    lib_id = lm.reveal_registry_package_id(library, silent=json_output)
+    lm.set_log_level(logging.ERROR if json_output else logging.DEBUG)
+    lib_id = lm.reveal_registry_package_id(library)
     regclient = lm.get_registry_client_instance()
     lib = regclient.fetch_json_data(
         "get", "/v2/lib/info/%d" % lib_id, x_cache_valid="1h"

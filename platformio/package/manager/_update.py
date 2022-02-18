@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 
 import click
@@ -77,18 +78,18 @@ class PackageManagerUpdateMixin(object):
             ).version
         )
 
-    def update(  # pylint: disable=too-many-arguments
+    def update(
         self,
         from_spec,
         to_spec=None,
         only_check=False,
-        silent=False,
         show_incompatible=True,
     ):
         pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
 
+        silent = not self.log.isEnabledFor(logging.INFO)
         if not silent:
             click.echo(
                 "{} {:<45} {:<35}".format(
@@ -114,7 +115,7 @@ class PackageManagerUpdateMixin(object):
 
         try:
             self.lock()
-            return self._update(pkg, outdated, silent=silent)
+            return self._update(pkg, outdated)
         finally:
             self.unlock()
 
@@ -156,7 +157,7 @@ class PackageManagerUpdateMixin(object):
             )
         )
 
-    def _update(self, pkg, outdated, silent=False):
+    def _update(self, pkg, outdated):
         if pkg.metadata.spec.external:
             vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.url)
             assert vcs.update()
@@ -170,8 +171,7 @@ class PackageManagerUpdateMixin(object):
                 owner=pkg.metadata.spec.owner,
                 name=pkg.metadata.spec.name,
                 requirements=outdated.wanted or outdated.latest,
-            ),
-            silent=silent,
+            )
         )
         if new_pkg:
             old_pkg = self.get_package(
@@ -183,5 +183,5 @@ class PackageManagerUpdateMixin(object):
                 )
             )
             if old_pkg:
-                self.uninstall(old_pkg, silent=silent, skip_dependencies=True)
+                self.uninstall(old_pkg, skip_dependencies=True)
         return new_pkg
