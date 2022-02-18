@@ -18,7 +18,7 @@ import subprocess
 import click
 
 from platformio.compat import IS_MACOS, IS_WINDOWS
-from platformio.exception import UserSideException
+from platformio.exception import ReturnErrorCode, UserSideException
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.proc import get_pythonexe_path
 
@@ -46,17 +46,23 @@ def package_exec_cmd(package, call, args):
 
     click.echo(
         "Using %s package"
-        % click.style("%s@%s" % (pkg.metadata.name, pkg.metadata.version), fg="green")
+        % click.style("%s@%s" % (pkg.metadata.name, pkg.metadata.version), fg="cyan")
     )
 
     inject_pkg_to_environ(pkg)
     os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
+    result = None
     try:
-        subprocess.run(  # pylint: disable=subprocess-run-check
-            call or args, shell=call is not None, env=os.environ
+        result = subprocess.run(  # pylint: disable=subprocess-run-check
+            call or args,
+            shell=call is not None,
+            env=os.environ,
         )
     except Exception as exc:
         raise UserSideException(exc)
+
+    if result and result.returncode != 0:
+        raise ReturnErrorCode(result.returncode)
 
 
 def find_pkg_by_executable(executable):
