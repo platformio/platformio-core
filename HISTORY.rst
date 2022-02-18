@@ -18,6 +18,7 @@ PlatformIO Core 5
     * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ - check for project outdated packages
     * `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`_ - run command from package tool (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
 
+  - Added support for dependencies declared in a "tool" type package
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
   - Dropped support for "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
 

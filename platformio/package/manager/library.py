@@ -15,14 +15,12 @@
 import json
 import os
 
-import click
-
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
 )
 from platformio.package.manager.base import BasePackageManager
-from platformio.package.meta import PackageItem, PackageSpec, PackageType
+from platformio.package.meta import PackageSpec, PackageType
 from platformio.project.config import ProjectConfig
 
 
@@ -107,53 +105,3 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 return True
 
             raise e
-
-    def install_dependencies(self, pkg):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        self.log.info("Installing dependencies...")
-        for dependency in manifest.get("dependencies"):
-            if not self._install_dependency(dependency):
-                self.log.warning(
-                    click.style(
-                        "Warning! Could not install dependency %s for package '%s'"
-                        % (dependency, pkg.metadata.name),
-                        fg="yellow",
-                    )
-                )
-
-    def _install_dependency(self, dependency):
-        spec = PackageSpec(
-            owner=dependency.get("owner"),
-            name=dependency.get("name"),
-            requirements=dependency.get("version"),
-        )
-        search_filters = {
-            key: value
-            for key, value in dependency.items()
-            if key in ("authors", "platforms", "frameworks")
-        }
-        try:
-            return self._install(spec, search_filters=search_filters or None)
-        except UnknownPackageError:
-            pass
-        return None
-
-    def uninstall_dependencies(self, pkg):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        self.log.info(click.style("Removing dependencies...", fg="yellow"))
-        for dependency in manifest.get("dependencies"):
-            spec = PackageSpec(
-                owner=dependency.get("owner"),
-                name=dependency.get("name"),
-                requirements=dependency.get("version"),
-            )
-            pkg = self.get_package(spec)
-            if not pkg:
-                continue
-            self._uninstall(pkg)
