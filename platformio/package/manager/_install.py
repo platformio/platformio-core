@@ -116,8 +116,7 @@ class PackageManagerInstallMixin(object):
 
     def install_dependencies(self, pkg):
         assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        dependencies = manifest.get("dependencies")
+        dependencies = self.load_manifest(pkg).get("dependencies")
         if not dependencies:
             return
         self.log.info("Resolving dependencies...")
