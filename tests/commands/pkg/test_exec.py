@@ -55,6 +55,6 @@ def test_unrecognized_options(
     )
     with pytest.raises(
         AssertionError,
-        match=("openocd: unrecognized option"),
+        match=(r"openocd: (unrecognized|unknown) option"),
     ):
         validate_cliresult(result)
