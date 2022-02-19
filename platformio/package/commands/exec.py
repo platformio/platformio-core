@@ -27,7 +27,8 @@ from platformio.proc import get_pythonexe_path
 @click.option("-p", "--package", metavar="<pkg>[@<version>]")
 @click.option("-c", "--call", metavar="<cmd> [args...]")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-def package_exec_cmd(package, call, args):
+@click.pass_obj
+def package_exec_cmd(obj, package, call, args):
     if not call and not args:
         raise click.BadArgumentUsage("Please provide command name")
     pkg = None
@@ -52,12 +53,16 @@ def package_exec_cmd(package, call, args):
     inject_pkg_to_environ(pkg)
     os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
     result = None
+    force_click_stream = (obj or {}).get("force_click_stream")
     try:
+        run_options = dict(shell=call is not None, env=os.environ)
+        if force_click_stream:
+            run_options.update(stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         result = subprocess.run(  # pylint: disable=subprocess-run-check
-            call or args,
-            shell=call is not None,
-            env=os.environ,
+            call or args, **run_options
         )
+        if force_click_stream:
+            click.echo(result.stdout.decode().strip(), err=result.returncode != 0)
     except Exception as exc:
         raise UserSideException(exc)
 

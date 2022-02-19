@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=unused-argument
+
 import pytest
 
 from platformio.package.commands.exec import package_exec_cmd
 
 
-def test_exec(clirunner, validate_cliresult, strip_ansi):
+def test_pkg_not_installed(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         package_exec_cmd,
         ["--", "openocd"],
@@ -28,22 +30,31 @@ def test_exec(clirunner, validate_cliresult, strip_ansi):
     ):
         validate_cliresult(result)
 
+
+def test_pkg_specified(clirunner, validate_cliresult, isolated_pio_core, strip_ansi):
     # with install
     result = clirunner.invoke(
         package_exec_cmd,
         ["-p", "platformio/tool-openocd", "--", "openocd", "--version"],
+        obj=dict(force_click_stream=True),
     )
     validate_cliresult(result)
     output = strip_ansi(result.output)
     assert "Tool Manager: Installing platformio/tool-openocd" in output
+    assert "Open On-Chip Debugger" in output
 
+
+def test_unrecognized_options(
+    clirunner, validate_cliresult, isolated_pio_core, strip_ansi
+):
     # unrecognized option
     result = clirunner.invoke(
         package_exec_cmd,
         ["--", "openocd", "--test-unrecognized"],
+        obj=dict(force_click_stream=True),
     )
     with pytest.raises(
         AssertionError,
-        match=("Using tool-openocd"),
+        match=("openocd: unrecognized option"),
     ):
         validate_cliresult(result)
