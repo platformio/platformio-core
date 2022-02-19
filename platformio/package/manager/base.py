@@ -70,7 +70,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 
     def _setup_logger(self):
         logger = logging.getLogger(str(self.__class__.__name__).replace("Package", " "))
-        logger.setLevel(logging.ERROR if PlatformioCLI.in_silence() else logging.INFO)
+        logger.setLevel(logging.INFO)
         formatter = logging.Formatter("%(name)s: %(message)s")
         sh = logging.StreamHandler(sys.stdout)
         sh.setFormatter(formatter)

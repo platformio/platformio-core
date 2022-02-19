@@ -38,8 +38,10 @@ def validate_cliresult():
 
 
 @pytest.fixture(scope="session")
-def clirunner(request):
+def clirunner(request, tmpdir_factory):
+    cache_dir = tmpdir_factory.mktemp(".cache")
     backup_env_vars = {
+        "PLATFORMIO_CACHE_DIR": {"new": str(cache_dir)},
         "PLATFORMIO_WORKSPACE_DIR": {"new": None},
     }
     for key, item in backup_env_vars.items():
