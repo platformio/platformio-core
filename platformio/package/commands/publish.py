@@ -97,6 +97,7 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
             ("Owner:", owner),
             ("Name:", name),
             ("Version:", version),
+            ("Size:", fs.humanize_file_size(os.path.getsize(archive_path))),
         ]
         if manifest.get("system"):
             data.insert(len(data) - 1, ("System:", ", ".join(manifest.get("system"))))
