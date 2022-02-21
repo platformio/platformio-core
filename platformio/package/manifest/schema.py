@@ -236,6 +236,12 @@ class ManifestSchema(BaseSchema):
         try:
             value = str(value)
             assert "." in value
+            # check leading zeros
+            try:
+                semantic_version.Version(value)
+            except ValueError as exc:
+                if "Invalid leading zero" in str(exc):
+                    raise exc
             semantic_version.Version.coerce(value)
         except (AssertionError, ValueError):
             raise ValidationError(

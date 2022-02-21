@@ -859,6 +859,11 @@ def test_broken_schemas():
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
         ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+    # version with leading zeros
+    with pytest.raises(
+        ManifestValidationError, match=("Invalid semantic versioning format")
+    ):
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="01.02.00"))
 
     # broken value for Nested
     with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):
