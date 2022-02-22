@@ -212,15 +212,19 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
 
 
 def get_contrib_pysite_deps():
-    twisted_version = "21.7.0"
-    result = [
-        # twisted[tls], see setup.py for %twisted_version%
-        "twisted == %s" % twisted_version,
-        # pyopenssl depends on it, use RUST-less version
-        "cryptography >= 3.3, < 35.0.0",
-        "pyopenssl >= 16.0.0, <= 21.0.0",
-        "service_identity >= 18.1.0, <= 21.1.0",
-    ]
-    if "windows" in util.get_systype():
+    systype = util.get_systype()
+    twisted_version = "22.1.0"
+    if "linux_arm" in systype:
+        result = [
+            # twisted[tls], see setup.py for %twisted_version%
+            "twisted == %s" % twisted_version,
+            # pyopenssl depends on it, use RUST-less version
+            "cryptography >= 3.3, < 35.0.0",
+            "pyopenssl >= 16.0.0, <= 21.0.0",
+            "service_identity >= 18.1.0, <= 21.1.0",
+        ]
+    else:
+        result = ["twisted[tls] == %s" % twisted_version]
+    if "windows" in systype:
         result.append("pywin32 != 226")
     return result
