@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import atexit
+import re
 from os import listdir, remove
 from os.path import isdir, isfile, join
 from string import Template
@@ -163,6 +164,10 @@ class TestProcessorBase(object):
             self._run_failed = True
             click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
         else:
+            if "Failures" in line:
+                match = re.match(r"\d+\s+Tests\s+(\d+)\s+Failures", line)
+                if match and int(match.group(1)) > 0:
+                    self._run_failed = True
             click.echo(line)
 
     def generate_output_file(self, test_dir):

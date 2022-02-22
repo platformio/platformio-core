@@ -23,6 +23,7 @@ PlatformIO Core 5
   - Dropped support for "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
 
 * Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
+* Better handling of the failed tests using `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~
