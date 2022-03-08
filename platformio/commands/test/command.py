@@ -175,6 +175,9 @@ def cli(  # pylint: disable=redefined-builtin
 
                 print_processing_footer(result)
 
+    # Reset custom project config
+    app.set_session_var("custom_project_conf", None)
+
     if without_testing:
         return
 

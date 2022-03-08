@@ -92,6 +92,7 @@ def cli(
 
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
 
+    results = []
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
@@ -114,7 +115,6 @@ def cli(
         handle_legacy_libdeps(project_dir, config)
 
         default_envs = config.default_envs()
-        results = []
         for env in config.envs():
             skipenv = any(
                 [
@@ -145,14 +145,17 @@ def cli(
                 )
             )
 
-        command_failed = any(r.get("succeeded") is False for r in results)
+    command_failed = any(r.get("succeeded") is False for r in results)
 
-        if not is_test_running and (command_failed or not silent) and len(results) > 1:
-            print_processing_summary(results, verbose)
+    if not is_test_running and (command_failed or not silent) and len(results) > 1:
+        print_processing_summary(results, verbose)
 
-        if command_failed:
-            raise exception.ReturnErrorCode(1)
-        return True
+    # Reset custom project config
+    app.set_session_var("custom_project_conf", None)
+
+    if command_failed:
+        raise exception.ReturnErrorCode(1)
+    return True
 
 
 def process_env(

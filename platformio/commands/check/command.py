@@ -168,6 +168,9 @@ def cli(
         elif not silent:
             print_check_summary(results)
 
+    # Reset custom project config
+    app.set_session_var("custom_project_conf", None)
+
     command_failed = any(r.get("succeeded") is False for r in results)
     if command_failed:
         raise exception.ReturnErrorCode(1)
