@@ -84,6 +84,9 @@ class PackageManagerInstallMixin(object):
                     fg="yellow",
                 )
             )
+            # ensure package dependencies are installed
+            if not skip_dependencies:
+                self.install_dependencies(pkg, print_header=False)
             return pkg
 
         self.log.info("Installing %s" % click.style(spec.humanize(), fg="cyan"))
@@ -114,12 +117,13 @@ class PackageManagerInstallMixin(object):
         self._INSTALL_HISTORY[spec] = pkg
         return pkg
 
-    def install_dependencies(self, pkg):
+    def install_dependencies(self, pkg, print_header=True):
         assert isinstance(pkg, PackageItem)
         dependencies = self.load_manifest(pkg).get("dependencies")
         if not dependencies:
             return
-        self.log.info("Resolving dependencies...")
+        if print_header:
+            self.log.info("Resolving dependencies...")
         for dependency in dependencies:
             if not self._install_dependency(dependency):
                 self.log.warning(
