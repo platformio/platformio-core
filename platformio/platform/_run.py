@@ -51,10 +51,7 @@ class PlatformRunMixin(object):
         assert isinstance(targets, list)
 
         self.ensure_engine_compatible()
-
         self.configure_project_packages(variables["pioenv"], targets)
-        self.autoinstall_required_packages()
-
         self._report_non_sensitive_data(variables["pioenv"], targets)
 
         self.silent = silent

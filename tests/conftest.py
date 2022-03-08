@@ -72,16 +72,26 @@ def strip_ansi():
     return decorator
 
 
-@pytest.fixture(scope="module")
-def isolated_pio_core(request, tmpdir_factory):
+def _isolated_pio_core(request, tmpdir_factory):
     core_dir = tmpdir_factory.mktemp(".platformio")
     os.environ["PLATFORMIO_CORE_DIR"] = str(core_dir)
 
     def fin():
-        del os.environ["PLATFORMIO_CORE_DIR"]
+        if "PLATFORMIO_CORE_DIR" in os.environ:
+            del os.environ["PLATFORMIO_CORE_DIR"]
 
     request.addfinalizer(fin)
     return core_dir
+
+
+@pytest.fixture(scope="module")
+def isolated_pio_core(request, tmpdir_factory):
+    return _isolated_pio_core(request, tmpdir_factory)
+
+
+@pytest.fixture(scope="function")
+def func_isolated_pio_core(request, tmpdir_factory):
+    return _isolated_pio_core(request, tmpdir_factory)
 
 
 @pytest.fixture(scope="function")

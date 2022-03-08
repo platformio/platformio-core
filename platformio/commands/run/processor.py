@@ -14,6 +14,7 @@
 
 from platformio.commands.platform import init_platform
 from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
+from platformio.package.commands.install import install_project_env_dependencies
 from platformio.project.exception import UndefinedEnvPlatformError
 
 # pylint: disable=too-many-instance-attributes
@@ -63,6 +64,11 @@ class EnvironmentProcessor(object):
         # skip monitor target, we call it above
         if "monitor" in build_targets:
             build_targets.remove("monitor")
+
+        install_project_env_dependencies(
+            self.name,
+            {"project_targets": build_targets},
+        )
 
         result = init_platform(self.options["platform"]).run(
             build_vars, build_targets, self.silent, self.verbose, self.jobs

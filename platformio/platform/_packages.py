@@ -65,15 +65,6 @@ class PlatformPackagesMixin(object):
             result.append(item)
         return result
 
-    def autoinstall_required_packages(self):
-        for name, options in self.packages.items():
-            if options.get("optional", False):
-                continue
-            if self.get_package(name):
-                continue
-            self.pm.install(self.get_package_spec(name))
-        return True
-
     def install_packages(  # pylint: disable=too-many-arguments
         self,
         with_packages=None,

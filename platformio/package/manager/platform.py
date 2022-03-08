@@ -47,6 +47,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         with_all_packages=False,
         force=False,
         project_env=None,
+        project_targets=None,
     ):
         already_installed = self.get_package(spec)
         pkg = super(PlatformPackageManager, self).install(
@@ -63,7 +64,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         p.pm.set_log_level(self.log.getEffectiveLevel())
 
         if project_env:
-            p.configure_project_packages(project_env)
+            p.configure_project_packages(project_env, project_targets)
 
         if with_all_packages:
             with_packages = list(p.packages)

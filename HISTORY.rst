@@ -15,8 +15,9 @@ PlatformIO Core 5
 
   - New unified Package Management CLI (``pio pkg``):
 
-    * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ - check for project outdated packages
     * `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`_ - run command from package tool (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
+    * `pio pkg install <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`_ - install the project dependencies or custom packages
+    * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ - check for project outdated packages
 
   - Added support for dependencies declared in a "tool" type package
   - Ignore files according to the patterns declared in ".gitignore" when using `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
