@@ -47,7 +47,7 @@ home_requirements = [
     "ajsonrpc==1.*",
     "starlette==0.18.*",
     "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
-    "wsproto==1.0.*",
+    "wsproto==%s" % ("1.1.*" if sys.version_info >= (3, 7) else "1.0.0"),
 ]
 
 setup(
