@@ -89,13 +89,17 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
     )
     validate_cliresult(result)
     with fs.cd(str(project_dir)):
+        config = ProjectConfig()
         lm = LibraryPackageManager(
-            os.path.join(ProjectConfig().get("platformio", "libdeps_dir"), "devkit")
+            os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_names(lm.get_installed()) == ["DallasTemperature", "OneWire"]
         assert pkgs_to_names(ToolPackageManager().get_installed()) == [
             "framework-arduino-avr-attiny",
             "toolchain-atmelavr",
+        ]
+        assert config.get("env:devkit", "lib_deps") == [
+            "milesburton/DallasTemperature@^3.9.1"
         ]
 
 
@@ -175,6 +179,25 @@ def test_custom_project_libraries(
         # do not expect any platforms/tools
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
         assert not os.path.exists(config.get("platformio", "packages_dir"))
+        # check saved deps
+        assert config.get("env:devkit", "lib_deps") == [
+            "bblanchon/ArduinoJson@^6.19.2",
+        ]
+
+        # install library without saving to config
+        result = clirunner.invoke(
+            package_install_cmd,
+            ["-e", "devkit", "-l", "nanopb/Nanopb@^0.4.6", "--no-save"],
+        )
+        validate_cliresult(result)
+        config = ProjectConfig()
+        lm = LibraryPackageManager(
+            os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
+        )
+        assert pkgs_to_names(lm.get_installed()) == ["ArduinoJson", "Nanopb"]
+        assert config.get("env:devkit", "lib_deps") == [
+            "bblanchon/ArduinoJson@^6.19.2",
+        ]
 
         # unknown libraries
         result = clirunner.invoke(

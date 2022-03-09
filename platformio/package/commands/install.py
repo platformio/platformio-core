@@ -21,7 +21,9 @@ from platformio import fs
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
+from platformio.project.savedeps import save_project_dependencies
 
 
 @click.command(
@@ -37,13 +39,18 @@ from platformio.project.config import ProjectConfig
 @click.option("-p", "--platform", "platforms", multiple=True)
 @click.option("-t", "--tool", "tools", multiple=True)
 @click.option("-l", "--library", "libraries", multiple=True)
+@click.option(
+    "--no-save",
+    is_flag=True,
+    help="Prevent saving specified packages to `platformio.ini`",
+)
 @click.option("--skip-dependencies", is_flag=True, help="Skip package dependencies")
 @click.option("-g", "--global", is_flag=True, help="Install package globally")
 @click.option(
     "--storage-dir",
     default=None,
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
-    help="Custom package storage directory",
+    help="Custom Package Manager storage for global packages",
 )
 @click.option("-f", "--force", is_flag=True, help="Reinstall package if it exists")
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
@@ -168,11 +175,22 @@ def _install_project_env_libraries(project_env, options):
     if options.get("libraries"):
         if not options.get("silent"):
             lm.set_log_level(logging.DEBUG)
-        for spec in options.get("libraries", []):
-            lm.install(
+        specs_to_save = []
+        for library in options.get("libraries", []):
+            spec = PackageSpec(library)
+            pkg = lm.install(
                 spec,
                 skip_dependencies=options.get("skip_dependencies"),
                 force=options.get("force"),
+            )
+            specs_to_save.append(_pkg_to_save_spec(pkg, spec))
+        if not options.get("no_save") and specs_to_save:
+            save_project_dependencies(
+                os.getcwd(),
+                specs_to_save,
+                scope="lib_deps",
+                action="add",
+                environments=[project_env],
             )
         return not already_up_to_date
 
@@ -180,9 +198,10 @@ def _install_project_env_libraries(project_env, options):
         return False
 
     # if not custom platforms/tools, install declared libraries
-    for spec in config.get(f"env:{project_env}", "lib_deps"):
+    for library in config.get(f"env:{project_env}", "lib_deps"):
+        spec = PackageSpec(library)
         # skip built-in dependencies
-        if "/" not in spec:
+        if not spec.external and not spec.owner:
             continue
         if not lm.get_package(spec):
             already_up_to_date = False
@@ -192,3 +211,19 @@ def _install_project_env_libraries(project_env, options):
             force=options.get("force"),
         )
     return not already_up_to_date
+
+
+def _pkg_to_save_spec(pkg, user_spec):
+    assert isinstance(user_spec, PackageSpec)
+    if user_spec.external:
+        return user_spec
+    return PackageSpec(
+        owner=pkg.metadata.spec.owner,
+        name=pkg.metadata.spec.name,
+        requirements=user_spec.requirements
+        or (
+            ("^%s" % pkg.metadata.version)
+            if not pkg.metadata.version.build
+            else pkg.metadata.version
+        ),
+    )
