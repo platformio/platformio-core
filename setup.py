@@ -45,7 +45,7 @@ if not PY2:
 home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
-    "starlette==0.18.*",
+    "starlette==0.19.*",
     "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
     "wsproto==%s" % ("1.1.*" if sys.version_info >= (3, 7) else "1.0.0"),
 ]
