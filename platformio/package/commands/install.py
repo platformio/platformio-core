@@ -107,56 +107,81 @@ def install_project_dependencies(options):
 def install_project_env_dependencies(project_env, options=None):
     """Used in `pio run` -> Processor"""
     options = options or {}
-    return any(
-        [
+    installed_conds = []
+    # custom platforms
+    if options.get("platforms"):
+        installed_conds.append(
+            _install_project_env_custom_platforms(project_env, options)
+        )
+    # custom tools
+    if options.get("tools"):
+        installed_conds.append(
+            _install_project_env_custom_tools(project_env, options)
+        )
+    # custom ibraries
+    if options.get("libraries"):
+        installed_conds.append(
+            _install_project_env_custom_libraries(project_env, options)
+        )
+    # declared dependencies
+    if not installed_conds:
+        installed_conds = [
             _install_project_env_platform(project_env, options),
             _install_project_env_libraries(project_env, options),
         ]
-    )
+    return any(installed_conds)
 
 
 def _install_project_env_platform(project_env, options):
-    already_up_to_date = not options.get("force")
     config = ProjectConfig.get_instance()
     pm = PlatformPackageManager()
     if options.get("silent"):
         pm.set_log_level(logging.WARN)
-
-    if options.get("platforms") or options.get("tools"):
-        already_up_to_date = False
-        tm = ToolPackageManager()
-        if not options.get("silent"):
-            pm.set_log_level(logging.DEBUG)
-            tm.set_log_level(logging.DEBUG)
-        for platform in options.get("platforms"):
-            pm.install(
-                platform,
-                project_env=project_env,
-                project_targets=options.get("project_targets"),
-                skip_default_package=options.get("skip_dependencies"),
-                force=options.get("force"),
-            )
-        for spec in options.get("tools"):
-            tm.install(
-                spec,
-                skip_dependencies=options.get("skip_dependencies"),
-                force=options.get("force"),
-            )
-        return not already_up_to_date
-
-    if options.get("libraries"):
+    spec = config.get(f"env:{project_env}", "platform")
+    if not spec:
         return False
+    already_up_to_date = not options.get("force")
+    if not pm.get_package(spec):
+        already_up_to_date = False
+    PlatformPackageManager().install(
+        spec,
+        project_env=project_env,
+        project_targets=options.get("project_targets"),
+        skip_default_package=options.get("skip_dependencies"),
+        force=options.get("force"),
+    )
+    return not already_up_to_date
 
-    # if not custom libraries, install declared platform
-    platform = config.get(f"env:{project_env}", "platform")
-    if platform:
-        if not pm.get_package(platform):
+
+def _install_project_env_custom_platforms(project_env, options):
+    already_up_to_date = not options.get("force")
+    pm = PlatformPackageManager()
+    if not options.get("silent"):
+        pm.set_log_level(logging.DEBUG)
+    for spec in options.get("platforms"):
+        if not pm.get_package(spec):
             already_up_to_date = False
-        PlatformPackageManager().install(
-            platform,
+        pm.install(
+            spec,
             project_env=project_env,
             project_targets=options.get("project_targets"),
             skip_default_package=options.get("skip_dependencies"),
+            force=options.get("force"),
+        )
+    return not already_up_to_date
+
+
+def _install_project_env_custom_tools(project_env, options):
+    already_up_to_date = not options.get("force")
+    tm = ToolPackageManager()
+    if not options.get("silent"):
+        tm.set_log_level(logging.DEBUG)
+    for spec in options.get("tools"):
+        if not tm.get_package(spec):
+            already_up_to_date = False
+        tm.install(
+            spec,
+            skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
     return not already_up_to_date
@@ -170,34 +195,6 @@ def _install_project_env_libraries(project_env, options):
     )
     if options.get("silent"):
         lm.set_log_level(logging.WARN)
-
-    # custom libraries
-    if options.get("libraries"):
-        if not options.get("silent"):
-            lm.set_log_level(logging.DEBUG)
-        specs_to_save = []
-        for library in options.get("libraries", []):
-            spec = PackageSpec(library)
-            pkg = lm.install(
-                spec,
-                skip_dependencies=options.get("skip_dependencies"),
-                force=options.get("force"),
-            )
-            specs_to_save.append(_pkg_to_save_spec(pkg, spec))
-        if not options.get("no_save") and specs_to_save:
-            save_project_dependencies(
-                os.getcwd(),
-                specs_to_save,
-                scope="lib_deps",
-                action="add",
-                environments=[project_env],
-            )
-        return not already_up_to_date
-
-    if options.get("platforms") or options.get("tools"):
-        return False
-
-    # if not custom platforms/tools, install declared libraries
     for library in config.get(f"env:{project_env}", "lib_deps"):
         spec = PackageSpec(library)
         # skip built-in dependencies
@@ -209,6 +206,36 @@ def _install_project_env_libraries(project_env, options):
             spec,
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
+        )
+    return not already_up_to_date
+
+
+def _install_project_env_custom_libraries(project_env, options):
+    already_up_to_date = not options.get("force")
+    config = ProjectConfig.get_instance()
+    lm = LibraryPackageManager(
+        os.path.join(config.get("platformio", "libdeps_dir"), project_env)
+    )
+    if not options.get("silent"):
+        lm.set_log_level(logging.DEBUG)
+    specs_to_save = []
+    for library in options.get("libraries") or []:
+        spec = PackageSpec(library)
+        if not lm.get_package(spec):
+            already_up_to_date = False
+        pkg = lm.install(
+            spec,
+            skip_dependencies=options.get("skip_dependencies"),
+            force=options.get("force"),
+        )
+        specs_to_save.append(_pkg_to_save_spec(pkg, spec))
+    if not options.get("no_save") and specs_to_save:
+        save_project_dependencies(
+            os.getcwd(),
+            specs_to_save,
+            scope="lib_deps",
+            action="add",
+            environments=[project_env],
         )
     return not already_up_to_date
 
