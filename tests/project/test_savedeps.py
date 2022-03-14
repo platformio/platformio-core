@@ -20,6 +20,8 @@ PROJECT_CONFIG_TPL = """
 [env]
 board = uno
 framework = arduino
+lib_deps =
+    SPI
 
 [env:bare]
 
@@ -31,6 +33,7 @@ lib_deps =
 [env:debug]
 platform = platformio/atmelavr@^3.4.0
 lib_deps =
+    ${env.lib_deps}
     milesburton/DallasTemperature@^3.9.1
     bblanchon/ArduinoJson
 """
@@ -52,12 +55,13 @@ def test_save_libraries(tmp_path):
     )
     config = ProjectConfig.get_instance(str(project_dir / "platformio.ini"))
     assert config.get("env:debug", "lib_deps") == [
+        "SPI",
         "bblanchon/ArduinoJson",
         "milesburton/DallasTemperature@^3.9",
         "adafruit/Adafruit GPS Library@^1.6.0",
         "https://github.com/nanopb/nanopb.git",
     ]
-    assert config.get("env:bare", "lib_deps") == []
+    assert config.get("env:bare", "lib_deps") == ["SPI"]
     assert config.get("env:release", "lib_deps") == [
         "milesburton/DallasTemperature@^3.8"
     ]
@@ -66,6 +70,7 @@ def test_save_libraries(tmp_path):
     save_project_dependencies(str(project_dir), specs, scope="lib_deps", action="add")
     config = ProjectConfig.get_instance(str(project_dir / "platformio.ini"))
     assert config.get("env:debug", "lib_deps") == [
+        "SPI",
         "bblanchon/ArduinoJson",
         "milesburton/DallasTemperature@^3.9",
         "adafruit/Adafruit GPS Library@^1.6.0",
@@ -114,7 +119,8 @@ def test_save_libraries(tmp_path):
     )
     config = ProjectConfig.get_instance(str(project_dir / "platformio.ini"))
     assert config.get("env:debug", "lib_deps") == [
+        "SPI",
         "bblanchon/ArduinoJson",
     ]
-    assert config.get("env:bare", "lib_deps") == []
-    assert config.get("env:release", "lib_deps") == []
+    assert config.get("env:bare", "lib_deps") == ["SPI"]
+    assert config.get("env:release", "lib_deps") == ["SPI"]
