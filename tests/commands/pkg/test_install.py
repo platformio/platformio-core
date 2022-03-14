@@ -179,6 +179,7 @@ def test_custom_project_libraries(
         # do not expect any platforms/tools
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
         assert not os.path.exists(config.get("platformio", "packages_dir"))
+
         # check saved deps
         assert config.get("env:devkit", "lib_deps") == [
             "bblanchon/ArduinoJson@^6.19.2",
@@ -248,6 +249,26 @@ def test_custom_project_tools(
         ).get_installed()
         # do not expect any platforms
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
+
+        # check saved deps
+        assert config.get("env:devkit", "platform_packages") == [
+            "platformio/tool-openocd@^2.1100.211028",
+        ]
+
+        # install tool without saving to config
+        result = clirunner.invoke(
+            package_install_cmd,
+            ["-e", "devkit", "-t", "platformio/tool-esptoolpy@1.20310.0", "--no-save"],
+        )
+        validate_cliresult(result)
+        config = ProjectConfig()
+        assert pkgs_to_names(ToolPackageManager().get_installed()) == [
+            "tool-esptoolpy",
+            "tool-openocd",
+        ]
+        assert config.get("env:devkit", "platform_packages") == [
+            "platformio/tool-openocd@^2.1100.211028",
+        ]
 
         # unknown tool
         result = clirunner.invoke(

@@ -115,9 +115,7 @@ def install_project_env_dependencies(project_env, options=None):
         )
     # custom tools
     if options.get("tools"):
-        installed_conds.append(
-            _install_project_env_custom_tools(project_env, options)
-        )
+        installed_conds.append(_install_project_env_custom_tools(project_env, options))
     # custom ibraries
     if options.get("libraries"):
         installed_conds.append(
@@ -176,13 +174,24 @@ def _install_project_env_custom_tools(project_env, options):
     tm = ToolPackageManager()
     if not options.get("silent"):
         tm.set_log_level(logging.DEBUG)
-    for spec in options.get("tools"):
+    specs_to_save = []
+    for tool in options.get("tools"):
+        spec = PackageSpec(tool)
         if not tm.get_package(spec):
             already_up_to_date = False
-        tm.install(
+        pkg = tm.install(
             spec,
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
+        )
+        specs_to_save.append(_pkg_to_save_spec(pkg, spec))
+    if not options.get("no_save") and specs_to_save:
+        save_project_dependencies(
+            os.getcwd(),
+            specs_to_save,
+            scope="platform_packages",
+            action="add",
+            environments=[project_env],
         )
     return not already_up_to_date
 
