@@ -23,7 +23,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
-from platformio.project.savedeps import save_project_dependencies
+from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
 
 
 @click.command(
@@ -99,7 +99,7 @@ def install_project_dependencies(options):
                 click.echo(
                     "Resolving %s environment packages..." % click.style(env, fg="cyan")
                 )
-            already_up_to_date = install_project_env_dependencies(env, options)
+            already_up_to_date = not install_project_env_dependencies(env, options)
             if not options["silent"] and already_up_to_date:
                 click.secho("Already up-to-date.", fg="green")
 
@@ -184,7 +184,7 @@ def _install_project_env_custom_tools(project_env, options):
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
-        specs_to_save.append(_pkg_to_save_spec(pkg, spec))
+        specs_to_save.append(pkg_to_save_spec(pkg, spec))
     if not options.get("no_save") and specs_to_save:
         save_project_dependencies(
             os.getcwd(),
@@ -237,7 +237,7 @@ def _install_project_env_custom_libraries(project_env, options):
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
-        specs_to_save.append(_pkg_to_save_spec(pkg, spec))
+        specs_to_save.append(pkg_to_save_spec(pkg, spec))
     if not options.get("no_save") and specs_to_save:
         save_project_dependencies(
             os.getcwd(),
@@ -247,19 +247,3 @@ def _install_project_env_custom_libraries(project_env, options):
             environments=[project_env],
         )
     return not already_up_to_date
-
-
-def _pkg_to_save_spec(pkg, user_spec):
-    assert isinstance(user_spec, PackageSpec)
-    if user_spec.external:
-        return user_spec
-    return PackageSpec(
-        owner=pkg.metadata.spec.owner,
-        name=pkg.metadata.spec.name,
-        requirements=user_spec.requirements
-        or (
-            ("^%s" % pkg.metadata.version)
-            if not pkg.metadata.version.build
-            else pkg.metadata.version
-        ),
-    )

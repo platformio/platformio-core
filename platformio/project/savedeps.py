@@ -20,6 +20,22 @@ from platformio.project.config import ProjectConfig
 from platformio.project.exception import InvalidProjectConfError
 
 
+def pkg_to_save_spec(pkg, user_spec):
+    assert isinstance(user_spec, PackageSpec)
+    if user_spec.external:
+        return user_spec
+    return PackageSpec(
+        owner=pkg.metadata.spec.owner,
+        name=pkg.metadata.spec.name,
+        requirements=user_spec.requirements
+        or (
+            ("^%s" % pkg.metadata.version)
+            if not pkg.metadata.version.build
+            else pkg.metadata.version
+        ),
+    )
+
+
 def save_project_dependencies(
     project_dir, specs, scope, action="add", environments=None
 ):
@@ -31,7 +47,7 @@ def save_project_dependencies(
         config.expand_interpolations = False
         candidates = []
         try:
-            candidates = ignore_deps_by_specs(config.get("env:" + env, scope), specs)
+            candidates = _ignore_deps_by_specs(config.get("env:" + env, scope), specs)
         except InvalidProjectConfError:
             pass
         if action == "add":
@@ -48,7 +64,7 @@ def save_project_dependencies(
     config.save()
 
 
-def ignore_deps_by_specs(deps, specs):
+def _ignore_deps_by_specs(deps, specs):
     result = []
     for dep in deps:
         ignore_conditions = []

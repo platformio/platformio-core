@@ -23,6 +23,7 @@ from platformio.package.commands.install import package_install_cmd
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
+from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
 
 PROJECT_CONFIG_TPL = """
@@ -39,8 +40,84 @@ board = attiny88
 """
 
 
-def pkgs_to_names(pkgs):
-    return [pkg.metadata.name for pkg in pkgs]
+def pkgs_to_specs(pkgs):
+    return [
+        PackageSpec(name=pkg.metadata.name, requirements=pkg.metadata.version)
+        for pkg in pkgs
+    ]
+
+
+def test_global_packages(
+    clirunner, validate_cliresult, func_isolated_pio_core, tmp_path
+):
+    # libraries
+    result = clirunner.invoke(
+        package_install_cmd,
+        [
+            "--global",
+            "-l",
+            "milesburton/DallasTemperature@^3.9.1",
+            "--skip-dependencies",
+        ],
+    )
+    validate_cliresult(result)
+    assert pkgs_to_specs(LibraryPackageManager().get_installed()) == [
+        PackageSpec("DallasTemperature@3.9.1")
+    ]
+    # with dependencies
+    result = clirunner.invoke(
+        package_install_cmd,
+        [
+            "--global",
+            "-l",
+            "milesburton/DallasTemperature@^3.9.1",
+            "-l",
+            "bblanchon/ArduinoJson@^6.19.2",
+        ],
+    )
+    validate_cliresult(result)
+    assert pkgs_to_specs(LibraryPackageManager().get_installed()) == [
+        PackageSpec("ArduinoJson@6.19.3"),
+        PackageSpec("DallasTemperature@3.9.1"),
+        PackageSpec("OneWire@2.3.6"),
+    ]
+    # custom storage
+    storage_dir = tmp_path / "custom_lib_storage"
+    storage_dir.mkdir()
+    result = clirunner.invoke(
+        package_install_cmd,
+        [
+            "--global",
+            "--storage-dir",
+            str(storage_dir),
+            "-l",
+            "bblanchon/ArduinoJson@^6.19.2",
+        ],
+    )
+    validate_cliresult(result)
+    assert pkgs_to_specs(LibraryPackageManager(storage_dir).get_installed()) == [
+        PackageSpec("ArduinoJson@6.19.3")
+    ]
+
+    # tools
+    result = clirunner.invoke(
+        package_install_cmd,
+        ["--global", "-t", "platformio/framework-arduino-avr-attiny@^1.5.2"],
+    )
+    validate_cliresult(result)
+    assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+        PackageSpec("framework-arduino-avr-attiny@1.5.2")
+    ]
+
+    # platforms
+    result = clirunner.invoke(
+        package_install_cmd,
+        ["--global", "-p", "platformio/atmelavr@^3.4.0", "--skip-dependencies"],
+    )
+    validate_cliresult(result)
+    assert pkgs_to_specs(PlatformPackageManager().get_installed()) == [
+        PackageSpec("atmelavr@3.4.0")
+    ]
 
 
 def test_skip_dependencies(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
@@ -56,7 +133,9 @@ def test_skip_dependencies(clirunner, validate_cliresult, isolated_pio_core, tmp
         installed_lib_pkgs = LibraryPackageManager(
             os.path.join(ProjectConfig().get("platformio", "libdeps_dir"), "devkit")
         ).get_installed()
-        assert pkgs_to_names(installed_lib_pkgs) == ["DallasTemperature"]
+        assert pkgs_to_specs(installed_lib_pkgs) == [
+            PackageSpec("DallasTemperature@3.9.1")
+        ]
         assert len(ToolPackageManager().get_installed()) == 0
 
 
@@ -73,9 +152,12 @@ def test_baremetal_project(clirunner, validate_cliresult, isolated_pio_core, tmp
         installed_lib_pkgs = LibraryPackageManager(
             os.path.join(ProjectConfig().get("platformio", "libdeps_dir"), "baremetal")
         ).get_installed()
-        assert pkgs_to_names(installed_lib_pkgs) == ["DallasTemperature", "OneWire"]
-        assert pkgs_to_names(ToolPackageManager().get_installed()) == [
-            "toolchain-atmelavr"
+        assert pkgs_to_specs(installed_lib_pkgs) == [
+            PackageSpec("DallasTemperature@3.9.1"),
+            PackageSpec("OneWire@2.3.6"),
+        ]
+        assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+            PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
 
 
@@ -93,14 +175,25 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         lm = LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
-        assert pkgs_to_names(lm.get_installed()) == ["DallasTemperature", "OneWire"]
-        assert pkgs_to_names(ToolPackageManager().get_installed()) == [
-            "framework-arduino-avr-attiny",
-            "toolchain-atmelavr",
+        assert pkgs_to_specs(lm.get_installed()) == [
+            PackageSpec("DallasTemperature@3.9.1"),
+            PackageSpec("OneWire@2.3.6"),
+        ]
+        assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+            PackageSpec("framework-arduino-avr-attiny@1.5.2"),
+            PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
             "milesburton/DallasTemperature@^3.9.1"
         ]
+
+    # test "Already up-to-date"
+    result = clirunner.invoke(
+        package_install_cmd,
+        ["-d", str(project_dir)],
+    )
+    validate_cliresult(result)
+    assert "Already up-to-date" in result.output
 
 
 def test_unknown_project_dependencies(
@@ -175,7 +268,7 @@ def test_custom_project_libraries(
         lm = LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
-        assert pkgs_to_names(lm.get_installed()) == ["ArduinoJson"]
+        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@6.19.3")]
         # do not expect any platforms/tools
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
         assert not os.path.exists(config.get("platformio", "packages_dir"))
@@ -195,7 +288,10 @@ def test_custom_project_libraries(
         lm = LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
-        assert pkgs_to_names(lm.get_installed()) == ["ArduinoJson", "Nanopb"]
+        assert pkgs_to_specs(lm.get_installed()) == [
+            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("Nanopb@0.4.6+3"),
+        ]
         assert config.get("env:devkit", "lib_deps") == [
             "bblanchon/ArduinoJson@^6.19.2",
         ]
@@ -243,7 +339,9 @@ def test_custom_project_tools(
         assert not result.output.strip()
 
         config = ProjectConfig()
-        assert pkgs_to_names(ToolPackageManager().get_installed()) == ["tool-openocd"]
+        assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+            PackageSpec("tool-openocd@2.1100.211028")
+        ]
         assert not LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         ).get_installed()
@@ -262,9 +360,9 @@ def test_custom_project_tools(
         )
         validate_cliresult(result)
         config = ProjectConfig()
-        assert pkgs_to_names(ToolPackageManager().get_installed()) == [
-            "tool-esptoolpy",
-            "tool-openocd",
+        assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+            PackageSpec("tool-esptoolpy@1.20310.0"),
+            PackageSpec("tool-openocd@2.1100.211028"),
         ]
         assert config.get("env:devkit", "platform_packages") == [
             "platformio/tool-openocd@^2.1100.211028",
@@ -290,7 +388,7 @@ def test_custom_project_platforms(
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_CONFIG_TPL)
-    spec = "atmelavr"
+    spec = "atmelavr@^3.4.0"
     result = clirunner.invoke(
         package_install_cmd,
         ["-d", str(project_dir), "-e", "devkit", "-p", spec, "--skip-dependencies"],
@@ -313,7 +411,9 @@ def test_custom_project_platforms(
         assert not result.output.strip()
 
         config = ProjectConfig()
-        assert pkgs_to_names(PlatformPackageManager().get_installed()) == ["atmelavr"]
+        assert pkgs_to_specs(PlatformPackageManager().get_installed()) == [
+            PackageSpec("atmelavr@3.4.0")
+        ]
         assert not LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         ).get_installed()
@@ -335,74 +435,3 @@ def test_custom_project_platforms(
             match="Unknown board ID",
         ):
             validate_cliresult(result)
-
-
-def test_global_packages(
-    clirunner, validate_cliresult, func_isolated_pio_core, tmp_path
-):
-    # libraries
-    result = clirunner.invoke(
-        package_install_cmd,
-        [
-            "--global",
-            "-l",
-            "milesburton/DallasTemperature@^3.9.1",
-            "--skip-dependencies",
-        ],
-    )
-    validate_cliresult(result)
-    assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
-        "DallasTemperature"
-    ]
-    # with dependencies
-    result = clirunner.invoke(
-        package_install_cmd,
-        [
-            "--global",
-            "-l",
-            "milesburton/DallasTemperature@^3.9.1",
-            "-l",
-            "bblanchon/ArduinoJson@^6.19.2",
-        ],
-    )
-    validate_cliresult(result)
-    assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
-        "ArduinoJson",
-        "DallasTemperature",
-        "OneWire",
-    ]
-    # custom storage
-    storage_dir = tmp_path / "custom_lib_storage"
-    storage_dir.mkdir()
-    result = clirunner.invoke(
-        package_install_cmd,
-        [
-            "--global",
-            "--storage-dir",
-            str(storage_dir),
-            "-l",
-            "bblanchon/ArduinoJson@^6.19.2",
-        ],
-    )
-    validate_cliresult(result)
-    assert pkgs_to_names(LibraryPackageManager(storage_dir).get_installed()) == [
-        "ArduinoJson"
-    ]
-
-    # tools
-    result = clirunner.invoke(
-        package_install_cmd,
-        ["--global", "-t", "platformio/framework-arduino-avr-attiny@^1.5.2"],
-    )
-    validate_cliresult(result)
-    assert pkgs_to_names(ToolPackageManager().get_installed()) == [
-        "framework-arduino-avr-attiny"
-    ]
-
-    # platforms
-    result = clirunner.invoke(
-        package_install_cmd,
-        ["--global", "-p", "platformio/atmelavr@^3.4.0", "--skip-dependencies"],
-    )
-    validate_cliresult(result)
-    assert pkgs_to_names(PlatformPackageManager().get_installed()) == ["atmelavr"]
