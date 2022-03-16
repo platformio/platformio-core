@@ -114,6 +114,10 @@ class PlatformPackagesMixin(object):
 
         return result
 
+    def uninstall_packages(self):
+        for pkg in self.get_installed_packages():
+            self.pm.uninstall(pkg)
+
     def update_packages(self, only_check=False):
         for pkg in self.get_installed_packages():
             self.pm.update(

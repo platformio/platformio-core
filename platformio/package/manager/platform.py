@@ -79,18 +79,23 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             p.on_installed()
         return pkg
 
-    def uninstall(self, spec, skip_dependencies=False):
+    def uninstall(  # pylint: disable=arguments-differ
+        self, spec, skip_dependencies=False, project_env=None
+    ):
         pkg = self.get_package(spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(spec)
         p = PlatformFactory.new(pkg)
         # set logging level for underlying tool manager
         p.pm.set_log_level(self.log.getEffectiveLevel())
+        if project_env:
+            p.configure_project_packages(project_env)
+        if not skip_dependencies:
+            p.uninstall_packages()
         assert super(PlatformPackageManager, self).uninstall(
             pkg, skip_dependencies=True
         )
-        if not skip_dependencies:
-            p.on_uninstalled()
+        p.on_uninstalled()
         return pkg
 
     def update(  # pylint: disable=arguments-differ, too-many-arguments

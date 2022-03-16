@@ -79,7 +79,7 @@ class PackageManagerUninstallMixin(object):
         dependencies = self.load_manifest(pkg).get("dependencies")
         if not dependencies:
             return
-        self.log.info(click.style("Removing dependencies...", fg="yellow"))
+        self.log.info("Removing dependencies...")
         for dependency in dependencies:
             spec = PackageSpec(
                 owner=dependency.get("owner"),

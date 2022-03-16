@@ -19,6 +19,7 @@ from platformio.package.commands.install import package_install_cmd
 from platformio.package.commands.outdated import package_outdated_cmd
 from platformio.package.commands.pack import package_pack_cmd
 from platformio.package.commands.publish import package_publish_cmd
+from platformio.package.commands.uninstall import package_uninstall_cmd
 from platformio.package.commands.unpublish import package_unpublish_cmd
 
 
@@ -27,6 +28,7 @@ from platformio.package.commands.unpublish import package_unpublish_cmd
     commands=[
         package_exec_cmd,
         package_install_cmd,
+        package_uninstall_cmd,
         package_outdated_cmd,
         package_pack_cmd,
         package_publish_cmd,
