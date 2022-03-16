@@ -16,11 +16,10 @@
 
 import os
 
-import pytest
-
 from platformio import fs
 from platformio.package.commands.install import package_install_cmd
 from platformio.package.commands.uninstall import package_uninstall_cmd
+from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -306,8 +305,7 @@ def test_custom_project_libraries(
         result = clirunner.invoke(
             package_uninstall_cmd, ["-l", "platformio/unknown_library"]
         )
-        with pytest.raises(AssertionError, match="UnknownPackageError"):
-            validate_cliresult(result)
+        assert isinstance(result.exception, UnknownPackageError)
 
 
 def test_custom_project_tools(
@@ -371,8 +369,7 @@ def test_custom_project_tools(
         result = clirunner.invoke(
             package_uninstall_cmd, ["-t", "platformio/unknown_tool"]
         )
-        with pytest.raises(AssertionError, match="UnknownPackageError"):
-            validate_cliresult(result)
+        assert isinstance(result.exception, UnknownPackageError)
 
 
 def test_custom_project_platforms(
@@ -407,10 +404,5 @@ def test_custom_project_platforms(
         assert not pkgs_to_names(ToolPackageManager().get_installed())
 
         # unknown platform
-        with pytest.raises(
-            AssertionError,
-            match="Could not find the package with 'unknown_platform' requirements",
-        ):
-            validate_cliresult(
-                clirunner.invoke(package_uninstall_cmd, ["-p", "unknown_platform"])
-            )
+        result = clirunner.invoke(package_uninstall_cmd, ["-p", "unknown_platform"])
+        assert isinstance(result.exception, UnknownPackageError)
