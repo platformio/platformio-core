@@ -56,13 +56,13 @@ def test_global_packages(
         [
             "--global",
             "-l",
-            "milesburton/DallasTemperature@^3.9.1",
+            "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#3.9.0",
             "--skip-dependencies",
         ],
     )
     validate_cliresult(result)
     assert pkgs_to_specs(LibraryPackageManager().get_installed()) == [
-        PackageSpec("DallasTemperature@3.9.1")
+        PackageSpec("DallasTemperature@3.9.0+sha.964939d")
     ]
     # with dependencies
     result = clirunner.invoke(
@@ -70,7 +70,7 @@ def test_global_packages(
         [
             "--global",
             "-l",
-            "milesburton/DallasTemperature@^3.9.1",
+            "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#3.9.0",
             "-l",
             "bblanchon/ArduinoJson@^6.19.2",
         ],
@@ -78,7 +78,7 @@ def test_global_packages(
     validate_cliresult(result)
     assert pkgs_to_specs(LibraryPackageManager().get_installed()) == [
         PackageSpec("ArduinoJson@6.19.3"),
-        PackageSpec("DallasTemperature@3.9.1"),
+        PackageSpec("DallasTemperature@3.9.0+sha.964939d"),
         PackageSpec("OneWire@2.3.6"),
     ]
     # custom storage

@@ -20,6 +20,8 @@ import click
 
 from platformio.cache import cleanup_content_cache
 from platformio.commands.boards import print_boards
+from platformio.exception import UserSideException
+from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.package.version import get_original_version
@@ -179,7 +181,7 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     is_flag=True,
     help="Reinstall/redownload dev/platform and its packages if exist",
 )
-def platform_install(  # pylint: disable=too-many-arguments
+def platform_install(  # pylint: disable=too-many-arguments,too-many-locals
     platforms,
     with_package,
     without_package,
@@ -188,37 +190,50 @@ def platform_install(  # pylint: disable=too-many-arguments
     silent,
     force,
 ):
-    return _platform_install(
-        platforms,
-        with_package,
-        without_package,
-        skip_default_package,
-        with_all_packages,
-        silent,
-        force,
-    )
+    def _find_pkg_names(p, candidates):
+        result = []
+        for candidate in candidates:
+            found = False
+            # lookup by package types
+            for _name, _opts in p.packages.items():
+                if _opts.get("type") == candidate:
+                    result.append(_name)
+                    found = True
+            if (
+                p.frameworks
+                and candidate.startswith("framework-")
+                and candidate[10:] in p.frameworks
+            ):
+                result.append(p.frameworks[candidate[10:]]["package"])
+                found = True
+            if not found:
+                result.append(candidate)
+        return result
 
-
-def _platform_install(  # pylint: disable=too-many-arguments
-    platforms,
-    with_package=None,
-    without_package=None,
-    skip_default_package=False,
-    with_all_packages=False,
-    silent=False,
-    force=False,
-):
     pm = PlatformPackageManager()
     pm.set_log_level(logging.WARN if silent else logging.DEBUG)
     for platform in platforms:
-        pkg = pm.install(
-            spec=platform,
-            with_packages=with_package or [],
-            without_packages=without_package or [],
-            skip_default_package=skip_default_package,
-            with_all_packages=with_all_packages,
-            force=force,
-        )
+        if with_package or without_package or with_all_packages:
+            pkg = pm.install(platform, skip_dependencies=True)
+            p = PlatformFactory.new(pkg)
+            if with_all_packages:
+                with_package = list(p.packages)
+            with_package = set(_find_pkg_names(p, with_package or []))
+            without_package = set(_find_pkg_names(p, without_package or []))
+            upkgs = with_package | without_package
+            ppkgs = set(p.packages)
+            if not upkgs.issubset(ppkgs):
+                raise UnknownPackageError(", ".join(upkgs - ppkgs))
+            for name, options in p.packages.items():
+                if name in without_package:
+                    continue
+                if name in with_package or not (
+                    skip_default_package or options.get("optional", False)
+                ):
+                    p.pm.install(p.get_package_spec(name), force=force)
+        else:
+            pkg = pm.install(platform, skip_dependencies=skip_default_package)
+
         if pkg and not silent:
             click.secho(
                 "The platform '%s' has been successfully installed!\n"

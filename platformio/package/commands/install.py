@@ -70,7 +70,7 @@ def install_global_dependencies(options):
     for spec in options.get("platforms"):
         pm.install(
             spec,
-            skip_default_package=options.get("skip_dependencies"),
+            skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
     for spec in options.get("tools"):
@@ -145,7 +145,7 @@ def _install_project_env_platform(project_env, options):
         spec,
         project_env=project_env,
         project_targets=options.get("project_targets"),
-        skip_default_package=options.get("skip_dependencies"),
+        skip_dependencies=options.get("skip_dependencies"),
         force=options.get("force"),
     )
     return not already_up_to_date
@@ -163,7 +163,7 @@ def _install_project_env_custom_platforms(project_env, options):
             spec,
             project_env=project_env,
             project_targets=options.get("project_targets"),
-            skip_default_package=options.get("skip_dependencies"),
+            skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
     return not already_up_to_date

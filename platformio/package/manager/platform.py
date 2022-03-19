@@ -38,13 +38,10 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
     def manifest_names(self):
         return PackageType.get_manifest_map()[PackageType.PLATFORM]
 
-    def install(  # pylint: disable=arguments-differ, too-many-arguments
+    def install(  # pylint: disable=arguments-differ,too-many-arguments
         self,
         spec,
-        with_packages=None,
-        without_packages=None,
-        skip_default_package=False,
-        with_all_packages=False,
+        skip_dependencies=False,
         force=False,
         project_env=None,
         project_targets=None,
@@ -55,26 +52,16 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         )
         try:
             p = PlatformFactory.new(pkg)
+            # set logging level for underlying tool manager
+            p.pm.set_log_level(self.log.getEffectiveLevel())
             p.ensure_engine_compatible()
         except IncompatiblePlatform as e:
             super(PlatformPackageManager, self).uninstall(pkg, skip_dependencies=True)
             raise e
-
-        # set logging level for underlying tool manager
-        p.pm.set_log_level(self.log.getEffectiveLevel())
-
         if project_env:
             p.configure_project_packages(project_env, project_targets)
-
-        if with_all_packages:
-            with_packages = list(p.packages)
-
-        p.install_packages(
-            with_packages,
-            without_packages,
-            skip_default_package,
-            force=force,
-        )
+        if not skip_dependencies:
+            p.install_required_packages(force=force)
         if not already_installed:
             p.on_installed()
         return pkg

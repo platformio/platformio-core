@@ -455,7 +455,7 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     assert outdated.latest > semantic_version.Version("1.10.0")
 
     pkg = lm.install("ArduinoJson @ 5.10.1")
-    # tesy latest
+    # test latest
     outdated = lm.outdated(pkg)
     assert str(outdated.current) == "5.10.1"
     assert outdated.wanted is None

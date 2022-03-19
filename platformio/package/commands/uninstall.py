@@ -134,7 +134,7 @@ def _uninstall_project_env_platform(project_env, options):
         pm.set_log_level(logging.WARN)
     spec = config.get(f"env:{project_env}", "platform")
     if not spec:
-        return False
+        return None
     already_up_to_date = True
     if not pm.get_package(spec):
         return None
