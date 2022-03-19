@@ -36,8 +36,9 @@ class PlatformFactory(object):
             raise UnknownPlatform(name)
 
     @classmethod
-    def new(cls, pkg_or_spec):
+    def new(cls, pkg_or_spec, autoinstall=False):
         # pylint: disable=import-outside-toplevel
+        from platformio.package.manager.platform import PlatformPackageManager
 
         platform_dir = None
         platform_name = None
@@ -47,17 +48,20 @@ class PlatformFactory(object):
         elif isinstance(pkg_or_spec, (str, bytes)) and os.path.isdir(pkg_or_spec):
             platform_dir = pkg_or_spec
         else:
-            from platformio.package.manager.platform import PlatformPackageManager
-
             pkg = PlatformPackageManager().get_package(pkg_or_spec)
-            if not pkg:
-                raise UnknownPlatform(pkg_or_spec)
-            platform_dir = pkg.path
-            platform_name = pkg.metadata.name
+            if pkg:
+                platform_dir = pkg.path
+                platform_name = pkg.metadata.name
 
         if not platform_dir or not os.path.isfile(
             os.path.join(platform_dir, "platform.json")
         ):
+            if autoinstall:
+                return cls.new(
+                    PlatformPackageManager().install(
+                        pkg_or_spec, skip_dependencies=True
+                    )
+                )
             raise UnknownPlatform(pkg_or_spec)
 
         if not platform_name:

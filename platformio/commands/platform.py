@@ -318,15 +318,6 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
 #
 
 
-def init_platform(name, skip_default_package=True, auto_install=True):
-    try:
-        return PlatformFactory.new(name)
-    except UnknownPlatform:
-        if auto_install:
-            _platform_install([name], skip_default_package=skip_default_package)
-        return PlatformFactory.new(name)
-
-
 def _print_platforms(platforms):
     for platform in platforms:
         click.echo(
