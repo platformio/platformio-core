@@ -125,14 +125,17 @@ class PackageManagerInstallMixin(object):
         if print_header:
             self.log.info("Resolving dependencies...")
         for dependency in dependencies:
-            if not self._install_dependency(dependency):
-                self.log.warning(
-                    click.style(
-                        "Warning! Could not install dependency %s for package '%s'"
-                        % (dependency, pkg.metadata.name),
-                        fg="yellow",
+            try:
+                self._install_dependency(dependency)
+            except UnknownPackageError:
+                if dependency.get("owner"):
+                    self.log.warning(
+                        click.style(
+                            "Warning! Could not install dependency %s for package '%s'"
+                            % (dependency, pkg.metadata.name),
+                            fg="yellow",
+                        )
                     )
-                )
 
     def _install_dependency(self, dependency):
         spec = PackageSpec(
@@ -145,11 +148,7 @@ class PackageManagerInstallMixin(object):
             for key, value in dependency.items()
             if key in ("authors", "platforms", "frameworks")
         }
-        try:
-            return self._install(spec, search_filters=search_filters or None)
-        except UnknownPackageError:
-            pass
-        return None
+        return self._install(spec, search_filters=search_filters or None)
 
     def install_from_url(self, url, spec, checksum=None):
         spec = self.ensure_spec(spec)

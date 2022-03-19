@@ -56,7 +56,6 @@ def test_global_packages(
         ],
     )
     validate_cliresult(result)
-    assert "Warning! Could not install dependency {'name': 'Hash'" in result.output
     assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
         "ArduinoJson",
         "AsyncMqttClient",
