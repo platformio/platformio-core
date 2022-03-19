@@ -432,9 +432,13 @@ class PackageItem(object):
         )
 
     def __eq__(self, other):
-        if not self.path or not other.path:
-            return self.path == other.path
-        return os.path.realpath(self.path) == os.path.realpath(other.path)
+        conds = [
+            os.path.realpath(self.path) == os.path.realpath(other.path)
+            if self.path and other.path
+            else self.path == other.path,
+            self.metadata == other.metadata,
+        ]
+        return all(conds)
 
     def __hash__(self):
         return hash(os.path.realpath(self.path))
