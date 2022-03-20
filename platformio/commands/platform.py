@@ -273,8 +273,13 @@ def platform_uninstall(platforms):
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option("--json-output", is_flag=True)
 def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
-    platforms, only_packages, only_check, dry_run, silent, json_output
+    platforms, only_check, dry_run, silent, json_output, **_
 ):
+    if only_check and not json_output:
+        raise UserSideException(
+            "This command is deprecated, please use `pio pkg outdated` instead"
+        )
+
     pm = PlatformPackageManager()
     pm.set_log_level(logging.WARN if silent else logging.DEBUG)
     platforms = platforms or pm.get_installed()
@@ -322,7 +327,7 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
             )
         )
         click.echo("--------")
-        pm.update(platform, only_packages=only_packages, only_check=only_check)
+        pm.update(platform)
         click.echo()
 
     return True

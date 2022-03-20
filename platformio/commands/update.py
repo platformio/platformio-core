@@ -42,7 +42,8 @@ def cli(ctx, core_packages, only_check, dry_run):
 
     only_check = dry_run or only_check
 
-    update_core_packages(only_check)
+    if not only_check:
+        update_core_packages()
 
     if core_packages:
         return

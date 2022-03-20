@@ -85,45 +85,28 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         p.on_uninstalled()
         return pkg
 
-    def update(  # pylint: disable=arguments-differ, too-many-arguments
+    def update(  # pylint: disable=arguments-differ
         self,
         from_spec,
         to_spec=None,
-        only_check=False,
-        show_incompatible=True,
-        only_packages=False,
+        skip_dependencies=False,
+        project_env=None,
     ):
         pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
+        pkg = super(PlatformPackageManager, self).update(
+            from_spec,
+            to_spec,
+        )
         p = PlatformFactory.new(pkg)
         # set logging level for underlying tool manager
         p.pm.set_log_level(self.log.getEffectiveLevel())
-        pkgs_before = [item.metadata.name for item in p.get_installed_packages()]
-
-        new_pkg = None
-        missed_pkgs = set()
-        if not only_packages:
-            new_pkg = super(PlatformPackageManager, self).update(
-                from_spec,
-                to_spec,
-                only_check=only_check,
-                show_incompatible=show_incompatible,
-            )
-            p = PlatformFactory.new(new_pkg)
-            missed_pkgs = set(pkgs_before) & set(p.packages)
-            missed_pkgs -= set(
-                item.metadata.name for item in p.get_installed_packages()
-            )
-
-        p.update_packages(only_check)
-
-        if missed_pkgs:
-            p.install_packages(
-                with_packages=list(missed_pkgs), skip_default_package=True
-            )
-
-        return new_pkg or pkg
+        if project_env:
+            p.configure_project_packages(project_env)
+        if not skip_dependencies:
+            p.update_packages()
+        return pkg
 
     @util.memoized(expire="5s")
     def get_installed_boards(self):

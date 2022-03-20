@@ -237,8 +237,13 @@ def lib_uninstall(ctx, libraries, save, silent):
 def lib_update(  # pylint: disable=too-many-arguments
     ctx, libraries, only_check, dry_run, silent, json_output
 ):
-    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     only_check = dry_run or only_check
+    if only_check and not json_output:
+        raise exception.UserSideException(
+            "This command is deprecated, please use `pio pkg outdated` instead"
+        )
+
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:
         if not json_output:
@@ -278,7 +283,7 @@ def lib_update(  # pylint: disable=too-many-arguments
                     None if isinstance(library, PackageItem) else PackageSpec(library)
                 )
                 try:
-                    lm.update(library, to_spec=to_spec, only_check=only_check)
+                    lm.update(library, to_spec=to_spec)
                 except UnknownPackageError as e:
                     if library not in lib_deps:
                         raise e
@@ -529,7 +534,7 @@ def lib_show(library, json_output):
 @click.argument("config_url")
 def lib_register(config_url):  # pylint: disable=unused-argument
     raise exception.UserSideException(
-        "This command is deprecated. Please use `pio package publish` command."
+        "This command is deprecated. Please use `pio pkg publish` command."
     )
 
 

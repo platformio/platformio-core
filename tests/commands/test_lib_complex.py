@@ -253,8 +253,8 @@ def test_global_lib_update(clirunner, validate_cliresult, strip_ansi):
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert result.output.count("[Detached]") == 1
-    assert result.output.count("[Up-to-date]") == 13
+    assert result.output.count("+sha.") == 4
+    assert result.output.count("already up-to-date") == 14
 
     # update unknown library
     result = clirunner.invoke(cmd_lib, ["-g", "update", "Unknown"])
@@ -290,17 +290,18 @@ def test_global_lib_uninstall(
 
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
-        "ArduinoJson",
-        "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "AsyncMqttClient",
-        "AsyncTCP",
-        "ESP32WebServer",
-        "ESPAsyncTCP",
-        "NeoPixelBus",
-        "PJON",
-        "PJON@src-79de467ebe19de18287becff0a1fb42d",
         "platformio-libmirror",
         "PubSubClient",
+        "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
+        "ESPAsyncTCP@1.2.0",
+        "AsyncTCP",
+        "ArduinoJson",
+        "ESPAsyncTCP",
+        "ESP32WebServer",
+        "PJON",
+        "NeoPixelBus",
+        "PJON@src-79de467ebe19de18287becff0a1fb42d",
         "SomeLib",
     ]
     assert set(items1) == set(items2)

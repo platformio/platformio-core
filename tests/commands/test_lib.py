@@ -17,6 +17,7 @@
 import json
 import os
 
+import pytest
 import semantic_version
 
 from platformio.clients.registry import RegistryClient
@@ -225,5 +226,13 @@ def test_update(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory
     result = clirunner.invoke(
         cmd_lib, ["-d", str(storage_dir), "update", "--dry-run", "ArduinoJson @ ^5"]
     )
+    with pytest.raises(
+        AssertionError,
+        match="This command is deprecated",
+    ):
+        validate_cliresult(result)
+    result = clirunner.invoke(
+        cmd_lib, ["-d", str(storage_dir), "update", "ArduinoJson @ ^5"]
+    )
     validate_cliresult(result)
-    assert "Incompatible" in result.stdout
+    assert "ArduinoJson @ 5.13.4 is already up-to-date" in result.stdout

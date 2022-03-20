@@ -150,13 +150,10 @@ def after_upgrade(ctx):
         return
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
-        try:
-            cleanup_content_cache("http")
-        except:  # pylint: disable=bare-except
-            pass
 
         # Update PlatformIO's Core packages
-        update_core_packages(silent=True)
+        cleanup_content_cache("http")
+        update_core_packages()
 
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
@@ -219,7 +216,7 @@ def check_platformio_upgrade():
     http.ensure_internet_on(raise_exception=True)
 
     # Update PlatformIO Core packages
-    update_core_packages(silent=True)
+    update_core_packages()
 
     latest_version = get_latest_version()
     if pepver_to_semver(latest_version) <= pepver_to_semver(__version__):

@@ -55,17 +55,15 @@ def get_core_package_dir(name, auto_install=True):
     return pm.get_package(spec).path
 
 
-def update_core_packages(only_check=False, silent=False):
+def update_core_packages():
     pm = ToolPackageManager()
     for name, requirements in __core_packages__.items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
-        pkg = pm.get_package(spec)
-        if not pkg:
-            continue
-        if not silent or pm.outdated(pkg, spec).is_outdated():
-            pm.update(pkg, spec, only_check=only_check)
-    if not only_check:
-        remove_unnecessary_core_packages()
+        try:
+            pm.update(spec, spec)
+        except UnknownPackageError:
+            pass
+    remove_unnecessary_core_packages()
     return True
 
 
