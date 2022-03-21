@@ -29,7 +29,7 @@ from platformio.compat import IS_CYGWIN, ensure_python3
     cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
 )
 @click.version_option(__version__, prog_name="PlatformIO Core")
-@click.option("--force", "-f", is_flag=True, help="DEPRECATE")
+@click.option("--force", "-f", is_flag=True, help="DEPRECATED")
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
 @click.pass_context
@@ -60,22 +60,9 @@ def cli(ctx, force, caller, no_ansi):
     maintenance.on_platformio_start(ctx, force, caller)
 
 
-try:
-
-    @cli.result_callback()
-    @click.pass_context
-    def process_result(ctx, result, *_, **__):
-        _process_result(ctx, result)
-
-except (AttributeError, TypeError):  # legacy support for CLick > 8.0.1
-
-    @cli.resultcallback()
-    @click.pass_context
-    def process_result(ctx, result, *_, **__):
-        _process_result(ctx, result)
-
-
-def _process_result(ctx, result):
+@cli.result_callback()
+@click.pass_context
+def process_result(ctx, result, *_, **__):
     from platformio import maintenance
 
     maintenance.on_platformio_end(ctx, result)
