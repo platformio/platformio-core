@@ -24,7 +24,7 @@ from platformio.proc import get_pythonexe_path
 
 
 @click.command("exec", short_help="Run command from package tool")
-@click.option("-p", "--package", metavar="<pkg>[@<version>]")
+@click.option("-p", "--package", metavar="SPECIFICATION")
 @click.option("-c", "--call", metavar="<cmd> [args...]")
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 @click.pass_obj

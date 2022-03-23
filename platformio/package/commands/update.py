@@ -36,9 +36,9 @@ from platformio.project.savedeps import pkg_to_save_spec, save_project_dependenc
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
 )
 @click.option("-e", "--environment", "environments", multiple=True)
-@click.option("-p", "--platform", "platforms", multiple=True)
-@click.option("-t", "--tool", "tools", multiple=True)
-@click.option("-l", "--library", "libraries", multiple=True)
+@click.option("-p", "--platform", "platforms", metavar="SPECIFICATION", multiple=True)
+@click.option("-t", "--tool", "tools", metavar="SPECIFICATION", multiple=True)
+@click.option("-l", "--library", "libraries", metavar="SPECIFICATION", multiple=True)
 @click.option(
     "--no-save",
     is_flag=True,
