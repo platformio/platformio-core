@@ -14,6 +14,7 @@
 
 import os
 
+from platformio import util
 from platformio.compat import ci_strings_are_equal
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageSpec
@@ -22,6 +23,7 @@ from platformio.project.config import ProjectConfig
 from platformio.project.exception import InvalidProjectConfError
 
 
+@util.memoized(expire="60s")
 def get_builtin_libs(storage_names=None):
     # pylint: disable=import-outside-toplevel
     from platformio.package.manager.library import LibraryPackageManager
@@ -45,8 +47,8 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-def is_builtin_lib(name, storages=None):
-    for storage in storages or get_builtin_libs():
+def is_builtin_lib(name):
+    for storage in get_builtin_libs():
         for lib in storage["items"]:
             if lib.get("name") == name:
                 return True

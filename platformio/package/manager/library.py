@@ -15,6 +15,7 @@
 import json
 import os
 
+from platformio.commands.lib.helpers import is_builtin_lib
 from platformio.package.exception import MissingPackageManifestError
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.meta import PackageSpec, PackageType
@@ -77,3 +78,13 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                 if fname.endswith((".c", ".cpp", ".h", ".hpp", ".S")):
                     return root
         return path
+
+    def install_dependency(self, dependency):
+        spec = self.dependency_to_spec(dependency)
+        # skip built-in dependencies
+        not_builtin_conds = [spec.external, spec.owner]
+        if not any(not_builtin_conds):
+            not_builtin_conds.append(not is_builtin_lib(spec.name))
+        if any(not_builtin_conds):
+            return super(LibraryPackageManager, self).install_dependency(dependency)
+        return None
