@@ -1073,15 +1073,23 @@ def ConfigureProjectLibBuilder(env):
                     lb.depbuilders.remove(deplb)
 
     def _print_deps_tree(root, level=0):
-        margin = "|   " * (level)
-        for lb in root.depbuilders:
-            title = "<%s>" % lb.name
+        margin = "│   " * (level)
+        for index, lb in enumerate(root.depbuilders):
+            title = lb.name
             pkg = PackageItem(lb.path)
             if pkg.metadata:
-                title += " %s" % pkg.metadata.version
+                title += " @ %s" % pkg.metadata.version
             elif lb.version:
-                title += " %s" % lb.version
-            click.echo("%s|-- %s" % (margin, title), nl=False)
+                title += " @ %s" % lb.version
+            click.echo(
+                "%s%s %s"
+                % (
+                    margin,
+                    "├──" if index < len(root.depbuilders) - 1 else "└──",
+                    title,
+                ),
+                nl=False,
+            )
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 if pkg.metadata and pkg.metadata.spec.external:
                     click.echo(" [%s]" % pkg.metadata.spec.url, nl=False)
