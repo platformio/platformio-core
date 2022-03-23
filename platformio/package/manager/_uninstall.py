@@ -67,7 +67,7 @@ class PackageManagerUninstallMixin(object):
 
         self.log.info(
             click.style(
-                "{name} @ {version} has been removed!".format(**pkg.metadata.as_dict()),
+                "{name}@{version} has been removed!".format(**pkg.metadata.as_dict()),
                 fg="green",
             )
         )
@@ -76,17 +76,12 @@ class PackageManagerUninstallMixin(object):
 
     def uninstall_dependencies(self, pkg):
         assert isinstance(pkg, PackageItem)
-        dependencies = self.load_manifest(pkg).get("dependencies")
+        dependencies = self.get_pkg_dependencies(pkg)
         if not dependencies:
             return
         self.log.info("Removing dependencies...")
         for dependency in dependencies:
-            spec = PackageSpec(
-                owner=dependency.get("owner"),
-                name=dependency.get("name"),
-                requirements=dependency.get("version"),
-            )
-            pkg = self.get_package(spec)
+            pkg = self.get_package(self.dependency_to_spec(dependency))
             if not pkg:
                 continue
             self._uninstall(pkg)

@@ -287,3 +287,14 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
             return False
 
         return True
+
+    def get_pkg_dependencies(self, pkg):
+        return self.load_manifest(pkg).get("dependencies")
+
+    @staticmethod
+    def dependency_to_spec(dependency):
+        return PackageSpec(
+            owner=dependency.get("owner"),
+            name=dependency.get("name"),
+            requirements=dependency.get("version"),
+        )

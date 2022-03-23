@@ -161,7 +161,7 @@ def remove_unnecessary_platform_packages(dry_run=False):
     core_packages = get_installed_core_packages()
     for platform in PlatformPackageManager().get_installed():
         p = PlatformFactory.new(platform)
-        for pkg in p.get_installed_packages(with_optional=True):
+        for pkg in p.get_installed_packages(with_optional_versions=True):
             required.add(pkg)
 
     pm = ToolPackageManager()

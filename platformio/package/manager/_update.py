@@ -92,7 +92,7 @@ class PackageManagerUpdateMixin(object):
         if not outdated.is_outdated(allow_incompatible=False):
             self.log.debug(
                 click.style(
-                    "{name} @ {version} is already up-to-date".format(
+                    "{name}@{version} is already up-to-date".format(
                         **pkg.metadata.as_dict()
                     ),
                     fg="yellow",

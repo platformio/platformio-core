@@ -36,7 +36,7 @@ class PlatformFactory(object):
             raise UnknownPlatform(name)
 
     @classmethod
-    def new(cls, pkg_or_spec, autoinstall=False):
+    def new(cls, pkg_or_spec, autoinstall=False) -> PlatformBase:
         # pylint: disable=import-outside-toplevel
         from platformio.package.manager.platform import PlatformPackageManager
 

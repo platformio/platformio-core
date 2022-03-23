@@ -209,7 +209,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         data = []
         for item in platform.dump_used_packages():
             original_version = get_original_version(item["version"])
-            info = "%s %s" % (item["name"], item["version"])
+            info = "%s @ %s" % (item["name"], item["version"])
             extra = []
             if original_version:
                 extra.append(original_version)

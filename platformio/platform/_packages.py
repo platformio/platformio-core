@@ -36,11 +36,13 @@ class PlatformPackagesMixin(object):
         pkg = self.get_package(name)
         return str(pkg.metadata.version) if pkg else None
 
-    def get_installed_packages(self, with_optional=False):
+    def get_installed_packages(self, with_optional=True, with_optional_versions=False):
         result = []
-        for name, options in self.packages.items():
+        for name, options in dict(sorted(self.packages.items())).items():
+            if not with_optional and options.get("optional"):
+                continue
             versions = [options.get("version")]
-            if with_optional:
+            if with_optional_versions:
                 versions.extend(options.get("optionalVersions", []))
             for version in versions:
                 if not version:

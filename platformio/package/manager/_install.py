@@ -21,7 +21,7 @@ import click
 
 from platformio import app, compat, fs, util
 from platformio.package.exception import PackageException, UnknownPackageError
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageItem
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
 
@@ -78,7 +78,7 @@ class PackageManagerInstallMixin(object):
         if pkg:
             self.log.debug(
                 click.style(
-                    "{name} @ {version} is already installed".format(
+                    "{name}@{version} is already installed".format(
                         **pkg.metadata.as_dict()
                     ),
                     fg="yellow",
@@ -104,9 +104,7 @@ class PackageManagerInstallMixin(object):
 
         self.log.info(
             click.style(
-                "{name} @ {version} has been installed!".format(
-                    **pkg.metadata.as_dict()
-                ),
+                "{name}@{version} has been installed!".format(**pkg.metadata.as_dict()),
                 fg="green",
             )
         )
@@ -119,14 +117,14 @@ class PackageManagerInstallMixin(object):
 
     def install_dependencies(self, pkg, print_header=True):
         assert isinstance(pkg, PackageItem)
-        dependencies = self.load_manifest(pkg).get("dependencies")
+        dependencies = dependencies = self.get_pkg_dependencies(pkg)
         if not dependencies:
             return
         if print_header:
             self.log.info("Resolving dependencies...")
         for dependency in dependencies:
             try:
-                self._install_dependency(dependency)
+                self.install_dependency(dependency)
             except UnknownPackageError:
                 if dependency.get("owner"):
                     self.log.warning(
@@ -137,12 +135,8 @@ class PackageManagerInstallMixin(object):
                         )
                     )
 
-    def _install_dependency(self, dependency):
-        spec = PackageSpec(
-            owner=dependency.get("owner"),
-            name=dependency.get("name"),
-            requirements=dependency.get("version"),
-        )
+    def install_dependency(self, dependency):
+        spec = self.dependency_to_spec(dependency)
         search_filters = {
             key: value
             for key, value in dependency.items()

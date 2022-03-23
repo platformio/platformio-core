@@ -235,4 +235,4 @@ def test_update(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory
         cmd_lib, ["-d", str(storage_dir), "update", "ArduinoJson @ ^5"]
     )
     validate_cliresult(result)
-    assert "ArduinoJson @ 5.13.4 is already up-to-date" in result.stdout
+    assert "ArduinoJson@5.13.4 is already up-to-date" in result.stdout

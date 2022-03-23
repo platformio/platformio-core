@@ -179,7 +179,7 @@ class PackageManageRegistryMixin(object):
 
         for item in packages:
             self.log.warning(
-                " - {owner}/{name} @ {version}".format(
+                " - {owner}/{name}@{version}".format(
                     owner=click.style(item["owner"]["username"], fg="cyan"),
                     name=item["name"],
                     version=item["version"]["name"],
