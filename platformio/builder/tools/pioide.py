@@ -45,7 +45,7 @@ def _dump_includes(env):
     # includes from toolchains
     p = env.PioPlatform()
     includes["toolchain"] = []
-    for pkg in p.get_installed_packages():
+    for pkg in p.get_installed_packages(with_optional=False):
         if p.get_package_type(pkg.metadata.name) != "toolchain":
             continue
         toolchain_dir = glob.escape(pkg.path)
