@@ -14,16 +14,8 @@
 
 # pylint: disable=unused-argument
 
-import os
-
-from platformio import fs
 from platformio.package.commands.install import package_install_cmd
 from platformio.package.commands.list import package_list_cmd
-from platformio.package.manager.library import LibraryPackageManager
-from platformio.package.manager.platform import PlatformPackageManager
-from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageSpec
-from platformio.project.config import ProjectConfig
 
 PROJECT_CONFIG_TPL = """
 [env]

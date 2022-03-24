@@ -153,7 +153,7 @@ def list_project_packages(options):
         options.get(type_) or options.get(f"only_{type_}")
         for type_ in ("platforms", "tools")
     )
-    only_library_packages = options.get("libraries") or options.get(f"only_libraries")
+    only_library_packages = options.get("libraries") or options.get("only_libraries")
 
     with fs.cd(options["project_dir"]):
         config = ProjectConfig.get_instance()
