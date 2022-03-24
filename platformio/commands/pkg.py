@@ -16,6 +16,7 @@ import click
 
 from platformio.package.commands.exec import package_exec_cmd
 from platformio.package.commands.install import package_install_cmd
+from platformio.package.commands.list import package_list_cmd
 from platformio.package.commands.outdated import package_outdated_cmd
 from platformio.package.commands.pack import package_pack_cmd
 from platformio.package.commands.publish import package_publish_cmd
@@ -29,6 +30,7 @@ from platformio.package.commands.update import package_update_cmd
     commands=[
         package_exec_cmd,
         package_install_cmd,
+        package_list_cmd,
         package_outdated_cmd,
         package_pack_cmd,
         package_publish_cmd,
