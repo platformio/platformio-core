@@ -65,10 +65,11 @@ class EnvironmentProcessor(object):
         if "monitor" in build_targets:
             build_targets.remove("monitor")
 
-        install_project_env_dependencies(
-            self.name,
-            {"project_targets": build_targets},
-        )
+        if "clean" not in build_targets:
+            install_project_env_dependencies(
+                self.name,
+                {"project_targets": build_targets},
+            )
 
         result = PlatformFactory.new(self.options["platform"]).run(
             build_vars, build_targets, self.silent, self.verbose, self.jobs
