@@ -43,9 +43,9 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
 @click.command("publish", short_help="Publish a package to the registry")
 @click.argument(
     "package",
-    required=True,
     default=os.getcwd,
     metavar="<source directory, tar.gz or zip>",
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, resolve_path=True),
 )
 @click.option(
     "--owner",

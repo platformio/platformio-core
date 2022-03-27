@@ -24,9 +24,9 @@ from platformio.package.pack import PackagePacker
 @click.command("pack", short_help="Create a tarball from a package")
 @click.argument(
     "package",
-    required=True,
     default=os.getcwd,
     metavar="<source directory, tar.gz or zip>",
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, resolve_path=True),
 )
 @click.option(
     "-o", "--output", help="A destination path (folder or a full path to file)"
