@@ -38,7 +38,7 @@ class CppcheckCheckTool(CheckToolBase):
         ]
         super(CppcheckCheckTool, self).__init__(*args, **kwargs)
 
-    def tool_output_filter(self, line):
+    def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if (
             not self.options.get("verbose")
             and "--suppress=unmatchedSuppression:" in line
@@ -56,7 +56,7 @@ class CppcheckCheckTool(CheckToolBase):
 
         return line
 
-    def parse_defect(self, raw_line):
+    def parse_defect(self, raw_line):  # pylint: disable=arguments-differ
         if self._field_delimiter not in raw_line:
             return None
 

@@ -21,7 +21,7 @@ from platformio.package.manager.core import get_core_package_dir
 
 
 class ClangtidyCheckTool(CheckToolBase):
-    def tool_output_filter(self, line):
+    def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if not self.options.get("verbose") and "[clang-diagnostic-error]" in line:
             return ""
 
@@ -34,7 +34,7 @@ class ClangtidyCheckTool(CheckToolBase):
 
         return ""
 
-    def parse_defect(self, raw_line):
+    def parse_defect(self, raw_line):  # pylint: disable=arguments-differ
         match = re.match(r"^(.*):(\d+):(\d+):\s+([^:]+):\s(.+)\[([^]]+)\]$", raw_line)
         if not match:
             return raw_line

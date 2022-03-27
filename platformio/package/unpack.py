@@ -68,7 +68,7 @@ class TARArchiver(BaseArchiver):
         return item.name
 
     @staticmethod
-    def is_link(item):
+    def is_link(item):  # pylint: disable=arguments-differ
         return item.islnk() or item.issym()
 
     @staticmethod
@@ -119,7 +119,7 @@ class ZIPArchiver(BaseArchiver):
         )
 
     @staticmethod
-    def is_link(_):
+    def is_link(_):  # pylint: disable=arguments-differ
         return False
 
     def get_items(self):

@@ -53,7 +53,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
                 )
             )
 
-    def tool_output_filter(self, line):
+    def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if "license was not entered" in line.lower():
             self._bad_input = True
         return line

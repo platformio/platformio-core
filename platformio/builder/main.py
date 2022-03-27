@@ -223,6 +223,7 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
+    projenv = None
     try:
         Import("projenv")
     except:  # pylint: disable=bare-except
