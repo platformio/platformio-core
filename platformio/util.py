@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import functools
 import json
 import math
 import os
@@ -21,7 +22,7 @@ import platform
 import re
 import shutil
 import time
-from functools import wraps
+from datetime import datetime
 from glob import glob
 
 import click
@@ -44,7 +45,7 @@ class memoized(object):
         self.cache = {}
 
     def __call__(self, func):
-        @wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             key = str(args) + str(kwargs)
             if key not in self.cache or (
@@ -66,7 +67,7 @@ class throttle(object):
         self.last = 0
 
     def __call__(self, func):
-        @wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             diff = int(round((time.time() - self.last) * 1000))
             if diff < self.threshhold:
@@ -252,10 +253,10 @@ def items_in_list(needle, haystack):
     return set(needle) & set(haystack)
 
 
-def parse_date(datestr):
+def parse_datetime(datestr):
     if "T" in datestr and "Z" in datestr:
-        return time.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
-    return time.strptime(datestr)
+        return datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
+    return datetime.strptime(datestr)
 
 
 def merge_dicts(d1, d2, path=None):

@@ -462,7 +462,7 @@ def lib_show(library, json_output):
         "Version: %s, released %s"
         % (
             lib["version"]["name"],
-            time.strftime("%c", util.parse_date(lib["version"]["released"])),
+            util.parse_datetime(lib["version"]["released"]).strftime("%c"),
         )
     )
     click.echo("Manifest: %s" % lib["confurl"])
@@ -504,7 +504,7 @@ def lib_show(library, json_output):
             "Versions",
             [
                 "%s, released %s"
-                % (v["name"], time.strftime("%c", util.parse_date(v["released"])))
+                % (v["name"], util.parse_datetime(v["released"]).strftime("%c"))
                 for v in lib["versions"]
             ],
         )
@@ -551,7 +551,7 @@ def lib_stats(json_output):
         tabular_data = [
             (
                 click.style(item["name"], fg="cyan"),
-                time.strftime("%c", util.parse_date(item["date"])),
+                util.parse_datetime(item["date"]).strftime("%c"),
                 "https://platformio.org/lib/show/%s/%s"
                 % (item["id"], quote(item["name"])),
             )

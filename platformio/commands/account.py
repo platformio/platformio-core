@@ -14,13 +14,13 @@
 
 # pylint: disable=unused-argument
 
-import datetime
 import json
 import re
 
 import click
 from tabulate import tabulate
 
+from platformio import util
 from platformio.clients.account import AccountClient, AccountNotAuthorized
 
 
@@ -244,12 +244,9 @@ def print_packages(packages):
         data = []
         expire = "-"
         if "subscription" in package:
-            expire = datetime.datetime.strptime(
-                (
-                    package["subscription"].get("end_at")
-                    or package["subscription"].get("next_bill_at")
-                ),
-                "%Y-%m-%dT%H:%M:%SZ",
+            expire = util.parse_datetime(
+                package["subscription"].get("end_at")
+                or package["subscription"].get("next_bill_at")
             ).strftime("%Y-%m-%d")
         data.append(("Expire:", expire))
         services = []
@@ -274,21 +271,17 @@ def print_subscriptions(subscriptions):
         click.secho(subscription.get("product_name"), bold=True)
         click.echo("-" * len(subscription.get("product_name")))
         data = [("State:", subscription.get("status"))]
-        begin_at = datetime.datetime.strptime(
-            subscription.get("begin_at"), "%Y-%m-%dT%H:%M:%SZ"
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        begin_at = util.parse_datetime(subscription.get("begin_at")).strftime("%c")
         data.append(("Start date:", begin_at or "-"))
         end_at = subscription.get("end_at")
         if end_at:
-            end_at = datetime.datetime.strptime(
-                subscription.get("end_at"), "%Y-%m-%dT%H:%M:%SZ"
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            end_at = util.parse_datetime(subscription.get("end_at")).strftime("%c")
         data.append(("End date:", end_at or "-"))
         next_bill_at = subscription.get("next_bill_at")
         if next_bill_at:
-            next_bill_at = datetime.datetime.strptime(
-                subscription.get("next_bill_at"), "%Y-%m-%dT%H:%M:%SZ"
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            next_bill_at = util.parse_datetime(
+                subscription.get("next_bill_at")
+            ).strftime("%c")
         data.append(("Next payment:", next_bill_at or "-"))
         data.append(
             ("Edit:", click.style(subscription.get("update_url"), fg="blue") or "-")
