@@ -90,7 +90,7 @@ class PackageManageRegistryMixin(object):
             if not packages:
                 raise UnknownPackageError(spec.humanize())
             if len(packages) > 1:
-                self.print_multi_package_issue(packages, spec)
+                self.print_multi_package_issue(self.log.warning, packages, spec)
             package, version = self.find_best_registry_version(packages, spec)
 
         if not package or not version:
@@ -164,12 +164,13 @@ class PackageManageRegistryMixin(object):
         if not packages:
             raise UnknownPackageError(spec.humanize())
         if len(packages) > 1:
-            self.print_multi_package_issue(packages, spec)
+            self.print_multi_package_issue(self.log.warning, packages, spec)
             self.log.info("")
         return packages[0]["id"]
 
-    def print_multi_package_issue(self, packages, spec):
-        self.log.warning(
+    @staticmethod
+    def print_multi_package_issue(print_func, packages, spec):
+        print_func(
             click.style(
                 "Warning! More than one package has been found by ", fg="yellow"
             )
@@ -178,14 +179,14 @@ class PackageManageRegistryMixin(object):
         )
 
         for item in packages:
-            self.log.warning(
+            print_func(
                 " - {owner}/{name}@{version}".format(
                     owner=click.style(item["owner"]["username"], fg="cyan"),
                     name=item["name"],
                     version=item["version"]["name"],
                 )
             )
-        self.log.warning(
+        print_func(
             click.style(
                 "Please specify detailed REQUIREMENTS using package owner and version "
                 "(shown above) to avoid name conflicts",
