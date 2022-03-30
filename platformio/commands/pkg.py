@@ -20,6 +20,7 @@ from platformio.package.commands.list import package_list_cmd
 from platformio.package.commands.outdated import package_outdated_cmd
 from platformio.package.commands.pack import package_pack_cmd
 from platformio.package.commands.publish import package_publish_cmd
+from platformio.package.commands.search import package_search_cmd
 from platformio.package.commands.show import package_show_cmd
 from platformio.package.commands.uninstall import package_uninstall_cmd
 from platformio.package.commands.unpublish import package_unpublish_cmd
@@ -35,6 +36,7 @@ from platformio.package.commands.update import package_update_cmd
         package_outdated_cmd,
         package_pack_cmd,
         package_publish_cmd,
+        package_search_cmd,
         package_show_cmd,
         package_uninstall_cmd,
         package_unpublish_cmd,
