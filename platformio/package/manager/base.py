@@ -14,7 +14,6 @@
 
 import logging
 import os
-import sys
 from datetime import datetime
 
 import click
@@ -39,6 +38,11 @@ from platformio.package.meta import (
     PackageType,
 )
 from platformio.project.helpers import get_project_cache_dir
+
+
+class ClickLoggingHandler(logging.Handler):
+    def emit(self, record):
+        click.echo(self.format(record))
 
 
 class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -72,7 +76,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
         logger = logging.getLogger(str(self.__class__.__name__).replace("Package", " "))
         logger.setLevel(logging.INFO)
         formatter = logging.Formatter("%(name)s: %(message)s")
-        sh = logging.StreamHandler(sys.stdout)
+        sh = ClickLoggingHandler()
         sh.setFormatter(formatter)
         logger.handlers.clear()
         logger.addHandler(sh)
