@@ -41,7 +41,6 @@ def package_show_cmd(spec, pkg_type):
             "Could not find '%s' package in the PlatormIO Registry" % spec.humanize()
         )
 
-    type_plural = "libraries" if data["type"] == "library" else (data["type"] + "s")
     click.echo()
     click.echo(
         "%s/%s"
@@ -51,7 +50,7 @@ def package_show_cmd(spec, pkg_type):
         )
     )
     click.echo(
-        "%s • %s • %s • Published %s"
+        "%s • %s • %s • Published on %s"
         % (
             data["type"].capitalize(),
             data["version"]["name"],
@@ -61,6 +60,7 @@ def package_show_cmd(spec, pkg_type):
     )
 
     click.echo()
+    type_plural = "libraries" if data["type"] == "library" else (data["type"] + "s")
     click.secho(
         "https://registry.platformio.org/%s/%s/%s"
         % (type_plural, data["owner"]["username"], quote(data["name"])),
@@ -127,12 +127,12 @@ def fetch_package_data(spec, pkg_type=None):
         return client.get_package(
             pkg_type, spec.owner, spec.name, version=spec.requirements
         )
-    filters = dict(names=spec.name.lower())
+    qualifiers = dict(names=spec.name.lower())
     if pkg_type:
-        filters["types"] = pkg_type
+        qualifiers["types"] = pkg_type
     if spec.owner:
-        filters["owners"] = spec.owner.lower()
-    packages = client.list_packages(filters=filters)["items"]
+        qualifiers["owners"] = spec.owner.lower()
+    packages = client.list_packages(qualifiers=qualifiers)["items"]
     if not packages:
         return None
     if len(packages) > 1:

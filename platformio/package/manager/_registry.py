@@ -79,14 +79,14 @@ class RegistryFileMirrorIterator(object):
 
 
 class PackageManageRegistryMixin(object):
-    def install_from_registry(self, spec, search_filters=None):
-        if spec.owner and spec.name and not search_filters:
+    def install_from_registry(self, spec, search_qualifiers=None):
+        if spec.owner and spec.name and not search_qualifiers:
             package = self.fetch_registry_package(spec)
             if not package:
                 raise UnknownPackageError(spec.humanize())
             version = self.pick_best_registry_version(package["versions"], spec)
         else:
-            packages = self.search_registry_packages(spec, search_filters)
+            packages = self.search_registry_packages(spec, search_qualifiers)
             if not packages:
                 raise UnknownPackageError(spec.humanize())
             if len(packages) > 1:
@@ -126,17 +126,17 @@ class PackageManageRegistryMixin(object):
             self._registry_client = RegistryClient()
         return self._registry_client
 
-    def search_registry_packages(self, spec, filters=None):
+    def search_registry_packages(self, spec, qualifiers=None):
         assert isinstance(spec, PackageSpec)
-        filters = filters or {}
+        qualifiers = qualifiers or {}
         if spec.id:
-            filters["ids"] = str(spec.id)
+            qualifiers["ids"] = str(spec.id)
         else:
-            filters["types"] = self.pkg_type
-            filters["names"] = spec.name.lower()
+            qualifiers["types"] = self.pkg_type
+            qualifiers["names"] = spec.name.lower()
             if spec.owner:
-                filters["owners"] = spec.owner.lower()
-        return self.get_registry_client_instance().list_packages(filters=filters)[
+                qualifiers["owners"] = spec.owner.lower()
+        return self.get_registry_client_instance().list_packages(qualifiers=qualifiers)[
             "items"
         ]
 

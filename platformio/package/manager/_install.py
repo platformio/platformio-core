@@ -55,7 +55,7 @@ class PackageManagerInstallMixin(object):
     def _install(
         self,
         spec,
-        search_filters=None,
+        search_qualifiers=None,
         skip_dependencies=False,
         force=False,
     ):
@@ -94,7 +94,7 @@ class PackageManagerInstallMixin(object):
         if spec.external:
             pkg = self.install_from_url(spec.url, spec)
         else:
-            pkg = self.install_from_registry(spec, search_filters)
+            pkg = self.install_from_registry(spec, search_qualifiers)
 
         if not pkg or not pkg.metadata:
             raise PackageException(
@@ -137,12 +137,12 @@ class PackageManagerInstallMixin(object):
 
     def install_dependency(self, dependency):
         spec = self.dependency_to_spec(dependency)
-        search_filters = {
+        search_qualifiers = {
             key: value
             for key, value in dependency.items()
             if key in ("authors", "platforms", "frameworks")
         }
-        return self._install(spec, search_filters=search_filters or None)
+        return self._install(spec, search_qualifiers=search_qualifiers or None)
 
     def install_from_url(self, url, spec, checksum=None):
         spec = self.ensure_spec(spec)

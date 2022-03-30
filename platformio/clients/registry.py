@@ -105,11 +105,10 @@ class RegistryClient(HTTPClient):
             x_with_authorization=True,
         )
 
-    def list_packages(self, query=None, filters=None, page=None):
-        assert query or filters
+    def list_packages(self, query=None, qualifiers=None, page=None, sort=None):
         search_query = []
-        if filters:
-            valid_filters = (
+        if qualifiers:
+            valid_qualifiers = (
                 "authors",
                 "keywords",
                 "frameworks",
@@ -120,8 +119,8 @@ class RegistryClient(HTTPClient):
                 "owners",
                 "types",
             )
-            assert set(filters.keys()) <= set(valid_filters)
-            for name, values in filters.items():
+            assert set(qualifiers.keys()) <= set(valid_qualifiers)
+            for name, values in qualifiers.items():
                 for value in set(
                     values if isinstance(values, (list, tuple)) else [values]
                 ):
@@ -131,6 +130,8 @@ class RegistryClient(HTTPClient):
         params = dict(query=" ".join(search_query))
         if page:
             params["page"] = int(page)
+        if sort:
+            params["sort"] = sort
         return self.fetch_json_data(
             "get",
             "/v3/search",

@@ -139,7 +139,7 @@ def check_package_duplicates(
     found = False
     items = (
         RegistryClient()
-        .list_packages(filters=dict(types=[type], names=[name]))
+        .list_packages(qualifiers=dict(types=[type], names=[name]))
         .get("items")
     )
     if not items:
