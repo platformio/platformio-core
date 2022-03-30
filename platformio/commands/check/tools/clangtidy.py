@@ -60,7 +60,9 @@ class ClangtidyCheckTool(CheckToolBase):
 
         cmd = [tool_path, "--quiet"]
         flags = self.get_flags("clangtidy")
-        if not self.is_flag_set("--checks", flags):
+        if not (
+            self.is_flag_set("--checks", flags) or self.is_flag_set("--config", flags)
+        ):
             cmd.append("--checks=*")
 
         project_files = self.get_project_target_files(self.options["patterns"])
