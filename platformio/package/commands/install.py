@@ -216,6 +216,10 @@ def _install_project_env_libraries(project_env, options):
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
+    # install dependencies from the priate libraries
+    plm = LibraryPackageManager(os.path.join(config.get("platformio", "lib_dir")))
+    for pkg in plm.get_installed():
+        lm.install_dependencies(pkg, print_header=False)
     return not already_up_to_date
 
 

@@ -24,6 +24,7 @@ PlatformIO Core 5
     * `pio pkg uninstall <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_uninstall.html>`_ - uninstall the project dependencies or custom packages
     * `pio pkg update <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_update.html>`__ - update the project dependencies or custom packages
 
+  - Automatically install dependencies of the local (private) libraries (`issue #2910 <https://github.com/platformio/platformio-core/issues/2910>`_)
   - Added support for dependencies declared in a "tool" type package
   - Ignore files according to the patterns declared in ".gitignore" when using `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)

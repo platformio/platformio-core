@@ -196,6 +196,48 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
     assert "Already up-to-date" in result.output
 
 
+def test_private_lib_deps(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
+    project_dir = tmp_path / "project"
+    private_lib_dir = project_dir / "lib" / "private"
+    private_lib_dir.mkdir(parents=True)
+    (private_lib_dir / "library.json").write_text(
+        """
+{
+    "name": "My Private Lib",
+    "version": "1.0.0",
+    "dependencies": {
+        "bblanchon/ArduinoJson": "^6.19.2",
+        "milesburton/DallasTemperature": "^3.9.1"
+    }
+}
+"""
+    )
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:private]
+platform = native
+"""
+    )
+    with fs.cd(str(project_dir)):
+        result = clirunner.invoke(package_install_cmd)
+        validate_cliresult(result)
+        config = ProjectConfig()
+        installed_lib_pkgs = LibraryPackageManager(
+            os.path.join(config.get("platformio", "lib_dir"))
+        ).get_installed()
+        assert pkgs_to_specs(installed_lib_pkgs) == [
+            PackageSpec("My Private Lib@1.0.0")
+        ]
+        installed_libdeps_pkgs = LibraryPackageManager(
+            os.path.join(config.get("platformio", "libdeps_dir"), "private")
+        ).get_installed()
+        assert pkgs_to_specs(installed_libdeps_pkgs) == [
+            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("DallasTemperature@3.9.1"),
+            PackageSpec("OneWire@2.3.6"),
+        ]
+
+
 def test_unknown_project_dependencies(
     clirunner, validate_cliresult, isolated_pio_core, tmp_path
 ):
