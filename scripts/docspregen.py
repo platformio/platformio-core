@@ -13,10 +13,10 @@
 # limitations under the License.
 
 import functools
-import json
 import os
 import sys
 import tempfile
+from urllib.parse import ParseResult, urlparse, urlunparse
 
 sys.path.append("..")
 
@@ -26,10 +26,6 @@ from platformio import fs, util  # noqa: E402
 from platformio.package.manager.platform import PlatformPackageManager  # noqa: E402
 from platformio.platform.factory import PlatformFactory  # noqa: E402
 
-try:
-    from urlparse import ParseResult, urlparse, urlunparse
-except ImportError:
-    from urllib.parse import ParseResult, urlparse, urlunparse
 
 RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,7 +71,7 @@ def install_platforms():
     page = 1
     pm = PlatformPackageManager()
     while True:
-        result = REGCLIENT.list_packages(filters=dict(types=["platform"]), page=page)
+        result = REGCLIENT.list_packages(qualifiers=dict(types=["platform"]), page=page)
         for item in result["items"]:
             spec = "%s/%s" % (item["owner"]["username"], item["name"])
             skip_conds = [
@@ -85,7 +81,7 @@ def install_platforms():
             if all(skip_conds):
                 click.secho("Skip community platform: %s" % spec, fg="yellow")
                 continue
-            pm.install(spec, skip_default_package=True)
+            pm.install(spec, skip_dependencies=True)
         page += 1
         if not result["items"] or result["page"] * result["limit"] >= result["total"]:
             break
