@@ -199,28 +199,47 @@ def _install_project_env_custom_tools(project_env, options):
 def _install_project_env_libraries(project_env, options):
     already_up_to_date = not options.get("force")
     config = ProjectConfig.get_instance()
-    lm = LibraryPackageManager(
+    env_lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "libdeps_dir"), project_env)
     )
+    private_lm = LibraryPackageManager(
+        os.path.join(config.get("platformio", "lib_dir"))
+    )
     if options.get("silent"):
-        lm.set_log_level(logging.WARN)
+        env_lm.set_log_level(logging.WARN)
+        private_lm.set_log_level(logging.WARN)
     for library in config.get(f"env:{project_env}", "lib_deps"):
         spec = PackageSpec(library)
         # skip built-in dependencies
         if not spec.external and not spec.owner:
             continue
-        if not lm.get_package(spec):
+        if not env_lm.get_package(spec):
             already_up_to_date = False
-        lm.install(
+        env_lm.install(
             spec,
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
     # install dependencies from the priate libraries
-    plm = LibraryPackageManager(os.path.join(config.get("platformio", "lib_dir")))
-    for pkg in plm.get_installed():
-        lm.install_dependencies(pkg, print_header=False)
+    for pkg in private_lm.get_installed():
+        _install_project_private_library_deps(pkg, private_lm, env_lm, options)
     return not already_up_to_date
+
+
+def _install_project_private_library_deps(private_pkg, private_lm, env_lm, options):
+    for dependency in private_lm.get_pkg_dependencies(private_pkg) or []:
+        spec = private_lm.dependency_to_spec(dependency)
+        # skip built-in dependencies
+        if not spec.external and not spec.owner:
+            continue
+        pkg = private_lm.get_package(spec)
+        if not pkg and not env_lm.get_package(spec):
+            pkg = env_lm.install(
+                spec,
+                skip_dependencies=True,
+                force=options.get("force"),
+            )
+        _install_project_private_library_deps(pkg, private_lm, env_lm, options)
 
 
 def _install_project_env_custom_libraries(project_env, options):

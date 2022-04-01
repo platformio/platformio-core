@@ -219,22 +219,37 @@ platform = native
 """
     )
     with fs.cd(str(project_dir)):
+        config = ProjectConfig()
+
+        # some deps were added by user manually
+        result = clirunner.invoke(
+            package_install_cmd,
+            [
+                "-g",
+                "--storage-dir",
+                config.get("platformio", "lib_dir"),
+                "-l",
+                "paulstoffregen/OneWire@^2.3.5",
+            ],
+        )
+        validate_cliresult(result)
+
+        # ensure all deps are installed
         result = clirunner.invoke(package_install_cmd)
         validate_cliresult(result)
-        config = ProjectConfig()
-        installed_lib_pkgs = LibraryPackageManager(
-            os.path.join(config.get("platformio", "lib_dir"))
+        installed_private_pkgs = LibraryPackageManager(
+            config.get("platformio", "lib_dir")
         ).get_installed()
-        assert pkgs_to_specs(installed_lib_pkgs) == [
-            PackageSpec("My Private Lib@1.0.0")
+        assert pkgs_to_specs(installed_private_pkgs) == [
+            PackageSpec("OneWire@2.3.6"),
+            PackageSpec("My Private Lib@1.0.0"),
         ]
-        installed_libdeps_pkgs = LibraryPackageManager(
+        installed_env_pkgs = LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "private")
         ).get_installed()
-        assert pkgs_to_specs(installed_libdeps_pkgs) == [
+        assert pkgs_to_specs(installed_env_pkgs) == [
             PackageSpec("ArduinoJson@6.19.3"),
             PackageSpec("DallasTemperature@3.9.1"),
-            PackageSpec("OneWire@2.3.6"),
         ]
 
 

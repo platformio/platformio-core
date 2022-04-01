@@ -117,7 +117,7 @@ class PackageManagerInstallMixin(object):
 
     def install_dependencies(self, pkg, print_header=True):
         assert isinstance(pkg, PackageItem)
-        dependencies = dependencies = self.get_pkg_dependencies(pkg)
+        dependencies = self.get_pkg_dependencies(pkg)
         if not dependencies:
             return
         if print_header:
