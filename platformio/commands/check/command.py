@@ -118,6 +118,7 @@ def cli(
                 if silent
                 else severity or config.get("env:" + envname, "check_severity"),
                 skip_packages=skip_packages or env_options.get("check_skip_packages"),
+                platform_packages=env_options.get("platform_packages"),
             )
 
             for tool in config.get("env:" + envname, "check_tool"):
@@ -166,7 +167,7 @@ def cli(
         if json_output:
             click.echo(json.dumps(results_to_json(results)))
         elif not silent:
-            print_check_summary(results)
+            print_check_summary(results, verbose=verbose)
 
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
@@ -270,7 +271,7 @@ def print_defects_stats(results):
     click.echo()
 
 
-def print_check_summary(results):
+def print_check_summary(results, verbose=False):
     click.echo()
 
     tabular_data = []
@@ -287,6 +288,8 @@ def print_check_summary(results):
             status_str = click.style("FAILED", fg="red")
         elif result.get("succeeded") is None:
             status_str = "IGNORED"
+            if not verbose:
+                continue
         else:
             succeeded_nums += 1
             status_str = click.style("PASSED", fg="green")

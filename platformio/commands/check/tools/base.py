@@ -20,6 +20,8 @@ import click
 
 from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
+from platformio.package.manager.core import get_core_package_dir
+from platformio.package.meta import PackageSpec
 from platformio.project.helpers import load_project_ide_data
 
 
@@ -65,6 +67,13 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         self.cc_path = data.get("cc_path")
         self.cxx_path = data.get("cxx_path")
         self.toolchain_defines = self._get_toolchain_defines()
+
+    def get_tool_dir(self, pkg_name):
+        for spec in self.options["platform_packages"] or []:
+            spec = PackageSpec(spec)
+            if spec.name == pkg_name:
+                return get_core_package_dir(pkg_name, spec=spec)
+        return get_core_package_dir(pkg_name)
 
     def get_flags(self, tool):
         result = []

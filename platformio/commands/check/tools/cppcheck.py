@@ -19,11 +19,11 @@ import click
 from platformio import proc
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
-from platformio.package.manager.core import get_core_package_dir
 
 
 class CppcheckCheckTool(CheckToolBase):
     def __init__(self, *args, **kwargs):
+        super(CppcheckCheckTool, self).__init__(*args, **kwargs)
         self._field_delimiter = "<&PIO&>"
         self._buffer = ""
         self.defect_fields = [
@@ -36,7 +36,6 @@ class CppcheckCheckTool(CheckToolBase):
             "cwe",
             "id",
         ]
-        super(CppcheckCheckTool, self).__init__(*args, **kwargs)
 
     def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if (
@@ -103,7 +102,7 @@ class CppcheckCheckTool(CheckToolBase):
         return DefectItem(**args)
 
     def configure_command(self, language, src_file):  # pylint: disable=arguments-differ
-        tool_path = os.path.join(get_core_package_dir("tool-cppcheck"), "cppcheck")
+        tool_path = os.path.join(self.get_tool_dir("tool-cppcheck"), "cppcheck")
 
         cmd = [
             tool_path,

@@ -17,7 +17,6 @@ from os.path import join
 
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
-from platformio.package.manager.core import get_core_package_dir
 
 
 class ClangtidyCheckTool(CheckToolBase):
@@ -56,7 +55,7 @@ class ClangtidyCheckTool(CheckToolBase):
         return cmd_result["returncode"] < 2
 
     def configure_command(self):
-        tool_path = join(get_core_package_dir("tool-clangtidy"), "clang-tidy")
+        tool_path = join(self.get_tool_dir("tool-clangtidy"), "clang-tidy")
 
         cmd = [tool_path, "--quiet"]
         flags = self.get_flags("clangtidy")

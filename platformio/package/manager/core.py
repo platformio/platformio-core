@@ -38,11 +38,11 @@ def get_installed_core_packages():
     return result
 
 
-def get_core_package_dir(name, auto_install=True):
+def get_core_package_dir(name, spec=None, auto_install=True):
     if name not in __core_packages__:
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
-    spec = PackageSpec(
+    spec = spec or PackageSpec(
         owner="platformio", name=name, requirements=__core_packages__[name]
     )
     pkg = pm.get_package(spec)
