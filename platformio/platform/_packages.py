@@ -66,11 +66,14 @@ class PlatformPackagesMixin(object):
             result.append(item)
         return result
 
+    def install_package(self, name, spec=None, force=False):
+        return self.pm.install(spec or self.get_package_spec(name), force=force)
+
     def install_required_packages(self, force=False):
         for name, options in self.packages.items():
             if options.get("optional"):
                 continue
-            self.pm.install(self.get_package_spec(name), force=force)
+            self.install_package(name, force=force)
 
     def uninstall_packages(self):
         for pkg in self.get_installed_packages():

@@ -186,10 +186,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                 else None
             )
             if server_package and not server_package_dir:
-                self.platform.install_packages(
-                    with_packages=[server_package],
-                    skip_default_package=True,
-                )
+                self.platform.install_package(server_package)
                 server_package_dir = self.platform.get_package_dir(server_package)
             result.update(
                 dict(
