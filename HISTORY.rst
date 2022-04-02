@@ -38,6 +38,7 @@ PlatformIO Core 5
 
 * **Miscellaneous**
 
+* Show project dependency licenses when building in the verbose mode
 * Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
 * Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
 

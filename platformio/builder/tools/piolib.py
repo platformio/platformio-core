@@ -34,7 +34,10 @@ from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
-from platformio.package.exception import UnknownPackageError
+from platformio.package.exception import (
+    MissingPackageManifestError,
+    UnknownPackageError,
+)
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
     ManifestParserError,
@@ -1061,6 +1064,18 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def ConfigureProjectLibBuilder(env):
+    _pm_storage = {}
+
+    def _get_lib_license(pkg):
+        storage_dir = os.path.dirname(os.path.dirname(pkg.path))
+        if storage_dir not in _pm_storage:
+            _pm_storage[storage_dir] = LibraryPackageManager(storage_dir)
+        try:
+            return (_pm_storage[storage_dir].load_manifest(pkg) or {}).get("license")
+        except MissingPackageManifestError:
+            pass
+        return None
+
     def _correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
@@ -1091,10 +1106,12 @@ def ConfigureProjectLibBuilder(env):
                 nl=False,
             )
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                click.echo(
+                    "(License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
+                )
                 if pkg.metadata and pkg.metadata.spec.external:
-                    click.echo(" [%s]" % pkg.metadata.spec.url, nl=False)
-                click.echo(" (", nl=False)
-                click.echo(lb.path, nl=False)
+                    click.echo("URI: %s, " % pkg.metadata.spec.url, nl=False)
+                click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")
             if lb.depbuilders:
