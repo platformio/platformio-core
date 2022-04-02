@@ -24,11 +24,12 @@ PlatformIO Core 5
     * `pio pkg uninstall <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_uninstall.html>`_ - uninstall the project dependencies or custom packages
     * `pio pkg update <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_update.html>`__ - update the project dependencies or custom packages
 
+  - Added support for multi-licensed packages in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html#license>`__ using SPDX Expressions (`issue #4037 <https://github.com/platformio/platformio-core/issues/4037>`_)
   - Automatically install dependencies of the local (private) libraries (`issue #2910 <https://github.com/platformio/platformio-core/issues/2910>`_)
   - Added support for dependencies declared in a "tool" type package
-  - Ignore files according to the patterns declared in ".gitignore" when using `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
+  - Ignore files according to the patterns declared in ".gitignore" when using the `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
-  - Dropped support for "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
+  - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
 
 * **Static Code Analysis**
 
@@ -38,7 +39,7 @@ PlatformIO Core 5
 * **Miscellaneous**
 
 * Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
-* Better handling of the failed tests using `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution
+* Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~

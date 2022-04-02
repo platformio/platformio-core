@@ -426,6 +426,25 @@ def test_library_json_schema():
         },
     )
 
+    # test multiple licenses
+    contents = """
+{
+    "name": "MultiLicense",
+    "version": "1.0.0",
+    "license": "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)"
+}
+"""
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert not jsondiff.diff(
+        data,
+        {
+            "name": "MultiLicense",
+            "version": "1.0.0",
+            "license": "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)",
+        },
+    )
+
 
 def test_library_properties_schema():
     contents = """

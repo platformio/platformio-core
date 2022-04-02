@@ -15,6 +15,7 @@
 # pylint: disable=too-many-ancestors
 
 import json
+import re
 
 import marshmallow
 import requests
@@ -254,9 +255,18 @@ class ManifestSchema(BaseSchema):
             spdx = self.load_spdx_licenses()
         except requests.exceptions.RequestException:
             raise ValidationError("Could not load SPDX licenses for validation")
-        for item in spdx.get("licenses", []):
-            if item.get("licenseId") == value:
-                return True
+        known_ids = set(item.get("licenseId") for item in spdx.get("licenses", []))
+        if value in known_ids:
+            return True
+        # parse license expression
+        # https://spdx.github.io/spdx-spec/SPDX-license-expressions/
+        package_ids = [
+            item.strip()
+            for item in re.sub(r"(\s+(?:OR|AND|WITH)\s+|[\(\)])", " ", value).split(" ")
+            if item.strip()
+        ]
+        if known_ids >= set(package_ids):
+            return True
         raise ValidationError(
             "Invalid SPDX license identifier. See valid identifiers at "
             "https://spdx.org/licenses/"
