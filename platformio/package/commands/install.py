@@ -239,6 +239,8 @@ def _install_project_private_library_deps(private_pkg, private_lm, env_lm, optio
                 skip_dependencies=True,
                 force=options.get("force"),
             )
+        if not pkg:
+            continue
         _install_project_private_library_deps(pkg, private_lm, env_lm, options)
 
 
