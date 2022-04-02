@@ -253,6 +253,56 @@ platform = native
         ]
 
 
+def test_remove_project_unused_libdeps(
+    clirunner, validate_cliresult, isolated_pio_core, tmp_path
+):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text(PROJECT_CONFIG_TPL)
+    result = clirunner.invoke(
+        package_install_cmd,
+        ["-d", str(project_dir), "-e", "baremetal"],
+    )
+    validate_cliresult(result)
+    with fs.cd(str(project_dir)):
+        config = ProjectConfig()
+        storage_dir = os.path.join(config.get("platformio", "libdeps_dir"), "baremetal")
+        lm = LibraryPackageManager(storage_dir)
+        assert pkgs_to_specs(lm.get_installed()) == [
+            PackageSpec("DallasTemperature@3.9.1"),
+            PackageSpec("OneWire@2.3.6"),
+        ]
+
+        # add new deps
+        lib_deps = config.get("env:baremetal", "lib_deps")
+        config.set(
+            "env:baremetal", "lib_deps", lib_deps + ["bblanchon/ArduinoJson@^6.19.2"]
+        )
+        config.save()
+        result = clirunner.invoke(
+            package_install_cmd,
+            ["-e", "baremetal"],
+        )
+        validate_cliresult(result)
+        lm = LibraryPackageManager(storage_dir)
+        assert pkgs_to_specs(lm.get_installed()) == [
+            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("DallasTemperature@3.9.1"),
+            PackageSpec("OneWire@2.3.6"),
+        ]
+
+        # manually remove from cofiguration file
+        config.set("env:baremetal", "lib_deps", ["bblanchon/ArduinoJson@^6.19.2"])
+        config.save()
+        result = clirunner.invoke(
+            package_install_cmd,
+            ["-e", "baremetal"],
+        )
+        validate_cliresult(result)
+        lm = LibraryPackageManager(storage_dir)
+        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@6.19.3")]
+
+
 def test_unknown_project_dependencies(
     clirunner, validate_cliresult, isolated_pio_core, tmp_path
 ):

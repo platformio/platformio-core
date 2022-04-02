@@ -58,7 +58,9 @@ def package_list_cmd(**options):
 def humanize_package(pkg, spec=None, verbose=False):
     if spec and not isinstance(spec, PackageSpec):
         spec = PackageSpec(spec)
-    data = [click.style("{name}@{version}".format(**pkg.metadata.as_dict()), fg="cyan")]
+    data = [
+        click.style("{name} @ {version}".format(**pkg.metadata.as_dict()), fg="cyan")
+    ]
     extra_data = ["required: %s" % (spec.humanize() if spec else "Any")]
     if verbose:
         extra_data.append(pkg.path)

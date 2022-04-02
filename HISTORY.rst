@@ -30,6 +30,7 @@ PlatformIO Core 5
   - Ignore files according to the patterns declared in ".gitignore" when using the `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
   - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
+  - Fixed an issue when manually removed dependencies from the `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file were not uninstalled from the storage (`issue #3076 <https://github.com/platformio/platformio-core/issues/3076>`_)
 
 * **Static Code Analysis**
 
@@ -38,9 +39,9 @@ PlatformIO Core 5
 
 * **Miscellaneous**
 
-* Show project dependency licenses when building in the verbose mode
-* Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
-* Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
+  - Show project dependency licenses when building in the verbose mode
+  - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
+  - Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~

@@ -14,10 +14,12 @@
 
 import logging
 import os
+from pathlib import Path
 
 import click
 
 from platformio import fs
+from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -197,6 +199,7 @@ def _install_project_env_custom_tools(project_env, options):
 
 
 def _install_project_env_libraries(project_env, options):
+    _uninstall_project_unused_libdeps(project_env, options)
     already_up_to_date = not options.get("force")
     config = ProjectConfig.get_instance()
     env_lm = LibraryPackageManager(
@@ -220,10 +223,35 @@ def _install_project_env_libraries(project_env, options):
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
-    # install dependencies from the priate libraries
+    # install dependencies from the private libraries
     for pkg in private_lm.get_installed():
         _install_project_private_library_deps(pkg, private_lm, env_lm, options)
     return not already_up_to_date
+
+
+def _uninstall_project_unused_libdeps(project_env, options):
+    config = ProjectConfig.get_instance()
+    lib_deps = set(config.get(f"env:{project_env}", "lib_deps"))
+    if not lib_deps:
+        return
+    storage_dir = Path(config.get("platformio", "libdeps_dir"), project_env)
+    integrity_dat = storage_dir / "integrity.dat"
+    if integrity_dat.is_file():
+        prev_lib_deps = set(integrity_dat.read_text().strip().split("\n"))
+        if lib_deps == prev_lib_deps:
+            return
+        lm = LibraryPackageManager(str(storage_dir))
+        if options.get("silent"):
+            lm.set_log_level(logging.WARN)
+        else:
+            click.secho("Removing unused dependencies...")
+        for spec in set(prev_lib_deps) - set(lib_deps):
+            try:
+                lm.uninstall(spec)
+            except UnknownPackageError:
+                pass
+    storage_dir.mkdir(parents=True, exist_ok=True)
+    integrity_dat.write_text("\n".join(lib_deps), encoding="utf-8")
 
 
 def _install_project_private_library_deps(private_pkg, private_lm, env_lm, options):
