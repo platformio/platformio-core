@@ -237,7 +237,9 @@ def _uninstall_project_unused_libdeps(project_env, options):
     storage_dir = Path(config.get("platformio", "libdeps_dir"), project_env)
     integrity_dat = storage_dir / "integrity.dat"
     if integrity_dat.is_file():
-        prev_lib_deps = set(integrity_dat.read_text().strip().split("\n"))
+        prev_lib_deps = set(
+            integrity_dat.read_text(encoding="utf-8").strip().split("\n")
+        )
         if lib_deps == prev_lib_deps:
             return
         lm = LibraryPackageManager(str(storage_dir))
