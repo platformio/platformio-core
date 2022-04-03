@@ -1088,23 +1088,15 @@ def ConfigureProjectLibBuilder(env):
                     lb.depbuilders.remove(deplb)
 
     def _print_deps_tree(root, level=0):
-        margin = "│   " * (level)
-        for index, lb in enumerate(root.depbuilders):
+        margin = "|   " * (level)
+        for lb in root.depbuilders:
             title = lb.name
             pkg = PackageItem(lb.path)
             if pkg.metadata:
                 title += " @ %s" % pkg.metadata.version
             elif lb.version:
                 title += " @ %s" % lb.version
-            click.echo(
-                "%s%s %s"
-                % (
-                    margin,
-                    "├──" if index < len(root.depbuilders) - 1 else "└──",
-                    title,
-                ),
-                nl=False,
-            )
+            click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 click.echo(
                     "(License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
