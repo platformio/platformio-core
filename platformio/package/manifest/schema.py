@@ -152,6 +152,21 @@ class ExampleSchema(StrictSchema):
     files = StrictListField(fields.Str, required=True)
 
 
+# Fields
+
+
+class ScriptField(fields.Field):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, (str, list)):
+            return value
+        raise ValidationError(
+            "Script value must be a command (string) or list of arguments"
+        )
+
+
+# Scheme
+
+
 class ManifestSchema(BaseSchema):
     # Required fields
     name = fields.Str(
@@ -173,6 +188,10 @@ class ManifestSchema(BaseSchema):
     license = fields.Str(validate=validate.Length(min=1, max=255))
     repository = fields.Nested(RepositorySchema)
     dependencies = fields.Nested(DependencySchema, many=True)
+    scripts = fields.Dict(
+        keys=fields.Str(validate=validate.OneOf(["postinstall", "preuninstall"])),
+        values=ScriptField(),
+    )
 
     # library.json
     export = fields.Nested(ExportSchema)

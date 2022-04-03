@@ -322,6 +322,9 @@ def test_library_json_schema():
   "frameworks": "arduino",
   "platforms": "*",
   "license": "MIT",
+  "scripts": {
+      "postinstall": "script.py"
+  },
   "examples": [
     {
         "name": "JsonConfigFile",
@@ -372,6 +375,7 @@ def test_library_json_schema():
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
+            "scripts": {"postinstall": "script.py"},
             "examples": [
                 {
                     "name": "JsonConfigFile",

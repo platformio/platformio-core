@@ -14,12 +14,13 @@
 
 import logging
 import os
+import subprocess
 from datetime import datetime
 
 import click
 import semantic_version
 
-from platformio import util
+from platformio import fs, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import ci_strings_are_equal
 from platformio.package.exception import ManifestException, MissingPackageManifestError
@@ -37,6 +38,7 @@ from platformio.package.meta import (
     PackageSpec,
     PackageType,
 )
+from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
 
@@ -302,3 +304,31 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
             name=dependency.get("name"),
             requirements=dependency.get("version"),
         )
+
+    def call_pkg_script(self, pkg, event):
+        manifest = None
+        try:
+            manifest = self.load_manifest(pkg)
+        except MissingPackageManifestError:
+            pass
+        scripts = (manifest or {}).get("scripts")
+        if not scripts or not isinstance(scripts, dict):
+            return
+        cmd = scripts.get(event)
+        if not cmd:
+            return
+        shell = False
+        if not isinstance(cmd, list):
+            shell = True
+            cmd = [cmd]
+        os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
+        with fs.cd(pkg.path):
+            if os.path.isfile(cmd[0]) and cmd[0].endswith(".py"):
+                cmd = [os.environ["PIO_PYTHON_EXE"]] + cmd
+            subprocess.run(
+                " ".join(cmd) if shell else cmd,
+                cwd=pkg.path,
+                shell=shell,
+                env=os.environ,
+                check=True,
+            )

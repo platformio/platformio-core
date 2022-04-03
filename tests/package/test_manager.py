@@ -17,6 +17,7 @@
 import logging
 import os
 import time
+from pathlib import Path
 
 import pytest
 import semantic_version
@@ -288,6 +289,44 @@ def test_install_force(isolated_pio_core, tmpdir_factory):
     pkg = lm.install(64, force=True)
     assert len(lm.get_installed()) == 1
     assert pkg.metadata.version.major > 5
+
+
+def test_scripts(isolated_pio_core, tmp_path: Path):
+    pkg_dir = tmp_path / "foo"
+    scripts_dir = pkg_dir / "scripts"
+    scripts_dir.mkdir(parents=True)
+    (scripts_dir / "script.py").write_text(
+        """
+import sys
+from pathlib import Path
+
+action = "postinstall" if len(sys.argv) == 1 else sys.argv[1]
+Path("%s.flag" % action).touch()
+
+if action == "preuninstall":
+    Path("../%s.flag" % action).touch()
+"""
+    )
+    (pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "foo",
+    "version": "1.0.0",
+    "scripts": {
+        "postinstall": "scripts/script.py",
+        "preuninstall2": ["scripts/script.py", "preuninstall"]
+    }
+}
+"""
+    )
+
+    storage_dir = tmp_path / "storage"
+    lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
+    lm.install("file://%s" % str(pkg_dir))
+    assert os.path.isfile(os.path.join(lm.get_package("foo").path, "postinstall.flag"))
+    lm.uninstall("foo")
+    (storage_dir / "preuninstall.flag").is_file()
 
 
 def test_get_installed(isolated_pio_core, tmpdir_factory):

@@ -24,9 +24,10 @@ PlatformIO Core 5
     * `pio pkg uninstall <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_uninstall.html>`_ - uninstall the project dependencies or custom packages
     * `pio pkg update <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_update.html>`__ - update the project dependencies or custom packages
 
-  - Added support for multi-licensed packages in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html#license>`__ using SPDX Expressions (`issue #4037 <https://github.com/platformio/platformio-core/issues/4037>`_)
-  - Automatically install dependencies of the local (private) libraries (`issue #2910 <https://github.com/platformio/platformio-core/issues/2910>`_)
-  - Added support for dependencies declared in a "tool" type package
+  - Added support for `"scripts" <https://docs.platformio.org/en/latest/librarymanager/config.html#scripts>`__ in package manifest (`issue #485 <https://github.com/platformio/platformio-core/issues/485>`_)
+  - Added support for `multi-licensed <https://docs.platformio.org/en/latest/librarymanager/config.html#license>`__ packages using SPDX Expressions (`issue #4037 <https://github.com/platformio/platformio-core/issues/4037>`_)
+  - Added support for `"dependencies" <https://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`__ declared in a "tool" package manifest
+  - Automatically install dependencies of the local (private) project libraries (`issue #2910 <https://github.com/platformio/platformio-core/issues/2910>`_)
   - Ignore files according to the patterns declared in ".gitignore" when using the `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
   - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__

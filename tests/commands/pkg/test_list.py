@@ -50,20 +50,20 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
     )
     validate_cliresult(result)
     assert all(token in result.output for token in ("baremetal", "devkit"))
-    assert result.output.count("Platform atmelavr@3.4.0") == 2
+    assert result.output.count("Platform atmelavr @ 3.4.0") == 2
     assert (
         result.output.count(
-            "toolchain-atmelavr@1.70300.191015 (required: "
+            "toolchain-atmelavr @ 1.70300.191015 (required: "
             "platformio/toolchain-atmelavr @ ~1.70300.0)"
         )
         == 2
     )
     assert result.output.count("Libraries") == 1
     assert (
-        "ArduinoJson@6.19.0+sha.9693fd2 (required: "
+        "ArduinoJson @ 6.19.0+sha.9693fd2 (required: "
         "git+https://github.com/bblanchon/ArduinoJson.git#v6.19.0)"
     ) in result.output
-    assert "OneWire@2" in result.output
+    assert "OneWire @ 2" in result.output
 
     # test "baremetal"
     result = clirunner.invoke(
@@ -71,7 +71,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         ["-d", str(project_dir), "-e", "baremetal"],
     )
     validate_cliresult(result)
-    assert "Platform atmelavr@3" in result.output
+    assert "Platform atmelavr @ 3" in result.output
     assert "Libraries" not in result.output
 
     # filter by "tool" package
@@ -100,7 +100,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
 def test_global_packages(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
     result = clirunner.invoke(package_list_cmd, ["-g"])
     validate_cliresult(result)
-    assert "atmelavr@3" in result.output
+    assert "atmelavr @ 3" in result.output
     assert "framework-arduino-avr-attiny" in result.output
 
     # only tools

@@ -102,6 +102,8 @@ class PackageManagerInstallMixin(object):
                 % (spec.humanize(), util.get_systype())
             )
 
+        self.call_pkg_script(pkg, "postinstall")
+
         self.log.info(
             click.style(
                 "{name}@{version} has been installed!".format(**pkg.metadata.as_dict()),

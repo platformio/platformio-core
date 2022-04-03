@@ -40,6 +40,8 @@ class PackageManagerUninstallMixin(object):
             % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version)
         )
 
+        self.call_pkg_script(pkg, "preuninstall")
+
         # firstly, remove dependencies
         if not skip_dependencies:
             self.uninstall_dependencies(pkg)
