@@ -41,11 +41,11 @@ def test_download(isolated_pio_core):
     lm.set_log_level(logging.ERROR)
     archive_path = lm.download(url, checksum)
     assert fs.calculate_file_hashsum("sha256", archive_path) == checksum
-    lm.cleanup_expired_downloads()
+    lm.cleanup_expired_downloads(time.time())
     assert os.path.isfile(archive_path)
     # test outdated downloads
     lm.set_download_utime(archive_path, time.time() - lm.DOWNLOAD_CACHE_EXPIRE - 1)
-    lm.cleanup_expired_downloads()
+    lm.cleanup_expired_downloads(time.time())
     assert not os.path.isfile(archive_path)
     # check that key is deleted from DB
     with open(lm.get_download_usagedb_path(), encoding="utf8") as fp:
@@ -287,6 +287,63 @@ def test_install_force(isolated_pio_core, tmpdir_factory):
     pkg = lm.install(64, force=True)
     assert len(lm.get_installed()) == 1
     assert pkg.metadata.version.major > 5
+
+
+def test_symlink(tmp_path: Path):
+    external_pkg_dir = tmp_path / "External"
+    external_pkg_dir.mkdir()
+    (external_pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "External",
+    "version": "1.0.0"
+}
+"""
+    )
+
+    storage_dir = tmp_path / "storage"
+    installed_pkg_dir = storage_dir / "installed"
+    installed_pkg_dir.mkdir(parents=True)
+    (installed_pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "Installed",
+    "version": "1.0.0"
+}
+"""
+    )
+
+    spec = "CustomExternal=symlink://%s" % str(external_pkg_dir)
+    lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
+    pkg = lm.install(spec)
+    assert os.path.isfile(str(storage_dir / "CustomExternal.pio-link"))
+    assert pkg.metadata.name == "External"
+    assert pkg.metadata.version.major == 1
+    assert ["External", "Installed"] == [
+        pkg.metadata.name for pkg in lm.get_installed()
+    ]
+    assert lm.get_package("External").metadata.spec.uri.startswith("symlink://")
+    assert lm.get_package(spec).metadata.spec.uri.startswith("symlink://")
+
+    # try to update
+    lm.update(pkg)
+
+    # uninstall
+    lm.uninstall("External")
+    assert ["Installed"] == [pkg.metadata.name for pkg in lm.get_installed()]
+    # ensure original package was not rmeoved
+    assert external_pkg_dir.is_dir()
+
+    # install again, remove from a disk
+    assert lm.install("symlink://%s" % str(external_pkg_dir))
+    assert os.path.isfile(str(storage_dir / "External.pio-link"))
+    assert ["External", "Installed"] == [
+        pkg.metadata.name for pkg in lm.get_installed()
+    ]
+    fs.rmtree(str(external_pkg_dir))
+    lm.memcache_reset()
+    assert ["Installed"] == [pkg.metadata.name for pkg in lm.get_installed()]
 
 
 def test_scripts(isolated_pio_core, tmp_path: Path):

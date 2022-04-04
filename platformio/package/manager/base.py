@@ -29,6 +29,7 @@ from platformio.package.manager._download import PackageManagerDownloadMixin
 from platformio.package.manager._install import PackageManagerInstallMixin
 from platformio.package.manager._legacy import PackageManagerLegacyMixin
 from platformio.package.manager._registry import PackageManagerRegistryMixin
+from platformio.package.manager._symlink import PackageManagerSymlinkMixin
 from platformio.package.manager._uninstall import PackageManagerUninstallMixin
 from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
@@ -50,6 +51,7 @@ class ClickLoggingHandler(logging.Handler):
 class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     PackageManagerDownloadMixin,
     PackageManagerRegistryMixin,
+    PackageManagerSymlinkMixin,
     PackageManagerInstallMixin,
     PackageManagerUninstallMixin,
     PackageManagerUpdateMixin,
@@ -213,7 +215,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
             metadata.version = self.generate_rand_version()
         return metadata
 
-    def get_installed(self):
+    def get_installed(self):  # pylint: disable=too-many-branches
         if not os.path.isdir(self.package_dir):
             return []
 
@@ -225,14 +227,18 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
         for name in sorted(os.listdir(self.package_dir)):
             if name.startswith("_tmp_installing"):  # legacy tmp folder
                 continue
-            pkg_dir = os.path.join(self.package_dir, name)
-            if not os.path.isdir(pkg_dir):
+            pkg = None
+            path = os.path.join(self.package_dir, name)
+            if os.path.isdir(path):
+                pkg = PackageItem(path)
+            elif self.is_symlink(path):
+                pkg = self.get_symlinked_package(path)
+            if not pkg:
                 continue
-            pkg = PackageItem(pkg_dir)
             if not pkg.metadata:
                 try:
-                    spec = self.build_legacy_spec(pkg_dir)
-                    pkg.metadata = self.build_metadata(pkg_dir, spec)
+                    spec = self.build_legacy_spec(pkg.path)
+                    pkg.metadata = self.build_metadata(pkg.path, spec)
                 except MissingPackageManifestError:
                     pass
             if not pkg.metadata:

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from pathlib import Path
+
 from platformio.commands.run.command import cli as cmd_run
 
 
@@ -176,3 +178,47 @@ int main() {
                 for level in (0, 1, 2)
             )
             assert all("-O%s" % optimization not in line for optimization in ("g", "s"))
+
+
+def test_symlinked_libs(clirunner, validate_cliresult, tmp_path: Path):
+    external_pkg_dir = tmp_path / "External"
+    external_pkg_dir.mkdir()
+    (external_pkg_dir / "External.h").write_text(
+        """
+#define EXTERNAL 1
+"""
+    )
+    (external_pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "External",
+    "version": "1.0.0"
+}
+"""
+    )
+
+    project_dir = tmp_path / "project"
+    src_dir = project_dir / "src"
+    src_dir.mkdir(parents=True)
+    (src_dir / "main.c").write_text(
+        """
+#include <External.h>
+#
+#if !defined(EXTERNAL)
+#error "EXTERNAL is not defined"
+#endif
+
+int main() {
+}
+"""
+    )
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:native]
+platform = native
+lib_deps = symlink://%s
+    """
+        % str(external_pkg_dir)
+    )
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir), "--verbose"])
+    validate_cliresult(result)

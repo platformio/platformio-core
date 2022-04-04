@@ -1032,7 +1032,11 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             continue
         for item in sorted(os.listdir(storage_dir)):
             lib_dir = os.path.join(storage_dir, item)
-            if item == "__cores__" or not os.path.isdir(lib_dir):
+            if item == "__cores__":
+                continue
+            if LibraryPackageManager.is_symlink(lib_dir):
+                lib_dir, _ = LibraryPackageManager.resolve_symlink(lib_dir)
+            if not lib_dir or not os.path.isdir(lib_dir):
                 continue
             try:
                 lb = LibBuilderFactory.new(env, lib_dir)

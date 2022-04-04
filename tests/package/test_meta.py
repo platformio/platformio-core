@@ -90,6 +90,9 @@ def test_spec_local_urls(tmpdir_factory):
     assert PackageSpec("file:///tmp/some-lib/") == PackageSpec(
         uri="file:///tmp/some-lib/", name="some-lib"
     )
+    assert PackageSpec("symlink:///tmp/soft-link/") == PackageSpec(
+        uri="symlink:///tmp/soft-link/", name="soft-link"
+    )
     # detached package
     assert PackageSpec("file:///tmp/some-lib@src-67e1043a673d2") == PackageSpec(
         uri="file:///tmp/some-lib@src-67e1043a673d2", name="some-lib"

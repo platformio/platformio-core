@@ -171,6 +171,10 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         return bool(self.uri)
 
     @property
+    def symlink(self):
+        return self.uri and self.uri.startswith("symlink://")
+
+    @property
     def requirements(self):
         return self._requirements
 
@@ -253,14 +257,16 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _parse_local_file(raw):
-        if raw.startswith("file://") or not any(c in raw for c in ("/", "\\")):
+        if raw.startswith(("file://", "symlink://")) or not any(
+            c in raw for c in ("/", "\\")
+        ):
             return raw
         if os.path.exists(raw):
             return "file://%s" % raw
         return raw
 
     def _parse_requirements(self, raw):
-        if "@" not in raw or raw.startswith("file://"):
+        if "@" not in raw or raw.startswith(("file://", "symlink://")):
             return raw
         tokens = raw.rsplit("@", 1)
         if any(s in tokens[1] for s in (":", "/")):
@@ -302,7 +308,7 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
 
         # if local file or valid URI with scheme vcs+protocol://
         if (
-            parts.scheme in ("file", )
+            parts.scheme in ("file", "symlink://")
             or "+" in parts.scheme
             or self.uri.startswith("git+")
         ):
@@ -334,7 +340,7 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         if uri.endswith("/"):
             uri = uri[:-1]
         stop_chars = ["#", "?"]
-        if uri.startswith(("file://", )):
+        if uri.startswith(("file://", "symlink://")):
             stop_chars.append("@")  # detached path
         for c in stop_chars:
             if c in uri:

@@ -46,7 +46,9 @@ class PackageManagerUninstallMixin(object):
         if not skip_dependencies:
             self.uninstall_dependencies(pkg)
 
-        if os.path.islink(pkg.path):
+        if pkg.metadata.spec.symlink:
+            self.uninstall_symlink(pkg.metadata.spec)
+        elif os.path.islink(pkg.path):
             os.unlink(pkg.path)
         else:
             fs.rmtree(pkg.path)

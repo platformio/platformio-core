@@ -148,6 +148,10 @@ class PackageManagerInstallMixin(object):
 
     def install_from_uri(self, uri, spec, checksum=None):
         spec = self.ensure_spec(spec)
+
+        if spec.symlink:
+            return self.install_symlink(spec)
+
         tmp_dir = tempfile.mkdtemp(prefix="pkg-installing-", dir=self.get_tmp_dir())
         vcs = None
         try:
