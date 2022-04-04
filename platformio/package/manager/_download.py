@@ -44,7 +44,7 @@ class PackageManagerDownloadMixin(object):
             state[os.path.basename(path)] = int(time.time() if not utime else utime)
 
     @util.memoized(DOWNLOAD_CACHE_EXPIRE)
-    def cleanup_expired_downloads(self):
+    def cleanup_expired_downloads(self, _=None):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
             # remove outdated
             for fname in list(state.keys()):
