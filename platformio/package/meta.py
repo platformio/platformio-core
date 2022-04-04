@@ -17,17 +17,13 @@ import os
 import re
 import tarfile
 from binascii import crc32
+from urllib.parse import urlparse
 
 import semantic_version
 
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
 from platformio.package.version import cast_version_to_semver
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 
 class PackageType(object):
@@ -127,19 +123,19 @@ class PackageOutdatedResult(object):
 
 class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
-        self, raw=None, owner=None, id=None, name=None, requirements=None, url=None
+        self, raw=None, owner=None, id=None, name=None, requirements=None, uri=None
     ):
         self._requirements = None
         self.owner = owner
         self.id = id
         self.name = name
-        self.url = url
+        self.uri = uri
         self.raw = raw
         if requirements:
             try:
                 self.requirements = requirements
             except ValueError as exc:
-                if not self.name or self.url or self.raw:
+                if not self.name or self.uri or self.raw:
                     raise exc
                 self.raw = "%s=%s" % (self.name, requirements)
         self._name_is_custom = False
@@ -152,7 +148,7 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
                 self.id == other.id,
                 self.name == other.name,
                 self.requirements == other.requirements,
-                self.url == other.url,
+                self.uri == other.uri,
             ]
         )
 
@@ -160,19 +156,19 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         return crc32(
             hashlib_encode_data(
                 "%s-%s-%s-%s-%s"
-                % (self.owner, self.id, self.name, self.requirements, self.url)
+                % (self.owner, self.id, self.name, self.requirements, self.uri)
             )
         )
 
     def __repr__(self):
         return (
             "PackageSpec <owner={owner} id={id} name={name} "
-            "requirements={requirements} url={url}>".format(**self.as_dict())
+            "requirements={requirements} uri={uri}>".format(**self.as_dict())
         )
 
     @property
     def external(self):
-        return bool(self.url)
+        return bool(self.uri)
 
     @property
     def requirements(self):
@@ -191,8 +187,8 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
 
     def humanize(self):
         result = ""
-        if self.url:
-            result = self.url
+        if self.uri:
+            result = self.uri
         elif self.name:
             if self.owner:
                 result = self.owner + "/"
@@ -212,12 +208,12 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
             id=self.id,
             name=self.name,
             requirements=str(self.requirements) if self.requirements else None,
-            url=self.url,
+            uri=self.uri,
         )
 
     def as_dependency(self):
-        if self.url:
-            return self.raw or self.url
+        if self.uri:
+            return self.raw or self.uri
         result = ""
         if self.name:
             result = "%s/%s" % (self.owner, self.name) if self.owner else self.name
@@ -241,16 +237,16 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
             self._parse_custom_name,
             self._parse_id,
             self._parse_owner,
-            self._parse_url,
+            self._parse_uri,
         )
         for parser in parsers:
             if raw is None:
                 break
             raw = parser(raw)
 
-        # if name is not custom, parse it from URL
-        if not self.name and self.url:
-            self.name = self._parse_name_from_url(self.url)
+        # if name is not custom, parse it from URI
+        if not self.name and self.uri:
+            self.name = self._parse_name_from_uri(self.uri)
         elif raw:
             # the leftover is a package name
             self.name = raw
@@ -298,14 +294,18 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         self.name = tokens[1].strip()
         return None
 
-    def _parse_url(self, raw):
+    def _parse_uri(self, raw):
         if not any(s in raw for s in ("@", ":", "/")):
             return raw
-        self.url = raw.strip()
-        parts = urlparse(self.url)
+        self.uri = raw.strip()
+        parts = urlparse(self.uri)
 
-        # if local file or valid URL with scheme vcs+protocol://
-        if parts.scheme == "file" or "+" in parts.scheme or self.url.startswith("git+"):
+        # if local file or valid URI with scheme vcs+protocol://
+        if (
+            parts.scheme in ("file", )
+            or "+" in parts.scheme
+            or self.uri.startswith("git+")
+        ):
             return None
 
         # parse VCS
@@ -323,29 +323,29 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
             in ("mbed.com", "os.mbed.com", "developer.mbed.org")
         ]
         if any(git_conditions):
-            self.url = "git+" + self.url
+            self.uri = "git+" + self.uri
         elif any(hg_conditions):
-            self.url = "hg+" + self.url
+            self.uri = "hg+" + self.uri
 
         return None
 
     @staticmethod
-    def _parse_name_from_url(url):
-        if url.endswith("/"):
-            url = url[:-1]
+    def _parse_name_from_uri(uri):
+        if uri.endswith("/"):
+            uri = uri[:-1]
         stop_chars = ["#", "?"]
-        if url.startswith("file://"):
+        if uri.startswith(("file://", )):
             stop_chars.append("@")  # detached path
         for c in stop_chars:
-            if c in url:
-                url = url[: url.index(c)]
+            if c in uri:
+                uri = uri[: uri.index(c)]
 
         # parse real repository name from Github
-        parts = urlparse(url)
+        parts = urlparse(uri)
         if parts.netloc == "github.com" and parts.path.count("/") > 2:
             return parts.path.split("/")[2]
 
-        name = os.path.basename(url)
+        name = os.path.basename(uri)
         if "." in name:
             return name.split(".", 1)[0].strip()
         return name
@@ -412,6 +412,10 @@ class PackageMetaData(object):
         with open(path, encoding="utf8") as fp:
             data = json.load(fp)
             if data["spec"]:
+                # legacy support for Core<5.3 packages
+                if "url" in data["spec"]:
+                    data["spec"]["uri"] = data["spec"]["url"]
+                    del data["spec"]["url"]
                 data["spec"] = PackageSpec(**data["spec"])
             return PackageMetaData(**data)
 

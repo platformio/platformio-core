@@ -67,7 +67,7 @@ class PackageManagerUpdateMixin(object):
     def _fetch_vcs_latest_version(self, pkg):
         vcs = None
         try:
-            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.url, silent=True)
+            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.uri, silent=True)
         except VCSBaseException:
             return None
         if not vcs.can_be_updated:
@@ -112,7 +112,7 @@ class PackageManagerUpdateMixin(object):
 
     def _update(self, pkg, outdated, skip_dependencies=False):
         if pkg.metadata.spec.external:
-            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.url)
+            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.uri)
             assert vcs.update()
             pkg.metadata.version = self._fetch_vcs_latest_version(pkg)
             pkg.dump_meta()

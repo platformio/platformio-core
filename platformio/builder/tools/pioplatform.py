@@ -156,7 +156,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             and pkg_metadata
             and pkg_metadata.spec.external
         ):
-            data.append("(%s)" % pkg_metadata.spec.url)
+            data.append("(%s)" % pkg_metadata.spec.uri)
         if board_config:
             data.extend([">", board_config.get("name")])
         return data

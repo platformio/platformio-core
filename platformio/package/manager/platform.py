@@ -167,7 +167,7 @@ def remove_unnecessary_platform_packages(dry_run=False):
     pm = ToolPackageManager()
     for pkg in pm.get_installed():
         skip_conds = [
-            pkg.metadata.spec.url,
+            pkg.metadata.spec.uri,
             os.path.isfile(os.path.join(pkg.path, ".piokeep")),
             pkg in required,
             pkg in core_packages,

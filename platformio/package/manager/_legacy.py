@@ -33,7 +33,7 @@ class PackageManagerLegacyMixin(object):
             src_manifest = fs.load_json(src_manifest_path)
             return PackageSpec(
                 name=src_manifest.get("name"),
-                url=src_manifest.get("url"),
+                uri=src_manifest.get("url"),
                 requirements=src_manifest.get("requirements"),
             )
 
@@ -51,7 +51,7 @@ class PackageManagerLegacyMixin(object):
             if not manifest.get(key):
                 manifest[key] = str(getattr(pkg.metadata, key))
         if pkg.metadata and pkg.metadata.spec and pkg.metadata.spec.external:
-            manifest["__src_url"] = pkg.metadata.spec.url
+            manifest["__src_url"] = pkg.metadata.spec.uri
             manifest["version"] = str(pkg.metadata.version)
         if pkg.metadata and pkg.metadata.spec.owner:
             manifest["ownername"] = pkg.metadata.spec.owner

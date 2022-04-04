@@ -23,7 +23,6 @@ import pytest
 import semantic_version
 
 from platformio import fs, util
-from platformio.compat import PY2
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -106,7 +105,7 @@ def test_build_legacy_spec(isolated_pio_core, tmpdir_factory):
     )
     assert pm.build_legacy_spec(str(pkg1_dir)) == PackageSpec(
         name="StreamSpy-0.0.1.tar",
-        url="https://dl.platformio.org/e8936b7/StreamSpy-0.0.1.tar.gz",
+        uri="https://dl.platformio.org/e8936b7/StreamSpy-0.0.1.tar.gz",
     )
 
     # without src manifest
@@ -148,8 +147,7 @@ def test_build_metadata(isolated_pio_core, tmpdir_factory):
     assert metadata.version.build[1] == vcs_revision
 
 
-@pytest.mark.skipif(PY2, reason="Requires Python 3.5 or higher")
-def test_install_from_url(isolated_pio_core, tmpdir_factory):
+def test_install_from_uri(isolated_pio_core, tmpdir_factory):
     tmp_dir = tmpdir_factory.mktemp("tmp")
     storage_dir = tmpdir_factory.mktemp("storage")
     lm = LibraryPackageManager(str(storage_dir))
@@ -189,7 +187,7 @@ version = 5.2.7
 """
     )
     spec = PackageSpec("company/wifilib @ ^5")
-    pkg = lm.install_from_url("file://%s" % src_dir, spec)
+    pkg = lm.install_from_uri("file://%s" % src_dir, spec)
     assert str(pkg.metadata.version) == "5.2.7"
 
     # check package folder names
@@ -416,11 +414,11 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     # foo @ 1.0.0
     pkg_dir = tmp_dir.join("foo").mkdir()
     pkg_dir.join("library.json").write('{"name": "foo", "version": "1.0.0"}')
-    foo_1_0_0_pkg = lm.install_from_url("file://%s" % pkg_dir, "foo")
+    foo_1_0_0_pkg = lm.install_from_uri("file://%s" % pkg_dir, "foo")
     # foo @ 1.3.0
     pkg_dir = tmp_dir.join("foo-1.3.0").mkdir()
     pkg_dir.join("library.json").write('{"name": "foo", "version": "1.3.0"}')
-    lm.install_from_url("file://%s" % pkg_dir, "foo")
+    lm.install_from_uri("file://%s" % pkg_dir, "foo")
     # bar
     pkg_dir = tmp_dir.join("bar").mkdir()
     pkg_dir.join("library.json").write('{"name": "bar", "version": "1.0.0"}')

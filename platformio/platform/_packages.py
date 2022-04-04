@@ -62,7 +62,7 @@ class PlatformPackagesMixin(object):
                 continue
             item = {"name": pkg.metadata.name, "version": str(pkg.metadata.version)}
             if pkg.metadata.spec.external:
-                item["src_url"] = pkg.metadata.spec.url
+                item["src_url"] = pkg.metadata.spec.uri
             result.append(item)
         return result
 

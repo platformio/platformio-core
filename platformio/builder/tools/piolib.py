@@ -1102,7 +1102,7 @@ def ConfigureProjectLibBuilder(env):
                     "(License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
                 )
                 if pkg.metadata and pkg.metadata.spec.external:
-                    click.echo("URI: %s, " % pkg.metadata.spec.url, nl=False)
+                    click.echo("URI: %s, " % pkg.metadata.spec.uri, nl=False)
                 click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")

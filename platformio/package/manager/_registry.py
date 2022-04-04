@@ -102,7 +102,7 @@ class PackageManageRegistryMixin(object):
 
         for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
             try:
-                return self.install_from_url(
+                return self.install_from_uri(
                     url,
                     PackageSpec(
                         owner=package["owner"]["username"],
