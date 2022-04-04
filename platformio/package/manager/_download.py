@@ -20,7 +20,7 @@ import time
 
 import click
 
-from platformio import app, compat
+from platformio import app, compat, util
 from platformio.package.download import FileDownloader
 from platformio.package.lockfile import LockFile
 
@@ -43,6 +43,7 @@ class PackageManagerDownloadMixin(object):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
             state[os.path.basename(path)] = int(time.time() if not utime else utime)
 
+    @util.memoized(DOWNLOAD_CACHE_EXPIRE)
     def cleanup_expired_downloads(self):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
             # remove outdated
