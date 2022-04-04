@@ -78,7 +78,7 @@ class RegistryFileMirrorIterator(object):
         return RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror]
 
 
-class PackageManageRegistryMixin(object):
+class PackageManagerRegistryMixin(object):
     def install_from_registry(self, spec, search_qualifiers=None):
         if spec.owner and spec.name and not search_qualifiers:
             package = self.fetch_registry_package(spec)

@@ -28,7 +28,7 @@ from platformio.package.lockfile import LockFile
 from platformio.package.manager._download import PackageManagerDownloadMixin
 from platformio.package.manager._install import PackageManagerInstallMixin
 from platformio.package.manager._legacy import PackageManagerLegacyMixin
-from platformio.package.manager._registry import PackageManageRegistryMixin
+from platformio.package.manager._registry import PackageManagerRegistryMixin
 from platformio.package.manager._uninstall import PackageManagerUninstallMixin
 from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
@@ -49,7 +49,7 @@ class ClickLoggingHandler(logging.Handler):
 
 class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     PackageManagerDownloadMixin,
-    PackageManageRegistryMixin,
+    PackageManagerRegistryMixin,
     PackageManagerInstallMixin,
     PackageManagerUninstallMixin,
     PackageManagerUpdateMixin,

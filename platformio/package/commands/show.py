@@ -20,7 +20,7 @@ from tabulate import tabulate
 from platformio import fs, util
 from platformio.clients.registry import RegistryClient
 from platformio.exception import UserSideException
-from platformio.package.manager._registry import PackageManageRegistryMixin
+from platformio.package.manager._registry import PackageManagerRegistryMixin
 from platformio.package.meta import PackageSpec, PackageType
 
 
@@ -136,7 +136,9 @@ def fetch_package_data(spec, pkg_type=None):
     if not packages:
         return None
     if len(packages) > 1:
-        PackageManageRegistryMixin.print_multi_package_issue(click.echo, packages, spec)
+        PackageManagerRegistryMixin.print_multi_package_issue(
+            click.echo, packages, spec
+        )
         return None
     return client.get_package(
         packages[0]["type"],
