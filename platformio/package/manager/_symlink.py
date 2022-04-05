@@ -34,7 +34,7 @@ class PackageManagerSymlinkMixin(object):
         spec = PackageSpec(**data["spec"])
         assert spec.symlink
         with fs.cd(data["cwd"]):
-            pkg_dir = os.path.realpath(pkg_dir)
+            pkg_dir = os.path.realpath(spec.uri[10:])
             return (pkg_dir if os.path.isdir(pkg_dir) else None, spec)
 
     def get_symlinked_package(self, path):
