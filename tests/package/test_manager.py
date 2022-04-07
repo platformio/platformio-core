@@ -323,7 +323,9 @@ def test_symlink(tmp_path: Path):
     assert ["External", "Installed"] == [
         pkg.metadata.name for pkg in lm.get_installed()
     ]
-    assert lm.get_package("External").metadata.spec.uri.startswith("symlink://")
+    pkg = lm.get_package("External")
+    assert Path(pkg.path) == external_pkg_dir
+    assert pkg.metadata.spec.uri.startswith("symlink://")
     assert lm.get_package(spec).metadata.spec.uri.startswith("symlink://")
 
     # try to update

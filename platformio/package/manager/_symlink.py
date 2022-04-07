@@ -15,7 +15,6 @@
 import json
 import os
 
-from platformio import fs
 from platformio.package.exception import PackageException
 from platformio.package.meta import PackageItem, PackageSpec
 
@@ -33,9 +32,10 @@ class PackageManagerSymlinkMixin(object):
             data = json.load(fp)
         spec = PackageSpec(**data["spec"])
         assert spec.symlink
-        with fs.cd(data["cwd"]):
-            pkg_dir = os.path.realpath(spec.uri[10:])
-            return (pkg_dir if os.path.isdir(pkg_dir) else None, spec)
+        pkg_dir = spec.uri[10:]
+        if not os.path.isabs(pkg_dir):
+            pkg_dir = os.path.normpath(os.path.join(data["cwd"], pkg_dir))
+        return (pkg_dir if os.path.isdir(pkg_dir) else None, spec)
 
     def get_symlinked_package(self, path):
         pkg_dir, spec = self.resolve_symlink(path)

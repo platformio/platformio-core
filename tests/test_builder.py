@@ -216,9 +216,8 @@ int main() {
         """
 [env:native]
 platform = native
-lib_deps = symlink://%s
+lib_deps = symlink://../External
     """
-        % str(external_pkg_dir)
     )
     result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir), "--verbose"])
     validate_cliresult(result)
