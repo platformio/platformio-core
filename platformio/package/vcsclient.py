@@ -221,12 +221,13 @@ class GitClient(VCSClientBase):
 
         branch_ref = f"refs/heads/{branch}"
         result = self.get_cmd_output(["ls-remote", self.remote_url, branch_ref])
+        if not result:
+            return None
 
-        if result:
-            for line in result.split("\n"):
-                sha, ref = line.split("\t")
-                if ref == branch_ref:
-                    return sha[:7]
+        for line in result.split("\n"):
+            sha, ref = line.strip().split("\t")
+            if ref == branch_ref:
+                return sha[:7]
 
         return None
 
