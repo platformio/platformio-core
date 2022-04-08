@@ -53,6 +53,11 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     "Default is set to a username of the authorized PIO Account",
 )
 @click.option(
+    "--type", "type_",
+    type=click.Choice(list(PackageType.items().values())),
+    help="Custom package type",
+)
+@click.option(
     "--released-at",
     callback=validate_datetime,
     help="Custom release date and time in the next format (UTC): 2014-06-13 17:08:52",
@@ -69,13 +74,13 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     help="Do not show interactive prompt",
 )
 def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
-    package, owner, released_at, private, notify, non_interactive
+    package, owner, type_, released_at, private, notify, non_interactive
 ):
     click.secho("Preparing a package...", fg="cyan")
     owner = owner or AccountClient().get_logged_username()
     do_not_pack = not os.path.isdir(package) and isinstance(
         FileUnpacker.new_archiver(package), TARArchiver
-    )
+    ) and PackageType.from_archive(package)
     archive_path = None
     with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
         # publish .tar.gz instantly without repacking
@@ -86,7 +91,7 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
                 p = PackagePacker(package)
                 archive_path = p.pack()
 
-        type_ = PackageType.from_archive(archive_path)
+        type_ = type_ or PackageType.from_archive(archive_path)
         manifest = ManifestSchema().load_manifest(
             ManifestParserFactory.new_from_archive(archive_path).as_dict()
         )

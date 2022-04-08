@@ -275,9 +275,7 @@ def test_remove_project_unused_libdeps(
 
         # add new deps
         lib_deps = config.get("env:baremetal", "lib_deps")
-        config.set(
-            "env:baremetal", "lib_deps", lib_deps + ["bblanchon/ArduinoJson@^5"]
-        )
+        config.set("env:baremetal", "lib_deps", lib_deps + ["bblanchon/ArduinoJson@^5"])
         config.save()
         result = clirunner.invoke(
             package_install_cmd,
