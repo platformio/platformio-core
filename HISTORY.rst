@@ -43,9 +43,13 @@ PlatformIO Core 5
   - Added support for the custom `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ configuration file (`issue #4186 <https://github.com/platformio/platformio-core/issues/4186>`_)
   - Added ability to override a tool version using the `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3798 <https://github.com/platformio/platformio-core/issues/3798>`_)
 
-* **Miscellaneous**
+* **Build System**
 
   - Show project dependency licenses when building in the verbose mode
+  - Fixed an issue when `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__ ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
+
+* **Miscellaneous**
+
   - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
   - Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
 

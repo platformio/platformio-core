@@ -139,9 +139,11 @@ class LibBuilderBase(object):
             )
             self._manifest = {}
 
-        self._is_dependent = False
-        self._is_built = False
-        self._depbuilders = []
+        self.is_dependent = False
+        self.is_built = False
+        self.depbuilders = []
+
+        self._deps_are_processed = False
         self._circular_deps = []
         self._processed_files = []
 
@@ -229,18 +231,6 @@ class LibBuilderBase(object):
         return None
 
     @property
-    def depbuilders(self):
-        return self._depbuilders
-
-    @property
-    def dependent(self):
-        return self._is_dependent
-
-    @property
-    def is_built(self):
-        return self._is_built
-
-    @property
     def lib_archive(self):
         return self.env.GetProjectOption("lib_archive")
 
@@ -299,8 +289,9 @@ class LibBuilderBase(object):
             self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
-        if not self.dependencies:
+        if not self.dependencies or self._deps_are_processed:
             return
+        self._deps_are_processed = True
         for item in self.dependencies:
             found = False
             for lb in self.env.GetLibBuilders():
@@ -308,7 +299,7 @@ class LibBuilderBase(object):
                     continue
                 found = True
                 if lb not in self.depbuilders:
-                    self.depend_recursive(lb)
+                    self.depend_on(lb)
                 break
 
             if not found and self.verbose:
@@ -403,7 +394,29 @@ class LibBuilderBase(object):
 
         return result
 
-    def depend_recursive(self, lb, search_files=None):
+    def search_deps_recursive(self, search_files=None):
+        self.process_dependencies()
+
+        # when LDF is disabled
+        if self.lib_ldf_mode == "off":
+            return
+
+        if self.lib_ldf_mode.startswith("deep"):
+            search_files = self.get_search_files()
+
+        lib_inc_map = {}
+        for inc in self._get_found_includes(search_files):
+            for lb in self.env.GetLibBuilders():
+                if inc.get_abspath() in lb:
+                    if lb not in lib_inc_map:
+                        lib_inc_map[lb] = []
+                    lib_inc_map[lb].append(inc.get_abspath())
+                    break
+
+        for lb, lb_search_files in lib_inc_map.items():
+            self.depend_on(lb, search_files == lb_search_files)
+
+    def depend_on(self, lb, search_files=None, recursive=True):
         def _already_depends(_lb):
             if self in _lb.depbuilders:
                 return True
@@ -421,38 +434,17 @@ class LibBuilderBase(object):
                         "between `%s` and `%s`\n" % (self.path, lb.path)
                     )
                 self._circular_deps.append(lb)
-            elif lb not in self._depbuilders:
-                self._depbuilders.append(lb)
+            elif lb not in self.depbuilders:
+                self.depbuilders.append(lb)
+                lb.is_dependent = True
                 LibBuilderBase._INCLUDE_DIRS_CACHE = None
-        lb.search_deps_recursive(search_files)
 
-    def search_deps_recursive(self, search_files=None):
-        if not self._is_dependent:
-            self._is_dependent = True
-            self.process_dependencies()
-
-            if self.lib_ldf_mode.startswith("deep"):
-                search_files = self.get_search_files()
-
-        # when LDF is disabled
-        if self.lib_ldf_mode == "off":
-            return
-
-        lib_inc_map = {}
-        for inc in self._get_found_includes(search_files):
-            for lb in self.env.GetLibBuilders():
-                if inc.get_abspath() in lb:
-                    if lb not in lib_inc_map:
-                        lib_inc_map[lb] = []
-                    lib_inc_map[lb].append(inc.get_abspath())
-                    break
-
-        for lb, lb_search_files in lib_inc_map.items():
-            self.depend_recursive(lb, lb_search_files)
+        if recursive:
+            lb.search_deps_recursive(search_files)
 
     def build(self):
         libs = []
-        for lb in self._depbuilders:
+        for lb in self.depbuilders:
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
@@ -461,9 +453,9 @@ class LibBuilderBase(object):
         for lb in self._circular_deps:
             self.env.PrependUnique(CPPPATH=lb.get_include_dirs())
 
-        if self._is_built:
+        if self.is_built:
             return libs
-        self._is_built = True
+        self.is_built = True
 
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
 
@@ -950,6 +942,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
             DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
+        found_lbs = []
         for spec in self.dependencies:
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
@@ -963,7 +956,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     if pkg.path != lb.path:
                         continue
                     if lb not in self.depbuilders:
-                        self.depend_recursive(lb)
+                        self.depend_on(lb, recursive=False)
+                        found_lbs.append(lb)
                     found = True
                     break
             if found:
@@ -975,12 +969,16 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 if lb.name != spec:
                     continue
                 if lb not in self.depbuilders:
-                    self.depend_recursive(lb)
+                    self.depend_on(lb)
                 found = True
                 break
 
+        # process library dependencies
+        for lb in found_lbs:
+            lb.search_deps_recursive()
+
     def build(self):
-        self._is_built = True  # do not build Project now
+        self.is_built = True  # do not build Project now
         result = LibBuilderBase.build(self)
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         return result
@@ -1018,7 +1016,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     if DefaultEnvironment().get("__PIO_LIB_BUILDERS", None) is not None:
         return sorted(
             DefaultEnvironment()["__PIO_LIB_BUILDERS"],
-            key=lambda lb: 0 if lb.dependent else 1,
+            key=lambda lb: 0 if lb.is_dependent else 1,
         )
 
     DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=[])
@@ -1082,7 +1080,7 @@ def ConfigureProjectLibBuilder(env):
 
     def _correct_found_libs(lib_builders):
         # build full dependency graph
-        found_lbs = [lb for lb in lib_builders if lb.dependent]
+        found_lbs = [lb for lb in lib_builders if lb.is_dependent]
         for lb in lib_builders:
             if lb in found_lbs:
                 lb.search_deps_recursive(lb.get_search_files())
