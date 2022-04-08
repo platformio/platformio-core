@@ -53,7 +53,8 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     "Default is set to a username of the authorized PIO Account",
 )
 @click.option(
-    "--type", "type_",
+    "--type",
+    "type_",
     type=click.Choice(list(PackageType.items().values())),
     help="Custom package type",
 )
@@ -78,9 +79,11 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
 ):
     click.secho("Preparing a package...", fg="cyan")
     owner = owner or AccountClient().get_logged_username()
-    do_not_pack = not os.path.isdir(package) and isinstance(
-        FileUnpacker.new_archiver(package), TARArchiver
-    ) and PackageType.from_archive(package)
+    do_not_pack = (
+        not os.path.isdir(package)
+        and isinstance(FileUnpacker.new_archiver(package), TARArchiver)
+        and PackageType.from_archive(package)
+    )
     archive_path = None
     with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
         # publish .tar.gz instantly without repacking
