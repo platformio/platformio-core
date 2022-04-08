@@ -414,7 +414,7 @@ class LibBuilderBase(object):
                     break
 
         for lb, lb_search_files in lib_inc_map.items():
-            self.depend_on(lb, search_files == lb_search_files)
+            self.depend_on(lb, search_files=lb_search_files)
 
     def depend_on(self, lb, search_files=None, recursive=True):
         def _already_depends(_lb):
