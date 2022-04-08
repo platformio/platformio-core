@@ -72,9 +72,14 @@ class PackageManagerUpdateMixin(object):
             return None
         if not vcs.can_be_updated:
             return None
+
+        vcs_revision = vcs.get_latest_revision()
+        if not vcs_revision:
+            return None
+
         return str(
             self.build_metadata(
-                pkg.path, pkg.metadata.spec, vcs_revision=vcs.get_latest_revision()
+                pkg.path, pkg.metadata.spec, vcs_revision=vcs_revision
             ).version
         )
 
