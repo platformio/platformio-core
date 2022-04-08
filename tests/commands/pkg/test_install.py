@@ -72,12 +72,12 @@ def test_global_packages(
             "-l",
             "https://github.com/milesburton/Arduino-Temperature-Control-Library.git#3.9.0",
             "-l",
-            "bblanchon/ArduinoJson@^6.19.2",
+            "bblanchon/ArduinoJson@^5",
         ],
     )
     validate_cliresult(result)
     assert pkgs_to_specs(LibraryPackageManager().get_installed()) == [
-        PackageSpec("ArduinoJson@6.19.3"),
+        PackageSpec("ArduinoJson@5.13.4"),
         PackageSpec("DallasTemperature@3.9.0+sha.964939d"),
         PackageSpec("OneWire@2.3.6"),
     ]
@@ -91,12 +91,12 @@ def test_global_packages(
             "--storage-dir",
             str(storage_dir),
             "-l",
-            "bblanchon/ArduinoJson@^6.19.2",
+            "bblanchon/ArduinoJson@^5",
         ],
     )
     validate_cliresult(result)
     assert pkgs_to_specs(LibraryPackageManager(storage_dir).get_installed()) == [
-        PackageSpec("ArduinoJson@6.19.3")
+        PackageSpec("ArduinoJson@5.13.4")
     ]
 
     # tools
@@ -206,7 +206,7 @@ def test_private_lib_deps(clirunner, validate_cliresult, isolated_pio_core, tmp_
     "name": "My Private Lib",
     "version": "1.0.0",
     "dependencies": {
-        "bblanchon/ArduinoJson": "^6.19.2",
+        "bblanchon/ArduinoJson": "^5",
         "milesburton/DallasTemperature": "^3.9.1"
     }
 }
@@ -248,7 +248,7 @@ platform = native
             os.path.join(config.get("platformio", "libdeps_dir"), "private")
         ).get_installed()
         assert pkgs_to_specs(installed_env_pkgs) == [
-            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("ArduinoJson@5.13.4"),
             PackageSpec("DallasTemperature@3.9.1"),
         ]
 
@@ -276,7 +276,7 @@ def test_remove_project_unused_libdeps(
         # add new deps
         lib_deps = config.get("env:baremetal", "lib_deps")
         config.set(
-            "env:baremetal", "lib_deps", lib_deps + ["bblanchon/ArduinoJson@^6.19.2"]
+            "env:baremetal", "lib_deps", lib_deps + ["bblanchon/ArduinoJson@^5"]
         )
         config.save()
         result = clirunner.invoke(
@@ -286,13 +286,13 @@ def test_remove_project_unused_libdeps(
         validate_cliresult(result)
         lm = LibraryPackageManager(storage_dir)
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("ArduinoJson@5.13.4"),
             PackageSpec("DallasTemperature@3.9.1"),
             PackageSpec("OneWire@2.3.6"),
         ]
 
         # manually remove from cofiguration file
-        config.set("env:baremetal", "lib_deps", ["bblanchon/ArduinoJson@^6.19.2"])
+        config.set("env:baremetal", "lib_deps", ["bblanchon/ArduinoJson@^5"])
         config.save()
         result = clirunner.invoke(
             package_install_cmd,
@@ -300,7 +300,7 @@ def test_remove_project_unused_libdeps(
         )
         validate_cliresult(result)
         lm = LibraryPackageManager(storage_dir)
-        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@6.19.3")]
+        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@5.13.4")]
 
 
 def test_unknown_project_dependencies(
@@ -348,7 +348,7 @@ def test_custom_project_libraries(
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_CONFIG_TPL)
-    spec = "bblanchon/ArduinoJson@^6.19.2"
+    spec = "bblanchon/ArduinoJson@^5"
     result = clirunner.invoke(
         package_install_cmd,
         ["-d", str(project_dir), "-e", "devkit", "-l", spec],
@@ -375,14 +375,14 @@ def test_custom_project_libraries(
         lm = LibraryPackageManager(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
-        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@6.19.3")]
+        assert pkgs_to_specs(lm.get_installed()) == [PackageSpec("ArduinoJson@5.13.4")]
         # do not expect any platforms/tools
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
         assert not os.path.exists(config.get("platformio", "packages_dir"))
 
         # check saved deps
         assert config.get("env:devkit", "lib_deps") == [
-            "bblanchon/ArduinoJson@^6.19.2",
+            "bblanchon/ArduinoJson@^5",
         ]
 
         # install library without saving to config
@@ -396,11 +396,11 @@ def test_custom_project_libraries(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("ArduinoJson@6.19.3"),
+            PackageSpec("ArduinoJson@5.13.4"),
             PackageSpec("Nanopb@0.4.6+3"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "bblanchon/ArduinoJson@^6.19.2",
+            "bblanchon/ArduinoJson@^5",
         ]
 
         # unknown libraries
