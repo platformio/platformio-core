@@ -217,12 +217,17 @@ class GitClient(VCSClientBase):
             return self.get_current_revision()
         branch = self.get_current_branch()
         if not branch:
-            return self.get_current_revision()
-        result = self.get_cmd_output(["ls-remote"])
-        for line in result.split("\n"):
-            ref_pos = line.strip().find("refs/heads/" + branch)
-            if ref_pos > 0:
-                return line[:ref_pos].strip()[:7]
+            return None
+
+        branch_ref = f"refs/heads/{branch}"
+        result = self.get_cmd_output(["ls-remote", self.remote_url, branch_ref])
+
+        if result:
+            for line in result.split("\n"):
+                sha, ref = line.split("\t")
+                if ref == branch_ref:
+                    return sha[:7]
+
         return None
 
 
