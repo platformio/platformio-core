@@ -61,7 +61,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "piolib",
         "pioupload",
         "piomisc",
-        "pioide",
+        "piointegration",
         "piosize",
     ],
     toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
@@ -72,7 +72,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
     BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
     BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=os.path.join("$BUILD_DIR", "compile_commands.json"),
+    COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
     PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
@@ -228,7 +228,7 @@ if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
         Import("projenv")
     except:  # pylint: disable=bare-except
         projenv = env
-    data = projenv.DumpIDEData(env)
+    data = projenv.DumpIntegrationData(env)
     # dump to file for the further reading by project.helpers.load_project_ide_data
     with open(
         projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),

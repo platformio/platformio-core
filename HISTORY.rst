@@ -48,6 +48,11 @@ PlatformIO Core 5
   - Show project dependency licenses when building in the verbose mode
   - Fixed an issue when `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__ ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
 
+* **Integration**
+
+  - Added a new build variable (``COMPILATIONDB_INCLUDE_TOOLCHAIN``) to include toolchain paths in the compilation database (`issue #3735 <https://github.com/platformio/platformio-core/issues/3735>`_)
+  - Changed default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the root of the project
+
 * **Miscellaneous**
 
   - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)

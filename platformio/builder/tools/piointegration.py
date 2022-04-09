@@ -24,27 +24,27 @@ from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
-def _dump_includes(env):
-    includes = {}
+def DumpIntegrationIncludes(env):
+    result = dict(build=[], compatlib=[], toolchain=[], unity=[])
 
-    includes["build"] = [
-        env.subst("$PROJECT_INCLUDE_DIR"),
-        env.subst("$PROJECT_SRC_DIR"),
-    ]
-    includes["build"].extend(
+    result["build"].extend(
+        [
+            env.subst("$PROJECT_INCLUDE_DIR"),
+            env.subst("$PROJECT_SRC_DIR"),
+        ]
+    )
+    result["build"].extend(
         [os.path.abspath(env.subst(item)) for item in env.get("CPPPATH", [])]
     )
 
     # installed libs
-    includes["compatlib"] = []
     for lb in env.GetLibBuilders():
-        includes["compatlib"].extend(
+        result["compatlib"].extend(
             [os.path.abspath(inc) for inc in lb.get_include_dirs()]
         )
 
     # includes from toolchains
     p = env.PioPlatform()
-    includes["toolchain"] = []
     for pkg in p.get_installed_packages(with_optional=False):
         if p.get_package_type(pkg.metadata.name) != "toolchain":
             continue
@@ -56,10 +56,9 @@ def _dump_includes(env):
             os.path.join(toolchain_dir, "*", "include*"),
         ]
         for g in toolchain_incglobs:
-            includes["toolchain"].extend([os.path.abspath(inc) for inc in glob.glob(g)])
+            result["toolchain"].extend([os.path.abspath(inc) for inc in glob.glob(g)])
 
     # include Unity framework if there are tests in project
-    includes["unity"] = []
     auto_install_unity = False
     test_dir = env.GetProjectConfig().get("platformio", "test_dir")
     if os.path.isdir(test_dir) and os.listdir(test_dir) != ["README"]:
@@ -69,9 +68,9 @@ def _dump_includes(env):
         auto_install=auto_install_unity,
     )
     if unity_dir:
-        includes["unity"].append(unity_dir)
+        result["unity"].append(unity_dir)
 
-    return includes
+    return result
 
 
 def _get_gcc_defines(env):
@@ -154,14 +153,14 @@ def _subst_cmd(env, cmd):
     return " ".join([SCons.Subst.quote_spaces(arg) for arg in args])
 
 
-def DumpIDEData(env, globalenv):
+def DumpIntegrationData(env, globalenv):
     """env here is `projenv`"""
 
     data = {
         "env_name": env["PIOENV"],
         "libsource_dirs": [env.subst(item) for item in env.GetLibSourceDirs()],
         "defines": _dump_defines(env),
-        "includes": _dump_includes(env),
+        "includes": env.DumpIntegrationIncludes(),
         "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
         "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
@@ -205,5 +204,6 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(DumpIDEData)
+    env.AddMethod(DumpIntegrationIncludes)
+    env.AddMethod(DumpIntegrationData)
     return env

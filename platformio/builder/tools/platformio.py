@@ -136,6 +136,13 @@ def ProcessProgramDeps(env):
     if "__test" in COMMAND_LINE_TARGETS:
         env.ConfigureTestTarget()
 
+    if "compiledb" in COMMAND_LINE_TARGETS and env.get(
+        "COMPILATIONDB_INCLUDE_TOOLCHAIN"
+    ):
+        for scope, includes in env.DumpIntegrationIncludes().items():
+            if scope in ("toolchain", "unity"):
+                env.Append(CPPPATH=includes)
+
 
 def ProcessProjectDeps(env):
     project_lib_builder = env.ConfigureProjectLibBuilder()
