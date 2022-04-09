@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import configparser
 import glob
 import json
 import os
@@ -23,11 +24,6 @@ from platformio import fs
 from platformio.compat import string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
-
-try:
-    import ConfigParser as ConfigParser
-except ImportError:
-    import configparser as ConfigParser
 
 CONFIG_HEADER = """
 ; PlatformIO Project Configuration File
@@ -87,7 +83,7 @@ class ProjectConfigBase(object):
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
+        self._parser = configparser.ConfigParser(inline_comment_prefixes=("#", ";"))
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
@@ -102,7 +98,7 @@ class ProjectConfigBase(object):
         self._parsed.append(path)
         try:
             self._parser.read(path, "utf-8")
-        except ConfigParser.Error as e:
+        except configparser.Error as e:
             raise exception.InvalidProjectConfError(path, str(e))
 
         if not parse_extra:
@@ -310,7 +306,7 @@ class ProjectConfigBase(object):
         value = None
         try:
             value = self.getraw(section, option, default)
-        except ConfigParser.Error as e:
+        except configparser.Error as e:
             raise exception.InvalidProjectConfError(self.path, str(e))
 
         option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
@@ -398,7 +394,7 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def update(self, data, clear=False):
         assert isinstance(data, list)
         if clear:
-            self._parser = ConfigParser.ConfigParser()
+            self._parser = configparser.ConfigParser()
         for section, options in data:
             if not self._parser.has_section(section):
                 self._parser.add_section(section)

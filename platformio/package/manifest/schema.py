@@ -26,36 +26,20 @@ from platformio.clients.http import fetch_remote_content
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
-MARSHMALLOW_2 = marshmallow.__version_info__ < (3,)
 
+class BaseSchema(Schema):
+    class Meta(object):  # pylint: disable=no-init
+        unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
 
-if MARSHMALLOW_2:
-
-    class CompatSchema(Schema):
-        pass
-
-else:
-
-    class CompatSchema(Schema):
-        class Meta(object):  # pylint: disable=no-init
-            unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
-
-        def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
-            raise ManifestValidationError(
-                error.messages,
-                data,
-                error.valid_data if hasattr(error, "valid_data") else error.data,
-            )
-
-
-class BaseSchema(CompatSchema):
     def load_manifest(self, data):
-        if MARSHMALLOW_2:
-            data, errors = self.load(data)
-            if errors:
-                raise ManifestValidationError(errors, data, data)
-            return data
         return self.load(data)
+
+    def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
+        raise ManifestValidationError(
+            error.messages,
+            data,
+            error.valid_data if hasattr(error, "valid_data") else error.data,
+        )
 
 
 class StrictSchema(BaseSchema):
@@ -67,8 +51,6 @@ class StrictSchema(BaseSchema):
             ]
         else:
             error.valid_data = None
-        if MARSHMALLOW_2:
-            error.data = error.valid_data
         raise error
 
 

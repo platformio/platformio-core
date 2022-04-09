@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import sys
+from urllib.parse import urlparse
 
 from platformio import proc
 from platformio.package.exception import (
@@ -23,11 +24,6 @@ from platformio.package.exception import (
     PlatformioException,
     UserSideException,
 )
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 
 class VCSBaseException(PackageException):

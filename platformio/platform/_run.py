@@ -16,6 +16,7 @@ import base64
 import os
 import re
 import sys
+from urllib.parse import quote
 
 import click
 
@@ -23,11 +24,6 @@ from platformio import app, fs, proc, telemetry
 from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
 
 
 class PlatformRunMixin(object):

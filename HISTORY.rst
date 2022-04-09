@@ -51,12 +51,13 @@ PlatformIO Core 5
 * **Integration**
 
   - Added a new build variable (``COMPILATIONDB_INCLUDE_TOOLCHAIN``) to include toolchain paths in the compilation database (`issue #3735 <https://github.com/platformio/platformio-core/issues/3735>`_)
-  - Changed default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the root of the project
+  - Changed default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the project root
 
 * **Miscellaneous**
 
   - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
-  - Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution.
+  - Better handling of the failed tests using the `Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution
+  - Finally removed all tracks to the Python 2.7, the Python 3.6 is the minimum supported version.
 
 5.2.5 (2022-02-10)
 ~~~~~~~~~~~~~~~~~~

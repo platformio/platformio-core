@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import time
+from urllib.parse import urlparse
 
 import click
 
@@ -21,11 +22,6 @@ from platformio.clients.registry import RegistryClient
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageSpec
 from platformio.package.version import cast_version_to_semver
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 
 class RegistryFileMirrorIterator(object):

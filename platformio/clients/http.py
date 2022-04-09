@@ -16,6 +16,7 @@ import json
 import math
 import os
 import socket
+from urllib.parse import urljoin
 
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
@@ -23,11 +24,6 @@ from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-
 from platformio import __check_internet_hosts__, __default_requests_timeout__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
-
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
 
 
 class HTTPClientError(PlatformioException):

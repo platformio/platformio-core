@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import time
+from urllib.parse import quote
 
 import click
 from tabulate import tabulate
@@ -31,11 +32,6 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
 
 CTX_META_INPUT_DIRS_KEY = __name__ + ".input_dirs"
 CTX_META_PROJECT_ENVIRONMENTS_KEY = __name__ + ".project_environments"

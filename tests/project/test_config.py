@@ -14,13 +14,14 @@
 
 # pylint: disable=redefined-outer-name
 
+import configparser
 import os
 import sys
 
 import pytest
 
 from platformio import fs
-from platformio.project.config import ConfigParser, ProjectConfig
+from platformio.project.config import ProjectConfig
 from platformio.project.exception import InvalidProjectConfError, UnknownEnvNamesError
 
 BASE_CONFIG = """
@@ -154,7 +155,7 @@ def test_defaults(config):
 
 
 def test_sections(config):
-    with pytest.raises(ConfigParser.NoSectionError):
+    with pytest.raises(configparser.NoSectionError):
         config.getraw("unknown_section", "unknown_option")
 
     assert config.sections() == [
@@ -276,10 +277,10 @@ def test_sysenv_options(config):
 
 def test_getraw_value(config):
     # unknown option
-    with pytest.raises(ConfigParser.NoOptionError):
+    with pytest.raises(configparser.NoOptionError):
         config.getraw("custom", "unknown_option")
     # unknown option even if exists in [env]
-    with pytest.raises(ConfigParser.NoOptionError):
+    with pytest.raises(configparser.NoOptionError):
         config.getraw("platformio", "monitor_speed")
 
     # default

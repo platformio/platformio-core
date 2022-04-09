@@ -16,6 +16,7 @@ import atexit
 import hashlib
 import json
 import os
+import queue
 import re
 import shutil
 import sys
@@ -31,11 +32,6 @@ from platformio.commands import PlatformioCLI
 from platformio.compat import hashlib_encode_data, string_types
 from platformio.proc import is_ci, is_container
 from platformio.project.helpers import is_platformio_project
-
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 
 
 class TelemetryBase(object):
