@@ -17,6 +17,7 @@
 import configparser
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -578,3 +579,21 @@ core_dir = ~/.pio
             fs.rmtree(win_core_root_dir)
     except PermissionError:
         pass
+
+
+def test_this(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[common]
+board = uno
+
+[env:myenv]
+extends = common
+build_flags = -D${this.__env__}
+custom_option = ${this.board}
+    """
+    )
+    config = ProjectConfig(str(project_conf))
+    assert config.get("env:myenv", "custom_option") == "uno"
+    assert config.get("env:myenv", "build_flags") == ["-Dmyenv"]

@@ -254,7 +254,7 @@ class ProjectConfigBase(object):
                 value = (
                     default if default != MISSING else self._parser.get(section, option)
                 )
-            return self._expand_interpolations(value)
+            return self._expand_interpolations(section, value)
 
         if option_meta.sysenvvar:
             envvar_value = os.getenv(option_meta.sysenvvar)
@@ -277,21 +277,31 @@ class ProjectConfigBase(object):
         if value == MISSING:
             return None
 
-        return self._expand_interpolations(value)
+        return self._expand_interpolations(section, value)
 
-    def _expand_interpolations(self, value):
+    def _expand_interpolations(self, parent_section, value):
         if (
             not value
             or not isinstance(value, string_types)
             or not all(["${" in value, "}" in value])
         ):
             return value
-        return self.VARTPL_RE.sub(self._re_interpolation_handler, value)
+        return self.VARTPL_RE.sub(
+            lambda match: self._re_interpolation_handler(parent_section, match), value
+        )
 
-    def _re_interpolation_handler(self, match):
+    def _re_interpolation_handler(self, parent_section, match):
         section, option = match.group(1), match.group(2)
+        # handle system environment variables
         if section == "sysenv":
             return os.getenv(option)
+        # handle ${this.*}
+        if section == "this":
+            section = parent_section
+            if option == "__env__":
+                assert parent_section.startswith("env:")
+                return parent_section[4:]
+        # handle nested calls
         try:
             value = self.getraw(section, option)
         except RecursionError:

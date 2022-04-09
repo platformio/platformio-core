@@ -53,6 +53,11 @@ PlatformIO Core 5
   - Added a new build variable (``COMPILATIONDB_INCLUDE_TOOLCHAIN``) to include toolchain paths in the compilation database (`issue #3735 <https://github.com/platformio/platformio-core/issues/3735>`_)
   - Changed default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the project root
 
+* **Project Configuration**
+
+  - Extended `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__  with ``${this}`` pattern (`issue #3953 <https://github.com/platformio/platformio-core/issues/3953>`_)
+  - Embed environment name of the current section in the `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file using ``${this.__env__}`` pattern
+
 * **Miscellaneous**
 
   - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
