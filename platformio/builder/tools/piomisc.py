@@ -376,7 +376,7 @@ def GetExtraScripts(env, scope):
     if not items:
         return items
     with fs.cd(env.subst("$PROJECT_DIR")):
-        return [os.path.abspath(item) for item in items]
+        return [os.path.abspath(env.subst(item)) for item in items]
 
 
 def exists(_):
