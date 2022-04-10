@@ -71,7 +71,7 @@ class EnvironmentProcessor(object):
                 {"project_targets": build_targets},
             )
 
-        result = PlatformFactory.new(self.options["platform"]).run(
+        result = PlatformFactory.new(self.options["platform"], autoinstall=True).run(
             build_vars, build_targets, self.silent, self.verbose, self.jobs
         )
         return result["returncode"] == 0
