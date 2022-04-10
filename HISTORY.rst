@@ -48,6 +48,7 @@ PlatformIO Core 5
   - Show project dependency licenses when building in the verbose mode
   - Fixed an issue when `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__ ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
   - Fixed an issue with calling an extra script located outside a project (`issue #4220 <https://github.com/platformio/platformio-core/issues/4220>`_)
+  - Fixed an issue when GCC preprocessor was applied to the ".s" assembly files on case-sensitive OS such as Window OS (`issue #3917 <https://github.com/platformio/platformio-core/issues/3917>`_)
 
 * **Integration**
 

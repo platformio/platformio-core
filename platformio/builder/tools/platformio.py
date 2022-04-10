@@ -113,10 +113,6 @@ def ProcessProgramDeps(env):
 
     env.PrintConfiguration()
 
-    # fix ASM handling under non case-sensitive OS
-    if not Util.case_sensitive_suffixes(".s", ".S"):
-        env.Replace(AS="$CC", ASCOM="$ASPPCOM")
-
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))

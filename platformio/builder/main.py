@@ -49,10 +49,10 @@ clivars.AddVariables(
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar",
-        "as",
         "cc",
         "c++",
         "link",
+        "pioasm",
         "platformio",
         "piotarget",
         "pioplatform",
