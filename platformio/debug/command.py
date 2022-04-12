@@ -172,11 +172,12 @@ def debug_cmd(
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             loop.run_until_complete(coro)
             if IS_WINDOWS:
+                client.close()
                 # an issue with `asyncio` executor and STIDIN,
                 # it cannot be closed gracefully
                 proc.force_exit()
         finally:
-            del client
+            client.close()
             loop.close()
 
     return True

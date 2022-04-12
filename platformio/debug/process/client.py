@@ -66,6 +66,14 @@ class DebugClientProcess(DebugBaseProcess):
             self._server_process.terminate()
         super(DebugClientProcess, self).process_exited()
 
+    def close(self):
+        self._unlock_session()
+        if self.working_dir and os.path.isdir(self.working_dir):
+            fs.rmtree(self.working_dir)
+
+    def __del__(self):
+        self.close()
+
     def _kill_previous_session(self):
         assert self._session_id
         pid = None
@@ -94,8 +102,3 @@ class DebugClientProcess(DebugBaseProcess):
             return
         with ContentCache() as cc:
             cc.delete(self._session_id)
-
-    def __del__(self):
-        self._unlock_session()
-        if self.working_dir and os.path.isdir(self.working_dir):
-            fs.rmtree(self.working_dir)
