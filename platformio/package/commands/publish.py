@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import tarfile
 import tempfile
 from datetime import datetime
 
@@ -111,6 +112,9 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
             data.insert(len(data) - 1, ("System:", ", ".join(manifest.get("system"))))
         click.echo(tabulate(data, tablefmt="plain"))
 
+        # check files containing non-ascii chars
+        check_archive_file_names(archive_path)
+
         # look for duplicates
         check_package_duplicates(owner, type_, name, version, manifest.get("system"))
 
@@ -139,6 +143,17 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
         if not do_not_pack:
             os.remove(archive_path)
         click.secho(response.get("message"), fg="green")
+
+
+def check_archive_file_names(archive_path):
+    with tarfile.open(archive_path, mode="r:gz") as tf:
+        for name in tf.getnames():
+            if not name.isascii():
+                click.secho(
+                    f"Warning! The `{name}` file contains non-ASCII chars and can "
+                    "lead to the unpacking issues on a user machine",
+                    fg="yellow",
+                )
 
 
 def check_package_duplicates(
