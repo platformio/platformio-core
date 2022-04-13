@@ -43,7 +43,7 @@ def get_project_global_lib_dir():
     return ProjectConfig.get_instance().get("platformio", "globallib_dir")
 
 
-@click.group(short_help="Library manager")
+@click.group(short_help="Library manager", hidden=True)
 @click.option(
     "-d",
     "--storage-dir",

@@ -108,8 +108,10 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         core_spec = semantic_version.SimpleSpec(self.engines["platformio"])
         if self.CORE_SEMVER in core_spec:
             return True
-        # PIO Core 5 is compatible with dev-platforms for PIO Core 2.0, 3.0, 4.0
-        if any(semantic_version.Version.coerce(str(v)) in core_spec for v in (2, 3, 4)):
+        # PIO Core 6 is compatible with dev-platforms for PIO Core 2.0, 3.0, 4.0
+        if any(
+            semantic_version.Version.coerce(str(v)) in core_spec for v in (2, 3, 4, 5)
+        ):
             return True
         raise IncompatiblePlatform(self.name, str(self.CORE_SEMVER), str(core_spec))
 

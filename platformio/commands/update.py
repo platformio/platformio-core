@@ -23,7 +23,9 @@ from platformio.package.manager.library import LibraryPackageManager
 
 
 @click.command(
-    "update", short_help="Update installed platforms, packages and libraries"
+    "update",
+    short_help="Update installed platforms, packages and libraries",
+    hidden=True,
 )
 @click.option("--core-packages", is_flag=True, help="Update only the core packages")
 @click.option(

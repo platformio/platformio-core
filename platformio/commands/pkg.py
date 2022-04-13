@@ -42,7 +42,7 @@ from platformio.package.commands.update import package_update_cmd
         package_unpublish_cmd,
         package_update_cmd,
     ],
-    short_help="Package Manager",
+    short_help="Unified Package Manager",
 )
 def cli():
     pass
