@@ -175,6 +175,11 @@ class LibBuilderBase(object):
         return self._manifest.get("version")
 
     @property
+    def dependent(self):
+        """Backward compatibility with ESP-IDF"""
+        return self.is_dependent
+
+    @property
     def dependencies(self):
         return self._manifest.get("dependencies")
 
