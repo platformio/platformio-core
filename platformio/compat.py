@@ -28,6 +28,7 @@ else:
     from asyncio import get_event_loop as aio_get_running_loop
 
 
+PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
 IS_CYGWIN = sys.platform.startswith("cygwin")
 IS_WINDOWS = WINDOWS = sys.platform.startswith("win")
 IS_MACOS = sys.platform.startswith("darwin")
