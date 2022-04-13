@@ -52,10 +52,13 @@ def package_exec_cmd(obj, package, call, args):
 
     inject_pkg_to_environ(pkg)
     os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
+    # inject current python interpreter on Windows
+    if IS_WINDOWS and args and args[0].endswith(".py"):
+        args = [os.environ["PIO_PYTHON_EXE"]] + list(args)
     result = None
-    force_click_stream = (obj or {}).get("force_click_stream")
     try:
-        run_options = dict(shell=call is not None, env=os.environ)
+        run_options = dict(shell=call is not None, env=os.environ, cwd=pkg.path)
+        force_click_stream = (obj or {}).get("force_click_stream")
         if force_click_stream:
             run_options.update(stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         result = subprocess.run(  # pylint: disable=subprocess-run-check
