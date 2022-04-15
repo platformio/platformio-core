@@ -76,6 +76,9 @@ class PackageManagerInstallMixin(object):
             pkg = None
 
         if pkg:
+            # avoid RecursionError for circular_dependencies
+            self._INSTALL_HISTORY[spec] = pkg
+
             self.log.debug(
                 click.style(
                     "{name}@{version} is already installed".format(
@@ -112,9 +115,12 @@ class PackageManagerInstallMixin(object):
         )
 
         self.memcache_reset()
+        # avoid RecursionError for circular_dependencies
+        self._INSTALL_HISTORY[spec] = pkg
+
         if not skip_dependencies:
             self.install_dependencies(pkg)
-        self._INSTALL_HISTORY[spec] = pkg
+
         return pkg
 
     def install_dependencies(self, pkg, print_header=True):

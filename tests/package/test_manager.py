@@ -386,6 +386,59 @@ if action == "preuninstall":
     (storage_dir / "preuninstall.flag").is_file()
 
 
+def test_install_circular_dependencies(tmp_path: Path):
+    storage_dir = tmp_path / "storage"
+    # Foo
+    pkg_dir = storage_dir / "foo"
+    pkg_dir.mkdir(parents=True)
+    (pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "Foo",
+    "version": "1.0.0",
+    "dependencies": {
+        "Bar": "*"
+    }
+}
+"""
+    )
+    # Bar
+    pkg_dir = storage_dir / "bar"
+    pkg_dir.mkdir(parents=True)
+    (pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "Bar",
+    "version": "1.0.0",
+    "dependencies": {
+        "Foo": "*"
+    }
+}
+"""
+    )
+
+    lm = LibraryPackageManager(str(storage_dir))
+    lm.set_log_level(logging.ERROR)
+    assert len(lm.get_installed()) == 2
+
+    # root library
+    pkg_dir = tmp_path / "root"
+    pkg_dir.mkdir(parents=True)
+    (pkg_dir / "library.json").write_text(
+        """
+{
+    "name": "Root",
+    "version": "1.0.0",
+    "dependencies": {
+        "Foo": "^1.0.0",
+        "Bar": "^1.0.0"
+    }
+}
+"""
+    )
+    lm.install("file://%s" % str(pkg_dir))
+
+
 def test_get_installed(isolated_pio_core, tmpdir_factory):
     storage_dir = tmpdir_factory.mktemp("storage")
     pm = ToolPackageManager(str(storage_dir))
