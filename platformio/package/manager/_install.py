@@ -64,7 +64,7 @@ class PackageManagerInstallMixin(object):
         # avoid circle dependencies
         if not self._INSTALL_HISTORY:
             self._INSTALL_HISTORY = {}
-        if spec in self._INSTALL_HISTORY:
+        if not force and spec in self._INSTALL_HISTORY:
             return self._INSTALL_HISTORY[spec]
 
         # check if package is already installed

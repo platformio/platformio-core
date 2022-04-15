@@ -19,7 +19,7 @@ class SendOnEnter(DeviceMonitorFilter):
     NAME = "send_on_enter"
 
     def __init__(self, *args, **kwargs):
-        super(SendOnEnter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._buffer = ""
 
         if self.options.get("eol") == "CR":

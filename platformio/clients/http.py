@@ -28,7 +28,7 @@ from platformio.exception import PlatformioException, UserSideException
 
 class HTTPClientError(PlatformioException):
     def __init__(self, message, response=None):
-        super(HTTPClientError, self).__init__()
+        super().__init__()
         self.message = message
         self.response = response
 
@@ -47,16 +47,14 @@ class InternetIsOffline(UserSideException):
 
 class EndpointSession(requests.Session):
     def __init__(self, base_url, *args, **kwargs):
-        super(EndpointSession, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.base_url = base_url
 
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
     ):
         # print(self.base_url, method, url, args, kwargs)
-        return super(EndpointSession, self).request(
-            method, urljoin(self.base_url, url), *args, **kwargs
-        )
+        return super().request(method, urljoin(self.base_url, url), *args, **kwargs)
 
 
 class EndpointSessionIterator(object):

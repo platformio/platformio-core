@@ -29,7 +29,7 @@ from platformio.project.config import ProjectConfig
 class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
         self.config = ProjectConfig.get_instance()
-        super(PlatformPackageManager, self).__init__(
+        super().__init__(
             PackageType.PLATFORM,
             package_dir or self.config.get("platformio", "platforms_dir"),
         )
@@ -47,16 +47,14 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         project_targets=None,
     ):
         already_installed = self.get_package(spec)
-        pkg = super(PlatformPackageManager, self).install(
-            spec, force=force, skip_dependencies=True
-        )
+        pkg = super().install(spec, force=force, skip_dependencies=True)
         try:
             p = PlatformFactory.new(pkg)
             # set logging level for underlying tool manager
             p.pm.set_log_level(self.log.getEffectiveLevel())
             p.ensure_engine_compatible()
         except IncompatiblePlatform as e:
-            super(PlatformPackageManager, self).uninstall(pkg, skip_dependencies=True)
+            super().uninstall(pkg, skip_dependencies=True)
             raise e
         if project_env:
             p.configure_project_packages(project_env, project_targets)
@@ -79,9 +77,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             p.configure_project_packages(project_env)
         if not skip_dependencies:
             p.uninstall_packages()
-        assert super(PlatformPackageManager, self).uninstall(
-            pkg, skip_dependencies=True
-        )
+        assert super().uninstall(pkg, skip_dependencies=True)
         p.on_uninstalled()
         return pkg
 
@@ -95,7 +91,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
         pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
-        pkg = super(PlatformPackageManager, self).update(
+        pkg = super().update(
             from_spec,
             to_spec,
         )

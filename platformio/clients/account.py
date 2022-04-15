@@ -40,7 +40,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
     def __init__(self):
-        super(AccountClient, self).__init__(__accounts_api__)
+        super().__init__(__accounts_api__)
 
     @staticmethod
     def get_refresh_token():
@@ -63,7 +63,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
 
     def fetch_json_data(self, *args, **kwargs):
         try:
-            return super(AccountClient, self).fetch_json_data(*args, **kwargs)
+            return super().fetch_json_data(*args, **kwargs)
         except HTTPClientError as exc:
             raise AccountError(exc) from exc
 

@@ -22,7 +22,7 @@ class PlatformioException(Exception):
             # pylint: disable=not-an-iterable
             return self.MESSAGE.format(*self.args)
 
-        return super(PlatformioException, self).__str__()
+        return super().__str__()
 
 
 class ReturnErrorCode(PlatformioException):

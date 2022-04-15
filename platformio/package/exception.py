@@ -34,7 +34,7 @@ class ManifestParserError(ManifestException):
 
 class ManifestValidationError(ManifestException):
     def __init__(self, messages, data, valid_data):
-        super(ManifestValidationError, self).__init__()
+        super().__init__()
         self.messages = messages
         self.data = data
         self.valid_data = valid_data

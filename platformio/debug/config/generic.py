@@ -34,5 +34,5 @@ $INIT_BREAK
 """
 
     def __init__(self, *args, **kwargs):
-        super(GenericDebugConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.port = ":3333"

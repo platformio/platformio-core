@@ -27,7 +27,7 @@ from platformio.compat import IS_WINDOWS
 
 class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-attributes
     def __init__(self, *args, **kwargs):
-        super(PvsStudioCheckTool, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._tmp_dir = tempfile.mkdtemp(prefix="piocheck")
         self._tmp_preprocessed_file = self._generate_tmp_file_path() + ".i"
         self._tmp_output_file = self._generate_tmp_file_path() + ".pvs"
@@ -208,7 +208,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             self._bad_input = True
 
     def clean_up(self):
-        super(PvsStudioCheckTool, self).clean_up()
+        super().clean_up()
         if os.path.isdir(self._tmp_dir):
             shutil.rmtree(self._tmp_dir)
 

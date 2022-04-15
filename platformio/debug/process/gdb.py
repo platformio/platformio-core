@@ -29,12 +29,12 @@ class GDBClientProcess(DebugClientProcess):
     INIT_COMPLETED_BANNER = "PlatformIO: Initialization completed"
 
     def __init__(self, *args, **kwargs):
-        super(GDBClientProcess, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._target_is_running = False
         self._errors_buffer = b""
 
     async def run(self, extra_args):  # pylint: disable=arguments-differ
-        await super(GDBClientProcess, self).run()
+        await super().run()
 
         self.generate_init_script(os.path.join(self.working_dir, self.PIO_SRC_NAME))
         gdb_path = self.debug_config.client_executable_path or "gdb"
@@ -109,7 +109,7 @@ class GDBClientProcess(DebugClientProcess):
             fp.write("\n".join(self.debug_config.reveal_patterns(commands)))
 
     def stdin_data_received(self, data):
-        super(GDBClientProcess, self).stdin_data_received(data)
+        super().stdin_data_received(data)
         if b"-exec-run" in data:
             if self._target_is_running:
                 token, _ = data.split(b"-", 1)
@@ -127,7 +127,7 @@ class GDBClientProcess(DebugClientProcess):
         self.transport.get_pipe_transport(0).write(data)
 
     def stdout_data_received(self, data):
-        super(GDBClientProcess, self).stdout_data_received(data)
+        super().stdout_data_received(data)
         self._handle_error(data)
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
@@ -170,7 +170,7 @@ class GDBClientProcess(DebugClientProcess):
         self._target_is_running = True
 
     def stderr_data_received(self, data):
-        super(GDBClientProcess, self).stderr_data_received(data)
+        super().stderr_data_received(data)
         self._handle_error(data)
 
     def _handle_error(self, data):

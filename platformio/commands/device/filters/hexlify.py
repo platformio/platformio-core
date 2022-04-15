@@ -21,7 +21,7 @@ class Hexlify(DeviceMonitorFilter):
     NAME = "hexlify"
 
     def __init__(self, *args, **kwargs):
-        super(Hexlify, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._counter = 0
 
     def rx(self, text):

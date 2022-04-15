@@ -23,7 +23,7 @@ class LogToFile(DeviceMonitorFilter):
     NAME = "log2file"
 
     def __init__(self, *args, **kwargs):
-        super(LogToFile, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._log_fp = None
 
     def __call__(self):

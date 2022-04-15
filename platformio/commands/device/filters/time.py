@@ -21,7 +21,7 @@ class Timestamp(DeviceMonitorFilter):
     NAME = "time"
 
     def __init__(self, *args, **kwargs):
-        super(Timestamp, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._line_started = False
 
     def rx(self, text):

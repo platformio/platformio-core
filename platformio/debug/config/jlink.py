@@ -38,11 +38,9 @@ $INIT_BREAK
 """
 
     def __init__(self, *args, **kwargs):
-        super(JlinkDebugConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.port = ":2331"
 
     @property
     def server_ready_pattern(self):
-        return super(JlinkDebugConfig, self).server_ready_pattern or (
-            "Waiting for GDB connection"
-        )
+        return super().server_ready_pattern or ("Waiting for GDB connection")

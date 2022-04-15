@@ -26,7 +26,7 @@ class AsyncSession(requests.Session):
     async def request(  # pylint: disable=signature-differs,invalid-overridden-method
         self, *args, **kwargs
     ):
-        func = super(AsyncSession, self).request
+        func = super().request
         return await run_in_threadpool(func, *args, **kwargs)
 
 

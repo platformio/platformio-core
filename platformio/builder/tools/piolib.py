@@ -632,7 +632,7 @@ class MbedLibBuilder(LibBuilderBase):
 
     def process_extra_options(self):
         self._process_mbed_lib_confs()
-        return super(MbedLibBuilder, self).process_extra_options()
+        return super().process_extra_options()
 
     def _process_mbed_lib_confs(self):
         mbed_lib_paths = [
@@ -851,7 +851,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
     def __init__(self, env, *args, **kwargs):
         # backup original value, will be reset in base.__init__
         project_src_filter = env.get("SRC_FILTER")
-        super(ProjectAsLibBuilder, self).__init__(env, *args, **kwargs)
+        super().__init__(env, *args, **kwargs)
         self.env["SRC_FILTER"] = project_src_filter
 
     @property

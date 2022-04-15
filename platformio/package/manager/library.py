@@ -24,7 +24,7 @@ from platformio.project.config import ProjectConfig
 
 class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
-        super(LibraryPackageManager, self).__init__(
+        super().__init__(
             PackageType.LIBRARY,
             package_dir
             or ProjectConfig.get_instance().get("platformio", "globallib_dir"),
@@ -36,7 +36,7 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
     def find_pkg_root(self, path, spec):
         try:
-            return super(LibraryPackageManager, self).find_pkg_root(path, spec)
+            return super().find_pkg_root(path, spec)
         except MissingPackageManifestError:
             pass
         assert isinstance(spec, PackageSpec)
@@ -86,5 +86,5 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         if not any(not_builtin_conds):
             not_builtin_conds.append(not is_builtin_lib(spec.name))
         if any(not_builtin_conds):
-            return super(LibraryPackageManager, self).install_dependency(dependency)
+            return super().install_dependency(dependency)
         return None

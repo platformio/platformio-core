@@ -91,7 +91,7 @@ class PackageOutdatedResult(object):
             and not isinstance(value, semantic_version.Version)
         ):
             value = cast_version_to_semver(str(value))
-        return super(PackageOutdatedResult, self).__setattr__(name, value)
+        return super().__setattr__(name, value)
 
     @property
     def update_increment_type(self):

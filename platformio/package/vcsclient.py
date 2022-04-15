@@ -131,7 +131,7 @@ class GitClient(VCSClientBase):
 
     def __init__(self, *args, **kwargs):
         self.configure()
-        super(GitClient, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def configure(cls):

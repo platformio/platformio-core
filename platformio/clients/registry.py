@@ -21,7 +21,7 @@ from platformio.clients.http import HTTPClient, HTTPClientError
 
 class RegistryClient(HTTPClient):
     def __init__(self):
-        super(RegistryClient, self).__init__(__registry_api__)
+        super().__init__(__registry_api__)
 
     @staticmethod
     def allowed_private_packages():

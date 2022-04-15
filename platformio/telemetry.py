@@ -64,7 +64,7 @@ class MeasurementProtocol(TelemetryBase):
     }
 
     def __init__(self):
-        super(MeasurementProtocol, self).__init__()
+        super().__init__()
         self["v"] = 1
         self["tid"] = self.TID
         self["cid"] = app.get_cid()
@@ -82,12 +82,12 @@ class MeasurementProtocol(TelemetryBase):
     def __getitem__(self, name):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        return super(MeasurementProtocol, self).__getitem__(name)
+        return super().__getitem__(name)
 
     def __setitem__(self, name, value):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        super(MeasurementProtocol, self).__setitem__(name, value)
+        super().__setitem__(name, value)
 
     def _prefill_appinfo(self):
         self["av"] = __version__
