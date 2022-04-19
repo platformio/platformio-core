@@ -21,7 +21,7 @@ import re
 import click
 
 from platformio import fs
-from platformio.compat import string_types
+from platformio.compat import MISSING, string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
@@ -36,9 +36,6 @@ CONFIG_HEADER = """
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
 """
-
-
-MISSING = object()
 
 
 class ProjectConfigBase(object):

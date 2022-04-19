@@ -14,6 +14,7 @@
 
 # pylint: disable=unused-import,no-name-in-module
 
+import importlib.util
 import inspect
 import locale
 import sys
@@ -32,6 +33,7 @@ PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
 IS_CYGWIN = sys.platform.startswith("cygwin")
 IS_WINDOWS = WINDOWS = sys.platform.startswith("win")
 IS_MACOS = sys.platform.startswith("darwin")
+MISSING = object()
 string_types = (str,)
 
 
@@ -56,8 +58,6 @@ def hashlib_encode_data(data):
 
 
 def load_python_module(name, pathname):
-    import importlib.util  # pylint: disable=import-outside-toplevel
-
     spec = importlib.util.spec_from_file_location(name, pathname)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

@@ -14,7 +14,8 @@
 
 from __future__ import absolute_import
 
-from platformio.project.config import MISSING, ProjectConfig, ProjectOptions
+from platformio.compat import MISSING
+from platformio.project.config import ProjectConfig, ProjectOptions
 
 
 def GetProjectConfig(env):
