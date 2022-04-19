@@ -19,6 +19,7 @@ import sys
 
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import fs, util
 from platformio.compat import IS_MACOS, IS_WINDOWS
@@ -32,10 +33,15 @@ from platformio.project.config import ProjectOptions
 
 
 @util.memoized()
-def PioPlatform(env):
+def _PioPlatform():
+    env = DefaultEnvironment()
     p = PlatformFactory.new(os.path.dirname(env["PLATFORM_MANIFEST"]))
     p.configure_project_packages(env["PIOENV"], COMMAND_LINE_TARGETS)
     return p
+
+
+def PioPlatform(_):
+    return _PioPlatform()
 
 
 def BoardConfig(env, board=None):
