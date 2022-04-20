@@ -23,7 +23,7 @@ class DebugConfigFactory(object):
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_\-]+", "", name, flags=re.I)
-        return "%sDebugConfig" % name.lower().title()
+        return "%sDebugConfig" % name.lower().capitalize()
 
     @classmethod
     def new(cls, platform, project_config, env_name):

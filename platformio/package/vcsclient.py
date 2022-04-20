@@ -47,7 +47,7 @@ class VCSClientFactory(object):
         if not type_:
             raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
         try:
-            obj = getattr(sys.modules[__name__], "%sClient" % type_.title())(
+            obj = getattr(sys.modules[__name__], "%sClient" % type_.capitalize())(
                 src_dir, remote_url, tag, silent
             )
             assert isinstance(obj, VCSClientBase)

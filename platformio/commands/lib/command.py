@@ -466,9 +466,9 @@ def lib_show(library, json_output):
         if key not in lib or not lib[key]:
             continue
         if isinstance(lib[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(lib[key])))
+            click.echo("%s: %s" % (key.capitalize(), ", ".join(lib[key])))
         else:
-            click.echo("%s: %s" % (key.title(), lib[key]))
+            click.echo("%s: %s" % (key.capitalize(), lib[key]))
 
     blocks = []
 
@@ -622,9 +622,9 @@ def print_lib_item(item):
         if key not in item or not item[key]:
             continue
         if isinstance(item[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+            click.echo("%s: %s" % (key.capitalize(), ", ".join(item[key])))
         else:
-            click.echo("%s: %s" % (key.title(), item[key]))
+            click.echo("%s: %s" % (key.capitalize(), item[key]))
 
     for key in ("frameworks", "platforms"):
         if key not in item:
