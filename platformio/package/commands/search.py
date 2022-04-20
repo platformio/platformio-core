@@ -68,7 +68,7 @@ def print_search_item(item):
             item["type"].capitalize()
             if item["tier"] == "community"
             else click.style(
-                ("%s %s" % (item["tier"], item["type"])).capitalize(), bold=True
+                ("%s %s" % (item["tier"], item["type"])).title(), bold=True
             ),
             item["version"]["name"],
             util.parse_datetime(item["version"]["released_at"]).strftime("%c"),
