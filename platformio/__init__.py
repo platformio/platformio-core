@@ -38,9 +38,9 @@ __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-present PlatformIO Labs"
 
 __accounts_api__ = "https://api.accounts.platformio.org"
-__registry_api__ = [
-    "https://api.registry.platformio.org",
-    "https://api.registry.ns1.platformio.org",
+__registry_mirror_hosts__ = [
+    "registry.platformio.org",
+    "registry.nm1.platformio.org",
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
@@ -60,5 +60,4 @@ __check_internet_hosts__ = [
     "185.199.110.153",  # Github.com
     "88.198.170.159",  # platformio.org
     "github.com",
-    "platformio.org",
-]
+] + __registry_mirror_hosts__

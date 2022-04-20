@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio import __registry_api__, fs
+from platformio import __registry_mirror_hosts__, fs
 from platformio.clients.account import AccountClient, AccountError
 from platformio.clients.http import HTTPClient, HTTPClientError
 
@@ -21,7 +21,8 @@ from platformio.clients.http import HTTPClient, HTTPClientError
 
 class RegistryClient(HTTPClient):
     def __init__(self):
-        super().__init__(__registry_api__)
+        endpoints = [f"https://api.{host}" for host in __registry_mirror_hosts__]
+        super().__init__(endpoints)
 
     @staticmethod
     def allowed_private_packages():
@@ -102,6 +103,7 @@ class RegistryClient(HTTPClient):
             "get",
             "/v3/resources",
             params={"owner": owner} if owner else None,
+            x_cache_valid="1h",
             x_with_authorization=True,
         )
 

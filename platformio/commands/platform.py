@@ -18,7 +18,6 @@ import os
 
 import click
 
-from platformio.cache import cleanup_content_cache
 from platformio.commands.boards import print_boards
 from platformio.exception import UserSideException
 from platformio.package.exception import UnknownPackageError
@@ -312,9 +311,6 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
                 )
             result.append(data)
         return click.echo(json.dumps(result))
-
-    # cleanup cached board and platform lists
-    cleanup_content_cache("http")
 
     for platform in platforms:
         click.echo(

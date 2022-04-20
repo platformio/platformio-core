@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 import click
 
+from platformio import __registry_mirror_hosts__
 from platformio.clients.http import HTTPClient
 from platformio.clients.registry import RegistryClient
 from platformio.package.exception import UnknownPackageError
@@ -36,10 +37,6 @@ class RegistryFileMirrorIterator(object):
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
-
-    def next(self):
-        """For Python 2 compatibility"""
-        return self.__next__()
 
     def __next__(self):
         http = self.get_http_client()
@@ -68,8 +65,13 @@ class RegistryFileMirrorIterator(object):
 
     def get_http_client(self):
         if self._mirror not in RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES:
+            endpoints = [self._mirror]
+            for host in __registry_mirror_hosts__:
+                endpoint = f"https://dl.{host}"
+                if endpoint not in endpoints:
+                    endpoints.append(endpoint)
             RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror] = HTTPClient(
-                self._mirror
+                endpoints
             )
         return RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror]
 

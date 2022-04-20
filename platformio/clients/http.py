@@ -73,10 +73,6 @@ class EndpointSessionIterator(object):
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
 
-    def next(self):
-        """For Python 2 compatibility"""
-        return self.__next__()
-
     def __next__(self):
         base_url = next(self.endpoints_iter)
         session = EndpointSession(base_url)
@@ -143,7 +139,7 @@ class HTTPClient(object):
                     raise HTTPClientError(str(e))
 
     def fetch_json_data(self, method, path, **kwargs):
-        if method != "get":
+        if method not in ("get", "head", "options"):
             cleanup_content_cache("http")
         cache_valid = kwargs.pop("x_cache_valid") if "x_cache_valid" in kwargs else None
         if not cache_valid:
