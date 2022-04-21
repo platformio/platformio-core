@@ -88,7 +88,8 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
             for stage in ("build", "upload", "run"):
                 getattr(self, f"stage_{stage}")()
         except Exception as exc:  # pylint: disable=broad-except
-            click.secho(str(exc), fg="red", err=True)
+            if str(exc) != "1":  # from returncode
+                click.secho(str(exc), fg="red", err=True)
             self.test_suite.on_error(exc)
         finally:
             self.test_suite.on_finish()

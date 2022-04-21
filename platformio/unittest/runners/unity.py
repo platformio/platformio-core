@@ -56,7 +56,7 @@ void unityOutputChar(unsigned int);
 void unityOutputFlush();
 void unityOutputComplete();
 
-#define UNITY_OUTPUT_START()    unityOutputStart($baudrate)
+#define UNITY_OUTPUT_START()    unityOutputStart((unsigned int) $baudrate)
 #define UNITY_OUTPUT_CHAR(a)    unityOutputChar(a)
 #define UNITY_OUTPUT_FLUSH()    unityOutputFlush()
 #define UNITY_OUTPUT_COMPLETE() unityOutputComplete()
@@ -182,7 +182,9 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         if not self.platform.is_embedded():
             return self.UNITY_FRAMEWORK_CONFIG["native"]
         if (
-            self.project_config.get(f"env:{self.test_suite.env_name}", "test_transport")
+            self.project_config.get(
+                f"env:{self.test_suite.env_name}", "test_transport", None
+            )
             == "custom"
         ):
             framework = "legacy_custom_transport"
