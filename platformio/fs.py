@@ -153,7 +153,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     def _find_candidates(pattern):
         candidates = set()
         for item in glob.glob(
-            os.path.join(glob.escape(src_dir), pattern), recursive=followlinks
+            os.path.join(glob.escape(src_dir), pattern), recursive=True
         ):
             if not os.path.isdir(item):
                 _add_candidate(candidates, item, src_dir)
