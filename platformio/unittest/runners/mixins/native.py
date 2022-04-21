@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import os
+import signal
 
 from platformio import proc
+from platformio.unittest.exception import UnitTestError
 
 
 class TestRunnerNativeMixin:
@@ -25,5 +27,16 @@ class TestRunnerNativeMixin:
             stdout=proc.LineBufferedAsyncPipe(self.on_run_output),
             stderr=proc.LineBufferedAsyncPipe(self.on_run_output),
         )
-        assert "returncode" in result
-        return result["returncode"] == 0
+        if result["returncode"] == 0:
+            return True
+        try:
+            sig = signal.Signals(abs(result["returncode"]))
+            try:
+                signal_description = signal.strsignal(sig)
+            except AttributeError:
+                signal_description = ""
+            raise UnitTestError(
+                f"Program received signal {sig.name} ({signal_description})"
+            )
+        except ValueError:
+            raise UnitTestError("Program errored with %d code" % result["returncode"])

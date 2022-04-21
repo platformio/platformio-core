@@ -40,6 +40,10 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
   - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
   - Fixed an issue when manually removed dependencies from the `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file were not uninstalled from the storage (`issue #3076 <https://github.com/platformio/platformio-core/issues/3076>`_)
 
+* **Unit Testing**
+
+  - Provide more information when the native program crashed on a host (errored with a negative return code) (`issue #3429 <https://github.com/platformio/platformio-core/issues/3429>`_)
+
 * **Static Code Analysis**
 
   - Added support for the custom `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ configuration file (`issue #4186 <https://github.com/platformio/platformio-core/issues/4186>`_)

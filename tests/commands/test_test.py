@@ -71,25 +71,52 @@ int main() {
         unittest_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
-
-    test_dir.join("unittest_transport.h").write(
-        """
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void unittest_uart_begin(){}
-void unittest_uart_putchar(char c){}
-void unittest_uart_flush(){}
-void unittest_uart_end(){}
-
-#ifdef __cplusplus
-}
-#endif
-"""
-    )
     validate_cliresult(result)
     assert all(f in result.output for f in ("setUp called", "tearDown called"))
+
+
+def test_crashed_program(clirunner, tmpdir):
+    project_dir = tmpdir.mkdir("project")
+    project_dir.join("platformio.ini").write(
+        """
+[env:native]
+platform = native
+"""
+    )
+    test_dir = project_dir.mkdir("test")
+    test_dir.join("test_main.c").write(
+        """
+#include <stdio.h>
+#include <unity.h>
+
+void setUp(){
+    printf("setUp called");
+}
+void tearDown(){
+    printf("tearDown called");
+}
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, 1);
+}
+
+int main(int argc, char *argv[]) {
+    printf("Address boundary error is %s", argv[-1]);
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+    return 0;
+}
+"""
+    )
+    result = clirunner.invoke(
+        unittest_cmd,
+        ["-d", str(project_dir), "-e", "native"],
+    )
+    assert result.exit_code != 0
+    assert any(
+        s in result.output for s in ("Program received signal", "Program errored with")
+    )
 
 
 def test_legacy_unity_custom_transport(clirunner, validate_cliresult, tmpdir):
