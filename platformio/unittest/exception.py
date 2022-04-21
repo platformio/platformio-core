@@ -12,19 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-from platformio import exception
+from platformio.exception import PlatformioException, UserSideException
 
 
-def get_test_names(config):
-    test_dir = config.get("platformio", "test_dir")
-    if not os.path.isdir(test_dir):
-        raise exception.TestDirNotExists(test_dir)
-    names = []
-    for item in sorted(os.listdir(test_dir)):
-        if os.path.isdir(os.path.join(test_dir, item)):
-            names.append(item)
-    if not names:
-        names = ["*"]
-    return names
+class UnitTestError(PlatformioException):
+    pass
+
+
+class TestDirNotExistsError(UnitTestError, UserSideException):
+
+    MESSAGE = (
+        "A test folder '{0}' does not exist.\nPlease create 'test' "
+        "directory in the project root and put a test set.\n"
+        "More details about Unit "
+        "Testing: https://docs.platformio.org/page/plus/"
+        "unit-testing.html"
+    )
+
+
+class UnitTestSuiteError(UnitTestError):
+    pass

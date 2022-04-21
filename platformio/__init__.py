@@ -49,7 +49,6 @@ __default_requests_timeout__ = (10, None)  # (connect, read)
 __core_packages__ = {
     "contrib-piohome": "~3.4.1",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-    "tool-unity": "~1.20500.0",
     "tool-scons": "~4.40300.0",
     "tool-cppcheck": "~1.260.0",
     "tool-clangtidy": "~1.120001.0",

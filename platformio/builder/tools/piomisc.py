@@ -117,22 +117,6 @@ def ConfigureDebugTarget(env):
         env.AppendUnique(ASFLAGS=optimization_flags, LINKFLAGS=optimization_flags)
 
 
-def ConfigureTestTarget(env):
-    env.Append(
-        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
-        CPPPATH=[os.path.join("$BUILD_DIR", "UnityTestLib")],
-    )
-    unitylib = env.BuildLibrary(
-        os.path.join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity")
-    )
-    env.Prepend(LIBS=[unitylib])
-
-    src_filter = ["+<*.cpp>", "+<*.c>"]
-    if "PIOTEST_RUNNING_NAME" in env:
-        src_filter.append("+<%s%s>" % (env["PIOTEST_RUNNING_NAME"], os.path.sep))
-    env.Replace(PIOTEST_SRC_FILTER=src_filter)
-
-
 def GetExtraScripts(env, scope):
     items = []
     for item in env.GetProjectOption("extra_scripts", []):
@@ -146,14 +130,12 @@ def GetExtraScripts(env, scope):
         return [os.path.abspath(env.subst(item)) for item in items]
 
 
-def exists(_):
-    return True
-
-
 def generate(env):
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
-    env.AddMethod(ConfigureDebugFlags)
-    env.AddMethod(ConfigureTestTarget)
+    env.AddMethod(ConfigureDebugTarget)
     env.AddMethod(GetExtraScripts)
-    return env
+
+
+def exists(_):
+    return True

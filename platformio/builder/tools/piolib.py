@@ -27,7 +27,6 @@ import sys
 import click
 import SCons.Scanner  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
@@ -57,9 +56,9 @@ class LibBuilderFactory(object):
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
             common_frameworks = set(env.get("PIOFRAMEWORK", [])) & set(used_frameworks)
             if common_frameworks:
-                clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
+                clsname = "%sLibBuilder" % list(common_frameworks)[0].capitalize()
             elif used_frameworks:
-                clsname = "%sLibBuilder" % used_frameworks[0].title()
+                clsname = "%sLibBuilder" % used_frameworks[0].capitalize()
 
         obj = getattr(sys.modules[__name__], clsname)(env, path, verbose=verbose)
 
@@ -877,7 +876,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # project files
         items = LibBuilderBase.get_search_files(self)
         # test files
-        if "__test" in COMMAND_LINE_TARGETS:
+        if "test" in self.env.GetBuildType():
             items.extend(
                 [
                     os.path.join("$PROJECT_TEST_DIR", item)
@@ -1106,7 +1105,7 @@ def ConfigureProjectLibBuilder(env):
             click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 click.echo(
-                    "(License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
+                    " (License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
                 )
                 if pkg.metadata and pkg.metadata.spec.external:
                     click.echo("URI: %s, " % pkg.metadata.spec.uri, nl=False)

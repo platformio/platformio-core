@@ -403,7 +403,7 @@ ProjectOptions = OrderedDict(
                 group="build",
                 name="build_type",
                 description="Project build configuration",
-                type=click.Choice(["release", "debug"]),
+                type=click.Choice(["release", "test", "debug"]),
                 default="release",
             ),
             ConfigEnvOption(
@@ -648,6 +648,13 @@ ProjectOptions = OrderedDict(
             # Test
             ConfigEnvOption(
                 group="test",
+                name="test_framework",
+                description="A unit testing framework",
+                type=click.Choice(["unity", "custom"]),
+                default="unity",
+            ),
+            ConfigEnvOption(
+                group="test",
                 name="test_filter",
                 description="Process tests where the name matches specified patterns",
                 multiple=True,
@@ -668,11 +675,7 @@ ProjectOptions = OrderedDict(
                 name="test_speed",
                 description="A connection speed (baud rate) to communicate with a target device",
                 type=click.INT,
-            ),
-            ConfigEnvOption(
-                group="test",
-                name="test_transport",
-                description="A transport to communicate with a target device",
+                default=115200,
             ),
             ConfigEnvOption(
                 group="test",

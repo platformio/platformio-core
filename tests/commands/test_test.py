@@ -13,15 +13,13 @@
 # limitations under the License.
 
 import os
+import subprocess
 
-import pytest
-
-from platformio import proc
-from platformio.commands.test.command import cli as cmd_test
+from platformio.unittest.command import unittest_cmd
 
 
-def test_local_env():
-    result = proc.exec_command(
+def test_unity_calculator():
+    result = subprocess.run(  # pylint: disable=subprocess-run-check
         [
             "platformio",
             "test",
@@ -29,77 +27,22 @@ def test_local_env():
             os.path.join("examples", "unit-testing", "calculator"),
             "-e",
             "native",
-        ]
+        ],
+        capture_output=True,
+        text=True,
     )
-    if result["returncode"] != 1:
-        pytest.fail(str(result))
-    # pylint: disable=unsupported-membership-test
-    assert all(s in result["err"] for s in ("PASSED", "FAILED")), result["out"]
+    assert result.returncode != 0
+    assert all(s in str(result) for s in ("PASSED", "FAILED"))
 
 
-def test_multiple_env_build(clirunner, validate_cliresult, tmpdir):
-
+def test_unity_setup_teardown(clirunner, validate_cliresult, tmpdir):
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(
         """
-[env:teensy31]
-platform = teensy
-framework = arduino
-board = teensy31
-
 [env:native]
 platform = native
-
-[env:espressif8266]
-platform = espressif8266
-framework = arduino
-board = nodemcuv2
 """
     )
-
-    project_dir.mkdir("test").join("test_main.cpp").write(
-        """
-#include <unity.h>
-#ifdef ARDUINO
-void setup()
-#else
-int main()
-#endif
-{
-    UNITY_BEGIN();
-    UNITY_END();
-
-}
-void loop() {}
-"""
-    )
-
-    result = clirunner.invoke(
-        cmd_test,
-        ["-d", str(project_dir), "--without-testing", "--without-uploading"],
-    )
-
-    validate_cliresult(result)
-    assert "Multiple ways to build" not in result.output
-
-
-def test_setup_teardown_are_compilable(clirunner, validate_cliresult, tmpdir):
-
-    project_dir = tmpdir.mkdir("project")
-    project_dir.join("platformio.ini").write(
-        """
-[env:embedded]
-platform = ststm32
-framework = stm32cube
-board = nucleo_f401re
-test_transport = custom
-
-[env:native]
-platform = native
-
-"""
-    )
-
     test_dir = project_dir.mkdir("test")
     test_dir.join("test_main.c").write(
         """
@@ -124,9 +67,8 @@ int main() {
 }
 """
     )
-
-    native_result = clirunner.invoke(
-        cmd_test,
+    result = clirunner.invoke(
+        unittest_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
 
@@ -146,25 +88,61 @@ void unittest_uart_end(){}
 #endif
 """
     )
+    validate_cliresult(result)
+    assert all(f in result.output for f in ("setUp called", "tearDown called"))
 
-    embedded_result = clirunner.invoke(
-        cmd_test,
+
+def test_legacy_unity_custom_transport(clirunner, validate_cliresult, tmpdir):
+    project_dir = tmpdir.mkdir("project")
+    project_dir.join("platformio.ini").write(
+        """
+[env:embedded]
+platform = ststm32
+framework = stm32cube
+board = nucleo_f401re
+test_transport = custom
+"""
+    )
+
+    test_dir = project_dir.mkdir("test")
+    test_dir.join("test_main.c").write(
+        """
+#include <unity.h>
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, 1);
+}
+
+int main() {
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+}
+"""
+    )
+    test_dir.join("unittest_transport.h").write(
+        """
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void unittest_uart_begin(){}
+void unittest_uart_putchar(char c){}
+void unittest_uart_flush(){}
+void unittest_uart_end(){}
+
+#ifdef __cplusplus
+}
+#endif
+"""
+    )
+    result = clirunner.invoke(
+        unittest_cmd,
         [
             "-d",
             str(project_dir),
             "--without-testing",
             "--without-uploading",
-            "-e",
-            "embedded",
         ],
     )
-
-    validate_cliresult(native_result)
-    validate_cliresult(embedded_result)
-
-    print("native_result.output", native_result.output)
-    print("embedded_result.output", embedded_result.output)
-    assert all(f in native_result.output for f in ("setUp called", "tearDown called"))
-    assert all(
-        "[FAILED]" not in out for out in (native_result.output, embedded_result.output)
-    )
+    validate_cliresult(result)

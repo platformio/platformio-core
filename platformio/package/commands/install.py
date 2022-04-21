@@ -26,6 +26,8 @@ from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
+from platformio.unittest.result import TestSuite
+from platformio.unittest.runners.factory import TestRunnerFactory
 
 
 @click.command(
@@ -211,7 +213,13 @@ def _install_project_env_libraries(project_env, options):
     if options.get("silent"):
         env_lm.set_log_level(logging.WARN)
         private_lm.set_log_level(logging.WARN)
-    for library in config.get(f"env:{project_env}", "lib_deps"):
+
+    lib_deps = config.get(f"env:{project_env}", "lib_deps")
+    if "__test" in options.get("project_targets", []):
+        test_runner = TestRunnerFactory.new(TestSuite(project_env, "*"), config)
+        lib_deps.extend(test_runner.EXTRA_LIB_DEPS or [])
+
+    for library in lib_deps:
         spec = PackageSpec(library)
         # skip built-in dependencies
         if not spec.external and not spec.owner:
@@ -223,9 +231,11 @@ def _install_project_env_libraries(project_env, options):
             skip_dependencies=options.get("skip_dependencies"),
             force=options.get("force"),
         )
+
     # install dependencies from the private libraries
     for pkg in private_lm.get_installed():
         _install_project_private_library_deps(pkg, private_lm, env_lm, options)
+
     return not already_up_to_date
 
 

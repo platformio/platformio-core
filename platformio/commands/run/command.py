@@ -25,9 +25,9 @@ from platformio import app, exception, fs, util
 from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.commands.run.processor import EnvironmentProcessor
-from platformio.commands.test.processor import CTX_META_TEST_IS_RUNNING
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, load_project_ide_data
+from platformio.unittest.runners.base import CTX_META_TEST_IS_RUNNING
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 

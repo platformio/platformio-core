@@ -47,14 +47,16 @@ def scons_patched_match_splitext(path, suffixes=None):
 
 
 def GetBuildType(env):
-    return (
-        "debug"
-        if (
-            set(["__debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
-            or env.GetProjectOption("build_type") == "debug"
-        )
-        else "release"
-    )
+    modes = []
+    if (
+        set(["__debug", "sizedata"])  # sizedata = for memory inspection
+        & set(COMMAND_LINE_TARGETS)
+        or env.GetProjectOption("build_type") == "debug"
+    ):
+        modes.append("debug")
+    if "__test" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "test":
+        modes.append("test")
+    return "+".join(modes or ["release"])
 
 
 def BuildProgram(env):
@@ -123,20 +125,19 @@ def ProcessProgramDeps(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    if env.GetBuildType() == "debug":
-        env.ConfigureDebugFlags()
+    if "debug" in env.GetBuildType():
+        env.ConfigureDebugTarget()
+    if "test" in env.GetBuildType():
+        env.ConfigureTestTarget()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
-
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.ConfigureTestTarget()
 
     if "compiledb" in COMMAND_LINE_TARGETS and env.get(
         "COMPILATIONDB_INCLUDE_TOOLCHAIN"
     ):
         for scope, includes in env.DumpIntegrationIncludes().items():
-            if scope in ("toolchain", "unity"):
+            if scope in ("toolchain",):
                 env.Append(CPPPATH=includes)
 
 
@@ -161,12 +162,13 @@ def ProcessProjectDeps(env):
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    is_test = "__test" in COMMAND_LINE_TARGETS
-    if is_test:
+    if "test" in env.GetBuildType():
         projenv.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
-    if not is_test or env.GetProjectOption("test_build_project_src"):
+    if "test" not in env.GetBuildType() or env.GetProjectOption(
+        "test_build_project_src"
+    ):
         projenv.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )

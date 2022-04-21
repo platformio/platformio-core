@@ -81,7 +81,29 @@ def debug_cmd(
             project_dir = os.getenv(name)
 
     with fs.cd(project_dir):
-        project_config = ProjectConfig.get_instance(project_conf)
+        return _debug_in_project_dir(
+            ctx,
+            project_dir,
+            project_conf,
+            environment,
+            load_mode,
+            verbose,
+            interface,
+            __unprocessed,
+        )
+
+
+def _debug_in_project_dir(
+    ctx,
+    project_dir,
+    project_conf,
+    environment,
+    load_mode,
+    verbose,
+    interface,
+    __unprocessed,
+):
+    project_config = ProjectConfig.get_instance(project_conf)
     project_config.validate(envs=[environment] if environment else None)
     env_name = environment or helpers.get_default_debug_env(project_config)
 
@@ -94,12 +116,11 @@ def debug_cmd(
     if "platform" not in env_options:
         raise ProjectEnvsNotAvailableError()
 
-    with fs.cd(project_dir):
-        debug_config = DebugConfigFactory.new(
-            PlatformFactory.new(env_options["platform"], autoinstall=True),
-            project_config,
-            env_name,
-        )
+    debug_config = DebugConfigFactory.new(
+        PlatformFactory.new(env_options["platform"], autoinstall=True),
+        project_config,
+        env_name,
+    )
 
     if "--version" in __unprocessed:
         return subprocess.run(
@@ -165,19 +186,18 @@ def debug_cmd(
     loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
 
-    with fs.cd(project_dir):
-        client = GDBClientProcess(project_dir, debug_config)
-        coro = client.run(__unprocessed)
-        try:
-            signal.signal(signal.SIGINT, signal.SIG_IGN)
-            loop.run_until_complete(coro)
-            if IS_WINDOWS:
-                client.close()
-                # an issue with `asyncio` executor and STIDIN,
-                # it cannot be closed gracefully
-                proc.force_exit()
-        finally:
+    client = GDBClientProcess(project_dir, debug_config)
+    coro = client.run(__unprocessed)
+    try:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        loop.run_until_complete(coro)
+        if IS_WINDOWS:
             client.close()
-            loop.close()
+            # an issue with `asyncio` executor and STIDIN,
+            # it cannot be closed gracefully
+            proc.force_exit()
+    finally:
+        client.close()
+        loop.close()
 
     return True

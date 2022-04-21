@@ -24,10 +24,12 @@ from platformio import util
 from platformio.commands import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.run.command import print_processing_header
-from platformio.commands.test.helpers import get_test_names
-from platformio.commands.test.processor import TestProcessorBase
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
+from platformio.unittest.command import get_test_names
+from platformio.unittest.result import TestSuite
+from platformio.unittest.runners.base import TestRunnerOptions
+from platformio.unittest.runners.factory import TestRunnerFactory
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
@@ -87,20 +89,18 @@ def predebug_project(
                 % (debug_testname, ", ".join(test_names))
             )
         print_processing_header(env_name, project_config, verbose)
-        tp = TestProcessorBase(
-            ctx,
-            debug_testname,
-            env_name,
-            dict(
-                project_config=project_config,
-                project_dir=project_dir,
+        test_runner = TestRunnerFactory.new(
+            TestSuite(env_name, debug_testname),
+            project_config,
+            TestRunnerOptions(
+                verbose=verbose,
                 without_building=False,
-                without_uploading=True,
+                without_debugging=False,
+                without_uploading=not preload,
                 without_testing=True,
-                verbose=False,
             ),
         )
-        tp.build_or_upload(["__debug", "__test"] + (["upload"] if preload else []))
+        test_runner.start(ctx)
     else:
         ctx.invoke(
             cmd_run,

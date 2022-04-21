@@ -17,41 +17,15 @@ from time import sleep
 import click
 import serial
 
-from platformio import exception, util
-from platformio.commands.test.processor import TestProcessorBase
-from platformio.platform.factory import PlatformFactory
+from platformio import util
+from platformio.exception import UserSideException
 
 
-class EmbeddedTestProcessor(TestProcessorBase):
+class TestRunnerEmbeddedMixin:
 
     SERIAL_TIMEOUT = 600
 
-    def process(self):
-        if not self.options["without_building"]:
-            self.print_progress("Building...")
-            target = ["__test"]
-            if self.options["without_uploading"]:
-                target.append("checkprogsize")
-            if not self.build_or_upload(target):
-                return False
-
-        if not self.options["without_uploading"]:
-            self.print_progress("Uploading...")
-            target = ["upload"]
-            if self.options["without_building"]:
-                target.append("nobuild")
-            else:
-                target.append("__test")
-            if not self.build_or_upload(target):
-                return False
-
-        if self.options["without_testing"]:
-            return True
-
-        self.print_progress("Testing...")
-        return self.run()
-
-    def run(self):
+    def stage_run_on_target(self):
         click.echo(
             "If you don't see any output for the first 10 secs, "
             "please reset board (press reset button)"
@@ -60,17 +34,17 @@ class EmbeddedTestProcessor(TestProcessorBase):
 
         try:
             ser = serial.Serial(
-                baudrate=self.get_baudrate(), timeout=self.SERIAL_TIMEOUT
+                baudrate=self.get_test_speed(), timeout=self.SERIAL_TIMEOUT
             )
             ser.port = self.get_test_port()
-            ser.rts = self.options["monitor_rts"]
-            ser.dtr = self.options["monitor_dtr"]
+            ser.rts = self.options.monitor_rts
+            ser.dtr = self.options.monitor_dtr
             ser.open()
         except serial.SerialException as e:
             click.secho(str(e), fg="red", err=True)
-            return False
+            return None
 
-        if not self.options["no_reset"]:
+        if not self.options.no_reset:
             ser.flushInput()
             ser.setDTR(False)
             ser.setRTS(False)
@@ -79,7 +53,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
             ser.setRTS(True)
             sleep(0.1)
 
-        while True:
+        while not self.test_suite.is_finished():
             line = ser.readline().strip()
 
             # fix non-ascii output from device
@@ -94,22 +68,19 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 continue
             if isinstance(line, bytes):
                 line = line.decode("utf8", "ignore")
-            self.on_run_out(line)
-            if all(l in line for l in ("Tests", "Failures", "Ignored")):
-                break
+            self.on_run_output(line)
         ser.close()
-        return not self._run_failed
 
     def get_test_port(self):
         # if test port is specified manually or in config
-        if self.options.get("test_port"):
-            return self.options.get("test_port")
-        if self.env_options.get("test_port"):
-            return self.env_options.get("test_port")
+        port = self.options.test_port or self.project_config.get(
+            f"env:{self.test_suite.env_name}", "test_port"
+        )
+        if port:
+            return port
 
-        assert set(["platform", "board"]) & set(self.env_options.keys())
-        p = PlatformFactory.new(self.env_options["platform"])
-        board_hwids = p.board_config(self.env_options["board"]).get("build.hwids", [])
+        board = self.project_config.get(f"env:{self.test_suite.env_name}", "board")
+        board_hwids = self.platform.board_config(board).get("build.hwids", [])
         port = None
         elapsed = 0
         while elapsed < 5 and not port:
@@ -128,7 +99,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 elapsed += 0.25
 
         if not port:
-            raise exception.PlatformioException(
+            raise UserSideException(
                 "Please specify `test_port` for environment or use "
                 "global `--test-port` option."
             )

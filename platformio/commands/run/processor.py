@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.package.commands.install import install_project_env_dependencies
 from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import UndefinedEnvPlatformError
+from platformio.unittest.runners.base import CTX_META_TEST_RUNNING_NAME
 
 # pylint: disable=too-many-instance-attributes
 

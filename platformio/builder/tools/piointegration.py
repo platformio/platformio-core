@@ -20,12 +20,11 @@ import os
 import SCons.Defaults  # pylint: disable=import-error
 import SCons.Subst  # pylint: disable=import-error
 
-from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
 def DumpIntegrationIncludes(env):
-    result = dict(build=[], compatlib=[], toolchain=[], unity=[])
+    result = dict(build=[], compatlib=[], toolchain=[])
 
     result["build"].extend(
         [
@@ -57,18 +56,6 @@ def DumpIntegrationIncludes(env):
         ]
         for g in toolchain_incglobs:
             result["toolchain"].extend([os.path.abspath(inc) for inc in glob.glob(g)])
-
-    # include Unity framework if there are tests in project
-    auto_install_unity = False
-    test_dir = env.GetProjectConfig().get("platformio", "test_dir")
-    if os.path.isdir(test_dir) and os.listdir(test_dir) != ["README"]:
-        auto_install_unity = True
-    unity_dir = get_core_package_dir(
-        "tool-unity",
-        auto_install=auto_install_unity,
-    )
-    if unity_dir:
-        result["unity"].append(unity_dir)
 
     return result
 
