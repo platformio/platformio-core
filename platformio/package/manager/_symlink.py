@@ -15,6 +15,7 @@
 import json
 import os
 
+from platformio import fs
 from platformio.package.exception import PackageException
 from platformio.package.meta import PackageItem, PackageSpec
 
@@ -27,9 +28,7 @@ class PackageManagerSymlinkMixin(object):
     @classmethod
     def resolve_symlink(cls, path):
         assert cls.is_symlink(path)
-        data = None
-        with open(path, "r", encoding="utf-8") as fp:
-            data = json.load(fp)
+        data = fs.load_json(path)
         spec = PackageSpec(**data["spec"])
         assert spec.symlink
         pkg_dir = spec.uri[10:]

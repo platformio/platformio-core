@@ -21,6 +21,7 @@ from urllib.parse import urlparse
 
 import semantic_version
 
+from platformio import fs
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
 from platformio.package.version import cast_version_to_semver
@@ -415,15 +416,14 @@ class PackageMetaData(object):
 
     @staticmethod
     def load(path):
-        with open(path, encoding="utf8") as fp:
-            data = json.load(fp)
-            if data["spec"]:
-                # legacy support for Core<5.3 packages
-                if "url" in data["spec"]:
-                    data["spec"]["uri"] = data["spec"]["url"]
-                    del data["spec"]["url"]
-                data["spec"] = PackageSpec(**data["spec"])
-            return PackageMetaData(**data)
+        data = fs.load_json(path)
+        if data["spec"]:
+            # legacy support for Core<5.3 packages
+            if "url" in data["spec"]:
+                data["spec"]["uri"] = data["spec"]["url"]
+                del data["spec"]["url"]
+            data["spec"] = PackageSpec(**data["spec"])
+        return PackageMetaData(**data)
 
 
 class PackageItem(object):

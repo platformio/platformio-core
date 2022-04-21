@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import os
 import subprocess
 from hashlib import sha1
@@ -162,6 +161,5 @@ def _load_cached_project_ide_data(project_dir, env_names):
     for name in env_names:
         if not os.path.isfile(os.path.join(build_dir, name, "idedata.json")):
             continue
-        with open(os.path.join(build_dir, name, "idedata.json"), encoding="utf8") as fp:
-            result[name] = json.load(fp)
+        result[name] = fs.load_json(os.path.join(build_dir, name, "idedata.json"))
     return result
