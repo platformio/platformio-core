@@ -1,6 +1,8 @@
 Release Notes
 =============
 
+.. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
+
 .. _release_notes_6:
 
 PlatformIO Core 6
@@ -38,11 +40,12 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
   - Ignore files according to the patterns declared in ".gitignore" when using the `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
   - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
   - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
-  - Fixed an issue when manually removed dependencies from the `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file were not uninstalled from the storage (`issue #3076 <https://github.com/platformio/platformio-core/issues/3076>`_)
+  - Fixed an issue when manually removed dependencies from the |PIOCONF| were not uninstalled from the storage (`issue #3076 <https://github.com/platformio/platformio-core/issues/3076>`_)
 
 * **Unit Testing**
 
   - Provide more information when the native program crashed on a host (errored with a negative return code) (`issue #3429 <https://github.com/platformio/platformio-core/issues/3429>`_)
+  - Fixed an issue when command line parameters ("--ignore", "--filter") do not override values defined in the |PIOCONF| (`issue #3845 <https://github.com/platformio/platformio-core/issues/3845>`_)
 
 * **Static Code Analysis**
 
@@ -64,7 +67,7 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 * **Project Configuration**
 
   - Extended `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__  with ``${this}`` pattern (`issue #3953 <https://github.com/platformio/platformio-core/issues/3953>`_)
-  - Embed environment name of the current section in the `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file using ``${this.__env__}`` pattern
+  - Embed environment name of the current section in the |PIOCONF| using ``${this.__env__}`` pattern
 
 * **Miscellaneous**
 

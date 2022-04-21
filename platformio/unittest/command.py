@@ -116,6 +116,8 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
                 # filter and ignore patterns
                 patterns = dict(filter=list(filter), ignore=list(ignore))
                 for key in patterns:
+                    if patterns[key]:  # overriden from CLI
+                        continue
                     patterns[key].extend(
                         config.get(f"env:{env_name}", f"test_{key}", [])
                     )
