@@ -217,7 +217,8 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             unity_h.write_text(
                 string.Template(self.UNITY_CONFIG_H).substitute(
                     baudrate=self.get_test_speed()
-                )
+                ),
+                encoding="utf8",
             )
         framework_config = self.get_unity_framework_config()
         unity_c = dst_dir / ("unity_config.%s" % framework_config.get("language", "c"))
@@ -225,7 +226,8 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             unity_c.write_text(
                 string.Template(self.UNITY_CONFIG_C).substitute(
                     framework_config_code=framework_config["code"]
-                )
+                ),
+                encoding="utf8",
             )
 
     def on_run_output(self, data):
