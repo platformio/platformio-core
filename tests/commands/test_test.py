@@ -102,6 +102,9 @@ void setUp(){
     my_extra_fun();
 }
 
+void tearDown(){
+}
+
 void dummy_test(void) {
     TEST_ASSERT_EQUAL(1, TEST_ONE);
 }
