@@ -51,12 +51,12 @@ extern "C"
 {
 #endif
 
-void unityOutputStart(unsigned int);
+void unityOutputStart(unsigned long);
 void unityOutputChar(unsigned int);
 void unityOutputFlush();
 void unityOutputComplete();
 
-#define UNITY_OUTPUT_START()    unityOutputStart((unsigned int) $baudrate)
+#define UNITY_OUTPUT_START()    unityOutputStart((unsigned long) $baudrate)
 #define UNITY_OUTPUT_CHAR(a)    unityOutputChar(a)
 #define UNITY_OUTPUT_FLUSH()    unityOutputFlush()
 #define UNITY_OUTPUT_COMPLETE() unityOutputComplete()
@@ -108,7 +108,7 @@ $framework_config_code
         native=dict(
             code="""
 #include <stdio.h>
-void unityOutputStart(unsigned int baudrate) { }
+void unityOutputStart(unsigned long baudrate) { }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
@@ -118,7 +118,7 @@ void unityOutputComplete(void) { }
         arduino=dict(
             code="""
 #include <Arduino.h>
-void unityOutputStart(unsigned int baudrate) { Serial.begin(baudrate); }
+void unityOutputStart(unsigned long baudrate) { Serial.begin(baudrate); }
 void unityOutputChar(unsigned int c) { Serial.write(c); }
 void unityOutputFlush(void) { Serial.flush(); }
 void unityOutputComplete(void) { Serial.end(); }
@@ -133,7 +133,7 @@ UnbufferedSerial pc(USBTX, USBRX);
 #else
 RawSerial pc(USBTX, USBRX);
 #endif
-void unityOutputStart(unsigned int baudrate) { pc.baud(baudrate); }
+void unityOutputStart(unsigned long baudrate) { pc.baud(baudrate); }
 void unityOutputChar(unsigned int c) {
 #if MBED_MAJOR_VERSION == 6
     pc.write(&c, 1);
@@ -149,7 +149,7 @@ void unityOutputComplete(void) { }
         espidf=dict(
             code="""
 #include <stdio.h>
-void unityOutputStart(unsigned int baudrate) { }
+void unityOutputStart(unsigned long baudrate) { }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
@@ -159,7 +159,7 @@ void unityOutputComplete(void) { }
         zephyr=dict(
             code="""
 #include <sys/printk.h>
-void unityOutputStart(unsigned int baudrate) { }
+void unityOutputStart(unsigned long baudrate) { }
 void unityOutputChar(unsigned int c) { printk("%c", c); }
 void unityOutputFlush(void) { }
 void unityOutputComplete(void) { }
@@ -169,7 +169,7 @@ void unityOutputComplete(void) { }
         legacy_custom_transport=dict(
             code="""
 #include <unittest_transport.h>
-void unityOutputStart(unsigned int baudrate) { unittest_uart_begin(); }
+void unityOutputStart(unsigned long baudrate) { unittest_uart_begin(); }
 void unityOutputChar(unsigned int c) { unittest_uart_putchar(c); }
 void unityOutputFlush(void) { unittest_uart_flush(); }
 void unityOutputComplete(void) { unittest_uart_end(); }

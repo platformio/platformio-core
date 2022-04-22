@@ -15,10 +15,27 @@
 import os
 import subprocess
 
+from platformio import proc
 from platformio.unittest.command import unittest_cmd
 
 
 def test_unity_calculator():
+    result = proc.exec_command(
+        [
+            "platformio",
+            "test",
+            "-d",
+            os.path.join("examples", "unit-testing", "calculator"),
+            "-e",
+            "native",
+        ]
+    )
+    assert result["returncode"] != 0
+    # pylint: disable=unsupported-membership-test
+    assert all(
+        s in (result["err"] + result["out"]) for s in ("PASSED", "FAILED")
+    ), result["out"]
+
     result = subprocess.run(  # pylint: disable=subprocess-run-check
         [
             "platformio",
