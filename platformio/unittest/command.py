@@ -171,9 +171,10 @@ def get_test_names(config):
     if not os.path.isdir(test_dir):
         raise TestDirNotExistsError(test_dir)
     names = []
-    for item in sorted(os.listdir(test_dir)):
-        if os.path.isdir(os.path.join(test_dir, item)):
-            names.append(item)
+    for root, _, __ in os.walk(test_dir):
+        if not os.path.basename(root).startswith("test_"):
+            continue
+        names.append(os.path.relpath(root, test_dir))
     if not names:
         names = ["*"]
     return names

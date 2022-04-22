@@ -13,13 +13,13 @@
 # limitations under the License.
 
 import os
-import subprocess
+from pathlib import Path
 
 from platformio import proc
 from platformio.unittest.command import unittest_cmd
 
 
-def test_unity_calculator():
+def test_calculator_example():
     result = proc.exec_command(
         [
             "platformio",
@@ -36,20 +36,90 @@ def test_unity_calculator():
         s in (result["err"] + result["out"]) for s in ("PASSED", "FAILED")
     ), result["out"]
 
-    result = subprocess.run(  # pylint: disable=subprocess-run-check
-        [
-            "platformio",
-            "test",
-            "-d",
-            os.path.join("examples", "unit-testing", "calculator"),
-            "-e",
-            "native",
-        ],
-        capture_output=True,
-        text=True,
+
+def test_nested_suites(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:native]
+platform = native
+"""
     )
-    assert result.returncode != 0
-    assert all(s in str(result) for s in ("PASSED", "FAILED"))
+    test_dir = project_dir / "test"
+
+    # non-test folder, does not start with "test_"
+    disabled_dir = test_dir / "disabled"
+    disabled_dir.mkdir(parents=True)
+    (disabled_dir / "main.c").write_text(
+        """
+#include <stdio.h>
+
+int main() {
+    printf("Disabled test suite\\n")
+}
+    """
+    )
+
+    # root
+    (test_dir / "my_extra.h").write_text(
+        """
+#ifndef MY_EXTRA_H
+#define MY_EXTRA_H
+
+#include <stdio.h>
+
+void my_extra_fun(void);
+#endif
+"""
+    )
+    (test_dir / "my_extra.c").write_text(
+        """
+#include "my_extra.h"
+
+void my_extra_fun(void) {
+    printf("Called from my_extra_fun\\n");
+}
+"""
+    )
+
+    # test suite
+    test_suite_dir = test_dir / "set" / "test_nested"
+    test_include_dir = test_suite_dir / "include"
+    test_include_dir.mkdir(parents=True)
+    (test_include_dir / "my_nested.h").write_text(
+        """
+#define TEST_ONE 1
+"""
+    )
+    (test_suite_dir / "main.c").write_text(
+        """
+#include <unity.h>
+#include <my_extra.h>
+#include <include/my_nested.h>
+
+void setUp(){
+    my_extra_fun();
+}
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, TEST_ONE);
+}
+
+int main() {
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+}
+    """
+    )
+    result = clirunner.invoke(
+        unittest_cmd,
+        ["-d", str(project_dir), "-e", "native"],
+    )
+    validate_cliresult(result)
+    assert "Called from my_extra_fun" in result.output
+    assert "Disabled test suite" not in result.output
 
 
 def test_unity_setup_teardown(clirunner, validate_cliresult, tmpdir):
