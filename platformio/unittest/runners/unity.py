@@ -73,7 +73,11 @@ void unityOutputComplete();
 #include <unity_config.h>
 
 #if !defined(UNITY_WEAK_ATTRIBUTE) && !defined(UNITY_WEAK_PRAGMA)
-#   define UNITY_WEAK_ATTRIBUTE __attribute__((weak))
+#   if defined(__GNUC__) || defined(__ghs__) /* __GNUC__ includes clang */
+#       if !(defined(__WIN32__) && defined(__clang__)) && !defined(__TMS470__)
+#           define UNITY_WEAK_ATTRIBUTE __attribute__((weak))
+#       endif
+#   endif
 #endif
 
 #ifdef __cplusplus
@@ -207,9 +211,11 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config"),
             BUILD_UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config_build"),
         )
-        env.Append(CPPPATH=["$UNITY_CONFIG_DIR"])
         self.generate_unity_extras(env.subst("$UNITY_CONFIG_DIR"))
-        env.BuildSources("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")
+        env.Append(
+            CPPPATH=["$UNITY_CONFIG_DIR"],
+            LIBS=[env.BuildLibrary("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")],
+        )
 
     def generate_unity_extras(self, dst_dir):
         dst_dir = Path(dst_dir)
