@@ -76,6 +76,12 @@ from platformio.unittest.runners.factory import TestRunnerFactory
     type=click.IntRange(0, 1),
     help="Set initial DTR line state for Serial Monitor",
 )
+@click.option("--output-format", type=click.Choice(["json", "junit"]))
+@click.option(
+    "--output-path",
+    default=os.getcwd,
+    type=click.Path(dir_okay=True, resolve_path=True),
+)
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
@@ -93,6 +99,8 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
     no_reset,
     monitor_rts,
     monitor_dtr,
+    output_format,
+    output_path,
     verbose,
 ):
     app.set_session_var("custom_project_conf", project_conf)
@@ -104,7 +112,8 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
 
         if not verbose:
             click.echo("Verbose mode can be enabled via `-v, --verbose` option")
-        click.secho("Collected %d test suites" % len(test_names), bold=True)
+        click.secho("Collected %d tests" % len(test_names), bold=True, nl=False)
+        click.echo(" (%s)" % ", ".join(test_names))
 
         test_summary = TestSummary(os.path.basename(project_dir))
         default_envs = config.default_envs()
@@ -156,11 +165,22 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
                 runner.start(ctx)
                 print_suite_footer(test_suite)
 
+        # automatically generate JSON report for PIO IDE
+        TestReportFactory.new("json", test_summary).generate(
+            os.path.join(
+                config.get("platformio", "build_dir"), "pio-test-report-latest.json"
+            )
+        )
+
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
     stdout_report = TestReportFactory.new("stdout", test_summary)
     stdout_report.generate(verbose=verbose)
+
+    if output_format:
+        custom_report = TestReportFactory.new(output_format, test_summary)
+        custom_report.generate(output_path=output_path, verbose=True)
 
     if test_summary.is_errored or test_summary.get_status_nums(TestStatus.FAILED):
         raise exception.ReturnErrorCode(1)

@@ -25,7 +25,7 @@ class TestRunnerEmbeddedMixin:
 
     SERIAL_TIMEOUT = 600
 
-    def stage_run_on_target(self):
+    def stage_testing_on_target(self):
         click.echo(
             "If you don't see any output for the first 10 secs, "
             "please reset board (press reset button)"
@@ -68,7 +68,7 @@ class TestRunnerEmbeddedMixin:
                 continue
             if isinstance(line, bytes):
                 line = line.decode("utf8", "ignore")
-            self.on_run_output(line)
+            self.on_test_output(line)
         ser.close()
 
     def get_test_port(self):

@@ -21,7 +21,7 @@ from platformio.unittest.result import TestStatus
 
 
 class StdoutTestReport(TestReportBase):
-    def generate(self, verbose=False):
+    def generate(self, verbose=False):  # pylint: disable=arguments-differ
         click.echo()
 
         tabular_data = []

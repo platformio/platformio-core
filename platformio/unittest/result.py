@@ -44,42 +44,51 @@ class TestCaseSource:
 
 class TestCase:
     def __init__(  # pylint: disable=too-many-arguments
-        self, name, status, message=None, stdout=None, source=None
+        self,
+        name,
+        status,
+        message=None,
+        stdout=None,
+        source=None,
+        duration=0,
+        exception=None,
     ):
         assert isinstance(status, TestStatus)
+        if status == TestStatus.ERRORED:
+            assert isinstance(exception, Exception)
         self.name = name.strip()
         self.status = status
-        self.message = message.strip() if message else None
-        self.stdout = stdout.strip() if stdout else None
+        self.message = message
+        self.stdout = stdout
         self.source = source
+        self.duration = duration
+        self.exception = exception
 
 
 class TestSuite:
     def __init__(self, env_name, test_name):
         self.env_name = env_name
         self.test_name = test_name
+        self.timestamp = 0
         self.duration = 0
         self._cases = []
-        self._start_timestamp = 0
         self._finished = False
-        self._error = None
 
     @property
     def cases(self):
         return self._cases
 
-    def get_status_nums(self, status):
-        return len([True for c in self._cases if c.status == status])
-
     @property
     def status(self):
-        if self._error:
-            return TestStatus.ERRORED
-        if self.get_status_nums(TestStatus.FAILED):
-            return TestStatus.FAILED
+        for s in (TestStatus.ERRORED, TestStatus.FAILED):
+            if self.get_status_nums(s):
+                return s
         if self._cases and any(c.status == TestStatus.PASSED for c in self._cases):
             return TestStatus.PASSED
         return TestStatus.SKIPPED
+
+    def get_status_nums(self, status):
+        return len([True for c in self._cases if c.status == status])
 
     def add_case(self, case: TestCase):
         assert isinstance(case, TestCase)
@@ -89,16 +98,13 @@ class TestSuite:
         return self._finished
 
     def on_start(self):
-        self._start_timestamp = time.time()
-
-    def on_error(self, exc):
-        self._error = exc
+        self.timestamp = time.time()
 
     def on_finish(self):
         if self.is_finished():
             return
         self._finished = True
-        self.duration = time.time() - self._start_timestamp
+        self.duration = time.time() - self.timestamp
 
 
 class TestSummary:

@@ -13,13 +13,15 @@
 # limitations under the License.
 
 import os
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from platformio import proc
 from platformio.unittest.command import unittest_cmd
 
 
-def test_calculator_example():
+def test_calculator_example(tmp_path: Path):
+    junit_output_path = tmp_path / "junit.xml"
     result = proc.exec_command(
         [
             "platformio",
@@ -27,14 +29,36 @@ def test_calculator_example():
             "-d",
             os.path.join("examples", "unit-testing", "calculator"),
             "-e",
+            "uno",
+            "-e",
             "native",
+            "--output-format=junit",
+            "--output-path",
+            str(junit_output_path),
         ]
     )
     assert result["returncode"] != 0
     # pylint: disable=unsupported-membership-test
     assert all(
-        s in (result["err"] + result["out"]) for s in ("PASSED", "FAILED")
+        s in (result["err"] + result["out"]) for s in ("ERRORED", "PASSED", "FAILED")
     ), result["out"]
+
+    # test JUnit output
+    junit_testsuites = ET.parse(junit_output_path).getroot()
+    assert int(junit_testsuites.get("tests")) == 11
+    assert int(junit_testsuites.get("errors")) == 2
+    assert int(junit_testsuites.get("failures")) == 1
+    assert len(junit_testsuites.findall("testsuite")) == 9
+    junit_errored_testcase = junit_testsuites.find(
+        ".//testcase[@name='uno:test_embedded']"
+    )
+    assert junit_errored_testcase.get("status") == "ERRORED"
+    assert junit_errored_testcase.find("error").get("type") == "UnitTestSuiteError"
+    junit_failed_testcase = junit_testsuites.find(
+        ".//testcase[@name='test_calculator_division']"
+    )
+    assert junit_failed_testcase.get("status") == "FAILED"
+    assert junit_failed_testcase.find("failure").get("message") == "Expected 32 Was 33"
 
 
 def test_nested_suites(clirunner, validate_cliresult, tmp_path: Path):

@@ -31,7 +31,7 @@ class UnityTestRunner(TestRunnerBase):
     # test/test_foo.cpp:44:test_function_foo:FAIL: Expected 32 Was 33
     TESTCASE_PARSE_RE = re.compile(
         r"(?P<source_file>[^:]+):(?P<source_line>\d+):(?P<name>[^:]+):"
-        r"(?P<status>PASS|IGNORE|FAIL)(?:(?P<message>.+)$)?"
+        r"(?P<status>PASS|IGNORE|FAIL)(:\s*(?P<message>.+)$)?"
     )
 
     UNITY_CONFIG_H = """
@@ -238,7 +238,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
                 encoding="utf8",
             )
 
-    def on_run_output(self, data):
+    def on_test_output(self, data):
         if not data.strip():
             return click.echo(data, nl=False)
 

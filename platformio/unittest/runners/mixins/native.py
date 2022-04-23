@@ -20,12 +20,12 @@ from platformio.unittest.exception import UnitTestError
 
 
 class TestRunnerNativeMixin:
-    def stage_run_on_host(self):
+    def stage_testing_on_host(self):
         build_dir = self.project_config.get("platformio", "build_dir")
         result = proc.exec_command(
             [os.path.join(build_dir, self.test_suite.env_name, "program")],
-            stdout=proc.LineBufferedAsyncPipe(self.on_run_output),
-            stderr=proc.LineBufferedAsyncPipe(self.on_run_output),
+            stdout=proc.LineBufferedAsyncPipe(self.on_test_output),
+            stderr=proc.LineBufferedAsyncPipe(self.on_test_output),
         )
         if result["returncode"] == 0:
             return True

@@ -14,6 +14,7 @@
 
 import click
 
+from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
 from platformio.unittest.exception import UnitTestSuiteError
 from platformio.unittest.result import TestCase, TestCaseSource, TestStatus
@@ -85,12 +86,17 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
         self.test_suite.on_start()
         try:
             self.setup()
-            for stage in ("build", "upload", "run"):
+            for stage in ("building", "uploading", "testing"):
                 getattr(self, f"stage_{stage}")()
         except Exception as exc:  # pylint: disable=broad-except
-            if str(exc) != "1":  # from returncode
-                click.secho(str(exc), fg="red", err=True)
-            self.test_suite.on_error(exc)
+            click.secho(str(exc), fg="red", err=True)
+            self.test_suite.add_case(
+                TestCase(
+                    name=f"{self.test_suite.env_name}:{self.test_suite.test_name}",
+                    status=TestStatus.ERRORED,
+                    exception=exc,
+                )
+            )
         finally:
             self.test_suite.on_finish()
             self.teardown()
@@ -98,7 +104,7 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
     def setup(self):
         pass
 
-    def stage_build(self):
+    def stage_building(self):
         if self.options.without_building:
             return None
         click.secho("Building...", bold=self.options.verbose)
@@ -107,9 +113,12 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
             targets.append("__debug")
         if self.platform.is_embedded():
             targets.append("checkprogsize")
-        return self.run_project_targets(targets)
+        try:
+            return self.run_project_targets(targets)
+        except ReturnErrorCode:
+            raise UnitTestSuiteError("Building stage has failed, see errors above.")
 
-    def stage_upload(self):
+    def stage_uploading(self):
         if self.options.without_uploading or not self.platform.is_embedded():
             return None
         click.secho("Uploading...", bold=self.options.verbose)
@@ -120,15 +129,18 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
             targets.append("__test")
         if not self.options.without_debugging:
             targets.append("__debug")
-        return self.run_project_targets(targets)
+        try:
+            return self.run_project_targets(targets)
+        except ReturnErrorCode:
+            raise UnitTestSuiteError("Uploading stage has failed, see errors above.")
 
-    def stage_run(self):
+    def stage_testing(self):
         if self.options.without_testing:
             return None
-        click.secho("Running...", bold=self.options.verbose)
+        click.secho("Testing...", bold=self.options.verbose)
         if self.platform.is_embedded():
-            return self.stage_run_on_target()
-        return self.stage_run_on_host()
+            return self.stage_testing_on_target()
+        return self.stage_testing_on_host()
 
     def teardown(self):
         pass
@@ -138,19 +150,16 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
         from platformio.commands.run.command import cli as run_cmd
 
         assert self.cmd_ctx
-        try:
-            return self.cmd_ctx.invoke(
-                run_cmd,
-                project_conf=self.project_config.path,
-                upload_port=self.options.upload_port,
-                verbose=self.options.verbose,
-                silent=not self.options.verbose,
-                environment=[self.test_suite.env_name],
-                disable_auto_clean="nobuild" in targets,
-                target=targets,
-            )
-        except Exception as exc:
-            raise UnitTestSuiteError(exc)
+        return self.cmd_ctx.invoke(
+            run_cmd,
+            project_conf=self.project_config.path,
+            upload_port=self.options.upload_port,
+            verbose=self.options.verbose,
+            silent=not self.options.verbose,
+            environment=[self.test_suite.env_name],
+            disable_auto_clean="nobuild" in targets,
+            target=targets,
+        )
 
     def configure_build_env(self, env):  # pylint: disable=no-self-use
         """
@@ -159,7 +168,7 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
         """
         return env
 
-    def on_run_output(self, data):
+    def on_test_output(self, data):
         click.echo(data, nl=False)
         self.parse_testcases(data)
 
@@ -178,7 +187,7 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
             source = None
             if "source_file" in data:
                 source = TestCaseSource(
-                    file=data["source_file"], line=data.get("source_line")
+                    file=data["source_file"], line=int(data.get("source_line"))
                 )
             self.test_suite.add_case(
                 TestCase(

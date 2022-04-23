@@ -21,7 +21,7 @@ class TestReportBase:
     def __init__(self, test_summary):
         self.test_summary = test_summary
 
-    def generate(self):
+    def generate(self, output_path, verbose):
         raise NotImplementedError()
 
 
