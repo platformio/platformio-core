@@ -249,11 +249,13 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         for line in data.strip().split("\n"):
             line = line.strip()
             if line.endswith(":PASS"):
-                click.echo("[%s] %s" % (click.style("PASSED", fg="green"), line[:-5]))
+                click.echo("%s\t[%s]" % (line[:-5], click.style("PASSED", fg="green")))
             elif line.endswith(":IGNORE"):
-                click.echo("[%s] %s" % (click.style("IGNORED", fg="yellow"), line[:-7]))
+                click.echo(
+                    "%s\t[%s]" % (line[:-7], click.style("IGNORED", fg="yellow"))
+                )
             elif ":FAIL" in line:
-                click.echo("[%s] %s" % (click.style("FAILED", fg="red"), line))
+                click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
             else:
                 click.echo(line)
 
