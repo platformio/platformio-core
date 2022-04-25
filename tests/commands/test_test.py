@@ -55,7 +55,8 @@ def test_calculator_example(tmp_path: Path):
     assert junit_errored_testcase.get("status") == "ERRORED"
     assert junit_errored_testcase.find("error").get("type") == "UnitTestSuiteError"
     junit_failed_testcase = junit_testsuites.find(
-        ".//testcase[@name='test_calculator_division']"
+        ".//testsuite[@name='native:test_desktop']"
+        "/testcase[@name='test_calculator_division']"
     )
     assert junit_failed_testcase.get("status") == "FAILED"
     assert junit_failed_testcase.find("failure").get("message") == "Expected 32 Was 33"
