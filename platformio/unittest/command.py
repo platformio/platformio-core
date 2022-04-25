@@ -112,8 +112,9 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
 
         if not verbose:
             click.echo("Verbose mode can be enabled via `-v, --verbose` option")
-        click.secho("Collected %d tests" % len(test_names), bold=True, nl=False)
-        click.echo(" (%s)" % ", ".join(test_names))
+        click.secho("Collected %d tests" % len(test_names), bold=True, nl=not verbose)
+        if verbose:
+            click.echo(" (%s)" % ", ".join(test_names))
 
         test_summary = TestSummary(os.path.basename(project_dir))
         default_envs = config.default_envs()

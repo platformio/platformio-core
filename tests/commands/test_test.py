@@ -126,6 +126,10 @@ void setUp(){
     my_extra_fun();
 }
 
+void tearDown(void) {
+    // clean stuff up here
+}
+
 void dummy_test(void) {
     TEST_ASSERT_EQUAL(1, TEST_ONE);
 }
@@ -144,46 +148,6 @@ int main() {
     validate_cliresult(result)
     assert "Called from my_extra_fun" in result.output
     assert "Disabled test suite" not in result.output
-
-
-def test_unity_setup_teardown(clirunner, validate_cliresult, tmpdir):
-    project_dir = tmpdir.mkdir("project")
-    project_dir.join("platformio.ini").write(
-        """
-[env:native]
-platform = native
-"""
-    )
-    test_dir = project_dir.mkdir("test")
-    test_dir.join("test_main.c").write(
-        """
-#include <stdio.h>
-#include <unity.h>
-
-void setUp(){
-    printf("setUp called");
-}
-void tearDown(){
-    printf("tearDown called");
-}
-
-void dummy_test(void) {
-    TEST_ASSERT_EQUAL(1, 1);
-}
-
-int main() {
-    UNITY_BEGIN();
-    RUN_TEST(dummy_test);
-    UNITY_END();
-}
-"""
-    )
-    result = clirunner.invoke(
-        unittest_cmd,
-        ["-d", str(project_dir), "-e", "native"],
-    )
-    validate_cliresult(result)
-    assert all(f in result.output for f in ("setUp called", "tearDown called"))
 
 
 def test_crashed_program(clirunner, tmpdir):
@@ -230,6 +194,97 @@ int main(int argc, char *argv[]) {
     )
 
 
+def test_unity_setup_teardown(clirunner, validate_cliresult, tmpdir):
+    project_dir = tmpdir.mkdir("project")
+    project_dir.join("platformio.ini").write(
+        """
+[env:native]
+platform = native
+"""
+    )
+    test_dir = project_dir.mkdir("test")
+    test_dir.join("test_main.c").write(
+        """
+#include <stdio.h>
+#include <unity.h>
+
+void setUp(){
+    printf("setUp called");
+}
+void tearDown(){
+    printf("tearDown called");
+}
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, 1);
+}
+
+int main() {
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+}
+"""
+    )
+    result = clirunner.invoke(
+        unittest_cmd,
+        ["-d", str(project_dir), "-e", "native"],
+    )
+    validate_cliresult(result)
+    assert all(f in result.output for f in ("setUp called", "tearDown called"))
+
+
+def test_unity_custom_config(clirunner, validate_cliresult, tmpdir):
+    project_dir = tmpdir.mkdir("project")
+    project_dir.join("platformio.ini").write(
+        """
+[env:native]
+platform = native
+"""
+    )
+    test_dir = project_dir.mkdir("test")
+    test_dir.join("unity_config.h").write(
+        """
+#include <stdio.h>
+
+#define CUSTOM_UNITY_CONFIG
+
+#define UNITY_OUTPUT_CHAR(c)    putchar(c)
+#define UNITY_OUTPUT_FLUSH()    fflush(stdout)
+"""
+    )
+    test_dir.join("test_main.c").write(
+        """
+#include <stdio.h>
+#include <unity.h>
+
+void setUp(){
+#ifdef CUSTOM_UNITY_CONFIG
+    printf("Found custom unity_config.h\\n");
+#endif
+}
+void tearDown(){
+}
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, 1);
+}
+
+int main() {
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+}
+"""
+    )
+    result = clirunner.invoke(
+        unittest_cmd,
+        ["-d", str(project_dir), "-e", "native"],
+    )
+    validate_cliresult(result)
+    assert all(f in result.output for f in ("Found custom unity_config", "dummy_test"))
+
+
 def test_legacy_unity_custom_transport(clirunner, validate_cliresult, tmpdir):
     project_dir = tmpdir.mkdir("project")
     project_dir.join("platformio.ini").write(
@@ -246,6 +301,14 @@ test_transport = custom
     test_dir.join("test_main.c").write(
         """
 #include <unity.h>
+
+void setUp(void) {
+    // set stuff up here
+}
+
+void tearDown(void) {
+    // clean stuff up here
+}
 
 void dummy_test(void) {
     TEST_ASSERT_EQUAL(1, 1);

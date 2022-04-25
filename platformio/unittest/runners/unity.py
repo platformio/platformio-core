@@ -57,7 +57,7 @@ void unityOutputFlush();
 void unityOutputComplete();
 
 #define UNITY_OUTPUT_START()    unityOutputStart((unsigned long) $baudrate)
-#define UNITY_OUTPUT_CHAR(a)    unityOutputChar(a)
+#define UNITY_OUTPUT_CHAR(c)    unityOutputChar(c)
 #define UNITY_OUTPUT_FLUSH()    unityOutputFlush()
 #define UNITY_OUTPUT_COMPLETE() unityOutputComplete()
 
@@ -207,14 +207,23 @@ void unityOutputComplete(void) { unittest_uart_end(); }
 
     def configure_build_env(self, env):
         env.Append(CPPDEFINES=["UNITY_INCLUDE_CONFIG_H"])
+        if self.custom_unity_config_exists(
+            [env.subst(item) for item in (env.get("CPPPATH") or [])]
+        ):
+            return env
         env.Replace(
             UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config"),
             BUILD_UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config_build"),
         )
+        env.Append(CPPPATH=["$UNITY_CONFIG_DIR"])
         self.generate_unity_extras(env.subst("$UNITY_CONFIG_DIR"))
-        env.Append(
-            CPPPATH=["$UNITY_CONFIG_DIR"],
-            LIBS=[env.BuildLibrary("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")],
+        env.BuildSources("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")
+        return env
+
+    @staticmethod
+    def custom_unity_config_exists(include_dirs):
+        return any(
+            os.path.isfile(os.path.join(d, "unity_config.h")) for d in include_dirs
         )
 
     def generate_unity_extras(self, dst_dir):
