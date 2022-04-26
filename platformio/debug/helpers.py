@@ -26,10 +26,10 @@ from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.run.command import print_processing_header
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.unittest.command import get_test_names
-from platformio.unittest.result import TestSuite
-from platformio.unittest.runners.base import TestRunnerOptions
-from platformio.unittest.runners.factory import TestRunnerFactory
+from platformio.test.command import get_test_names
+from platformio.test.result import TestSuite
+from platformio.test.runners.base import TestRunnerOptions
+from platformio.test.runners.factory import TestRunnerFactory
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods

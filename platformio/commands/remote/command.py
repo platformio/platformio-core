@@ -29,7 +29,7 @@ from platformio.commands.device.command import device_monitor as cmd_device_moni
 from platformio.commands.run.command import cli as cmd_run
 from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
-from platformio.unittest.command import unittest_cmd
+from platformio.test.command import test_cmd
 
 
 @click.group("remote", short_help="Remote Development")
@@ -217,7 +217,7 @@ def remote_test(
     click.secho("Building project locally", bold=True)
 
     ctx.invoke(
-        unittest_cmd,
+        test_cmd,
         environment=environment,
         ignore=ignore,
         project_dir=project_dir,

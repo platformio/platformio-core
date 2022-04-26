@@ -27,7 +27,7 @@ from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libde
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, load_project_ide_data
-from platformio.unittest.runners.base import CTX_META_TEST_IS_RUNNING
+from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 

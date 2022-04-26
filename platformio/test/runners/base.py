@@ -16,10 +16,10 @@ import click
 
 from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
-from platformio.unittest.exception import UnitTestSuiteError
-from platformio.unittest.result import TestCase, TestCaseSource, TestStatus
-from platformio.unittest.runners.mixins.embedded import TestRunnerEmbeddedMixin
-from platformio.unittest.runners.mixins.native import TestRunnerNativeMixin
+from platformio.test.exception import UnitTestSuiteError
+from platformio.test.result import TestCase, TestCaseSource, TestStatus
+from platformio.test.runners.mixins.embedded import TestRunnerEmbeddedMixin
+from platformio.test.runners.mixins.native import TestRunnerNativeMixin
 
 CTX_META_TEST_IS_RUNNING = __name__ + ".test_running"
 CTX_META_TEST_RUNNING_NAME = __name__ + ".test_running_name"

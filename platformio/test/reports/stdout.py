@@ -16,8 +16,8 @@ import click
 from tabulate import tabulate
 
 from platformio import util
-from platformio.unittest.reports.base import TestReportBase
-from platformio.unittest.result import TestStatus
+from platformio.test.reports.base import TestReportBase
+from platformio.test.result import TestStatus
 
 
 class StdoutTestReport(TestReportBase):
@@ -25,11 +25,11 @@ class StdoutTestReport(TestReportBase):
         click.echo()
 
         tabular_data = []
-        failed_nums = self.test_summary.get_status_nums(TestStatus.FAILED)
-        skipped_nums = self.test_summary.get_status_nums(TestStatus.SKIPPED)
-        is_error = failed_nums > 0 or self.test_summary.is_errored
+        failed_nums = self.test_result.get_status_nums(TestStatus.FAILED)
+        skipped_nums = self.test_result.get_status_nums(TestStatus.SKIPPED)
+        is_error = failed_nums > 0 or self.test_result.is_errored
 
-        for test_suite in self.test_summary.suites:
+        for test_suite in self.test_result.suites:
             if not verbose and test_suite.status == TestStatus.SKIPPED:
                 continue
             status_str = test_suite.status.name
@@ -62,11 +62,11 @@ class StdoutTestReport(TestReportBase):
         util.print_labeled_bar(
             "%d test cases: %s%s%d succeeded in %s"
             % (
-                self.test_summary.case_nums,
+                self.test_result.case_nums,
                 ("%d failed, " % failed_nums) if failed_nums else "",
                 ("%d skipped, " % skipped_nums) if skipped_nums else "",
-                self.test_summary.get_status_nums(TestStatus.PASSED),
-                util.humanize_duration_time(self.test_summary.duration),
+                self.test_result.get_status_nums(TestStatus.PASSED),
+                util.humanize_duration_time(self.test_result.duration),
             ),
             is_error=is_error,
             fg="red" if is_error else "green",

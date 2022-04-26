@@ -18,8 +18,8 @@ import os
 
 import click
 
-from platformio.unittest.reports.base import TestReportBase
-from platformio.unittest.result import TestStatus
+from platformio.test.reports.base import TestReportBase
+from platformio.test.result import TestStatus
 
 
 class JsonTestReport(TestReportBase):
@@ -29,7 +29,7 @@ class JsonTestReport(TestReportBase):
                 output_path,
                 "pio-test-report-%s-%s.json"
                 % (
-                    self.test_summary.name,
+                    self.test_result.name,
                     datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
                 ),
             )
@@ -43,15 +43,15 @@ class JsonTestReport(TestReportBase):
     def to_json(self):
         result = dict(
             version="1.0",
-            name=self.test_summary.name,
-            duration=self.test_summary.duration,
-            testcase_nums=self.test_summary.case_nums,
-            error_nums=self.test_summary.get_status_nums(TestStatus.ERRORED),
-            failure_nums=self.test_summary.get_status_nums(TestStatus.FAILED),
-            skipped_nums=self.test_summary.get_status_nums(TestStatus.SKIPPED),
+            name=self.test_result.name,
+            duration=self.test_result.duration,
+            testcase_nums=self.test_result.case_nums,
+            error_nums=self.test_result.get_status_nums(TestStatus.ERRORED),
+            failure_nums=self.test_result.get_status_nums(TestStatus.FAILED),
+            skipped_nums=self.test_result.get_status_nums(TestStatus.SKIPPED),
             test_suites=[],
         )
-        for test_suite in self.test_summary.suites:
+        for test_suite in self.test_result.suites:
             result["test_suites"].append(self.test_suite_to_json(test_suite))
         return result
 

@@ -14,12 +14,12 @@
 
 import importlib
 
-from platformio.unittest.result import TestSummary
+from platformio.test.result import TestResult
 
 
 class TestReportBase:
-    def __init__(self, test_summary):
-        self.test_summary = test_summary
+    def __init__(self, test_result):
+        self.test_result = test_result
 
     def generate(self, output_path, verbose):
         raise NotImplementedError()
@@ -27,10 +27,8 @@ class TestReportBase:
 
 class TestReportFactory:
     @staticmethod
-    def new(  # pylint: disable=redefined-builtin
-        format, test_summary
-    ) -> TestReportBase:
-        assert isinstance(test_summary, TestSummary)
-        mod = importlib.import_module(f"platformio.unittest.reports.{format}")
+    def new(format, test_result) -> TestReportBase:  # pylint: disable=redefined-builtin
+        assert isinstance(test_result, TestResult)
+        mod = importlib.import_module(f"platformio.test.reports.{format}")
         report_cls = getattr(mod, "%sTestReport" % format.lower().capitalize())
-        return report_cls(test_summary)
+        return report_cls(test_result)

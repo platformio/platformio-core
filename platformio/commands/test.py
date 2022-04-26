@@ -14,4 +14,4 @@
 
 # pylint: disable=unused-import
 
-from platformio.unittest.command import unittest_cmd as cli
+from platformio.test.command import test_cmd as cli

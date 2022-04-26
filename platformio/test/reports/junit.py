@@ -18,8 +18,8 @@ import xml.etree.ElementTree as ET
 
 import click
 
-from platformio.unittest.reports.base import TestReportBase
-from platformio.unittest.result import TestStatus
+from platformio.test.reports.base import TestReportBase
+from platformio.test.result import TestStatus
 
 
 class JunitTestReport(TestReportBase):
@@ -29,7 +29,7 @@ class JunitTestReport(TestReportBase):
                 output_path,
                 "pio-test-report-%s-%s-junit.xml"
                 % (
-                    self.test_summary.name,
+                    self.test_result.name,
                     datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
                 ),
             )
@@ -42,12 +42,12 @@ class JunitTestReport(TestReportBase):
 
     def build_xml_tree(self):
         root = ET.Element("testsuites")
-        root.set("name", self.test_summary.name)
-        root.set("tests", str(self.test_summary.case_nums))
-        root.set("errors", str(self.test_summary.get_status_nums(TestStatus.ERRORED)))
-        root.set("failures", str(self.test_summary.get_status_nums(TestStatus.FAILED)))
-        root.set("time", str(self.test_summary.duration))
-        for suite in self.test_summary.suites:
+        root.set("name", self.test_result.name)
+        root.set("tests", str(self.test_result.case_nums))
+        root.set("errors", str(self.test_result.get_status_nums(TestStatus.ERRORED)))
+        root.set("failures", str(self.test_result.get_status_nums(TestStatus.FAILED)))
+        root.set("time", str(self.test_result.duration))
+        for suite in self.test_result.suites:
             root.append(self.build_testsuite_node(suite))
         return ET.ElementTree(root)
 

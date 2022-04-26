@@ -16,7 +16,7 @@ import os
 import signal
 
 from platformio import proc
-from platformio.unittest.exception import UnitTestError
+from platformio.test.exception import UnitTestError
 
 
 class TestRunnerNativeMixin:

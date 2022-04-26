@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from platformio import proc
-from platformio.unittest.command import unittest_cmd
+from platformio.test.command import test_cmd as pio_test_cmd
 
 
 def test_calculator_example(tmp_path: Path):
@@ -143,7 +143,7 @@ int main() {
     """
     )
     result = clirunner.invoke(
-        unittest_cmd,
+        pio_test_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
     validate_cliresult(result)
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
 """
     )
     result = clirunner.invoke(
-        unittest_cmd,
+        pio_test_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
     assert result.exit_code != 0
@@ -228,7 +228,7 @@ int main() {
 """
     )
     result = clirunner.invoke(
-        unittest_cmd,
+        pio_test_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
     validate_cliresult(result)
@@ -279,7 +279,7 @@ int main() {
 """
     )
     result = clirunner.invoke(
-        unittest_cmd,
+        pio_test_cmd,
         ["-d", str(project_dir), "-e", "native"],
     )
     validate_cliresult(result)
@@ -339,7 +339,7 @@ void unittest_uart_end(){}
 """
     )
     result = clirunner.invoke(
-        unittest_cmd,
+        pio_test_cmd,
         [
             "-d",
             str(project_dir),

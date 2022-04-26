@@ -19,8 +19,8 @@ from pathlib import Path
 
 import click
 
-from platformio.unittest.exception import UnitTestSuiteError
-from platformio.unittest.runners.base import TestRunnerBase
+from platformio.test.exception import UnitTestSuiteError
+from platformio.test.runners.base import TestRunnerBase
 
 
 class UnityTestRunner(TestRunnerBase):

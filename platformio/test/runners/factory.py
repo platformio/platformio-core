@@ -19,8 +19,8 @@ import re
 from platformio.compat import load_python_module
 from platformio.exception import UserSideException
 from platformio.project.config import ProjectConfig
-from platformio.unittest.result import TestSuite
-from platformio.unittest.runners.base import TestRunnerBase, TestRunnerOptions
+from platformio.test.result import TestSuite
+from platformio.test.runners.base import TestRunnerBase, TestRunnerOptions
 
 
 class TestRunnerFactory(object):
@@ -38,7 +38,7 @@ class TestRunnerFactory(object):
         test_framework = project_config.get(
             f"env:{test_suite.env_name}", "test_framework"
         )
-        module_name = f"platformio.unittest.runners.{test_framework}"
+        module_name = f"platformio.test.runners.{test_framework}"
         runner_cls = None
         if test_framework == "custom":
             custom_runner_path = os.path.join(

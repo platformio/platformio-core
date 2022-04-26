@@ -26,8 +26,8 @@ from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
-from platformio.unittest.result import TestSuite
-from platformio.unittest.runners.factory import TestRunnerFactory
+from platformio.test.result import TestSuite
+from platformio.test.runners.factory import TestRunnerFactory
 
 
 @click.command(

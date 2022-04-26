@@ -107,7 +107,7 @@ class TestSuite:
         self.duration = time.time() - self.timestamp
 
 
-class TestSummary:
+class TestResult:
     def __init__(self, name):
         self.name = name
         self._suites = []

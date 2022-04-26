@@ -20,11 +20,11 @@ import click
 
 from platformio import app, exception, fs, util
 from platformio.project.config import ProjectConfig
-from platformio.unittest.exception import TestDirNotExistsError
-from platformio.unittest.reports.base import TestReportFactory
-from platformio.unittest.result import TestStatus, TestSuite, TestSummary
-from platformio.unittest.runners.base import TestRunnerOptions
-from platformio.unittest.runners.factory import TestRunnerFactory
+from platformio.test.exception import TestDirNotExistsError
+from platformio.test.reports.base import TestReportFactory
+from platformio.test.result import TestResult, TestStatus, TestSuite
+from platformio.test.runners.base import TestRunnerOptions
+from platformio.test.runners.factory import TestRunnerFactory
 
 
 @click.command("test", short_help="Unit Testing")
@@ -84,7 +84,7 @@ from platformio.unittest.runners.factory import TestRunnerFactory
 )
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
-def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
+def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
     ctx,
     environment,
     ignore,
@@ -116,12 +116,12 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
         if verbose:
             click.echo(" (%s)" % ", ".join(test_names))
 
-        test_summary = TestSummary(os.path.basename(project_dir))
+        test_result = TestResult(os.path.basename(project_dir))
         default_envs = config.default_envs()
         for env_name in config.envs():
             for test_name in test_names:
                 test_suite = TestSuite(env_name, test_name)
-                test_summary.add_suite(test_suite)
+                test_result.add_suite(test_suite)
 
                 # filter and ignore patterns
                 patterns = dict(filter=list(filter), ignore=list(ignore))
@@ -167,7 +167,7 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
                 print_suite_footer(test_suite)
 
         # automatically generate JSON report for PIO IDE
-        TestReportFactory.new("json", test_summary).generate(
+        TestReportFactory.new("json", test_result).generate(
             os.path.join(
                 config.get("platformio", "build_dir"), "pio-test-report-latest.json"
             )
@@ -176,14 +176,14 @@ def unittest_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefine
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
-    stdout_report = TestReportFactory.new("stdout", test_summary)
+    stdout_report = TestReportFactory.new("stdout", test_result)
     stdout_report.generate(verbose=verbose)
 
     if output_format:
-        custom_report = TestReportFactory.new(output_format, test_summary)
+        custom_report = TestReportFactory.new(output_format, test_result)
         custom_report.generate(output_path=output_path, verbose=True)
 
-    if test_summary.is_errored or test_summary.get_status_nums(TestStatus.FAILED):
+    if test_result.is_errored or test_result.get_status_nums(TestStatus.FAILED):
         raise exception.ReturnErrorCode(1)
 
 

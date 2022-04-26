@@ -16,8 +16,8 @@ from __future__ import absolute_import
 
 import os
 
-from platformio.unittest.result import TestSuite
-from platformio.unittest.runners.factory import TestRunnerFactory
+from platformio.test.result import TestSuite
+from platformio.test.runners.factory import TestRunnerFactory
 
 
 def ConfigureTestTarget(env):
