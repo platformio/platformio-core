@@ -54,6 +54,7 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 
   - Added support for the custom `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ configuration file (`issue #4186 <https://github.com/platformio/platformio-core/issues/4186>`_)
   - Added ability to override a tool version using the `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3798 <https://github.com/platformio/platformio-core/issues/3798>`_)
+  - Fixed an issue with improper handling of defects that don't specify a source file (`issue #4237 <https://github.com/platformio/platformio-core/issues/4237>`_)
 
 * **Build System**
 

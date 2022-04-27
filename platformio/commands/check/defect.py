@@ -34,7 +34,7 @@ class DefectItem(object):
         severity,
         category,
         message,
-        file="unknown",
+        file=None,
         line=0,
         column=0,
         id=None,
@@ -50,7 +50,7 @@ class DefectItem(object):
         self.callstack = callstack
         self.cwe = cwe
         self.id = id
-        self.file = file
+        self.file = file or "unknown"
         if file.lower().startswith(get_project_dir().lower()):
             self.file = os.path.relpath(file, get_project_dir())
 
