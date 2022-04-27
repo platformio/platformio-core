@@ -54,13 +54,11 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
     def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if any(
-            [
-                err_msg in line.lower()
-                for err_msg in (
-                    "license was not entered",
-                    "license information is incorrect",
-                )
-            ]
+            err_msg in line.lower()
+            for err_msg in (
+                "license was not entered",
+                "license information is incorrect",
+            )
         ):
             self._bad_input = True
         return line
