@@ -53,7 +53,15 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             )
 
     def tool_output_filter(self, line):  # pylint: disable=arguments-differ
-        if "license was not entered" in line.lower():
+        if any(
+            [
+                err_msg in line.lower()
+                for err_msg in (
+                    "license was not entered",
+                    "license information is incorrect",
+                )
+            ]
+        ):
             self._bad_input = True
         return line
 
@@ -193,7 +201,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             '"%s"' % self._tmp_preprocessed_file,
         ]
         cmd.extend([f for f in flags if f])
-        cmd.extend(["-D%s" % d for d in self.cpp_defines])
+        cmd.extend(['"-D%s"' % d.replace('"', '\\"') for d in self.cpp_defines])
         cmd.append('@"%s"' % self._tmp_cmd_file)
 
         # Explicitly specify C++ as the language used in .ino files

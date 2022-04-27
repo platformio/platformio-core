@@ -49,6 +49,7 @@ class CppcheckCheckTool(CheckToolBase):
             for msg in (
                 "No C or C++ source files found",
                 "unrecognized command line option",
+                "there was an internal error",
             )
         ):
             self._bad_input = True
