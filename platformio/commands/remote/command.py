@@ -193,7 +193,7 @@ def remote_run(
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_obj
 @click.pass_context
-def remote_test(
+def remote_test(  # pylint: disable=redefined-builtin
     ctx,
     agents,
     environment,
