@@ -339,7 +339,7 @@ def init_test_readme(test_dir):
     with open(os.path.join(test_dir, "README"), mode="w", encoding="utf8") as fp:
         fp.write(
             """
-This directory is intended for PlatformIO Unit Testing and project tests.
+This directory is intended for PlatformIO Test Runner and project tests.
 
 Unit Testing is a software testing method by which individual units of
 source code, sets of one or more MCU program modules together with associated
@@ -348,7 +348,7 @@ determine whether they are fit for use. Unit testing finds problems early
 in the development cycle.
 
 More information about PlatformIO Unit Testing:
-- https://docs.platformio.org/page/plus/unit-testing.html
+- https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
 """,
         )
 

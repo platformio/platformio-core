@@ -48,7 +48,7 @@ def test_calculator_example(tmp_path: Path):
     assert int(junit_testsuites.get("tests")) == 11
     assert int(junit_testsuites.get("errors")) == 2
     assert int(junit_testsuites.get("failures")) == 1
-    assert len(junit_testsuites.findall("testsuite")) == 9
+    assert len(junit_testsuites.findall("testsuite")) == 6
     junit_errored_testcase = junit_testsuites.find(
         ".//testcase[@name='uno:test_embedded']"
     )

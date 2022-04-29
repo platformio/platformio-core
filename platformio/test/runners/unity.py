@@ -202,7 +202,8 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         raise UnitTestSuiteError(
             f"Could not find Unity configuration for the `{framework}` framework.\n"
             "Learn how to create a custom Unity configuration at"
-            "https://docs.platformio.org/page/plus/unit-testing.html"
+            "https://docs.platformio.org/en/latest/advanced/"
+            "unit-testing/frameworks/unity.html"
         )
 
     def configure_build_env(self, env):
