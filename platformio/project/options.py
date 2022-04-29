@@ -679,8 +679,9 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="test",
-                name="test_build_project_src",
-                description="Build project source code in a pair with test code",
+                name="test_build_src",
+                oldnames=["test_build_project_src"],
+                description="Build main source code in pair with a test code",
                 type=click.BOOL,
                 default=False,
             ),
