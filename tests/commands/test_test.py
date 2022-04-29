@@ -235,16 +235,18 @@ int main() {
     assert all(f in result.output for f in ("setUp called", "tearDown called"))
 
 
-def test_unity_custom_config(clirunner, validate_cliresult, tmpdir):
-    project_dir = tmpdir.mkdir("project")
-    project_dir.join("platformio.ini").write(
+def test_unity_custom_config(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text(
         """
 [env:native]
 platform = native
 """
     )
-    test_dir = project_dir.mkdir("test")
-    test_dir.join("unity_config.h").write(
+    test_dir = project_dir / "test" / "native" / "test_component"
+    test_dir.mkdir(parents=True)
+    (test_dir.parent / "unity_config.h").write_text(
         """
 #include <stdio.h>
 
@@ -254,7 +256,7 @@ platform = native
 #define UNITY_OUTPUT_FLUSH()    fflush(stdout)
 """
     )
-    test_dir.join("test_main.c").write(
+    (test_dir / "test_main.c").write_text(
         """
 #include <stdio.h>
 #include <unity.h>

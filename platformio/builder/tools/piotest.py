@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 import os
 
+from platformio.builder.tools import platformio as piotool
 from platformio.test.result import TestSuite
 from platformio.test.runners.factory import TestRunnerFactory
 
@@ -23,10 +24,24 @@ from platformio.test.runners.factory import TestRunnerFactory
 def ConfigureTestTarget(env):
     env.Append(
         CPPDEFINES=["UNIT_TEST", "PIO_UNIT_TESTING"],
-        PIOTEST_SRC_FILTER=["+<*.cpp>", "+<*.c>"],
+        PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piotool.SRC_BUILD_EXT],
     )
 
     if "PIOTEST_RUNNING_NAME" in env:
+        test_name = env["PIOTEST_RUNNING_NAME"]
+        while True:
+            test_name = os.path.dirname(test_name)  # parent dir
+            # skip nested tests (user's side issue?)
+            if not test_name or os.path.basename(test_name).startswith("test_"):
+                break
+            env.Append(
+                PIOTEST_SRC_FILTER=[
+                    f"+<{test_name}{os.path.sep}*.{ext}>"
+                    for ext in piotool.SRC_BUILD_EXT
+                ],
+                CPPPATH=[os.path.join("$PROJECT_TEST_DIR", test_name)],
+            )
+
         env.Append(
             PIOTEST_SRC_FILTER=[f"+<$PIOTEST_RUNNING_NAME{os.path.sep}>"],
             CPPPATH=[os.path.join("$PROJECT_TEST_DIR", "$PIOTEST_RUNNING_NAME")],
