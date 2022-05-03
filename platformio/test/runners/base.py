@@ -76,6 +76,11 @@ class TestRunnerBase:
             self.project_config.get(f"env:{self.test_suite.env_name}", "test_speed")
         )
 
+    def get_test_port(self):
+        return self.options.test_port or self.project_config.get(
+            f"env:{self.test_suite.env_name}", "test_port"
+        )
+
     def start(self, cmd_ctx):
         # setup command context
         self.cmd_ctx = cmd_ctx
@@ -138,9 +143,11 @@ class TestRunnerBase:
         if self.options.without_testing:
             return None
         click.secho("Testing...", bold=self.options.verbose)
+        test_port = self.get_test_port()
+        serial_conds = [self.platform.is_embedded(), test_port and "://" in test_port]
         reader = (
             SerialTestOutputReader(self)
-            if self.platform.is_embedded()
+            if any(serial_conds)
             else ProgramTestOutputReader(self)
         )
         return reader.begin()

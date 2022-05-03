@@ -36,10 +36,12 @@ class SerialTestOutputReader:
         click.echo()
 
         try:
-            ser = serial.Serial(
-                baudrate=self.test_runner.get_test_speed(), timeout=self.SERIAL_TIMEOUT
+            ser = serial.serial_for_url(
+                self.test_runner.get_test_port() or self.autodetect_test_port(),
+                do_not_open=True,
+                baudrate=self.test_runner.get_test_speed(),
+                timeout=self.SERIAL_TIMEOUT,
             )
-            ser.port = self.get_test_port()
             ser.rts = self.test_runner.options.monitor_rts
             ser.dtr = self.test_runner.options.monitor_dtr
             ser.open()
@@ -74,17 +76,7 @@ class SerialTestOutputReader:
             self.test_runner.on_test_output(line)
         ser.close()
 
-    def get_test_port(self):
-        # if test port is specified manually or in config
-        port = (
-            self.test_runner.options.test_port
-            or self.test_runner.project_config.get(
-                f"env:{self.test_runner.test_suite.env_name}", "test_port"
-            )
-        )
-        if port:
-            return port
-
+    def autodetect_test_port(self):
         board = self.test_runner.project_config.get(
             f"env:{self.test_runner.test_suite.env_name}", "board"
         )
