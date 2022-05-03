@@ -62,13 +62,14 @@ def test_calculator_example(tmp_path: Path):
     assert junit_failed_testcase.find("failure").get("message") == "Expected 32 Was 33"
 
 
-def test_nested_suites(clirunner, validate_cliresult, tmp_path: Path):
+def test_group_and_custom_runner(clirunner, validate_cliresult, tmp_path: Path):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(
         """
 [env:native]
 platform = native
+test_framework = custom
 """
     )
     test_dir = project_dir / "test"
@@ -108,8 +109,23 @@ void my_extra_fun(void) {
 """
     )
 
+    # test group
+    test_group = test_dir / "group"
+    test_group.mkdir(parents=True)
+    (test_group / "custom_test_runner.py").write_text(
+        """
+import click
+
+from platformio.test.runners.unity import UnityTestRunner
+
+class CustomTestRunner(UnityTestRunner):
+    def teardown(self):
+        click.echo("CustomTestRunner::TearDown called")
+"""
+    )
+
     # test suite
-    test_suite_dir = test_dir / "set" / "test_nested"
+    test_suite_dir = test_group / "test_nested"
     test_include_dir = test_suite_dir / "include"
     test_include_dir.mkdir(parents=True)
     (test_include_dir / "my_nested.h").write_text(
@@ -148,6 +164,7 @@ int main() {
     )
     validate_cliresult(result)
     assert "Called from my_extra_fun" in result.output
+    assert "CustomTestRunner::TearDown called" in result.output
     assert "Disabled test suite" not in result.output
 
 

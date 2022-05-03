@@ -68,7 +68,10 @@ class EnvironmentProcessor(object):
         if "clean" not in build_targets:
             install_project_env_dependencies(
                 self.name,
-                {"project_targets": build_targets},
+                {
+                    "project_targets": build_targets,
+                    "piotest_running_name": build_vars.get("piotest_running_name"),
+                },
             )
 
         result = PlatformFactory.new(self.options["platform"], autoinstall=True).run(

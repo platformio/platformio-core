@@ -41,14 +41,24 @@ class TestRunnerFactory(object):
         module_name = f"platformio.test.runners.{test_framework}"
         runner_cls = None
         if test_framework == "custom":
-            custom_runner_path = os.path.join(
-                project_config.get("platformio", "test_dir"), "custom_runner.py"
-            )
+            test_dir = project_config.get("platformio", "test_dir")
+            custom_runner_path = os.path.join(test_dir, "custom_test_runner.py")
+            test_name = test_suite.test_name if test_suite.test_name != "*" else None
+            while test_name:
+                if os.path.isfile(
+                    os.path.join(test_dir, test_name, "custom_test_runner.py")
+                ):
+                    custom_runner_path = os.path.join(
+                        test_dir, test_name, "custom_test_runner.py"
+                    )
+                    break
+                test_name = os.path.dirname(test_name)  # parent dir
+
             try:
                 mod = load_python_module(module_name, custom_runner_path)
-            except ImportError:
+            except (FileNotFoundError, ImportError):
                 raise UserSideException(
-                    "Could not find custom unit testing runner "
+                    "Could not find custom test runner "
                     f"by this path -> {custom_runner_path}"
                 )
         else:
