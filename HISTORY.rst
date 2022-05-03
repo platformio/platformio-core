@@ -8,7 +8,7 @@ Release Notes
 PlatformIO Core 6
 -----------------
 
-**A professional collaborative platform for embedded development**
+**A professional collaborative platform for safety-critical and declarative embedded development**
 
 6.0.0 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
