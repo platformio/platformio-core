@@ -45,7 +45,7 @@ def test_calculator_example(tmp_path: Path):
 
     # test JUnit output
     junit_testsuites = ET.parse(junit_output_path).getroot()
-    assert int(junit_testsuites.get("tests")) == 10
+    assert int(junit_testsuites.get("tests")) == 11
     assert int(junit_testsuites.get("errors")) == 2
     assert int(junit_testsuites.get("failures")) == 1
     assert len(junit_testsuites.findall("testsuite")) == 6
@@ -112,7 +112,7 @@ void my_extra_fun(void) {
     # test group
     test_group = test_dir / "group"
     test_group.mkdir(parents=True)
-    (test_group / "custom_test_runner.py").write_text(
+    (test_group / "test_custom_runner.py").write_text(
         """
 import click
 
