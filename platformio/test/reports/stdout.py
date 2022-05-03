@@ -48,6 +48,11 @@ class StdoutTestReport(TestReportBase):
             )
 
         if tabular_data:
+            util.print_labeled_bar(
+                "SUMMARY",
+                is_error=is_error,
+                fg="red" if is_error else "green",
+            )
             click.echo(
                 tabulate(
                     tabular_data,
@@ -58,6 +63,9 @@ class StdoutTestReport(TestReportBase):
                 ),
                 err=is_error,
             )
+
+        if failed_nums:
+            self.print_failed_test_cases()
 
         util.print_labeled_bar(
             "%d test cases: %s%s%d succeeded in %s"
@@ -71,3 +79,21 @@ class StdoutTestReport(TestReportBase):
             is_error=is_error,
             fg="red" if is_error else "green",
         )
+
+    def print_failed_test_cases(self):
+        click.echo()
+        for test_suite in self.test_result.suites:
+            if test_suite.status != TestStatus.FAILED:
+                continue
+            util.print_labeled_bar(
+                click.style(
+                    f"{test_suite.env_name}:{test_suite.test_name}", bold=True, fg="red"
+                ),
+                is_error=True,
+                sep="_",
+            )
+            for test_case in test_suite.cases:
+                if test_case.status != TestStatus.FAILED:
+                    continue
+                click.echo(test_case.stdout)
+                click.echo()
