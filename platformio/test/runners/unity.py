@@ -269,4 +269,4 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             else:
                 click.echo(line)
 
-        return self.parse_testcases(data)
+        return self.parse_test_cases(data)

@@ -18,8 +18,8 @@ from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
 from platformio.test.exception import UnitTestSuiteError
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
-from platformio.test.runners.mixins.embedded import TestRunnerEmbeddedMixin
-from platformio.test.runners.mixins.native import TestRunnerNativeMixin
+from platformio.test.runners.readers.program import ProgramTestOutputReader
+from platformio.test.runners.readers.serial import SerialTestOutputReader
 
 CTX_META_TEST_IS_RUNNING = __name__ + ".test_running"
 CTX_META_TEST_RUNNING_NAME = __name__ + ".test_running_name"
@@ -51,7 +51,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         self.monitor_dtr = monitor_dtr
 
 
-class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
+class TestRunnerBase:
 
     NAME = None
     EXTRA_LIB_DEPS = None
@@ -138,9 +138,12 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
         if self.options.without_testing:
             return None
         click.secho("Testing...", bold=self.options.verbose)
-        if self.platform.is_embedded():
-            return self.stage_testing_on_target()
-        return self.stage_testing_on_host()
+        reader = (
+            SerialTestOutputReader(self)
+            if self.platform.is_embedded()
+            else ProgramTestOutputReader(self)
+        )
+        return reader.begin()
 
     def teardown(self):
         pass
@@ -170,9 +173,9 @@ class TestRunnerBase(TestRunnerNativeMixin, TestRunnerEmbeddedMixin):
 
     def on_test_output(self, data):
         click.echo(data, nl=False)
-        self.parse_testcases(data)
+        self.parse_test_cases(data)
 
-    def parse_testcases(self, data):
+    def parse_test_cases(self, data):
         if not self.TESTCASE_PARSE_RE:
             raise NotImplementedError()
 

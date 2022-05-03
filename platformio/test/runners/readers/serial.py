@@ -21,11 +21,14 @@ from platformio import util
 from platformio.exception import UserSideException
 
 
-class TestRunnerEmbeddedMixin:
+class SerialTestOutputReader:
 
     SERIAL_TIMEOUT = 600
 
-    def stage_testing_on_target(self):
+    def __init__(self, test_runner):
+        self.test_runner = test_runner
+
+    def begin(self):
         click.echo(
             "If you don't see any output for the first 10 secs, "
             "please reset board (press reset button)"
@@ -34,17 +37,17 @@ class TestRunnerEmbeddedMixin:
 
         try:
             ser = serial.Serial(
-                baudrate=self.get_test_speed(), timeout=self.SERIAL_TIMEOUT
+                baudrate=self.test_runner.get_test_speed(), timeout=self.SERIAL_TIMEOUT
             )
             ser.port = self.get_test_port()
-            ser.rts = self.options.monitor_rts
-            ser.dtr = self.options.monitor_dtr
+            ser.rts = self.test_runner.options.monitor_rts
+            ser.dtr = self.test_runner.options.monitor_dtr
             ser.open()
         except serial.SerialException as e:
             click.secho(str(e), fg="red", err=True)
             return None
 
-        if not self.options.no_reset:
+        if not self.test_runner.options.no_reset:
             ser.flushInput()
             ser.setDTR(False)
             ser.setRTS(False)
@@ -53,7 +56,7 @@ class TestRunnerEmbeddedMixin:
             ser.setRTS(True)
             sleep(0.1)
 
-        while not self.test_suite.is_finished():
+        while not self.test_runner.test_suite.is_finished():
             line = ser.readline().strip()
 
             # fix non-ascii output from device
@@ -68,19 +71,26 @@ class TestRunnerEmbeddedMixin:
                 continue
             if isinstance(line, bytes):
                 line = line.decode("utf8", "ignore")
-            self.on_test_output(line)
+            self.test_runner.on_test_output(line)
         ser.close()
 
     def get_test_port(self):
         # if test port is specified manually or in config
-        port = self.options.test_port or self.project_config.get(
-            f"env:{self.test_suite.env_name}", "test_port"
+        port = (
+            self.test_runner.options.test_port
+            or self.test_runner.project_config.get(
+                f"env:{self.test_runner.test_suite.env_name}", "test_port"
+            )
         )
         if port:
             return port
 
-        board = self.project_config.get(f"env:{self.test_suite.env_name}", "board")
-        board_hwids = self.platform.board_config(board).get("build.hwids", [])
+        board = self.test_runner.project_config.get(
+            f"env:{self.test_runner.test_suite.env_name}", "board"
+        )
+        board_hwids = self.test_runner.platform.board_config(board).get(
+            "build.hwids", []
+        )
         port = None
         elapsed = 0
         while elapsed < 5 and not port:
