@@ -21,6 +21,7 @@ import click
 
 from platformio.test.exception import UnitTestSuiteError
 from platformio.test.runners.base import TestRunnerBase
+from platformio.util import strip_ansi_codes
 
 
 class UnityTestRunner(TestRunnerBase):
@@ -249,6 +250,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             )
 
     def on_test_output(self, data):
+        data = strip_ansi_codes(data or "")
         if not data.strip():
             return click.echo(data, nl=False)
 
@@ -258,11 +260,18 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         # beautify output
         for line in data.strip().split("\n"):
             line = line.strip()
-            if line.endswith(":PASS"):
-                click.echo("%s\t[%s]" % (line[:-5], click.style("PASSED", fg="green")))
-            elif line.endswith(":IGNORE"):
+            if line.strip(".").endswith(":PASS"):
                 click.echo(
-                    "%s\t[%s]" % (line[:-7], click.style("IGNORED", fg="yellow"))
+                    "%s\t[%s]"
+                    % (line[: line.rindex(":PASS")], click.style("PASSED", fg="green"))
+                )
+            elif line.strip(".").endswith(":IGNORE"):
+                click.echo(
+                    "%s\t[%s]"
+                    % (
+                        line[: line.rindex(":IGNORE")],
+                        click.style("IGNORED", fg="yellow"),
+                    )
                 )
             elif ":FAIL" in line:
                 click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
