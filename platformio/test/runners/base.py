@@ -144,11 +144,17 @@ class TestRunnerBase:
             return None
         click.secho("Testing...", bold=self.options.verbose)
         test_port = self.get_test_port()
-        serial_conds = [self.platform.is_embedded(), test_port and "://" in test_port]
+        program_conds = [
+            not self.platform.is_embedded()
+            and (not test_port or "://" not in test_port),
+            self.project_config.get(
+                f"env:{self.test_suite.env_name}", "test_testing_command"
+            ),
+        ]
         reader = (
-            SerialTestOutputReader(self)
-            if any(serial_conds)
-            else ProgramTestOutputReader(self)
+            ProgramTestOutputReader(self)
+            if any(program_conds)
+            else SerialTestOutputReader(self)
         )
         return reader.begin()
 

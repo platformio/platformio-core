@@ -12,28 +12,88 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import os
 import signal
+import subprocess
+import time
 
-from platformio import proc
+from platformio.compat import IS_WINDOWS, get_filesystem_encoding, get_locale_encoding
 from platformio.test.exception import UnitTestError
 
 
+class ProgramProcessProtocol(asyncio.SubprocessProtocol):
+    def __init__(self, test_runner, exit_future):
+        self.test_runner = test_runner
+        self.exit_future = exit_future
+
+    def pipe_data_received(self, _, data):
+        try:
+            data = data.decode(get_locale_encoding() or get_filesystem_encoding())
+        except UnicodeDecodeError:
+            data = data.decode("latin-1")
+        self.test_runner.on_test_output(data)
+        if self.test_runner.test_suite.is_finished():
+            self._stop_testing()
+
+    def process_exited(self):
+        self._stop_testing()
+
+    def _stop_testing(self):
+        if not self.exit_future.done():
+            self.exit_future.set_result(True)
+
+
 class ProgramTestOutputReader:
+
+    KILLING_TIMEOUT = 5  # seconds
+
     def __init__(self, test_runner):
         self.test_runner = test_runner
-
-    def begin(self):
-        build_dir = self.test_runner.project_config.get("platformio", "build_dir")
-        result = proc.exec_command(
-            [os.path.join(build_dir, self.test_runner.test_suite.env_name, "program")],
-            stdout=proc.LineBufferedAsyncPipe(self.test_runner.on_test_output),
-            stderr=proc.LineBufferedAsyncPipe(self.test_runner.on_test_output),
+        self.aio_loop = (
+            asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.new_event_loop()
         )
-        if result["returncode"] == 0:
-            return True
+        asyncio.set_event_loop(self.aio_loop)
+
+    def get_testing_command(self):
+        custom_testing_command = self.test_runner.project_config.get(
+            f"env:{self.test_runner.test_suite.env_name}", "test_testing_command"
+        )
+        if custom_testing_command:
+            return custom_testing_command
+        build_dir = self.test_runner.project_config.get("platformio", "build_dir")
+        return [
+            os.path.join(build_dir, self.test_runner.test_suite.env_name, "program")
+        ]
+
+    async def gather_results(self):
+        exit_future = asyncio.Future(loop=self.aio_loop)
+        transport, _ = await self.aio_loop.subprocess_exec(
+            lambda: ProgramProcessProtocol(self.test_runner, exit_future),
+            *self.get_testing_command(),
+            stdin=None,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        await exit_future
+        last_return_code = transport.get_returncode()
+        transport.close()
+
+        # wait until subprocess will be killed
+        start = time.time()
+        while (
+            start > (time.time() - self.KILLING_TIMEOUT)
+            and transport.get_returncode() is None
+        ):
+            await asyncio.sleep(0.5)
+
+        if last_return_code:
+            self.raise_for_status(last_return_code)
+
+    @staticmethod
+    def raise_for_status(return_code):
         try:
-            sig = signal.Signals(abs(result["returncode"]))
+            sig = signal.Signals(abs(return_code))
             try:
                 signal_description = signal.strsignal(sig)
             except AttributeError:
@@ -42,4 +102,11 @@ class ProgramTestOutputReader:
                 f"Program received signal {sig.name} ({signal_description})"
             )
         except ValueError:
-            raise UnitTestError("Program errored with %d code" % result["returncode"])
+            raise UnitTestError("Program errored with %d code" % return_code)
+
+    def begin(self):
+        try:
+            self.aio_loop.run_until_complete(self.gather_results())
+        finally:
+            self.aio_loop.run_until_complete(self.aio_loop.shutdown_asyncgens())
+            self.aio_loop.close()

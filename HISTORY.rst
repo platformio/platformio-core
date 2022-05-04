@@ -45,9 +45,10 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 * **Unit Testing**
 
   - Refactored from scratch `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`_ solution and its documentation
-  - New `Test Hierarchies <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
-  - New `Custom Testing Framework <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/custom/index.html>`_
-  - New "test" `build configuration <https://docs.platformio.org/en/latest/projectconf/build_configurations.html>`__
+  - New: `Test Hierarchies <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
+  - New: `Custom Testing Framework <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/custom/index.html>`_
+  - New: Using hardware `Simulators <https://docs.platformio.org/en/latest/advanced/unit-testing/simulators/index.html>`__ for Unit Testing
+  - Added a new "test" `build configuration <https://docs.platformio.org/en/latest/projectconf/build_configurations.html>`__
   - Added support for the ``socket://`` and ``rfc2217://`` protocols using `test_port <https://docs.platformio.org/en/latest/projectconf/section_env_test.html#test-port>`__ option (`issue #4229 <https://github.com/platformio/platformio-core/issues/4229>`_)
   - Added support for a `Custom Unity Library <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/custom/examples/custom_unity_library.html>`__ (`issue #3980 <https://github.com/platformio/platformio-core/issues/3980>`_)
   - Generate reports in JUnit and JSON formats using the `pio test --output-format <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-output-format>`__ option  (`issue #2891 <https://github.com/platformio/platformio-core/issues/2891>`_)

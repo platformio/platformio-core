@@ -687,6 +687,15 @@ ProjectOptions = OrderedDict(
                 type=click.BOOL,
                 default=False,
             ),
+            ConfigEnvOption(
+                group="test",
+                name="test_testing_command",
+                multiple=True,
+                description=(
+                    "A custom testing command that runs test cases "
+                    "and returns results to the standard output"
+                ),
+            ),
             # Debug
             ConfigEnvOption(
                 group="debug",

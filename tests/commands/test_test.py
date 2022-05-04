@@ -13,8 +13,11 @@
 # limitations under the License.
 
 import os
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+import pytest
 
 from platformio import proc
 from platformio.test.command import test_cmd as pio_test_cmd
@@ -210,6 +213,69 @@ int main(int argc, char *argv[]) {
     assert any(
         s in result.output for s in ("Program received signal", "Program errored with")
     )
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="runs only on Unix (issue with SimAVR)"
+)
+def test_custom_testing_command(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:uno]
+platform = atmelavr
+framework = arduino
+board = uno
+
+platform_packages =
+    platformio/tool-simavr @ ^1
+test_speed = 9600
+test_testing_command =
+    ${platformio.packages_dir}/tool-simavr/bin/simavr
+    -m
+    atmega328p
+    -f
+    16000000L
+    ${platformio.build_dir}/${this.__env__}/firmware.elf
+"""
+    )
+    test_dir = project_dir / "test" / "test_dummy"
+    test_dir.mkdir(parents=True)
+    (test_dir / "test_main.cpp").write_text(
+        """
+#include <Arduino.h>
+#include <unity.h>
+
+void setUp(void) {
+    // set stuff up here
+}
+
+void tearDown(void) {
+    // clean stuff up here
+}
+
+void dummy_test(void) {
+    TEST_ASSERT_EQUAL(1, 1);
+}
+
+void setup() {
+    UNITY_BEGIN();
+    RUN_TEST(dummy_test);
+    UNITY_END();
+}
+
+void loop() {
+    delay(1000);
+}
+"""
+    )
+    result = clirunner.invoke(
+        pio_test_cmd,
+        ["-d", str(project_dir), "--without-uploading"],
+    )
+    validate_cliresult(result)
+    assert "dummy_test" in result.output
 
 
 def test_unity_setup_teardown(clirunner, validate_cliresult, tmpdir):
