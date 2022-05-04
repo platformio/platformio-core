@@ -15,7 +15,6 @@
 import email
 import imaplib
 import os
-import re
 import time
 
 import pytest
@@ -62,14 +61,6 @@ def clirunner(request, tmpdir_factory):
     request.addfinalizer(fin)
 
     return CliRunner()
-
-
-@pytest.fixture(scope="session")
-def strip_ansi():
-    def decorator(text):
-        return re.sub(r"\x1B\[\d+(;\d+){0,2}m", "", text)
-
-    return decorator
 
 
 def _isolated_pio_core(request, tmpdir_factory):

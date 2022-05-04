@@ -20,6 +20,7 @@ import re
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import cli as cmd_lib
 from platformio.package.exception import UnknownPackageError
+from platformio.util import strip_ansi_codes
 
 PlatformioCLI.leftover_args = ["--json-output"]  # hook for click
 
@@ -237,7 +238,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     ) == set(lib["name"] for lib in output)
 
 
-def test_global_lib_update(clirunner, validate_cliresult, strip_ansi):
+def test_global_lib_update(clirunner, validate_cliresult):
     # update library using package directory
     result = clirunner.invoke(
         cmd_lib, ["-g", "update", "NeoPixelBus", "--dry-run", "--json-output"]
@@ -248,7 +249,7 @@ def test_global_lib_update(clirunner, validate_cliresult, strip_ansi):
     assert "__pkg_dir" in oudated[0]
     result = clirunner.invoke(cmd_lib, ["-g", "update", oudated[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert "Removing NeoPixelBus @ 2.2.4" in strip_ansi(result.output)
+    assert "Removing NeoPixelBus @ 2.2.4" in strip_ansi_codes(result.output)
 
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
@@ -262,9 +263,7 @@ def test_global_lib_update(clirunner, validate_cliresult, strip_ansi):
     assert isinstance(result.exception, UnknownPackageError)
 
 
-def test_global_lib_uninstall(
-    clirunner, validate_cliresult, isolated_pio_core, strip_ansi
-):
+def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     # uninstall using package directory
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     validate_cliresult(result)
@@ -272,7 +271,7 @@ def test_global_lib_uninstall(
     items = sorted(items, key=lambda item: item["__pkg_dir"])
     result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert ("Removing %s" % items[0]["name"]) in strip_ansi(result.output)
+    assert ("Removing %s" % items[0]["name"]) in strip_ansi_codes(result.output)
 
     # uninstall the rest libraries
     result = clirunner.invoke(

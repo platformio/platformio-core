@@ -287,3 +287,7 @@ def humanize_duration_time(duration):
         tokens.append(int(round(duration) if multiplier == 1 else fraction))
         duration -= fraction * multiplier
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
+
+
+def strip_ansi_codes(text):
+    return re.sub(r"\x1B\[\d+(;\d+){0,2}m", "", text)

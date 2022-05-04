@@ -17,6 +17,7 @@
 import pytest
 
 from platformio.package.commands.exec import package_exec_cmd
+from platformio.util import strip_ansi_codes
 
 
 def test_pkg_not_installed(clirunner, validate_cliresult, isolated_pio_core):
@@ -31,7 +32,7 @@ def test_pkg_not_installed(clirunner, validate_cliresult, isolated_pio_core):
         validate_cliresult(result)
 
 
-def test_pkg_specified(clirunner, validate_cliresult, isolated_pio_core, strip_ansi):
+def test_pkg_specified(clirunner, validate_cliresult, isolated_pio_core):
     # with install
     result = clirunner.invoke(
         package_exec_cmd,
@@ -39,14 +40,12 @@ def test_pkg_specified(clirunner, validate_cliresult, isolated_pio_core, strip_a
         obj=dict(force_click_stream=True),
     )
     validate_cliresult(result)
-    output = strip_ansi(result.output)
+    output = strip_ansi_codes(result.output)
     assert "Tool Manager: Installing platformio/tool-openocd" in output
     assert "Open On-Chip Debugger" in output
 
 
-def test_unrecognized_options(
-    clirunner, validate_cliresult, isolated_pio_core, strip_ansi
-):
+def test_unrecognized_options(clirunner, validate_cliresult, isolated_pio_core):
     # unrecognized option
     result = clirunner.invoke(
         package_exec_cmd,
