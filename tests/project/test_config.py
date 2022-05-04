@@ -343,6 +343,7 @@ def test_get_value(config):
     assert config.get("platformio", "src_dir") == os.path.abspath(
         os.path.join(os.getcwd(), "source")
     )
+    assert "$PROJECT_HASH" not in config.get("platformio", "build_dir")
 
 
 def test_items(config):
@@ -597,3 +598,25 @@ custom_option = ${this.board}
     config = ProjectConfig(str(project_conf))
     assert config.get("env:myenv", "custom_option") == "uno"
     assert config.get("env:myenv", "build_flags") == ["-Dmyenv"]
+
+
+def test_nested_interpolation(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[platformio]
+build_dir = ~/tmp/pio-$PROJECT_HASH
+
+[env:myenv]
+test_testing_command =
+    ${platformio.packages_dir}/tool-simavr/bin/simavr
+     -m
+     atmega328p
+     -f
+     16000000L
+     ${platformio.build_dir}/${this.__env__}/firmware.elf
+    """
+    )
+    config = ProjectConfig(str(project_conf))
+    testing_command = config.get("env:myenv", "test_testing_command")
+    assert "$" not in " ".join(testing_command)

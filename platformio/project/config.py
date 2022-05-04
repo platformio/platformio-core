@@ -300,7 +300,7 @@ class ProjectConfigBase(object):
                 return parent_section[4:]
         # handle nested calls
         try:
-            value = self.getraw(section, option)
+            value = self.get(section, option)
         except RecursionError:
             raise exception.ProjectOptionValueError(
                 "Infinite recursion has been detected", option, section
