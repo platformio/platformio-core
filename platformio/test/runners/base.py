@@ -113,7 +113,7 @@ class TestRunnerBase:
     def stage_building(self):
         if self.options.without_building:
             return None
-        click.secho("Building...", bold=self.options.verbose)
+        click.secho("Building...", bold=True)
         targets = ["__test"]
         if not self.options.without_debugging:
             targets.append("__debug")
@@ -127,7 +127,7 @@ class TestRunnerBase:
     def stage_uploading(self):
         if self.options.without_uploading or not self.platform.is_embedded():
             return None
-        click.secho("Uploading...", bold=self.options.verbose)
+        click.secho("Uploading...", bold=True)
         targets = ["upload"]
         if self.options.without_building:
             targets.append("nobuild")
@@ -143,7 +143,7 @@ class TestRunnerBase:
     def stage_testing(self):
         if self.options.without_testing:
             return None
-        click.secho("Testing...", bold=self.options.verbose)
+        click.secho("Testing...", bold=True)
         test_port = self.get_test_port()
         program_conds = [
             not self.platform.is_embedded()
