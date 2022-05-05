@@ -66,6 +66,7 @@ class TestRunnerBase:
             autoinstall=True,
         )
         self.cmd_ctx = None
+        self._testing_output_buffer = ""
 
     @property
     def name(self):
@@ -184,33 +185,42 @@ class TestRunnerBase:
         """
         return env
 
-    def on_test_output(self, data):
-        click.echo(data, nl=False)
-        self.parse_test_cases(data)
+    def on_testing_data_output(self, data):
+        if isinstance(data, bytes):
+            data = data.decode("utf8", "ignore")
+        self._testing_output_buffer += data
+        self._testing_output_buffer = self._testing_output_buffer.replace("\r", "")
+        while "\n" in self._testing_output_buffer:
+            nl_pos = self._testing_output_buffer.index("\n")
+            line = self._testing_output_buffer[: nl_pos + 1]
+            self._testing_output_buffer = self._testing_output_buffer[nl_pos + 1 :]
+            self.on_testing_line_output(line)
 
-    def parse_test_cases(self, data):
+    def on_testing_line_output(self, line):
+        click.echo(line, nl=False)
+        self.parse_test_case(line)
+
+    def parse_test_case(self, line):
         if not self.TESTCASE_PARSE_RE:
             raise NotImplementedError()
-
-        for line in data.split("\n"):
-            line = line.strip()
-            if not line:
-                continue
-            match = self.TESTCASE_PARSE_RE.search(line)
-            if not match:
-                continue
-            data = match.groupdict()
-            source = None
-            if "source_file" in data:
-                source = TestCaseSource(
-                    file=data["source_file"], line=int(data.get("source_line"))
-                )
-            self.test_suite.add_case(
-                TestCase(
-                    name=data.get("name"),
-                    status=TestStatus.from_string(data.get("status")),
-                    message=data.get("message"),
-                    stdout=line,
-                    source=source,
-                )
+        line = line.strip()
+        if not line:
+            return None
+        match = self.TESTCASE_PARSE_RE.search(line)
+        if not match:
+            return None
+        data = match.groupdict()
+        source = None
+        if "source_file" in data:
+            source = TestCaseSource(
+                file=data["source_file"], line=int(data.get("source_line"))
             )
+        test_case = TestCase(
+            name=data.get("name"),
+            status=TestStatus.from_string(data.get("status")),
+            message=data.get("message"),
+            stdout=line,
+            source=source,
+        )
+        self.test_suite.add_case(test_case)
+        return test_case

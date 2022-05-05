@@ -249,33 +249,33 @@ void unityOutputComplete(void) { unittest_uart_end(); }
                 encoding="utf8",
             )
 
-    def on_test_output(self, data):
-        data = strip_ansi_codes(data or "")
-        if not data.strip():
-            return click.echo(data, nl=False)
+    def on_testing_line_output(self, line):
+        line = strip_ansi_codes(line or "")
+        if not line.strip():
+            click.echo(line, nl=False)
+            return
 
-        if all(s in data for s in ("Tests", "Failures", "Ignored")):
+        if all(s in line for s in ("Tests", "Failures", "Ignored")):
             self.test_suite.on_finish()
 
         # beautify output
-        for line in data.strip().split("\n"):
-            line = line.strip()
-            if line.strip(".").endswith(":PASS"):
-                click.echo(
-                    "%s\t[%s]"
-                    % (line[: line.rindex(":PASS")], click.style("PASSED", fg="green"))
+        line = line.strip()
+        if line.strip(".").endswith(":PASS"):
+            click.echo(
+                "%s\t[%s]"
+                % (line[: line.rindex(":PASS")], click.style("PASSED", fg="green"))
+            )
+        elif line.strip(".").endswith(":IGNORE"):
+            click.echo(
+                "%s\t[%s]"
+                % (
+                    line[: line.rindex(":IGNORE")],
+                    click.style("IGNORED", fg="yellow"),
                 )
-            elif line.strip(".").endswith(":IGNORE"):
-                click.echo(
-                    "%s\t[%s]"
-                    % (
-                        line[: line.rindex(":IGNORE")],
-                        click.style("IGNORED", fg="yellow"),
-                    )
-                )
-            elif ":FAIL" in line:
-                click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
-            else:
-                click.echo(line)
+            )
+        elif ":FAIL" in line:
+            click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
+        else:
+            click.echo(line)
 
-        return self.parse_test_cases(data)
+        self.parse_test_case(line)

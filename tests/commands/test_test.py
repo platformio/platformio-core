@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 
 
 @pytest.mark.skipif(
-    sys.platform == "win32", reason="runs only on Unix (issue with SimAVR)"
+    sys.platform != "darwin", reason="runs only on macOS (issue with SimAVR)"
 )
 def test_custom_testing_command(clirunner, validate_cliresult, tmp_path: Path):
     project_dir = tmp_path / "project"

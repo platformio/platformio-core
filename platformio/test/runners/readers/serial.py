@@ -59,21 +59,7 @@ class SerialTestOutputReader:
             sleep(0.1)
 
         while not self.test_runner.test_suite.is_finished():
-            line = ser.readline().strip()
-
-            # fix non-ascii output from device
-            for i, c in enumerate(line[::-1]):
-                if not isinstance(c, int):
-                    c = ord(c)
-                if c > 127:
-                    line = line[-i:]
-                    break
-
-            if not line:
-                continue
-            if isinstance(line, bytes):
-                line = line.decode("utf8", "ignore")
-            self.test_runner.on_test_output(line)
+            self.test_runner.on_testing_data_output(ser.read(ser.in_waiting or 1))
         ser.close()
 
     def autodetect_test_port(self):

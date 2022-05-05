@@ -32,7 +32,7 @@ class ProgramProcessProtocol(asyncio.SubprocessProtocol):
             data = data.decode(get_locale_encoding() or get_filesystem_encoding())
         except UnicodeDecodeError:
             data = data.decode("latin-1")
-        self.test_runner.on_test_output(data)
+        self.test_runner.on_testing_data_output(data)
         if self.test_runner.test_suite.is_finished():
             self._stop_testing()
 
