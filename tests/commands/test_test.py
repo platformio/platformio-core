@@ -433,3 +433,111 @@ void unittest_uart_end(){}
         ],
     )
     validate_cliresult(result)
+
+
+def test_doctest_framework(clirunner, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:native]
+platform = native
+test_framework = doctest
+"""
+    )
+    test_dir = project_dir / "test" / "test_dummy"
+    test_dir.mkdir(parents=True)
+    (test_dir / "test_main.cpp").write_text(
+        """
+#define DOCTEST_CONFIG_IMPLEMENT
+#include <doctest.h>
+
+TEST_CASE("[math] basic stuff")
+{
+	CHECK(6 > 5);
+	CHECK(6 > 7);
+}
+
+TEST_CASE("should be skipped " * doctest::skip())
+{
+	CHECK(2 > 5);
+}
+
+TEST_CASE("vectors can be sized and resized")
+{
+	std::vector<int> v(5);
+
+	REQUIRE(v.size() == 5);
+	REQUIRE(v.capacity() >= 5);
+
+	SUBCASE("adding to the vector increases it's size")
+	{
+		v.push_back(1);
+
+		CHECK(v.size() == 6);
+		CHECK(v.capacity() >= 6);
+	}
+	SUBCASE("reserving increases just the capacity")
+	{
+		v.reserve(6);
+
+		CHECK(v.size() == 5);
+		CHECK(v.capacity() >= 6);
+	}
+}
+
+TEST_CASE("WARN level of asserts don't fail the test case")
+{
+	WARN(0);
+	WARN_FALSE(1);
+	WARN_EQ(1, 0);
+}
+
+TEST_SUITE("scoped test suite")
+{
+	TEST_CASE("part of scoped")
+	{
+		FAIL("Error message");
+	}
+
+	TEST_CASE("part of scoped 2")
+	{
+		FAIL("");
+	}
+}
+
+int main(int argc, char **argv)
+{
+	doctest::Context context;
+	context.setOption("success", true);
+	context.setOption("no-exitcode", true);
+	context.applyCommandLine(argc, argv);
+	return context.run();
+}
+"""
+    )
+    junit_output_path = tmp_path / "junit.xml"
+    result = clirunner.invoke(
+        pio_test_cmd,
+        [
+            "-d",
+            str(project_dir),
+            "--output-format=junit",
+            "--output-path",
+            str(junit_output_path),
+        ],
+    )
+    assert result.exit_code != 0
+
+    # test JUnit output
+    junit_testsuites = ET.parse(junit_output_path).getroot()
+    assert int(junit_testsuites.get("tests")) == 8
+    assert int(junit_testsuites.get("errors")) == 0
+    assert int(junit_testsuites.get("failures")) == 3
+    assert len(junit_testsuites.findall("testsuite")) == 1
+    junit_failed_testcase = junit_testsuites.find(
+        ".//testcase[@name='scoped test suite -> part of scoped']"
+    )
+    assert junit_failed_testcase.get("status") == "FAILED"
+    assert junit_failed_testcase.find("failure").get("message") == "Error message"
+    assert "TEST SUITE: scoped test suite" in junit_failed_testcase.find("failure").text

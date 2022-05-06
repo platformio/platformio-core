@@ -652,7 +652,7 @@ ProjectOptions = OrderedDict(
                 group="test",
                 name="test_framework",
                 description="A unit testing framework",
-                type=click.Choice(["unity", "custom"]),
+                type=click.Choice(["doctest", "unity", "custom"]),
                 default="unity",
             ),
             ConfigEnvOption(
