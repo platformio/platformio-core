@@ -2,6 +2,7 @@ Release Notes
 =============
 
 .. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
+.. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
 
 .. _release_notes_6:
 
@@ -72,9 +73,10 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 * **Build System**
 
   - Show project dependency licenses when building in the verbose mode
-  - Fixed an issue when `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__ ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
+  - Fixed an issue when |LDF| ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
   - Fixed an issue with calling an extra script located outside a project (`issue #4220 <https://github.com/platformio/platformio-core/issues/4220>`_)
   - Fixed an issue when GCC preprocessor was applied to the ".s" assembly files on case-sensitive OS such as Window OS (`issue #3917 <https://github.com/platformio/platformio-core/issues/3917>`_)
+  - Fixed an issue when |LDF| ignores `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ in the "deep+" mode (`issue #4253 <https://github.com/platformio/platformio-core/issues/4253>`_)
 
 * **Integration**
 

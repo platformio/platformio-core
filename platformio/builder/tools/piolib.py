@@ -901,12 +901,18 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)
 
     @property
+    def build_flags(self):
+        # pylint: disable=no-member
+        return self.env.get("SRC_BUILD_FLAGS") or LibBuilderBase.build_flags.fget(self)
+
+    @property
     def dependencies(self):
         return self.env.GetProjectOption("lib_deps", [])
 
     def process_extra_options(self):
-        # skip for project, options are already processed
-        pass
+        with fs.cd(self.path):
+            self.env.ProcessFlags(self.build_flags)
+            self.env.ProcessUnFlags(self.build_unflags)
 
     def install_dependencies(self):
         def _is_builtin(spec):
