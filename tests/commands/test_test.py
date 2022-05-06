@@ -163,7 +163,7 @@ int main() {
     )
     result = clirunner.invoke(
         pio_test_cmd,
-        ["-d", str(project_dir), "-e", "native"],
+        ["-d", str(project_dir), "-e", "native", "--verbose"],
     )
     validate_cliresult(result)
     assert "Called from my_extra_fun" in result.output
@@ -365,7 +365,7 @@ int main() {
     )
     result = clirunner.invoke(
         pio_test_cmd,
-        ["-d", str(project_dir), "-e", "native"],
+        ["-d", str(project_dir), "-e", "native", "--verbose"],
     )
     validate_cliresult(result)
     assert all(f in result.output for f in ("Found custom unity_config", "dummy_test"))
