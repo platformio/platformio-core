@@ -163,7 +163,13 @@ class LibBuilderBase(object):
             p2 = p2.lower()
         if p1 == p2:
             return True
-        return os.path.commonprefix((p1 + os.path.sep, p2)) == p1 + os.path.sep
+        p1 = p1 + os.path.sep
+        if os.path.commonprefix([p1, p2]) == p1:
+            return True
+        # try to resolve paths
+        p1 = os.path.os.path.realpath(p1)
+        p2 = os.path.os.path.realpath(p2)
+        return os.path.commonprefix([p1, p2]) == p1
 
     @property
     def name(self):
