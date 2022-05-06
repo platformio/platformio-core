@@ -88,6 +88,7 @@ class PackagePacker(object):
         "**/*.[jJ][pP][eE][gG]",
         "**/*.[pP][nN][gG]",
         "**/*.[gG][iI][fF]",
+        "**/*.[sS][vV][gG]",
         "**/*.[zZ][iI][pP]",
         "**/*.[gG][zZ]",
         "**/*.3[gG][pP]",
