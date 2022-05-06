@@ -95,5 +95,5 @@ class StdoutTestReport(TestReportBase):
             for test_case in test_suite.cases:
                 if test_case.status != TestStatus.FAILED:
                     continue
-                click.echo(test_case.stdout)
+                click.echo((test_case.stdout or "").strip())
                 click.echo()

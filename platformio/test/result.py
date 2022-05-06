@@ -17,23 +17,35 @@ import functools
 import operator
 import time
 
+import click
+
 
 class TestStatus(enum.Enum):
     PASSED = enum.auto()
     FAILED = enum.auto()
     SKIPPED = enum.auto()
+    WARNED = enum.auto()
     ERRORED = enum.auto()
 
     @classmethod
     def from_string(cls, value: str):
         value = value.lower()
-        if value.startswith("pass"):
+        if value.startswith("fail"):
+            return cls.FAILED
+        if value.startswith(("pass", "success")):
             return cls.PASSED
         if value.startswith(("ignore", "skip")):
             return cls.SKIPPED
-        if value.startswith("fail"):
-            return cls.FAILED
+        if value.startswith("WARNING"):
+            return cls.WARNED
         raise ValueError(f"Unknown test status `{value}`")
+
+    def to_ansi_color(self):
+        if self == TestStatus.FAILED:
+            return "red"
+        if self == TestStatus.PASSED:
+            return "green"
+        return "yellow"
 
 
 class TestCaseSource:
@@ -63,6 +75,21 @@ class TestCase:
         self.source = source
         self.duration = duration
         self.exception = exception
+
+    def humanize(self):
+        parts = []
+        if self.source:
+            parts.append("%s:%d: " % (self.source.file, self.source.line))
+        parts.append(self.name)
+        if self.message:
+            parts.append(": " + self.message)
+        parts.extend(
+            [
+                "\t",
+                "[%s]" % click.style(self.status.name, fg=self.status.to_ansi_color()),
+            ]
+        )
+        return "".join(parts)
 
 
 class TestSuite:
