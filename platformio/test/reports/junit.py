@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 
 import click
 
+from platformio import __version__
 from platformio.test.reports.base import TestReportBase
 from platformio.test.result import TestStatus
 
@@ -29,7 +30,7 @@ class JunitTestReport(TestReportBase):
                 output_path,
                 "pio-test-report-%s-%s-junit.xml"
                 % (
-                    self.test_result.name,
+                    os.path.basename(self.test_result.project_dir),
                     datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
                 ),
             )
@@ -42,7 +43,8 @@ class JunitTestReport(TestReportBase):
 
     def build_xml_tree(self):
         root = ET.Element("testsuites")
-        root.set("name", self.test_result.name)
+        root.set("name", self.test_result.project_dir)
+        root.set("platformio_version", __version__)
         root.set("tests", str(self.test_result.case_nums))
         root.set("errors", str(self.test_result.get_status_nums(TestStatus.ERRORED)))
         root.set("failures", str(self.test_result.get_status_nums(TestStatus.FAILED)))

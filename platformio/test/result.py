@@ -49,8 +49,8 @@ class TestStatus(enum.Enum):
 
 
 class TestCaseSource:
-    def __init__(self, file, line=None):
-        self.file = file
+    def __init__(self, filename, line=None):
+        self.filename = filename
         self.line = line
 
 
@@ -79,7 +79,7 @@ class TestCase:
     def humanize(self):
         parts = []
         if self.source:
-            parts.append("%s:%d: " % (self.source.file, self.source.line))
+            parts.append("%s:%d: " % (self.source.filename, self.source.line))
         parts.append(self.name)
         if self.message:
             parts.append(": " + self.message)
@@ -135,8 +135,8 @@ class TestSuite:
 
 
 class TestResult:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, project_dir):
+        self.project_dir = project_dir
         self._suites = []
 
     @property

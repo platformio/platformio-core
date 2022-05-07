@@ -213,12 +213,12 @@ class TestRunnerBase:
         source = None
         if "source_file" in data:
             source = TestCaseSource(
-                file=data["source_file"], line=int(data.get("source_line"))
+                filename=data["source_file"], line=int(data.get("source_line"))
             )
         test_case = TestCase(
-            name=data.get("name"),
+            name=data.get("name").strip(),
             status=TestStatus.from_string(data.get("status")),
-            message=data.get("message"),
+            message=data.get("message", "").strip() or None,
             stdout=line,
             source=source,
         )

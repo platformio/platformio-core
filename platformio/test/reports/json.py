@@ -29,7 +29,7 @@ class JsonTestReport(TestReportBase):
                 output_path,
                 "pio-test-report-%s-%s.json"
                 % (
-                    self.test_result.name,
+                    os.path.basename(self.test_result.project_dir),
                     datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
                 ),
             )
@@ -43,7 +43,7 @@ class JsonTestReport(TestReportBase):
     def to_json(self):
         result = dict(
             version="1.0",
-            name=self.test_result.name,
+            project_dir=self.test_result.project_dir,
             duration=self.test_result.duration,
             testcase_nums=self.test_result.case_nums,
             error_nums=self.test_result.get_status_nums(TestStatus.ERRORED),
@@ -94,6 +94,6 @@ class JsonTestReport(TestReportBase):
             )
         if test_case.source:
             result["source"] = dict(
-                file=test_case.source.file, line=test_case.source.line
+                filename=test_case.source.filename, line=test_case.source.line
             )
         return result
