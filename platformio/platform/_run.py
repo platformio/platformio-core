@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import base64
+import json
 import os
 import re
 import sys
@@ -21,7 +22,7 @@ from urllib.parse import quote
 import click
 
 from platformio import app, fs, proc, telemetry
-from platformio.compat import hashlib_encode_data, is_bytes
+from platformio.compat import hashlib_encode_data
 from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
 
@@ -32,13 +33,16 @@ class PlatformRunMixin(object):
 
     @staticmethod
     def encode_scons_arg(value):
-        data = base64.urlsafe_b64encode(hashlib_encode_data(value))
-        return data.decode() if is_bytes(data) else data
+        if isinstance(value, (list, tuple, dict)):
+            value = json.dumps(value)
+        return base64.urlsafe_b64encode(hashlib_encode_data(value)).decode()
 
     @staticmethod
     def decode_scons_arg(data):
-        value = base64.urlsafe_b64decode(data)
-        return value.decode() if is_bytes(value) else value
+        value = base64.urlsafe_b64decode(data).decode()
+        if value.startswith(("[", "{")):
+            value = json.loads(value)
+        return value
 
     def run(  # pylint: disable=too-many-arguments
         self, variables, targets, silent, verbose, jobs

@@ -44,6 +44,7 @@ clivars.AddVariables(
     ("PIOENV",),
     ("PIOTEST_RUNNING_NAME",),
     ("UPLOAD_PORT",),
+    ("PROGRAM_ARGS",),
 )
 
 DEFAULT_ENV_OPTIONS = dict(

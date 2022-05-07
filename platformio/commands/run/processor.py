@@ -22,20 +22,34 @@ from platformio.test.runners.base import CTX_META_TEST_RUNNING_NAME
 
 class EnvironmentProcessor(object):
     def __init__(  # pylint: disable=too-many-arguments
-        self, cmd_ctx, name, config, targets, upload_port, silent, verbose, jobs
+        self,
+        cmd_ctx,
+        name,
+        config,
+        targets,
+        upload_port,
+        jobs,
+        program_args,
+        silent,
+        verbose,
     ):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
         self.targets = [str(t) for t in targets]
         self.upload_port = upload_port
+        self.jobs = jobs
+        self.program_args = program_args
         self.silent = silent
         self.verbose = verbose
-        self.jobs = jobs
         self.options = config.items(env=name, as_dict=True)
 
     def get_build_variables(self):
-        variables = {"pioenv": self.name, "project_config": self.config.path}
+        variables = dict(
+            pioenv=self.name,
+            project_config=self.config.path,
+            program_args=self.program_args,
+        )
 
         if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
             variables["piotest_running_name"] = self.cmd_ctx.meta[

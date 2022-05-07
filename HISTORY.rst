@@ -95,6 +95,7 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 
 * **Miscellaneous**
 
+  - Pass extra arguments to the `native <https://docs.platformio.org/en/latest/platforms/native.html>`__ program with a new `pio run --program-arg <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-a>`__ option (`issue #4246 <https://github.com/platformio/platformio-core/issues/4246>`_)
   - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
   - Finally removed all tracks to the Python 2.7, the Python 3.6 is the minimum supported version.
 

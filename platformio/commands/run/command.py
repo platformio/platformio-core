@@ -66,10 +66,17 @@ except NotImplementedError:
         "Default is a number of CPUs in a system (N=%d)" % DEFAULT_JOB_NUMS
     ),
 )
-@click.option("-s", "--silent", is_flag=True)
-@click.option("-v", "--verbose", is_flag=True)
+@click.option(
+    "-a",
+    "--program-arg",
+    "program_args",
+    multiple=True,
+    help="A program argument (multiple are allowed)",
+)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.option("--list-targets", is_flag=True)
+@click.option("-s", "--silent", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(
     ctx,
@@ -79,10 +86,11 @@ def cli(
     project_dir,
     project_conf,
     jobs,
-    silent,
-    verbose,
+    program_args,
     disable_auto_clean,
     list_targets,
+    silent,
+    verbose,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -138,10 +146,11 @@ def cli(
                     environment,
                     target,
                     upload_port,
+                    jobs,
+                    program_args,
+                    is_test_running,
                     silent,
                     verbose,
-                    jobs,
-                    is_test_running,
                 )
             )
 
@@ -165,16 +174,25 @@ def process_env(
     environments,
     targets,
     upload_port,
+    jobs,
+    program_args,
+    is_test_running,
     silent,
     verbose,
-    jobs,
-    is_test_running,
 ):
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
 
     ep = EnvironmentProcessor(
-        ctx, name, config, targets, upload_port, silent, verbose, jobs
+        ctx,
+        name,
+        config,
+        targets,
+        upload_port,
+        jobs,
+        program_args,
+        silent,
+        verbose,
     )
     result = {"env": name, "duration": time(), "succeeded": ep.process()}
     result["duration"] = time() - result["duration"]
