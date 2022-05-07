@@ -28,19 +28,19 @@ from platformio.test.runners.factory import TestRunnerFactory
 
 
 @click.command("test", short_help="Unit Testing")
-@click.option("--environment", "-e", multiple=True, metavar="<environment>")
+@click.option("--environment", "-e", multiple=True)
 @click.option(
     "--filter",
     "-f",
     multiple=True,
-    metavar="<pattern>",
+    metavar="PATTERN",
     help="Filter tests by a pattern",
 )
 @click.option(
     "--ignore",
     "-i",
     multiple=True,
-    metavar="<pattern>",
+    metavar="PATTERN",
     help="Ignore tests by a pattern",
 )
 @click.option("--upload-port")
@@ -76,6 +76,13 @@ from platformio.test.runners.factory import TestRunnerFactory
     type=click.IntRange(0, 1),
     help="Set initial DTR line state for Serial Monitor",
 )
+@click.option(
+    "-a",
+    "--program-arg",
+    "program_args",
+    multiple=True,
+    help="A program argument (multiple are allowed)",
+)
 @click.option("--output-format", type=click.Choice(["json", "junit"]))
 @click.option(
     "--output-path",
@@ -99,6 +106,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
     no_reset,
     monitor_rts,
     monitor_dtr,
+    program_args,
     output_format,
     output_path,
     verbose,
@@ -116,7 +124,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
         if verbose:
             click.echo(" (%s)" % ", ".join(test_names))
 
-        test_result = TestResult(os.path.basename(project_dir))
+        test_result = TestResult(project_dir)
         default_envs = config.default_envs()
         for env_name in config.envs():
             for test_name in test_names:
@@ -159,6 +167,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
                         no_reset=no_reset,
                         monitor_rts=monitor_rts,
                         monitor_dtr=monitor_dtr,
+                        program_args=program_args,
                     ),
                 )
                 click.echo()

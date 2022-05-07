@@ -38,6 +38,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         no_reset=False,
         monitor_rts=None,
         monitor_dtr=None,
+        program_args=None,
     ):
         self.verbose = verbose
         self.without_building = without_building
@@ -49,6 +50,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         self.no_reset = no_reset
         self.monitor_rts = monitor_rts
         self.monitor_dtr = monitor_dtr
+        self.program_args = program_args
 
 
 class TestRunnerBase:

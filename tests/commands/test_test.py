@@ -20,6 +20,7 @@ from pathlib import Path
 import pytest
 
 from platformio import proc
+from platformio.fs import load_json
 from platformio.test.command import test_cmd as pio_test_cmd
 
 
@@ -528,7 +529,6 @@ int main(int argc, char **argv)
         ],
     )
     assert result.exit_code != 0
-
     # test JUnit output
     junit_testsuites = ET.parse(junit_output_path).getroot()
     assert int(junit_testsuites.get("tests")) == 8
@@ -536,8 +536,29 @@ int main(int argc, char **argv)
     assert int(junit_testsuites.get("failures")) == 3
     assert len(junit_testsuites.findall("testsuite")) == 1
     junit_failed_testcase = junit_testsuites.find(
-        ".//testcase[@name='scoped test suite -> part of scoped']"
+        ".//testcase[@name='scoped test suite/part of scoped']"
     )
     assert junit_failed_testcase.get("status") == "FAILED"
     assert junit_failed_testcase.find("failure").get("message") == "Error message"
     assert "TEST SUITE: scoped test suite" in junit_failed_testcase.find("failure").text
+
+    # test program arguments
+    json_output_path = tmp_path / "report.json"
+    result = clirunner.invoke(
+        pio_test_cmd,
+        [
+            "-d",
+            str(project_dir),
+            "--output-format=json",
+            "--output-path",
+            str(json_output_path),
+            "-a",
+            "-aa=1",  # fail after the 1 error
+        ],
+    )
+    assert result.exit_code != 0
+    assert "1 test cases" in result.output
+    # test JSON
+    json_report = load_json(str(json_output_path))
+    assert json_report["testcase_nums"] == 1
+    assert json_report["failure_nums"] == 1
