@@ -24,14 +24,10 @@ class DoctestTestCaseParser:
         self._name_tokens = []
 
     def parse(self, line):
-        if line.strip().startswith("[doctest]"):
-            return None
         if self.is_divider(line):
             return self._on_divider()
-
-        if not self._tmp_tc:
-            self._tmp_tc = TestCase("", TestStatus.PASSED, stdout="")
-            self._name_tokens = []
+        if not self._tmp_tc or line.strip().startswith("[doctest]"):
+            return None
 
         self._tmp_tc.stdout += line
         line = line.strip()
@@ -60,24 +56,26 @@ class DoctestTestCaseParser:
         return line.startswith("===") and line.endswith("===")
 
     def _on_divider(self):
-        # if the first unprocessed test case
-        if not self._tmp_tc:
-            return None
-        test_case = TestCase(
-            name=self._tmp_tc.name,
-            status=self._tmp_tc.status,
-            message=self._tmp_tc.message,
-            source=self._tmp_tc.source,
-            stdout=self._tmp_tc.stdout,
-        )
-        self._tmp_tc = None
+        test_case = None
+        if self._tmp_tc:
+            test_case = TestCase(
+                name=self._tmp_tc.name.strip(),
+                status=self._tmp_tc.status,
+                message=(self._tmp_tc.message or "").strip() or None,
+                source=self._tmp_tc.source,
+                stdout=self._tmp_tc.stdout.strip(),
+            )
+
+        self._tmp_tc = TestCase("", TestStatus.PASSED, stdout="")
+        self._name_tokens = []
         return test_case
 
     @staticmethod
     def parse_source(line):
-        assert line.endswith(":"), line
-        file_, line = line[:-1].rsplit(":", 1)
-        return TestCaseSource(file_, int(line))
+        if not line.endswith(":"):
+            return None
+        filename, line = line[:-1].rsplit(":", 1)
+        return TestCaseSource(filename, int(line))
 
     @staticmethod
     def parse_name(tokens):
@@ -86,7 +84,7 @@ class DoctestTestCaseParser:
             if token.startswith("TEST ") and ":" in token:
                 token = token[token.index(":") + 1 :]
             cleaned_tokens.append(token.strip())
-        return " -> ".join(cleaned_tokens)
+        return "/".join(cleaned_tokens)
 
     def _parse_assert(self, line):
         status_tokens = [
@@ -121,7 +119,6 @@ class DoctestTestRunner(TestRunnerBase):
 
         test_case = self._tc_parser.parse(line)
         if test_case:
-            self._tc_parser = DoctestTestCaseParser()
             click.echo(test_case.humanize())
             self.test_suite.add_case(test_case)
 
