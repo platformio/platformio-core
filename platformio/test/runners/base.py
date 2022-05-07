@@ -220,7 +220,7 @@ class TestRunnerBase:
         test_case = TestCase(
             name=data.get("name").strip(),
             status=TestStatus.from_string(data.get("status")),
-            message=data.get("message", "").strip() or None,
+            message=(data.get("message") or "").strip() or None,
             stdout=line,
             source=source,
         )
