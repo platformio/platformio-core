@@ -436,6 +436,10 @@ void unittest_uart_end(){}
     validate_cliresult(result)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS"),
+    reason="skip Github Actions on Windows (MinGW issue)",
+)
 def test_doctest_framework(clirunner, tmp_path: Path):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
