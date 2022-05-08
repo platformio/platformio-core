@@ -437,7 +437,7 @@ void unittest_uart_end(){}
 
 
 @pytest.mark.skipif(
-    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS"),
+    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS") == "true",
     reason="skip Github Actions on Windows (MinGW issue)",
 )
 def test_doctest_framework(clirunner, tmp_path: Path):
