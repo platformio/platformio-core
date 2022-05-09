@@ -77,6 +77,9 @@ class JunitTestReport(TestReportBase):
         element.set("name", str(test_case.name))
         element.set("time", str(test_case.duration))
         element.set("status", str(test_case.status.name))
+        if test_case.source:
+            element.set("file", test_case.source.filename)
+            element.set("line", str(test_case.source.line))
         if test_case.status == TestStatus.SKIPPED:
             element.append(ET.Element("skipped"))
         elif test_case.status == TestStatus.ERRORED:

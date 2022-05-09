@@ -94,6 +94,6 @@ class JsonTestReport(TestReportBase):
             )
         if test_case.source:
             result["source"] = dict(
-                filename=test_case.source.filename, line=test_case.source.line
+                file=test_case.source.filename, line=test_case.source.line
             )
         return result
