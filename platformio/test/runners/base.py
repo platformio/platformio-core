@@ -17,7 +17,7 @@ import click
 from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
 from platformio.test.exception import UnitTestSuiteError
-from platformio.test.result import TestCase, TestCaseSource, TestStatus
+from platformio.test.result import TestCase, TestStatus
 from platformio.test.runners.readers.program import ProgramTestOutputReader
 from platformio.test.runners.readers.serial import SerialTestOutputReader
 
@@ -204,31 +204,5 @@ class TestRunnerBase:
             self._testing_output_buffer = self._testing_output_buffer[nl_pos + 1 :]
             self.on_testing_line_output(line)
 
-    def on_testing_line_output(self, line):
+    def on_testing_line_output(self, line):  # pylint: disable=no-self-use
         click.echo(line, nl=False)
-        self.parse_test_case(line)
-
-    def parse_test_case(self, line):
-        if not self.TESTCASE_PARSE_RE:
-            raise NotImplementedError()
-        line = line.strip()
-        if not line:
-            return None
-        match = self.TESTCASE_PARSE_RE.search(line)
-        if not match:
-            return None
-        data = match.groupdict()
-        source = None
-        if "source_file" in data:
-            source = TestCaseSource(
-                filename=data["source_file"], line=int(data.get("source_line"))
-            )
-        test_case = TestCase(
-            name=data.get("name").strip(),
-            status=TestStatus.from_string(data.get("status")),
-            message=(data.get("message") or "").strip() or None,
-            stdout=line,
-            source=source,
-        )
-        self.test_suite.add_case(test_case)
-        return test_case

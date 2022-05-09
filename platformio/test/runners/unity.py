@@ -20,6 +20,7 @@ from pathlib import Path
 import click
 
 from platformio.test.exception import UnitTestSuiteError
+from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
 from platformio.util import strip_ansi_codes
 
@@ -28,7 +29,7 @@ class UnityTestRunner(TestRunnerBase):
 
     EXTRA_LIB_DEPS = ["throwtheswitch/Unity@^2.5.2"]
 
-    # example
+    # Example:
     # test/test_foo.cpp:44:test_function_foo:FAIL: Expected 32 Was 33
     TESTCASE_PARSE_RE = re.compile(
         r"(?P<source_file>[^:]+):(?P<source_line>\d+):(?P<name>[^:]+):"
@@ -262,3 +263,28 @@ void unityOutputComplete(void) { unittest_uart_end(); }
 
         if all(s in line for s in ("Tests", "Failures", "Ignored")):
             self.test_suite.on_finish()
+
+    def parse_test_case(self, line):
+        if not self.TESTCASE_PARSE_RE:
+            raise NotImplementedError()
+        line = line.strip()
+        if not line:
+            return None
+        match = self.TESTCASE_PARSE_RE.search(line)
+        if not match:
+            return None
+        data = match.groupdict()
+        source = None
+        if "source_file" in data:
+            source = TestCaseSource(
+                filename=data["source_file"], line=int(data.get("source_line"))
+            )
+        test_case = TestCase(
+            name=data.get("name").strip(),
+            status=TestStatus.from_string(data.get("status")),
+            message=(data.get("message") or "").strip() or None,
+            stdout=line,
+            source=source,
+        )
+        self.test_suite.add_case(test_case)
+        return test_case
