@@ -124,7 +124,10 @@ class TestRunnerBase:
         try:
             return self.run_project_targets(targets)
         except ReturnErrorCode:
-            raise UnitTestSuiteError("Building stage has failed, see errors above.")
+            raise UnitTestSuiteError(
+                "Building stage has failed, see errors above. "
+                "Use `pio test --verbose` option to enable verbose output."
+            )
 
     def stage_uploading(self):
         if self.options.without_uploading or not self.platform.is_embedded():
@@ -140,7 +143,10 @@ class TestRunnerBase:
         try:
             return self.run_project_targets(targets)
         except ReturnErrorCode:
-            raise UnitTestSuiteError("Uploading stage has failed, see errors above.")
+            raise UnitTestSuiteError(
+                "Uploading stage has failed, see errors above. "
+                "Use `pio test --verbose` option to enable verbose output."
+            )
 
     def stage_testing(self):
         if self.options.without_testing:
