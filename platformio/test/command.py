@@ -175,13 +175,6 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
                 runner.start(ctx)
                 print_suite_footer(test_suite)
 
-        # automatically generate JSON report for PIO IDE
-        TestReportFactory.new("json", test_result).generate(
-            os.path.join(
-                config.get("platformio", "build_dir"), "pio-test-report-latest.json"
-            )
-        )
-
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
