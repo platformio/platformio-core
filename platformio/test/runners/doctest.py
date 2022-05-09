@@ -109,9 +109,11 @@ class DoctestTestRunner(TestRunnerBase):
         self._tc_parser = DoctestTestCaseParser()
 
     def configure_build_env(self, env):
+        env.Append(CPPDEFINES=["DOCTEST_CONFIG_COLORS_NONE"])
+        if self.platform.is_embedded():
+            return
         if "-std=" not in env.subst("$CXXFLAGS"):
             env.Append(CXXFLAGS=["-std=c++11"])
-        env.Append(CPPDEFINES=["DOCTEST_CONFIG_COLORS_NONE"])
 
     def on_testing_line_output(self, line):
         if self.options.verbose:
