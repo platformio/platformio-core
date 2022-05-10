@@ -103,7 +103,7 @@ class GoogletestTestRunner(TestRunnerBase):
             return
         env.Append(CXXFLAGS=["-std=c++11"])
         if not IS_WINDOWS:
-            env.Append(CCFLAGS=["-pthread"])
+            env.Append(CCFLAGS=["-pthread"], LINKFLAGS=["-pthread"])
 
     def on_testing_line_output(self, line):
         if self.options.verbose:
