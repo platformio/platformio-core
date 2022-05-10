@@ -83,8 +83,8 @@ from platformio.test.runners.factory import TestRunnerFactory
     multiple=True,
     help="A program argument (multiple are allowed)",
 )
-@click.option("--output-json", type=click.Path(resolve_path=True))
-@click.option("--output-junit", type=click.Path(resolve_path=True))
+@click.option("--json-output", type=click.Path(resolve_path=True))
+@click.option("--junit-output", type=click.Path(resolve_path=True))
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
@@ -103,8 +103,8 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
     monitor_rts,
     monitor_dtr,
     program_args,
-    output_json,
-    output_junit,
+    json_output,
+    junit_output,
     verbose,
 ):
     app.set_session_var("custom_project_conf", project_conf)
@@ -177,7 +177,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
     stdout_report = TestReportFactory.new("stdout", test_result)
     stdout_report.generate(verbose=verbose)
 
-    for output_format, output_path in [("json", output_json), ("junit", output_junit)]:
+    for output_format, output_path in [("json", json_output), ("junit", junit_output)]:
         if not output_path:
             continue
         custom_report = TestReportFactory.new(output_format, test_result)
