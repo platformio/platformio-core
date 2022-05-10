@@ -46,8 +46,9 @@ Please check `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/la
 * **Unit Testing**
 
   - Refactored from scratch `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`_ solution and its documentation
-  - New: `Test Hierarchies <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
-  - New: `doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework (`issue #4240 <https://github.com/platformio/platformio-core/issues/4240>`_)
+  - New: `Test Hierarchy <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
+  - New: `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework (`issue #4240 <https://github.com/platformio/platformio-core/issues/4240>`_)
+  - New: `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework (`issue #3572 <https://github.com/platformio/platformio-core/issues/3572>`_)
   - New: `Semihosting <https://docs.platformio.org/en/latest/advanced/unit-testing/semihosting.html>`__ (`issue #3516 <https://github.com/platformio/platformio-core/issues/3516>`_)
   - New: Hardware `Simulators <https://docs.platformio.org/en/latest/advanced/unit-testing/simulators/index.html>`__ for Unit Testing (QEMU, Renode, SimAVR, and custom solutions)
   - New: ``test`` `build configuration <https://docs.platformio.org/en/latest/projectconf/build_configurations.html>`__

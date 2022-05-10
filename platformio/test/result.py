@@ -30,11 +30,11 @@ class TestStatus(enum.Enum):
     @classmethod
     def from_string(cls, value: str):
         value = value.lower()
-        if value.startswith("fail"):
+        if value.startswith(("failed", "fail")):
             return cls.FAILED
-        if value.startswith(("pass", "success")):
+        if value.startswith(("passed", "pass", "success", "ok")):
             return cls.PASSED
-        if value.startswith(("ignore", "skip")):
+        if value.startswith(("skipped", "skip", "ignore", "ignored")):
             return cls.SKIPPED
         if value.startswith("WARNING"):
             return cls.WARNED

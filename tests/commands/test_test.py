@@ -436,6 +436,10 @@ void unittest_uart_end(){}
     validate_cliresult(result)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS") == "true",
+    reason="skip Github Actions on Windows (MinGW issue)",
+)
 def test_doctest_framework(clirunner, tmp_path: Path):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
@@ -562,3 +566,57 @@ int main(int argc, char **argv)
     json_report = load_json(str(json_output_path))
     assert json_report["testcase_nums"] == 1
     assert json_report["failure_nums"] == 1
+
+
+def test_googletest_framework(clirunner, tmp_path: Path):
+    project_dir = os.path.join("examples", "unit-testing", "googletest")
+    junit_output_path = tmp_path / "junit.xml"
+    result = clirunner.invoke(
+        pio_test_cmd,
+        [
+            "-d",
+            project_dir,
+            "-e",
+            "native",
+            "--output-format=junit",
+            "--output-path",
+            str(junit_output_path),
+        ],
+    )
+    assert result.exit_code != 0
+    # test JUnit output
+    junit_testsuites = ET.parse(junit_output_path).getroot()
+    assert int(junit_testsuites.get("tests")) == 4
+    assert int(junit_testsuites.get("errors")) == 0
+    assert int(junit_testsuites.get("failures")) == 1
+    assert len(junit_testsuites.findall("testsuite")) == 4
+    junit_failed_testcase = junit_testsuites.find(".//testcase[@name='FooTest.Bar']")
+    assert junit_failed_testcase.get("status") == "FAILED"
+    assert "test_main.cpp" in junit_failed_testcase.get("file")
+    assert junit_failed_testcase.get("line") == "26"
+    assert junit_failed_testcase.find("failure").get("message") == "Failure"
+    assert "Expected equality" in junit_failed_testcase.find("failure").text
+
+    # test program arguments
+    json_output_path = tmp_path / "report.json"
+    result = clirunner.invoke(
+        pio_test_cmd,
+        [
+            "-d",
+            project_dir,
+            "-e",
+            "native",
+            "--output-format=json",
+            "--output-path",
+            str(json_output_path),
+            "-a",
+            "--gtest_filter=-FooTest.Bar",
+        ],
+    )
+    assert result.exit_code == 0
+    # test JSON
+    json_report = load_json(str(json_output_path))
+    assert json_report["testcase_nums"] == 3
+    assert json_report["failure_nums"] == 0
+    assert json_report["skipped_nums"] == 1
+    assert len(json_report["test_suites"]) == 4
