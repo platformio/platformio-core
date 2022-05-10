@@ -100,7 +100,7 @@ class GoogletestTestRunner(TestRunnerBase):
     def configure_build_env(self, env):
         if self.platform.is_embedded():
             return
-        env.Append(CXXFLAGS=["-std=c++11"])
+        env.Append(CXXFLAGS=["-std=c++11", "-pthread"])
 
     def on_testing_line_output(self, line):
         if self.options.verbose:
