@@ -62,7 +62,13 @@ class ProgramTestOutputReader:
         if custom_testing_command:
             return custom_testing_command
         build_dir = self.test_runner.project_config.get("platformio", "build_dir")
-        cmd = [os.path.join(build_dir, self.test_runner.test_suite.env_name, "program")]
+        cmd = [
+            os.path.join(
+                build_dir,
+                self.test_runner.test_suite.env_name,
+                "program.exe" if IS_WINDOWS else "program",
+            )
+        ]
         if self.test_runner.options.program_args:
             cmd.extend(self.test_runner.options.program_args)
         return cmd
