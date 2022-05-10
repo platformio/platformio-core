@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import fnmatch
 import os
 import shutil
 
@@ -20,9 +19,9 @@ import click
 
 from platformio import app, exception, fs, util
 from platformio.project.config import ProjectConfig
-from platformio.test.exception import TestDirNotExistsError
+from platformio.test.helpers import list_test_suites
 from platformio.test.reports.base import TestReportFactory
-from platformio.test.result import TestResult, TestStatus, TestSuite
+from platformio.test.result import TestResult, TestStatus
 from platformio.test.runners.base import TestRunnerOptions
 from platformio.test.runners.factory import TestRunnerFactory
 
@@ -83,6 +82,7 @@ from platformio.test.runners.factory import TestRunnerFactory
     multiple=True,
     help="A program argument (multiple are allowed)",
 )
+@click.option("--list-tests", is_flag=True)
 @click.option("--json-output", type=click.Path(resolve_path=True))
 @click.option("--junit-output", type=click.Path(resolve_path=True))
 @click.option("--verbose", "-v", is_flag=True)
@@ -103,6 +103,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
     monitor_rts,
     monitor_dtr,
     program_args,
+    list_tests,
     json_output,
     junit_output,
     verbose,
@@ -110,9 +111,14 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
     app.set_session_var("custom_project_conf", project_conf)
 
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(project_conf)
-        config.validate(envs=environment)
-        test_names = get_test_names(config)
+        project_config = ProjectConfig.get_instance(project_conf)
+        project_config.validate(envs=environment)
+
+        test_result = TestResult(project_dir)
+        test_suites = list_test_suites(
+            project_config, environments=environment, filters=filter, ignores=ignore
+        )
+        test_names = sorted(set(s.test_name for s in test_suites))
 
         if not verbose:
             click.echo("Verbose mode can be enabled via `-v, --verbose` option")
@@ -120,62 +126,36 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
         if verbose:
             click.echo(" (%s)" % ", ".join(test_names))
 
-        test_result = TestResult(project_dir)
-        default_envs = config.default_envs()
-        for env_name in config.envs():
-            for test_name in test_names:
-                test_suite = TestSuite(env_name, test_name)
-                test_result.add_suite(test_suite)
-
-                # filter and ignore patterns
-                patterns = dict(filter=list(filter), ignore=list(ignore))
-                for key in patterns:
-                    if patterns[key]:  # overriden from CLI
-                        continue
-                    patterns[key].extend(
-                        config.get(f"env:{env_name}", f"test_{key}", [])
-                    )
-
-                skip_conditions = [
-                    environment and env_name not in environment,
-                    not environment and default_envs and env_name not in default_envs,
-                    test_name != "*"
-                    and patterns["filter"]
-                    and not any(
-                        fnmatch.fnmatch(test_name, p) for p in patterns["filter"]
-                    ),
-                    test_name != "*"
-                    and any(fnmatch.fnmatch(test_name, p) for p in patterns["ignore"]),
-                ]
-                if any(skip_conditions):
-                    continue
-
-                runner = TestRunnerFactory.new(
-                    test_suite,
-                    config,
-                    TestRunnerOptions(
-                        verbose=verbose,
-                        without_building=without_building,
-                        without_uploading=without_uploading,
-                        without_testing=without_testing,
-                        upload_port=upload_port,
-                        test_port=test_port,
-                        no_reset=no_reset,
-                        monitor_rts=monitor_rts,
-                        monitor_dtr=monitor_dtr,
-                        program_args=program_args,
-                    ),
-                )
-                click.echo()
-                print_suite_header(test_suite)
-                runner.start(ctx)
-                print_suite_footer(test_suite)
+        for test_suite in test_suites:
+            test_result.add_suite(test_suite)
+            if list_tests or test_suite.is_finished():  # skipped by user
+                continue
+            runner = TestRunnerFactory.new(
+                test_suite,
+                project_config,
+                TestRunnerOptions(
+                    verbose=verbose,
+                    without_building=without_building,
+                    without_uploading=without_uploading,
+                    without_testing=without_testing,
+                    upload_port=upload_port,
+                    test_port=test_port,
+                    no_reset=no_reset,
+                    monitor_rts=monitor_rts,
+                    monitor_dtr=monitor_dtr,
+                    program_args=program_args,
+                ),
+            )
+            click.echo()
+            print_suite_header(test_suite)
+            runner.start(ctx)
+            print_suite_footer(test_suite)
 
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
     stdout_report = TestReportFactory.new("stdout", test_result)
-    stdout_report.generate(verbose=verbose)
+    stdout_report.generate(verbose=verbose or list_tests)
 
     for output_format, output_path in [("json", json_output), ("junit", junit_output)]:
         if not output_path:
@@ -185,20 +165,6 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
 
     if test_result.is_errored or test_result.get_status_nums(TestStatus.FAILED):
         raise exception.ReturnErrorCode(1)
-
-
-def get_test_names(config):
-    test_dir = config.get("platformio", "test_dir")
-    if not os.path.isdir(test_dir):
-        raise TestDirNotExistsError(test_dir)
-    names = []
-    for root, _, __ in os.walk(test_dir):
-        if not os.path.basename(root).startswith("test_"):
-            continue
-        names.append(os.path.relpath(root, test_dir))
-    if not names:
-        names = ["*"]
-    return names
 
 
 def print_suite_header(test_suite):

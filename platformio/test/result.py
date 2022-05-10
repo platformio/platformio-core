@@ -93,13 +93,13 @@ class TestCase:
 
 
 class TestSuite:
-    def __init__(self, env_name, test_name):
+    def __init__(self, env_name, test_name, finished=False):
         self.env_name = env_name
         self.test_name = test_name
         self.timestamp = 0
         self.duration = 0
         self._cases = []
-        self._finished = False
+        self._finished = finished
 
     @property
     def cases(self):

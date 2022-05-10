@@ -65,6 +65,27 @@ def test_calculator_example(tmp_path: Path):
     assert junit_failed_testcase.find("failure").get("message") == "Expected 32 Was 33"
 
 
+def test_list_tests(clirunner, validate_cliresult, tmp_path: Path):
+    json_output_path = tmp_path / "report.json"
+    result = clirunner.invoke(
+        pio_test_cmd,
+        [
+            "-d",
+            os.path.join("examples", "unit-testing", "calculator"),
+            "--list-tests",
+            "--json-output",
+            str(json_output_path),
+        ],
+    )
+    validate_cliresult(result)
+    # test JSON
+    json_report = load_json(str(json_output_path))
+    assert json_report["testcase_nums"] == 0
+    assert json_report["failure_nums"] == 0
+    assert json_report["skipped_nums"] == 0
+    assert len(json_report["test_suites"]) == 6
+
+
 def test_group_and_custom_runner(clirunner, validate_cliresult, tmp_path: Path):
     project_dir = tmp_path / "project"
     project_dir.mkdir()

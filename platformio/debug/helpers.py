@@ -26,7 +26,7 @@ from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.run.command import print_processing_header
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.test.command import get_test_names
+from platformio.test.helpers import list_test_names
 from platformio.test.result import TestSuite
 from platformio.test.runners.base import TestRunnerOptions
 from platformio.test.runners.factory import TestRunnerFactory
@@ -82,7 +82,7 @@ def predebug_project(
 ):  # pylint: disable=too-many-arguments
     debug_testname = project_config.get("env:" + env_name, "debug_test")
     if debug_testname:
-        test_names = get_test_names(project_config)
+        test_names = list_test_names(project_config)
         if debug_testname not in test_names:
             raise DebugInvalidOptionsError(
                 "Unknown test name `%s`. Valid names are `%s`"
