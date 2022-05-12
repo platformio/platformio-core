@@ -26,6 +26,7 @@ def ConfigureTestTarget(env):
         CPPDEFINES=["UNIT_TEST", "PIO_UNIT_TESTING"],
         PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piotool.SRC_BUILD_EXT],
     )
+    env.Prepend(CPPPATH=["$PROJECT_TEST_DIR"])
 
     if "PIOTEST_RUNNING_NAME" in env:
         test_name = env["PIOTEST_RUNNING_NAME"]
@@ -34,7 +35,7 @@ def ConfigureTestTarget(env):
             # skip nested tests (user's side issue?)
             if not test_name or os.path.basename(test_name).startswith("test_"):
                 break
-            env.Append(
+            env.Prepend(
                 PIOTEST_SRC_FILTER=[
                     f"+<{test_name}{os.path.sep}*.{ext}>"
                     for ext in piotool.SRC_BUILD_EXT
@@ -42,12 +43,11 @@ def ConfigureTestTarget(env):
                 CPPPATH=[os.path.join("$PROJECT_TEST_DIR", test_name)],
             )
 
-        env.Append(
+        env.Prepend(
             PIOTEST_SRC_FILTER=[f"+<$PIOTEST_RUNNING_NAME{os.path.sep}>"],
             CPPPATH=[os.path.join("$PROJECT_TEST_DIR", "$PIOTEST_RUNNING_NAME")],
         )
 
-    env.Append(CPPPATH=["$PROJECT_TEST_DIR"])
     test_runner = TestRunnerFactory.new(
         TestSuite(env["PIOENV"], env.get("PIOTEST_RUNNING_NAME", "*")),
         env.GetProjectConfig(),

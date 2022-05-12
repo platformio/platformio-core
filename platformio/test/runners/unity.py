@@ -216,7 +216,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config"),
             BUILD_UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config_build"),
         )
-        env.Append(CPPPATH=["$UNITY_CONFIG_DIR"])
+        env.Prepend(CPPPATH=["$UNITY_CONFIG_DIR"])
         self.generate_unity_extras(env.subst("$UNITY_CONFIG_DIR"))
         env.BuildSources("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")
         return env
