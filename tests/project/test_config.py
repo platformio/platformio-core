@@ -310,6 +310,9 @@ def test_getraw_value(config):
     )
     assert config.getraw("platformio", "build_dir") == "~/tmp/pio-$PROJECT_HASH"
 
+    # renamed option
+    assert config.getraw("env:base", "debug_load_cmd") == ["load"]
+
 
 def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"

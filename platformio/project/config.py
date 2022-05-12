@@ -132,7 +132,7 @@ class ProjectConfigBase(object):
                 renamed_options.update({name: option.name for name in option.oldnames})
 
         for section in self._parser.sections():
-            scope = section.split(":", 1)[0]
+            scope = self.get_section_scope(section)
             if scope not in ("platformio", "env"):
                 continue
             for option in self._parser.options(section):
@@ -163,6 +163,10 @@ class ProjectConfigBase(object):
                         "in section [%s]" % (option, section)
                     )
         return True
+
+    @staticmethod
+    def get_section_scope(section):
+        return section.split(":", 1)[0] if ":" in section else section
 
     def walk_options(self, root_section):
         extends_queue = (
@@ -195,7 +199,7 @@ class ProjectConfigBase(object):
                 result.append(option)
 
         # handle system environment variables
-        scope = section.split(":", 1)[0]
+        scope = self.get_section_scope(section)
         for option_meta in ProjectOptions.values():
             if option_meta.scope != scope or option_meta.name in result:
                 continue
@@ -233,9 +237,29 @@ class ProjectConfigBase(object):
             value = "\n" + value
         self._parser.set(section, option, value)
 
-    def getraw(  # pylint: disable=too-many-branches
-        self, section, option, default=MISSING
-    ):
+    def getraw(self, section, option, default=MISSING):
+        try:
+            return self._getraw(section, option, default)
+        except configparser.NoOptionError as exc:
+            renamed_option = self._resolve_renamed_option(section, option)
+            if renamed_option:
+                return self._getraw(section, renamed_option, default)
+            raise exc
+
+    def _resolve_renamed_option(self, section, old_name):
+        scope = self.get_section_scope(section)
+        if scope not in ("platformio", "env"):
+            return None
+        for option_meta in ProjectOptions.values():
+            if (
+                option_meta.oldnames
+                and option_meta.scope == scope
+                and old_name in option_meta.oldnames
+            ):
+                return option_meta.name
+        return None
+
+    def _getraw(self, section, option, default):  # pylint: disable=too-many-branches
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
@@ -245,7 +269,9 @@ class ProjectConfigBase(object):
                 value = self._parser.get(sec, option)
                 break
 
-        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get(
+            "%s.%s" % (self.get_section_scope(section), option)
+        )
         if not option_meta:
             if value == MISSING:
                 value = (
@@ -316,7 +342,9 @@ class ProjectConfigBase(object):
         except configparser.Error as e:
             raise exception.InvalidProjectConfError(self.path, str(e))
 
-        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get(
+            "%s.%s" % (self.get_section_scope(section), option)
+        )
         if not option_meta:
             return value
 
