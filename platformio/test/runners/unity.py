@@ -210,9 +210,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
 
     def configure_build_env(self, env):
         env.Append(CPPDEFINES=["UNITY_INCLUDE_CONFIG_H"])
-        if self.custom_unity_config_exists(
-            [env.subst(item) for item in (env.get("CPPPATH") or [])]
-        ):
+        if self.custom_unity_config_exists():
             return env
         env.Replace(
             UNITY_CONFIG_DIR=os.path.join("$BUILD_DIR", "unity_config"),
@@ -223,11 +221,19 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         env.BuildSources("$BUILD_UNITY_CONFIG_DIR", "$UNITY_CONFIG_DIR")
         return env
 
-    @staticmethod
-    def custom_unity_config_exists(include_dirs):
-        return any(
-            os.path.isfile(os.path.join(d, "unity_config.h")) for d in include_dirs
+    def custom_unity_config_exists(self):
+        test_dir = self.project_config.get("platformio", "test_dir")
+        config_fname = "unity_config.h"
+        if os.path.isfile(os.path.join(test_dir, config_fname)):
+            return True
+        test_name = (
+            self.test_suite.test_name if self.test_suite.test_name != "*" else None
         )
+        while test_name:
+            if os.path.isfile(os.path.join(test_dir, test_name, config_fname)):
+                return True
+            test_name = os.path.dirname(test_name)  # parent dir
+        return False
 
     def generate_unity_extras(self, dst_dir):
         dst_dir = Path(dst_dir)
