@@ -11,22 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import click
-
-from platformio.project.commands.config import project_config_cmd
-from platformio.project.commands.data import project_data_cmd
-from platformio.project.commands.init import project_init_cmd
-
-
-@click.group(
-    "project",
-    commands=[
-        project_config_cmd,
-        project_data_cmd,
-        project_init_cmd,
-    ],
-    short_help="Project Manager",
-)
-def cli():
-    pass

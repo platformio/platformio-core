@@ -20,10 +20,9 @@ import tempfile
 import click
 
 from platformio import app, fs
-from platformio.commands.project import project_init as cmd_project_init
-from platformio.commands.project import validate_boards
 from platformio.commands.run.command import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
+from platformio.project.commands.init import project_init_cmd, validate_boards
 from platformio.project.config import ProjectConfig
 
 
@@ -109,7 +108,7 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
 
         # initialise project
         ctx.invoke(
-            cmd_project_init,
+            project_init_cmd,
             project_dir=build_dir,
             board=board,
             project_option=project_option,

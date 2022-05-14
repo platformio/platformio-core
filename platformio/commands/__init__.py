@@ -74,9 +74,9 @@ class PlatformioCLI(click.MultiCommand):
     def _handle_obsolate_command(name):
         # pylint: disable=import-outside-toplevel
         if name == "init":
-            from platformio.commands.project import project_init
+            from platformio.project.commands.init import project_init_cmd
 
-            return project_init
+            return project_init_cmd
 
         if name == "package":
             from platformio.commands.pkg import cli

@@ -21,7 +21,7 @@ import pytest
 from platformio import proc
 from platformio.commands import platform as cli_platform
 from platformio.commands.boards import cli as cmd_boards
-from platformio.commands.project import project_init as cmd_init
+from platformio.project.commands.init import project_init_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 
@@ -34,7 +34,7 @@ def validate_pioproject(pioproject_dir):
 
 def test_init_default(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
-        result = clirunner.invoke(cmd_init)
+        result = clirunner.invoke(project_init_cmd)
         validate_cliresult(result)
         validate_pioproject(getcwd())
 
@@ -43,7 +43,7 @@ def test_init_ext_folder(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         ext_folder_name = "ext_folder"
         makedirs(ext_folder_name)
-        result = clirunner.invoke(cmd_init, ["-d", ext_folder_name])
+        result = clirunner.invoke(project_init_cmd, ["-d", ext_folder_name])
         validate_cliresult(result)
         validate_pioproject(join(getcwd(), ext_folder_name))
 
@@ -51,7 +51,7 @@ def test_init_ext_folder(clirunner, validate_cliresult):
 def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
     with tmpdir.as_cwd():
         for _ in range(2):
-            result = clirunner.invoke(cmd_init, ["-b", "uno", "-b", "uno"])
+            result = clirunner.invoke(project_init_cmd, ["-b", "uno", "-b", "uno"])
             validate_cliresult(result)
             validate_pioproject(str(tmpdir))
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
@@ -61,7 +61,7 @@ def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
 
 def test_init_ide_without_board(clirunner, tmpdir):
     with tmpdir.as_cwd():
-        result = clirunner.invoke(cmd_init, ["--ide", "atom"])
+        result = clirunner.invoke(project_init_cmd, ["--ide", "atom"])
         assert result.exit_code != 0
         assert isinstance(result.exception, ProjectEnvsNotAvailableError)
 
@@ -69,7 +69,7 @@ def test_init_ide_without_board(clirunner, tmpdir):
 def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(
-            cmd_init, ["--ide", "vscode", "-b", "uno", "-b", "teensy31"]
+            project_init_cmd, ["--ide", "vscode", "-b", "uno", "-b", "teensy31"]
         )
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
@@ -83,7 +83,9 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
         )
 
         # switch to NodeMCU
-        result = clirunner.invoke(cmd_init, ["--ide", "vscode", "-b", "nodemcuv2"])
+        result = clirunner.invoke(
+            project_init_cmd, ["--ide", "vscode", "-b", "nodemcuv2"]
+        )
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert (
@@ -92,7 +94,9 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
         )
 
         # switch to teensy31 via env name
-        result = clirunner.invoke(cmd_init, ["--ide", "vscode", "-e", "teensy31"])
+        result = clirunner.invoke(
+            project_init_cmd, ["--ide", "vscode", "-e", "teensy31"]
+        )
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert (
@@ -101,7 +105,7 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
         )
 
         # switch to the first board
-        result = clirunner.invoke(cmd_init, ["--ide", "vscode"])
+        result = clirunner.invoke(project_init_cmd, ["--ide", "vscode"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert (
@@ -112,7 +116,7 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
 
 def test_init_ide_eclipse(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
-        result = clirunner.invoke(cmd_init, ["-b", "uno", "--ide", "eclipse"])
+        result = clirunner.invoke(project_init_cmd, ["-b", "uno", "--ide", "eclipse"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
         assert all(isfile(f) for f in (".cproject", ".project"))
@@ -120,7 +124,7 @@ def test_init_ide_eclipse(clirunner, validate_cliresult):
 
 def test_init_special_board(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
-        result = clirunner.invoke(cmd_init, ["-b", "uno"])
+        result = clirunner.invoke(project_init_cmd, ["-b", "uno"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
 
@@ -145,7 +149,7 @@ def test_init_special_board(clirunner, validate_cliresult):
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(
-            cmd_init, ["-b", "uno", "--project-option", "targets=upload"]
+            project_init_cmd, ["-b", "uno", "--project-option", "targets=upload"]
         )
         validate_cliresult(result)
         validate_pioproject(getcwd())
@@ -163,7 +167,7 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
 def test_init_custom_framework(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(
-            cmd_init, ["-b", "teensy31", "--project-option", "framework=mbed"]
+            project_init_cmd, ["-b", "teensy31", "--project-option", "framework=mbed"]
         )
         validate_cliresult(result)
         validate_pioproject(getcwd())
@@ -177,7 +181,7 @@ def test_init_custom_framework(clirunner, validate_cliresult):
 
 
 def test_init_incorrect_board(clirunner):
-    result = clirunner.invoke(cmd_init, ["-b", "missed_board"])
+    result = clirunner.invoke(project_init_cmd, ["-b", "missed_board"])
     assert result.exit_code == 2
     assert "Error: Invalid value for" in result.output
     assert isinstance(result.exception, SystemExit)
@@ -205,7 +209,7 @@ def test_init_ide_clion(clirunner, isolated_pio_core, validate_cliresult, tmpdir
 
     with tmpdir.as_cwd():
         result = clirunner.invoke(
-            cmd_init,
+            project_init_cmd,
             [
                 "-b",
                 "nucleo_f401re",
