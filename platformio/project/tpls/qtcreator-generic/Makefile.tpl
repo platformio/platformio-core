@@ -1,8 +1,6 @@
-default_target: all
-
 all:
-	platformio -f -c qtcreator run
+	platformio -c qtcreator run
 
-clean:
-	platformio -f -c qtcreator run --target clean
-
+# forward any other target (clean, build, etc.) to pio run
+{{'%'}}:
+	platformio -c qtcreator run --target $*
