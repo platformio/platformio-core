@@ -14,14 +14,13 @@
 
 import os
 import sys
-from fnmatch import fnmatch
 
 import click
 from serial.tools import miniterm
 
 from platformio import exception, fs
 from platformio.device.filters.base import register_filters
-from platformio.device.list import list_serial_ports
+from platformio.device.serial import scan_serial_port
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
@@ -100,40 +99,22 @@ from platformio.project.options import ProjectOptions
 def device_monitor_cmd(**kwargs):  # pylint: disable=too-many-branches
     project_options = {}
     platform = None
-    try:
-        with fs.cd(kwargs["project_dir"]):
+    with fs.cd(kwargs["project_dir"]):
+        try:
             project_options = get_project_options(kwargs["environment"])
             kwargs = apply_project_monitor_options(kwargs, project_options)
             if "platform" in project_options:
                 platform = PlatformFactory.new(project_options["platform"])
-    except NotPlatformIOProjectError:
-        pass
-
-    with fs.cd(kwargs["project_dir"]):
+        except NotPlatformIOProjectError:
+            pass
         register_filters(platform=platform, options=kwargs)
-
-    if not kwargs["port"]:
-        ports = list_serial_ports(filter_hwid=True)
-        if len(ports) == 1:
-            kwargs["port"] = ports[0]["port"]
-        elif "platform" in project_options and "board" in project_options:
-            with fs.cd(kwargs["project_dir"]):
-                board_hwids = platform.board_config(project_options["board"]).get(
-                    "build.hwids", []
-                )
-            for item in ports:
-                for hwid in board_hwids:
-                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                    if hwid_str in item["hwid"]:
-                        kwargs["port"] = item["port"]
-                        break
-                if kwargs["port"]:
-                    break
-    elif kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
-        for item in list_serial_ports():
-            if fnmatch(item["port"], kwargs["port"]):
-                kwargs["port"] = item["port"]
-                break
+        kwargs["port"] = scan_serial_port(
+            initial_port=kwargs["port"],
+            board_config=platform.board_config(project_options.get("board"))
+            if platform and project_options.get("board")
+            else None,
+            upload_protocol=project_options.get("upload_port"),
+        )
 
     # override system argv with patched options
     sys.argv = ["monitor"] + project_options_to_monitor_argv(

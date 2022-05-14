@@ -17,7 +17,7 @@ from time import sleep
 import click
 import serial
 
-from platformio.device.list import list_serial_ports
+from platformio.device.serial import scan_serial_port
 from platformio.exception import UserSideException
 
 
@@ -37,7 +37,7 @@ class SerialTestOutputReader:
 
         try:
             ser = serial.serial_for_url(
-                self.test_runner.get_test_port() or self.autodetect_test_port(),
+                self.resolve_test_port(),
                 do_not_open=True,
                 baudrate=self.test_runner.get_test_speed(),
                 timeout=self.SERIAL_TIMEOUT,
@@ -62,48 +62,28 @@ class SerialTestOutputReader:
             self.test_runner.on_testing_data_output(ser.read(ser.in_waiting or 1))
         ser.close()
 
-    def autodetect_test_port(self):
-        board = self.test_runner.project_config.get(
-            f"env:{self.test_runner.test_suite.env_name}", "board"
+    def resolve_test_port(self):
+        project_options = self.test_runner.project_config.items(
+            env=self.test_runner.test_suite.env_name, as_dict=True
         )
-        board_hwids = self.test_runner.platform.board_config(board).get(
-            "build.hwids", []
+        scan_options = dict(
+            initial_port=self.test_runner.get_test_port(),
+            board_config=self.test_runner.platform.board_config(
+                project_options["board"]
+            ),
+            upload_protocol=project_options.get("upload_port"),
+            ensure_ready=True,
         )
-        port = None
+
         elapsed = 0
-        while elapsed < 5 and not port:
-            for item in list_serial_ports():
-                port = item["port"]
-                for hwid in board_hwids:
-                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                    if hwid_str in item["hwid"] and self.is_serial_port_ready(port):
-                        return port
+        while elapsed < 5:
+            port = scan_serial_port(**scan_options)
+            if port:
+                return port
+            sleep(0.25)
+            elapsed += 0.25
 
-            if port and not self.is_serial_port_ready(port):
-                port = None
-
-            if not port:
-                sleep(0.25)
-                elapsed += 0.25
-
-        if not port:
-            raise UserSideException(
-                "Please specify `test_port` for environment or use "
-                "global `--test-port` option."
-            )
-        return port
-
-    @staticmethod
-    def is_serial_port_ready(port, timeout=3):
-        if not port:
-            return False
-        elapsed = 0
-        while elapsed < timeout:
-            try:
-                serial.Serial(port, timeout=1).close()
-                return True
-            except:  # pylint: disable=bare-except
-                pass
-            sleep(1)
-            elapsed += 1
-        return False
+        raise UserSideException(
+            "Please specify `test_port` for environment or use "
+            "global `--test-port` option."
+        )
