@@ -1,1 +1,1 @@
-{{cxx_flags}}
+{{cxx_flags.replace('-mlongcalls', '-mlong-calls')}}
