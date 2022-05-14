@@ -376,6 +376,13 @@ class ProjectConfigBase(object):
     def default_envs(self):
         return self.get("platformio", "default_envs", [])
 
+    def get_default_env(self):
+        default_envs = self.default_envs()
+        if default_envs:
+            return default_envs[0]
+        envs = self.envs()
+        return envs[0] if envs else None
+
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
             raise exception.NotPlatformIOProjectError(os.path.dirname(self.path))

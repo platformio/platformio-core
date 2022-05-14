@@ -183,6 +183,7 @@ def test_envs(config):
         "extra_2",
     ]
     assert config.default_envs() == ["base", "extra_2"]
+    assert config.get_default_env() == "base"
 
 
 def test_options(config):
