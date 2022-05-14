@@ -87,6 +87,7 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
 
   - Added a new build variable (``COMPILATIONDB_INCLUDE_TOOLCHAIN``) to include toolchain paths in the compilation database (`issue #3735 <https://github.com/platformio/platformio-core/issues/3735>`_)
   - Changed a default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the project root
+  - Enhanced integration for Qt Creator (`issue #3046 <https://github.com/platformio/platformio-core/issues/3046>`_)
 
 * **Project Configuration**
 

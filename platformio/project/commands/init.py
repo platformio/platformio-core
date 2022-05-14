@@ -21,7 +21,7 @@ import os
 import click
 
 from platformio import fs
-from platformio.commands.platform import platform_install as cli_platform_install
+from platformio.package.commands.install import install_project_dependencies
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.exception import UnknownBoard
 from platformio.project.config import ProjectConfig
@@ -53,61 +53,47 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 )
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("-e", "--environment", help="Update using existing environment")
+@click.option("-e", "--environment", help="Update existing environment")
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
+@click.option("--no-install-dependencies", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
-@click.pass_context
 def project_init_cmd(
-    ctx,
     project_dir,
     board,
     ide,
     environment,
     project_option,
     env_prefix,
+    no_install_dependencies,
     silent,
 ):
     is_new_project = not is_platformio_project(project_dir)
-    if not silent and is_new_project:
-        if project_dir == os.getcwd():
-            click.secho("\nThe current working directory ", fg="yellow", nl=False)
-            try:
-                click.secho(project_dir, fg="cyan", nl=False)
-            except UnicodeEncodeError:
-                click.secho(json.dumps(project_dir), fg="cyan", nl=False)
-            click.secho(" will be used for the project.", fg="yellow")
-            click.echo("")
-
-        click.echo("The next files/directories have been created in ", nl=False)
-        try:
-            click.secho(project_dir, fg="cyan")
-        except UnicodeEncodeError:
-            click.secho(json.dumps(project_dir), fg="cyan")
-        click.echo(
-            "%s - Put project header files here" % click.style("include", fg="cyan")
-        )
-        click.echo(
-            "%s - Put here project specific (private) libraries"
-            % click.style("lib", fg="cyan")
-        )
-        click.echo("%s - Put project source files here" % click.style("src", fg="cyan"))
-        click.echo(
-            "%s - Project Configuration File" % click.style("platformio.ini", fg="cyan")
-        )
-
     if is_new_project:
+        if not silent:
+            print_header(project_dir)
         init_base_project(project_dir)
 
     if environment:
         update_project_env(project_dir, environment, project_option)
     elif board:
-        update_board_envs(
-            ctx, project_dir, board, project_option, env_prefix, ide is not None
+        update_board_envs(project_dir, board, project_option, env_prefix)
+
+    # resolve project dependencies
+    if not no_install_dependencies and (environment or board):
+        install_project_dependencies(
+            options=dict(
+                project_dir=project_dir,
+                environments=[environment] if environment else [],
+                silent=silent,
+            )
         )
 
     if ide:
-        click.echo("Updating metadata for the %s IDE..." % click.style(ide, fg="cyan"))
+        if not silent:
+            click.echo(
+                "Updating metadata for the %s IDE..." % click.style(ide, fg="cyan")
+            )
         with fs.cd(project_dir):
             config = ProjectConfig.get_instance(
                 os.path.join(project_dir, "platformio.ini")
@@ -118,11 +104,39 @@ def project_init_cmd(
     if is_new_project:
         init_cvs_ignore(project_dir)
 
-    if silent:
-        return
+    if not silent:
+        print_footer(is_new_project)
 
+
+def print_header(project_dir):
+    if project_dir == os.getcwd():
+        click.secho("\nThe current working directory ", fg="yellow", nl=False)
+        try:
+            click.secho(project_dir, fg="cyan", nl=False)
+        except UnicodeEncodeError:
+            click.secho(json.dumps(project_dir), fg="cyan", nl=False)
+        click.secho(" will be used for the project.", fg="yellow")
+        click.echo("")
+
+    click.echo("The next files/directories have been created in ", nl=False)
+    try:
+        click.secho(project_dir, fg="cyan")
+    except UnicodeEncodeError:
+        click.secho(json.dumps(project_dir), fg="cyan")
+    click.echo("%s - Put project header files here" % click.style("include", fg="cyan"))
+    click.echo(
+        "%s - Put here project specific (private) libraries"
+        % click.style("lib", fg="cyan")
+    )
+    click.echo("%s - Put project source files here" % click.style("src", fg="cyan"))
+    click.echo(
+        "%s - Project Configuration File" % click.style("platformio.ini", fg="cyan")
+    )
+
+
+def print_footer(is_new_project):
     if is_new_project:
-        click.secho(
+        return click.secho(
             "\nProject has been successfully initialized! Useful commands:\n"
             "`pio run` - process/build project from the current directory\n"
             "`pio run --target upload` or `pio run -t upload` "
@@ -131,11 +145,10 @@ def project_init_cmd(
             "\n`pio run --help` - additional information",
             fg="green",
         )
-    else:
-        click.secho(
-            "Project has been successfully updated!",
-            fg="green",
-        )
+    return click.secho(
+        "Project has been successfully updated!",
+        fg="green",
+    )
 
 
 def init_base_project(project_dir):
@@ -281,9 +294,7 @@ def init_cvs_ignore(project_dir):
         fp.write(".pio\n")
 
 
-def update_board_envs(
-    ctx, project_dir, board_ids, project_option, env_prefix, force_download
-):
+def update_board_envs(project_dir, board_ids, project_option, env_prefix):
     config = ProjectConfig(
         os.path.join(project_dir, "platformio.ini"), parse_extra=False
     )
@@ -294,11 +305,9 @@ def update_board_envs(
             used_boards.append(config.get(section, "board"))
 
     pm = PlatformPackageManager()
-    used_platforms = []
     modified = False
     for id_ in board_ids:
         board_config = pm.board_config(id_)
-        used_platforms.append(board_config["platform"])
         if id_ in used_boards:
             continue
         used_boards.append(id_)
@@ -322,22 +331,8 @@ def update_board_envs(
         for option, value in envopts.items():
             config.set(section, option, value)
 
-    if force_download and used_platforms:
-        _install_dependent_platforms(ctx, used_platforms)
-
     if modified:
         config.save()
-
-
-def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = [
-        pkg.metadata.name for pkg in PlatformPackageManager().get_installed()
-    ]
-    if set(platforms) <= set(installed_platforms):
-        return
-    ctx.invoke(
-        cli_platform_install, platforms=list(set(platforms) - set(installed_platforms))
-    )
 
 
 def update_project_env(project_dir, environment, project_option):
