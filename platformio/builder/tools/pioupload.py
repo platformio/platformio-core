@@ -25,8 +25,9 @@ from time import sleep
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
-from platformio import exception, fs, util
+from platformio import exception, fs
 from platformio.compat import IS_WINDOWS
+from platformio.device.list import list_logical_devices, list_serial_ports
 from platformio.proc import exec_command
 
 # pylint: disable=unused-argument
@@ -62,7 +63,7 @@ def WaitForNewSerialPort(env, before):
     elapsed = 0
     before = [p["port"] for p in before]
     while elapsed < 5 and new_port is None:
-        now = [p["port"] for p in util.get_serial_ports()]
+        now = [p["port"] for p in list_serial_ports()]
         for p in now:
             if p not in before:
                 new_port = p
@@ -113,7 +114,7 @@ def AutodetectUploadPort(*args, **kwargs):
 
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
-        for item in util.get_logical_devices():
+        for item in list_logical_devices():
             if item["path"].startswith("/net") or not _is_match_pattern(item["path"]):
                 continue
             mbed_pages = [join(item["path"], n) for n in ("mbed.htm", "mbed.html")]
@@ -129,7 +130,7 @@ def AutodetectUploadPort(*args, **kwargs):
         upload_protocol = env.subst("$UPLOAD_PROTOCOL")
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
-        for item in util.get_serial_ports(filter_hwid=True):
+        for item in list_serial_ports(filter_hwid=True):
             if not _is_match_pattern(item["port"]):
                 continue
             port = item["port"]

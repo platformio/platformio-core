@@ -17,7 +17,7 @@ from time import sleep
 import click
 import serial
 
-from platformio import util
+from platformio.device.list import list_serial_ports
 from platformio.exception import UserSideException
 
 
@@ -72,7 +72,7 @@ class SerialTestOutputReader:
         port = None
         elapsed = 0
         while elapsed < 5 and not port:
-            for item in util.get_serialports():
+            for item in list_serial_ports():
                 port = item["port"]
                 for hwid in board_hwids:
                     hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")

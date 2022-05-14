@@ -12,27 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import serial
+from datetime import datetime
 
-from platformio.commands.device import DeviceMonitorFilter
+from platformio.device.filters.base import DeviceMonitorFilterBase
 
 
-class Hexlify(DeviceMonitorFilter):
-    NAME = "hexlify"
+class Timestamp(DeviceMonitorFilterBase):
+    NAME = "time"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._counter = 0
+        self._line_started = False
 
     def rx(self, text):
-        result = ""
-        for b in serial.iterbytes(text):
-            if (self._counter % 16) == 0:
-                result += "\n{:04X} | ".format(self._counter)
-            asciicode = ord(b)
-            if asciicode <= 255:
-                result += "{:02X} ".format(asciicode)
-            else:
-                result += "?? "
-            self._counter += 1
-        return result
+        if self._line_started and "\n" not in text:
+            return text
+        timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        if not self._line_started:
+            self._line_started = True
+            text = "%s > %s" % (timestamp, text)
+        if text.endswith("\n"):
+            self._line_started = False
+            return text[:-1].replace("\n", "\n%s > " % timestamp) + "\n"
+        return text.replace("\n", "\n%s > " % timestamp)

@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.device import DeviceMonitorFilter
+from platformio.device.filters.base import DeviceMonitorFilterBase
 
 
-class SendOnEnter(DeviceMonitorFilter):
+class SendOnEnter(DeviceMonitorFilterBase):
     NAME = "send_on_enter"
 
     def __init__(self, *args, **kwargs):

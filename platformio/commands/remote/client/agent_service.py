@@ -17,11 +17,12 @@ import os
 from twisted.logger import LogLevel  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
-from platformio import proc, util
+from platformio import proc
 from platformio.commands.remote.ac.process import ProcessAsyncCmd
 from platformio.commands.remote.ac.psync import ProjectSyncAsyncCmd
 from platformio.commands.remote.ac.serial import SerialPortAsyncCmd
 from platformio.commands.remote.client.base import RemoteClientBase
+from platformio.device.list import list_serial_ports
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 
@@ -84,11 +85,11 @@ class RemoteAgentService(RemoteClientBase):
         return (self.id, ac.id)
 
     def _process_cmd_device_list(self, _):
-        return (self.name, util.get_serialports())
+        return (self.name, list_serial_ports())
 
     def _process_cmd_device_monitor(self, options):
         if not options["port"]:
-            for item in util.get_serialports():
+            for item in list_serial_ports():
                 if "VID:PID" in item["hwid"]:
                     options["port"] = item["port"]
                     break

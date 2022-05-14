@@ -16,10 +16,10 @@ import io
 import os.path
 from datetime import datetime
 
-from platformio.commands.device import DeviceMonitorFilter
+from platformio.device.filters.base import DeviceMonitorFilterBase
 
 
-class LogToFile(DeviceMonitorFilter):
+class LogToFile(DeviceMonitorFilterBase):
     NAME = "log2file"
 
     def __init__(self, *args, **kwargs):

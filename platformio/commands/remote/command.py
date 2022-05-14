@@ -24,11 +24,16 @@ from time import sleep
 import click
 
 from platformio import fs, proc
-from platformio.commands.device import helpers as device_helpers
-from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.commands.run.command import cli as cmd_run
+from platformio.device.commands.monitor import (
+    apply_project_monitor_options,
+    device_monitor_cmd,
+    get_project_options,
+    project_options_to_monitor_argv,
+)
 from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
+from platformio.project.options import ProjectOptions
 from platformio.test.command import test_cmd
 
 
@@ -265,7 +270,12 @@ def device_list(agents, json_output):
 
 @remote_device.command("monitor", short_help="Monitor remote device")
 @click.option("--port", "-p", help="Port, a number or a device name")
-@click.option("--baud", "-b", type=int, help="Set baud rate, default=9600")
+@click.option(
+    "--baud",
+    "-b",
+    type=int,
+    help="Set baud rate, default=%d" % ProjectOptions["env.monitor_speed"].default,
+)
 @click.option(
     "--parity",
     default="N",
@@ -344,19 +354,19 @@ def device_monitor(ctx, agents, **kwargs):
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
-            project_options = device_helpers.get_project_options(kwargs["environment"])
-        kwargs = device_helpers.apply_project_monitor_options(kwargs, project_options)
+            project_options = get_project_options(kwargs["environment"])
+        kwargs = apply_project_monitor_options(kwargs, project_options)
     except NotPlatformIOProjectError:
         pass
 
-    kwargs["baud"] = kwargs["baud"] or 9600
+    kwargs["baud"] = kwargs["baud"] or ProjectOptions["env.monitor_speed"].default
 
     def _tx_target(sock_dir):
         subcmd_argv = ["remote"]
         for agent in agents:
             subcmd_argv.extend(["--agent", agent])
         subcmd_argv.extend(["device", "monitor"])
-        subcmd_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
+        subcmd_argv.extend(project_options_to_monitor_argv(kwargs, project_options))
         subcmd_argv.extend(["--sock", sock_dir])
         subprocess.call([proc.where_is_program("platformio")] + subcmd_argv)
 
@@ -371,7 +381,7 @@ def device_monitor(ctx, agents, **kwargs):
             return
         with open(sock_file, encoding="utf8") as fp:
             kwargs["port"] = fp.read()
-        ctx.invoke(cmd_device_monitor, **kwargs)
+        ctx.invoke(device_monitor_cmd, **kwargs)
         t.join(2)
     finally:
         fs.rmtree(sock_dir)

@@ -22,9 +22,9 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
-from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.commands.run.processor import EnvironmentProcessor
+from platformio.device.commands.monitor import device_monitor_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
 from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
@@ -207,7 +207,7 @@ def process_env(
         and "nobuild" not in ep.get_build_targets()
     ):
         ctx.invoke(
-            cmd_device_monitor, environment=environments[0] if environments else None
+            device_monitor_cmd, environment=environments[0] if environments else None
         )
 
     return result
