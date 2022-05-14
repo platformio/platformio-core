@@ -26,7 +26,7 @@ from platformio.commands.device.command import device_monitor as cmd_device_moni
 from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import find_project_dir_above, load_project_ide_data
+from platformio.project.helpers import find_project_dir_above, load_build_metadata
 from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
@@ -294,7 +294,7 @@ def print_processing_summary(results, verbose=False):
 
 def print_target_list(envs):
     tabular_data = []
-    for env, data in load_project_ide_data(os.getcwd(), envs).items():
+    for env, data in load_build_metadata(os.getcwd(), envs).items():
         tabular_data.extend(
             sorted(
                 [

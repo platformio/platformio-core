@@ -119,7 +119,7 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_project_ide_data(project_dir, env_or_envs, cache=False):
+def load_build_metadata(project_dir, env_or_envs, cache=True):
     assert env_or_envs
     env_names = env_or_envs
     if not isinstance(env_names, list):
@@ -129,14 +129,18 @@ def load_project_ide_data(project_dir, env_or_envs, cache=False):
         result = _load_cached_project_ide_data(project_dir, env_names) if cache else {}
         missed_env_names = set(env_names) - set(result.keys())
         if missed_env_names:
-            result.update(_load_project_ide_data(project_dir, missed_env_names))
+            result.update(_load_build_metadata(project_dir, missed_env_names))
 
     if not isinstance(env_or_envs, list) and env_or_envs in result:
         return result[env_or_envs]
     return result or None
 
 
-def _load_project_ide_data(project_dir, env_names):
+# Backward compatibiility with dev-platforms
+load_project_ide_data = load_build_metadata
+
+
+def _load_build_metadata(project_dir, env_names):
     # pylint: disable=import-outside-toplevel
     from platformio.commands.run.command import cli as cmd_run
 

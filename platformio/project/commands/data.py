@@ -21,7 +21,7 @@ from tabulate import tabulate
 from platformio import fs
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
-from platformio.project.helpers import is_platformio_project, load_project_ide_data
+from platformio.project.helpers import is_platformio_project, load_build_metadata
 
 
 @click.command("data", short_help="Dump data intended for IDE extensions/plugins")
@@ -42,7 +42,7 @@ def project_data_cmd(project_dir, environment, json_output):
         environment = list(environment or config.envs())
 
     if json_output:
-        return click.echo(json.dumps(load_project_ide_data(project_dir, environment)))
+        return click.echo(json.dumps(load_build_metadata(project_dir, environment)))
 
     for envname in environment:
         click.echo("Environment: " + click.style(envname, fg="cyan", bold=True))
@@ -51,9 +51,7 @@ def project_data_cmd(project_dir, environment, json_output):
             tabulate(
                 [
                     (click.style(name, bold=True), "=", json.dumps(value, indent=2))
-                    for name, value in load_project_ide_data(
-                        project_dir, envname
-                    ).items()
+                    for name, value in load_build_metadata(project_dir, envname).items()
                 ],
                 tablefmt="plain",
             )

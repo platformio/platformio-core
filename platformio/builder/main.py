@@ -232,7 +232,7 @@ if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
     except:  # pylint: disable=bare-except
         projenv = env
     data = projenv.DumpIntegrationData(env)
-    # dump to file for the further reading by project.helpers.load_project_ide_data
+    # dump to file for the further reading by project.helpers.load_build_metadata
     with open(
         projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
         mode="w",

@@ -8,7 +8,7 @@
 % import os
 % import re
 %
-% from platformio.project.helpers import load_project_ide_data
+% from platformio.project.helpers import load_build_metadata
 %
 % def _normalize_path(path):
 %   if project_dir in path:
@@ -97,7 +97,7 @@ endif()
 %
 % ide_data = {}
 % if leftover_envs:
-%   ide_data = load_project_ide_data(project_dir, leftover_envs)
+%   ide_data = load_build_metadata(project_dir, leftover_envs)
 % end
 %
 % for env, data in ide_data.items():

@@ -22,7 +22,7 @@ from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
 from platformio.package.manager.core import get_core_package_dir
 from platformio.package.meta import PackageSpec
-from platformio.project.helpers import load_project_ide_data
+from platformio.project.helpers import load_build_metadata
 
 
 class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
@@ -57,7 +57,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         ]
 
     def _load_cpp_data(self, project_dir):
-        data = load_project_ide_data(project_dir, self.envname)
+        data = load_build_metadata(project_dir, self.envname)
         if not data:
             return
         self.cc_flags = click.parser.split_arg_string(data.get("cc_flags", ""))
