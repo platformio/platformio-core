@@ -1,2 +1,2 @@
 .pio
-*.creator.user
+.qtc_clangd
