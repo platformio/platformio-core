@@ -6,6 +6,10 @@
 # (C)2002-2020 Chris Liechti <cliechti@gmx.net>
 #
 # SPDX-License-Identifier:    BSD-3-Clause
+#
+# Modifications for platformio:
+#    * more graceful exit on disconnect
+#    * exit(1) on error
 
 from __future__ import absolute_import
 
@@ -404,6 +408,7 @@ class Miniterm(object):
         self.exit_character = unichr(0x1d)  # GS/CTRL+]
         self.menu_character = unichr(0x14)  # Menu: CTRL+T
         self.alive = None
+        self.error = False
         self._reader_alive = None
         self.receiver_thread = None
         self.rx_decoder = None
@@ -507,8 +512,9 @@ class Miniterm(object):
                         self.console.write(text)
         except serial.SerialException:
             self.alive = False
+            self.error = True
             self.console.cancel()
-            raise       # XXX handle instead of re-raise?
+            sys.stderr.write('--- receive exception ---\n')
 
     def writer(self):
         """\
@@ -546,7 +552,8 @@ class Miniterm(object):
                         self.console.write(echo_text)
         except:
             self.alive = False
-            raise
+            self.error = True
+            sys.stderr.write('--- send exception ---\n')
 
     def handle_menu_key(self, c):
         """Implement a simple menu / settings"""
@@ -937,6 +944,12 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
         default=False)
 
     group.add_argument(
+        '--very-quiet',
+        action='store_true',
+        help='suppress error and non-error messages (implies --quiet)',
+        default=False)
+
+    group.add_argument(
         '--develop',
         action='store_true',
         help='show Python traceback on error',
@@ -996,16 +1009,15 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
                 serial_instance.exclusive = args.exclusive
 
             serial_instance.open()
+            break
         except serial.SerialException as e:
             sys.stderr.write('could not open port {!r}: {}\n'.format(args.port, e))
             if args.develop:
                 raise
-            if not args.ask:
-                sys.exit(1)
-            else:
+            if args.ask:
                 args.port = '-'
-        else:
-            break
+                continue
+            sys.exit(1)
 
     miniterm = Miniterm(
         serial_instance,
@@ -1032,10 +1044,12 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
         miniterm.join(True)
     except KeyboardInterrupt:
         pass
-    if not args.quiet:
-        sys.stderr.write('\n--- exit ---\n')
     miniterm.join()
     miniterm.close()
+
+    if not args.quiet:
+        sys.stderr.write('\n--- exit ---\n')
+    sys.exit(1 if miniterm.error else 0)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if __name__ == '__main__':
