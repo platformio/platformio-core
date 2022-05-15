@@ -3,8 +3,8 @@ all:
 
 # regenerate project files to reflect platformio.ini changes
 project-update:
-	 @echo "This will overwrite project files and delete .pio cache.  Are you sure? [y/N] " \
-	      && read ans && [ $${ans:-'N'} = 'y' ]
+	@echo "This will overwrite project files and delete .pio cache.  Are you sure? [y/N] " \
+	    && read ans && [ $${ans:-'N'} = 'y' ]
 	rm -r .pio/
 	platformio project init --ide qtcreator
 
