@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=unused-argument
+
 from __future__ import absolute_import
 
+import os
 import re
 import sys
-from fnmatch import fnmatch
-from os import environ
-from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
@@ -26,11 +26,9 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, fs
-from platformio.compat import IS_WINDOWS
-from platformio.device.list import list_logical_devices, list_serial_ports
+from platformio.device.finder import find_mbed_disk, find_serial_port, is_pattern_port
+from platformio.device.list import list_serial_ports
 from platformio.proc import exec_command
-
-# pylint: disable=unused-argument
 
 
 def FlushSerialBuffer(env, port):
@@ -98,67 +96,28 @@ def WaitForNewSerialPort(env, before):
 
 def AutodetectUploadPort(*args, **kwargs):
     env = args[0]
-
-    def _get_pattern():
-        if "UPLOAD_PORT" not in env:
-            return None
-        if set(["*", "?", "[", "]"]) & set(env["UPLOAD_PORT"]):
-            return env["UPLOAD_PORT"]
-        return None
-
-    def _is_match_pattern(port):
-        pattern = _get_pattern()
-        if not pattern:
-            return True
-        return fnmatch(port, pattern)
-
-    def _look_for_mbed_disk():
-        msdlabels = ("mbed", "nucleo", "frdm", "microbit")
-        for item in list_logical_devices():
-            if item["path"].startswith("/net") or not _is_match_pattern(item["path"]):
-                continue
-            mbed_pages = [join(item["path"], n) for n in ("mbed.htm", "mbed.html")]
-            if any(isfile(p) for p in mbed_pages):
-                return item["path"]
-            if item["name"] and any(l in item["name"].lower() for l in msdlabels):
-                return item["path"]
-        return None
-
-    def _look_for_serial_port():
-        port = None
-        board_hwids = []
-        upload_protocol = env.subst("$UPLOAD_PROTOCOL")
-        if "BOARD" in env and "build.hwids" in env.BoardConfig():
-            board_hwids = env.BoardConfig().get("build.hwids")
-        for item in list_serial_ports(filter_hwid=True):
-            if not _is_match_pattern(item["port"]):
-                continue
-            port = item["port"]
-            if upload_protocol.startswith("blackmagic"):
-                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
-                    port = "\\\\.\\%s" % port
-                if "GDB" in item["description"]:
-                    return port
-            for hwid in board_hwids:
-                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                if hwid_str in item["hwid"]:
-                    return port
-        return port
-
-    if "UPLOAD_PORT" in env and not _get_pattern():
-        print(env.subst("Use manually specified: $UPLOAD_PORT"))
+    initial_port = env.subst("$UPLOAD_PORT")
+    upload_protocol = env.subst("$UPLOAD_PROTOCOL")
+    if initial_port and not is_pattern_port(initial_port):
+        print(env.subst("Using manually specified: $UPLOAD_PORT"))
         return
 
-    if env.subst("$UPLOAD_PROTOCOL") == "mbed" or (
-        "mbed" in env.subst("$PIOFRAMEWORK") and not env.subst("$UPLOAD_PROTOCOL")
+    if upload_protocol == "mbed" or (
+        "mbed" in env.subst("$PIOFRAMEWORK") and not upload_protocol
     ):
-        env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
+        env.Replace(UPLOAD_PORT=find_mbed_disk(initial_port))
     else:
         try:
             fs.ensure_udev_rules()
         except exception.InvalidUdevRules as e:
             sys.stderr.write("\n%s\n\n" % e)
-        env.Replace(UPLOAD_PORT=_look_for_serial_port())
+        env.Replace(
+            UPLOAD_PORT=find_serial_port(
+                initial_port=initial_port,
+                board_config=env.BoardConfig() if "BOARD" in env else None,
+                upload_protocol=upload_protocol,
+            )
+        )
 
     if env.subst("$UPLOAD_PORT"):
         print(env.subst("Auto-detected: $UPLOAD_PORT"))
@@ -176,10 +135,12 @@ def UploadToDisk(_, target, source, env):
     assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
     for ext in ("bin", "hex"):
-        fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
-        if not isfile(fpath):
+        fpath = os.path.join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
+        if not os.path.isfile(fpath):
             continue
-        copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
+        copyfile(
+            fpath, os.path.join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext))
+        )
     print(
         "Firmware has been successfully uploaded.\n"
         "(Some boards may require manual hard reset)"
@@ -212,7 +173,7 @@ def CheckUploadSize(_, target, source, env):
         if not isinstance(cmd, list):
             cmd = cmd.split()
         cmd = [arg.replace("$SOURCES", str(source[0])) for arg in cmd if arg]
-        sysenv = environ.copy()
+        sysenv = os.environ.copy()
         sysenv["PATH"] = str(env["ENV"]["PATH"])
         result = exec_command(env.subst(cmd), env=sysenv)
         if result["returncode"] != 0:

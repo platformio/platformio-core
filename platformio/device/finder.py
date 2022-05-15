@@ -12,18 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from fnmatch import fnmatch
 
 import serial
 
 from platformio.compat import IS_WINDOWS
-from platformio.device.list import list_serial_ports
+from platformio.device.list import list_logical_devices, list_serial_ports
 
 
 def is_pattern_port(port):
     if not port:
         return False
     return set(["*", "?", "[", "]"]) & set(port)
+
+
+def match_serial_port(pattern):
+    for item in list_serial_ports():
+        if fnmatch(item["port"], pattern):
+            return item["port"]
+    return None
 
 
 def is_serial_port_ready(port, timeout=1):
@@ -35,7 +43,7 @@ def is_serial_port_ready(port, timeout=1):
     return False
 
 
-def scan_serial_port(
+def find_serial_port(
     initial_port, board_config=None, upload_protocol=None, ensure_ready=False
 ):
     if initial_port:
@@ -44,9 +52,9 @@ def scan_serial_port(
         return match_serial_port(initial_port)
     port = None
     if upload_protocol and upload_protocol.startswith("blackmagic"):
-        port = scan_blackmagic_serial_port()
+        port = find_blackmagic_serial_port()
     if not port and board_config:
-        port = scan_board_serial_port(board_config)
+        port = find_board_serial_port(board_config)
     if port:
         return port
 
@@ -61,14 +69,7 @@ def scan_serial_port(
     return usb_port or port
 
 
-def match_serial_port(pattern):
-    for item in list_serial_ports():
-        if fnmatch(item["port"], pattern):
-            return item["port"]
-    return None
-
-
-def scan_blackmagic_serial_port():
+def find_blackmagic_serial_port():
     for item in list_serial_ports():
         port = item["port"]
         if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
@@ -78,7 +79,7 @@ def scan_blackmagic_serial_port():
     return None
 
 
-def scan_board_serial_port(board_config):
+def find_board_serial_port(board_config):
     board_hwids = board_config.get("build.hwids", [])
     if not board_hwids:
         return None
@@ -88,4 +89,23 @@ def scan_board_serial_port(board_config):
             hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
             if hwid_str in item["hwid"]:
                 return port
+    return None
+
+
+def find_mbed_disk(initial_port):
+    msdlabels = ("mbed", "nucleo", "frdm", "microbit")
+    for item in list_logical_devices():
+        if item["path"].startswith("/net"):
+            continue
+        if (
+            initial_port
+            and is_pattern_port(initial_port)
+            and not fnmatch(item["path"], initial_port)
+        ):
+            continue
+        mbed_pages = [os.path.join(item["path"], n) for n in ("mbed.htm", "mbed.html")]
+        if any(os.path.isfile(p) for p in mbed_pages):
+            return item["path"]
+        if item["name"] and any(l in item["name"].lower() for l in msdlabels):
+            return item["path"]
     return None

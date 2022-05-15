@@ -20,7 +20,7 @@ from serial.tools import miniterm
 
 from platformio import exception, fs
 from platformio.device.filters.base import register_filters
-from platformio.device.serial import scan_serial_port
+from platformio.device.finder import find_serial_port
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
@@ -108,7 +108,7 @@ def device_monitor_cmd(**kwargs):  # pylint: disable=too-many-branches
         except NotPlatformIOProjectError:
             pass
         register_filters(platform=platform, options=kwargs)
-        kwargs["port"] = scan_serial_port(
+        kwargs["port"] = find_serial_port(
             initial_port=kwargs["port"],
             board_config=platform.board_config(project_options.get("board"))
             if platform and project_options.get("board")

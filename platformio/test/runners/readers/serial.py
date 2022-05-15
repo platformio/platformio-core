@@ -17,7 +17,7 @@ from time import sleep
 import click
 import serial
 
-from platformio.device.serial import scan_serial_port
+from platformio.device.finder import find_serial_port
 from platformio.exception import UserSideException
 
 
@@ -77,7 +77,7 @@ class SerialTestOutputReader:
 
         elapsed = 0
         while elapsed < 5:
-            port = scan_serial_port(**scan_options)
+            port = find_serial_port(**scan_options)
             if port:
                 return port
             sleep(0.25)
