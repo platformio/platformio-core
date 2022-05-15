@@ -395,7 +395,8 @@ class Miniterm(object):
     Handle special keys from the console to show menu etc.
     """
 
-    def __init__(self, serial_instance, echo=False, eol='crlf', filters=()):
+    def __init__(self, serial_instance, echo=False, eol='crlf', filters=(),
+                 quiet=False):
         self.console = Console()
         self.serial = serial_instance
         self.echo = echo
@@ -404,6 +405,7 @@ class Miniterm(object):
         self.output_encoding = 'UTF-8'
         self.eol = eol
         self.filters = filters
+        self.quiet = quiet
         self.update_transformations()
         self.exit_character = unichr(0x1d)  # GS/CTRL+]
         self.menu_character = unichr(0x14)  # Menu: CTRL+T
@@ -514,7 +516,8 @@ class Miniterm(object):
             self.alive = False
             self.error = True
             self.console.cancel()
-            sys.stderr.write('--- receive exception ---\n')
+            if not self.quiet:
+                sys.stderr.write('--- receive exception ---\n')
 
     def writer(self):
         """\
@@ -553,7 +556,8 @@ class Miniterm(object):
         except:
             self.alive = False
             self.error = True
-            sys.stderr.write('--- send exception ---\n')
+            if not self.quiet:
+                sys.stderr.write('--- send exception ---\n')
 
     def handle_menu_key(self, c):
         """Implement a simple menu / settings"""
@@ -944,12 +948,6 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
         default=False)
 
     group.add_argument(
-        '--very-quiet',
-        action='store_true',
-        help='suppress error and non-error messages (implies --quiet)',
-        default=False)
-
-    group.add_argument(
         '--develop',
         action='store_true',
         help='show Python traceback on error',
@@ -1023,7 +1021,8 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
         serial_instance,
         echo=args.echo,
         eol=args.eol.lower(),
-        filters=filters)
+        filters=filters,
+        quiet=args.quiet)
     miniterm.exit_character = unichr(args.exit_char)
     miniterm.menu_character = unichr(args.menu_char)
     miniterm.raw = args.raw
