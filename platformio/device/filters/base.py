@@ -15,9 +15,8 @@
 import inspect
 import os
 
-from serial.tools import miniterm
-
 from platformio import fs
+from platformio.commands.device import pio_miniterm as miniterm
 from platformio.compat import get_object_members, load_python_module
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig

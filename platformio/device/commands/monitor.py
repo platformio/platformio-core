@@ -16,9 +16,9 @@ import os
 import sys
 
 import click
-from serial.tools import miniterm
 
 from platformio import exception, fs
+from platformio.commands.device import pio_miniterm as miniterm
 from platformio.device.filters.base import register_filters
 from platformio.device.finder import find_serial_port
 from platformio.platform.factory import PlatformFactory
