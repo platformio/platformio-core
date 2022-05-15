@@ -36,7 +36,7 @@ def test_calculator_example(tmp_path: Path):
             "uno",
             "-e",
             "native",
-            "--junit-output",
+            "--junit-output-path",
             str(junit_output_path),
         ]
     )
@@ -73,7 +73,7 @@ def test_list_tests(clirunner, validate_cliresult, tmp_path: Path):
             "-d",
             os.path.join("examples", "unit-testing", "calculator"),
             "--list-tests",
-            "--json-output",
+            "--json-output-path",
             str(json_output_path),
         ],
     )
@@ -547,7 +547,7 @@ int main(int argc, char **argv)
         [
             "-d",
             str(project_dir),
-            "--junit-output",
+            "--junit-output-path",
             str(junit_output_path),
         ],
     )
@@ -572,7 +572,7 @@ int main(int argc, char **argv)
         [
             "-d",
             str(project_dir),
-            "--json-output",
+            "--json-output-path",
             str(json_output_path),
             "-a",
             "-aa=1",  # fail after the 1 error
@@ -596,7 +596,7 @@ def test_googletest_framework(clirunner, tmp_path: Path):
             project_dir,
             "-e",
             "native",
-            "--junit-output",
+            "--junit-output-path",
             str(junit_output_path),
         ],
     )
@@ -623,7 +623,7 @@ def test_googletest_framework(clirunner, tmp_path: Path):
             project_dir,
             "-e",
             "native",
-            "--json-output",
+            "--json-output-path",
             str(json_output_path),
             "-a",
             "--gtest_filter=-FooTest.Bar",
