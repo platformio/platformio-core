@@ -119,7 +119,7 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_build_metadata(project_dir, env_or_envs, cache=True):
+def load_build_metadata(project_dir, env_or_envs, cache=False):
     assert env_or_envs
     env_names = env_or_envs
     if not isinstance(env_names, list):
