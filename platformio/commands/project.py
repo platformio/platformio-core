@@ -15,16 +15,16 @@
 import click
 
 from platformio.project.commands.config import project_config_cmd
-from platformio.project.commands.data import project_data_cmd
 from platformio.project.commands.init import project_init_cmd
+from platformio.project.commands.metadata import project_metadata_cmd
 
 
 @click.group(
     "project",
     commands=[
         project_config_cmd,
-        project_data_cmd,
         project_init_cmd,
+        project_metadata_cmd,
     ],
     short_help="Project Manager",
 )

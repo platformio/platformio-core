@@ -99,12 +99,12 @@ def install_project_dependencies(options):
         for env in config.envs():
             if environments and env not in environments:
                 continue
-            if not options["silent"]:
+            if not options.get("silent"):
                 click.echo(
                     "Resolving %s environment packages..." % click.style(env, fg="cyan")
                 )
             already_up_to_date = not install_project_env_dependencies(env, options)
-            if not options["silent"] and already_up_to_date:
+            if not options.get("silent") and already_up_to_date:
                 click.secho("Already up-to-date.", fg="green")
 
 
