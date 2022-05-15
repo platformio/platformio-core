@@ -50,15 +50,15 @@ def scan_serial_port(
     if port:
         return port
 
-    # pick the first PID:VID USB device
+    # pick the last PID:VID USB device
+    usb_port = None
     for item in list_serial_ports():
         if ensure_ready and not is_serial_port_ready(item["port"]):
             continue
         port = item["port"]
         if "VID:PID" in item["hwid"]:
-            return port
-
-    return port
+            usb_port = port
+    return usb_port or port
 
 
 def match_serial_port(pattern):
