@@ -13,21 +13,18 @@
 # limitations under the License.
 
 import base64
+import json
 import os
 import re
 import sys
+from urllib.parse import quote
 
 import click
 
 from platformio import app, fs, proc, telemetry
-from platformio.compat import hashlib_encode_data, is_bytes
+from platformio.compat import hashlib_encode_data
 from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
 
 
 class PlatformRunMixin(object):
@@ -36,13 +33,16 @@ class PlatformRunMixin(object):
 
     @staticmethod
     def encode_scons_arg(value):
-        data = base64.urlsafe_b64encode(hashlib_encode_data(value))
-        return data.decode() if is_bytes(data) else data
+        if isinstance(value, (list, tuple, dict)):
+            value = json.dumps(value)
+        return base64.urlsafe_b64encode(hashlib_encode_data(value)).decode()
 
     @staticmethod
     def decode_scons_arg(data):
-        value = base64.urlsafe_b64decode(data)
-        return value.decode() if is_bytes(value) else value
+        value = base64.urlsafe_b64decode(data).decode()
+        if value.startswith(("[", "{")):
+            value = json.loads(value)
+        return value
 
     def run(  # pylint: disable=too-many-arguments
         self, variables, targets, silent, verbose, jobs
@@ -51,15 +51,8 @@ class PlatformRunMixin(object):
         assert isinstance(targets, list)
 
         self.ensure_engine_compatible()
-
-        options = self.config.items(env=variables["pioenv"], as_dict=True)
-        if "framework" in options:
-            # support PIO Core 3.0 dev/platforms
-            options["pioframework"] = options["framework"]
-        self.configure_default_packages(options, targets)
-        self.autoinstall_runtime_packages()
-
-        self._report_non_sensitive_data(options, targets)
+        self.configure_project_packages(variables["pioenv"], targets)
+        self._report_non_sensitive_data(variables["pioenv"], targets)
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
@@ -79,14 +72,14 @@ class PlatformRunMixin(object):
 
         return result
 
-    def _report_non_sensitive_data(self, options, targets):
-        topts = options.copy()
-        topts["platform_packages"] = [
+    def _report_non_sensitive_data(self, env, targets):
+        options = self.config.items(env=env, as_dict=True)
+        options["platform_packages"] = [
             dict(name=item["name"], version=item["version"])
             for item in self.dump_used_packages()
         ]
-        topts["platform"] = {"name": self.name, "version": self.version}
-        telemetry.send_run_environment(topts, targets)
+        options["platform"] = {"name": self.name, "version": self.version}
+        telemetry.send_run_environment(options, targets)
 
     def _run_scons(self, variables, targets, jobs):
         scons_dir = get_core_package_dir("tool-scons")

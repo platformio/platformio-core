@@ -15,8 +15,10 @@
 # pylint: disable=too-many-branches, too-many-locals
 
 import json
+import logging
 import os
 import time
+from urllib.parse import quote
 
 import click
 from tabulate import tabulate
@@ -31,11 +33,6 @@ from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
 
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
-
 CTX_META_INPUT_DIRS_KEY = __name__ + ".input_dirs"
 CTX_META_PROJECT_ENVIRONMENTS_KEY = __name__ + ".project_environments"
 CTX_META_STORAGE_DIRS_KEY = __name__ + ".storage_dirs"
@@ -46,7 +43,7 @@ def get_project_global_lib_dir():
     return ProjectConfig.get_instance().get("platformio", "globallib_dir")
 
 
-@click.group(short_help="Library manager")
+@click.group(short_help="Library manager", hidden=True)
 @click.option(
     "-d",
     "--storage-dir",
@@ -152,16 +149,16 @@ def lib_install(  # pylint: disable=too-many-arguments,unused-argument
         if not silent and (libraries or storage_dir in storage_libdeps):
             print_storage_header(storage_dirs, storage_dir)
         lm = LibraryPackageManager(storage_dir)
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
 
         if libraries:
             installed_pkgs = {
-                library: lm.install(library, silent=silent, force=force)
-                for library in libraries
+                library: lm.install(library, force=force) for library in libraries
             }
 
         elif storage_dir in storage_libdeps:
             for library in storage_libdeps[storage_dir]:
-                lm.install(library, silent=silent, force=force)
+                lm.install(library, force=force)
 
     if save and installed_pkgs:
         _save_deps(ctx, installed_pkgs)
@@ -212,9 +209,8 @@ def lib_uninstall(ctx, libraries, save, silent):
     for storage_dir in storage_dirs:
         print_storage_header(storage_dirs, storage_dir)
         lm = LibraryPackageManager(storage_dir)
-        uninstalled_pkgs = {
-            library: lm.uninstall(library, silent=silent) for library in libraries
-        }
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
+        uninstalled_pkgs = {library: lm.uninstall(library) for library in libraries}
 
     if save and uninstalled_pkgs:
         _save_deps(ctx, uninstalled_pkgs, action="remove")
@@ -237,14 +233,20 @@ def lib_uninstall(ctx, libraries, save, silent):
 def lib_update(  # pylint: disable=too-many-arguments
     ctx, libraries, only_check, dry_run, silent, json_output
 ):
-    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     only_check = dry_run or only_check
+    if only_check and not json_output:
+        raise exception.UserSideException(
+            "This command is deprecated, please use `pio pkg outdated` instead"
+        )
+
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:
         if not json_output:
             print_storage_header(storage_dirs, storage_dir)
         lib_deps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, {}).get(storage_dir, [])
         lm = LibraryPackageManager(storage_dir)
+        lm.set_log_level(logging.WARN if silent else logging.DEBUG)
         _libraries = libraries or lib_deps or lm.get_installed()
 
         if only_check and json_output:
@@ -277,9 +279,7 @@ def lib_update(  # pylint: disable=too-many-arguments
                     None if isinstance(library, PackageItem) else PackageSpec(library)
                 )
                 try:
-                    lm.update(
-                        library, to_spec=to_spec, only_check=only_check, silent=silent
-                    )
+                    lm.update(library, to_spec=to_spec)
                 except UnknownPackageError as e:
                     if library not in lib_deps:
                         raise e
@@ -438,7 +438,8 @@ def lib_builtin(storage, json_output):
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
     lm = LibraryPackageManager()
-    lib_id = lm.reveal_registry_package_id(library, silent=json_output)
+    lm.set_log_level(logging.ERROR if json_output else logging.DEBUG)
+    lib_id = lm.reveal_registry_package_id(library)
     regclient = lm.get_registry_client_instance()
     lib = regclient.fetch_json_data(
         "get", "/v2/lib/info/%d" % lib_id, x_cache_valid="1h"
@@ -457,7 +458,7 @@ def lib_show(library, json_output):
         "Version: %s, released %s"
         % (
             lib["version"]["name"],
-            time.strftime("%c", util.parse_date(lib["version"]["released"])),
+            util.parse_datetime(lib["version"]["released"]).strftime("%c"),
         )
     )
     click.echo("Manifest: %s" % lib["confurl"])
@@ -465,9 +466,9 @@ def lib_show(library, json_output):
         if key not in lib or not lib[key]:
             continue
         if isinstance(lib[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(lib[key])))
+            click.echo("%s: %s" % (key.capitalize(), ", ".join(lib[key])))
         else:
-            click.echo("%s: %s" % (key.title(), lib[key]))
+            click.echo("%s: %s" % (key.capitalize(), lib[key]))
 
     blocks = []
 
@@ -499,7 +500,7 @@ def lib_show(library, json_output):
             "Versions",
             [
                 "%s, released %s"
-                % (v["name"], time.strftime("%c", util.parse_date(v["released"])))
+                % (v["name"], util.parse_datetime(v["released"]).strftime("%c"))
                 for v in lib["versions"]
             ],
         )
@@ -529,7 +530,7 @@ def lib_show(library, json_output):
 @click.argument("config_url")
 def lib_register(config_url):  # pylint: disable=unused-argument
     raise exception.UserSideException(
-        "This command is deprecated. Please use `pio package publish` command."
+        "This command is deprecated. Please use `pio pkg publish` command."
     )
 
 
@@ -546,7 +547,7 @@ def lib_stats(json_output):
         tabular_data = [
             (
                 click.style(item["name"], fg="cyan"),
-                time.strftime("%c", util.parse_date(item["date"])),
+                util.parse_datetime(item["date"]).strftime("%c"),
                 "https://platformio.org/lib/show/%s/%s"
                 % (item["id"], quote(item["name"])),
             )
@@ -621,9 +622,9 @@ def print_lib_item(item):
         if key not in item or not item[key]:
             continue
         if isinstance(item[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+            click.echo("%s: %s" % (key.capitalize(), ", ".join(item[key])))
         else:
-            click.echo("%s: %s" % (key.title(), item[key]))
+            click.echo("%s: %s" % (key.capitalize(), item[key]))
 
     for key in ("frameworks", "platforms"):
         if key not in item:

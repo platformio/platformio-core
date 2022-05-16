@@ -27,8 +27,8 @@ from platformio.package.pack import PackagePacker
 def test_base(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
     pkg_dir.join(".git").mkdir().join("file").write("")
-    pkg_dir.join(".gitignore").write("tests")
-    pkg_dir.join("._ignored").write("")
+    pkg_dir.join(".gitignore").write("")
+    pkg_dir.join("._hidden_file").write("")
     pkg_dir.join("main.cpp").write("#include <stdio.h>")
     p = PackagePacker(str(pkg_dir))
     # test missed manifest
@@ -92,6 +92,42 @@ def test_filters(tmpdir_factory):
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
         assert set(tar.getnames()) == set(
             ["library.json", "src/main.cpp", "src/util/helpers.cpp"]
+        )
+
+
+def test_gitgnore_filters(tmpdir_factory):
+    pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join(".git").mkdir().join("file").write("")
+    pkg_dir.join(".gitignore").write(
+        """
+# comment
+
+gi_file
+gi_folder
+gi_folder_*
+
+**/main_nested.h
+
+gi_keep_file
+!gi_keep_file
+LICENSE
+"""
+    )
+    pkg_dir.join("LICENSE").write("")
+    pkg_dir.join("gi_keep_file").write("")
+    pkg_dir.join("gi_file").write("")
+    pkg_dir.mkdir("gi_folder").join("main.h").write("#ifndef")
+    pkg_dir.mkdir("gi_folder_name").join("main.h").write("#ifndef")
+    pkg_dir.mkdir("gi_nested_folder").mkdir("a").mkdir("b").join("main_nested.h").write(
+        "#ifndef"
+    )
+    pkg_dir.join("library.json").write('{"name": "foo", "version": "1.0.0"}')
+    p = PackagePacker(str(pkg_dir))
+    with fs.cd(str(pkg_dir)):
+        p.pack()
+    with tarfile.open(os.path.join(str(pkg_dir), "foo-1.0.0.tar.gz"), "r:gz") as tar:
+        assert set(tar.getnames()) == set(
+            ["library.json", "LICENSE", ".gitignore", "gi_keep_file"]
         )
 
 

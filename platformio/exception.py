@@ -22,7 +22,7 @@ class PlatformioException(Exception):
             # pylint: disable=not-an-iterable
             return self.MESSAGE.format(*self.args)
 
-        return super(PlatformioException, self).__str__()
+        return super().__str__()
 
 
 class ReturnErrorCode(PlatformioException):
@@ -48,7 +48,7 @@ class AbortedByUser(UserSideException):
 #
 
 
-class InvalidUdevRules(PlatformioException):
+class InvalidUdevRules(UserSideException):
     pass
 
 
@@ -134,15 +134,4 @@ class CygwinEnvDetected(PlatformioException):
     MESSAGE = (
         "PlatformIO does not work within Cygwin environment. "
         "Use native Terminal instead."
-    )
-
-
-class TestDirNotExists(UserSideException):
-
-    MESSAGE = (
-        "A test folder '{0}' does not exist.\nPlease create 'test' "
-        "directory in project's root and put a test set.\n"
-        "More details about Unit "
-        "Testing: https://docs.platformio.org/page/plus/"
-        "unit-testing.html"
     )

@@ -15,18 +15,16 @@
 import json
 import os
 
-from platformio.package.exception import (
-    MissingPackageManifestError,
-    UnknownPackageError,
-)
+from platformio.commands.lib.helpers import is_builtin_lib
+from platformio.package.exception import MissingPackageManifestError
 from platformio.package.manager.base import BasePackageManager
-from platformio.package.meta import PackageItem, PackageSpec, PackageType
+from platformio.package.meta import PackageSpec, PackageType
 from platformio.project.config import ProjectConfig
 
 
 class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
-        super(LibraryPackageManager, self).__init__(
+        super().__init__(
             PackageType.LIBRARY,
             package_dir
             or ProjectConfig.get_instance().get("platformio", "globallib_dir"),
@@ -38,7 +36,7 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
 
     def find_pkg_root(self, path, spec):
         try:
-            return super(LibraryPackageManager, self).find_pkg_root(path, spec)
+            return super().find_pkg_root(path, spec)
         except MissingPackageManifestError:
             pass
         assert isinstance(spec, PackageSpec)
@@ -81,81 +79,12 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
                     return root
         return path
 
-    def _install(  # pylint: disable=too-many-arguments
-        self,
-        spec,
-        search_filters=None,
-        silent=False,
-        skip_dependencies=False,
-        force=False,
-    ):
-        try:
-            return super(LibraryPackageManager, self)._install(
-                spec,
-                search_filters=search_filters,
-                silent=silent,
-                skip_dependencies=skip_dependencies,
-                force=force,
-            )
-        except UnknownPackageError as e:
-            # pylint: disable=import-outside-toplevel
-            from platformio.commands.lib.helpers import is_builtin_lib
-
-            spec = self.ensure_spec(spec)
-            if is_builtin_lib(spec.name):
-                self.print_message("Already installed, built-in library", fg="yellow")
-                return True
-
-            raise e
-
-    def install_dependencies(self, pkg, silent=False):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        if not silent:
-            self.print_message("Installing dependencies...")
-        for dependency in manifest.get("dependencies"):
-            if not self._install_dependency(dependency, silent) and not silent:
-                self.print_message(
-                    "Warning! Could not install dependency %s for package '%s'"
-                    % (dependency, pkg.metadata.name),
-                    fg="yellow",
-                )
-
-    def _install_dependency(self, dependency, silent=False):
-        spec = PackageSpec(
-            owner=dependency.get("owner"),
-            name=dependency.get("name"),
-            requirements=dependency.get("version"),
-        )
-        search_filters = {
-            key: value
-            for key, value in dependency.items()
-            if key in ("authors", "platforms", "frameworks")
-        }
-        try:
-            return self._install(
-                spec, search_filters=search_filters or None, silent=silent
-            )
-        except UnknownPackageError:
-            pass
+    def install_dependency(self, dependency):
+        spec = self.dependency_to_spec(dependency)
+        # skip built-in dependencies
+        not_builtin_conds = [spec.external, spec.owner]
+        if not any(not_builtin_conds):
+            not_builtin_conds.append(not is_builtin_lib(spec.name))
+        if any(not_builtin_conds):
+            return super().install_dependency(dependency)
         return None
-
-    def uninstall_dependencies(self, pkg, silent=False):
-        assert isinstance(pkg, PackageItem)
-        manifest = self.load_manifest(pkg)
-        if not manifest.get("dependencies"):
-            return
-        if not silent:
-            self.print_message("Removing dependencies...", fg="yellow")
-        for dependency in manifest.get("dependencies"):
-            spec = PackageSpec(
-                owner=dependency.get("owner"),
-                name=dependency.get("name"),
-                requirements=dependency.get("version"),
-            )
-            pkg = self.get_package(spec)
-            if not pkg:
-                continue
-            self._uninstall(pkg, silent=silent)

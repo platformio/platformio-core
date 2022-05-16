@@ -35,24 +35,8 @@ def projects_dir_validate(projects_dir):
 
 
 DEFAULT_SETTINGS = {
-    "auto_update_libraries": {
-        "description": "Automatically update libraries (Yes/No)",
-        "value": False,
-    },
-    "auto_update_platforms": {
-        "description": "Automatically update platforms (Yes/No)",
-        "value": False,
-    },
-    "check_libraries_interval": {
-        "description": "Check for the library updates interval (days)",
-        "value": 7,
-    },
     "check_platformio_interval": {
-        "description": "Check for the new PlatformIO interval (days)",
-        "value": 3,
-    },
-    "check_platforms_interval": {
-        "description": "Check for the platform updates interval (days)",
+        "description": "Check for the new PlatformIO Core interval (days)",
         "value": 7,
     },
     "check_prune_system_threshold": {

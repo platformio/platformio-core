@@ -29,7 +29,7 @@ from platformio.project.config import ProjectConfig
 class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
     def __init__(self, package_dir=None):
         self.config = ProjectConfig.get_instance()
-        super(PlatformPackageManager, self).__init__(
+        super().__init__(
             PackageType.PLATFORM,
             package_dir or self.config.get("platformio", "platforms_dir"),
         )
@@ -38,94 +38,71 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
     def manifest_names(self):
         return PackageType.get_manifest_map()[PackageType.PLATFORM]
 
-    def install(  # pylint: disable=arguments-differ, too-many-arguments
+    def install(  # pylint: disable=arguments-differ,too-many-arguments
         self,
         spec,
-        with_packages=None,
-        without_packages=None,
-        skip_default_package=False,
-        with_all_packages=False,
-        silent=False,
+        skip_dependencies=False,
         force=False,
+        project_env=None,
+        project_targets=None,
     ):
-        pkg = super(PlatformPackageManager, self).install(
-            spec, silent=silent, force=force, skip_dependencies=True
-        )
+        already_installed = self.get_package(spec)
+        pkg = super().install(spec, force=force, skip_dependencies=True)
         try:
             p = PlatformFactory.new(pkg)
+            # set logging level for underlying tool manager
+            p.pm.set_log_level(self.log.getEffectiveLevel())
             p.ensure_engine_compatible()
         except IncompatiblePlatform as e:
-            super(PlatformPackageManager, self).uninstall(
-                pkg, silent=silent, skip_dependencies=True
-            )
+            super().uninstall(pkg, skip_dependencies=True)
             raise e
-
-        if with_all_packages:
-            with_packages = list(p.packages)
-
-        p.install_packages(
-            with_packages,
-            without_packages,
-            skip_default_package,
-            silent=silent,
-            force=force,
-        )
-        p.install_python_packages()
-        p.on_installed()
+        if project_env:
+            p.configure_project_packages(project_env, project_targets)
+        if not skip_dependencies:
+            p.install_required_packages(force=force)
+        if not already_installed:
+            p.on_installed()
         return pkg
 
-    def uninstall(self, spec, silent=False, skip_dependencies=False):
+    def uninstall(  # pylint: disable=arguments-differ
+        self, spec, skip_dependencies=False, project_env=None
+    ):
         pkg = self.get_package(spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(spec)
         p = PlatformFactory.new(pkg)
-        assert super(PlatformPackageManager, self).uninstall(
-            pkg, silent=silent, skip_dependencies=True
-        )
+        # set logging level for underlying tool manager
+        p.pm.set_log_level(self.log.getEffectiveLevel())
+        if project_env:
+            p.configure_project_packages(project_env)
         if not skip_dependencies:
-            p.uninstall_python_packages()
-            p.on_uninstalled()
+            p.uninstall_packages()
+        assert super().uninstall(pkg, skip_dependencies=True)
+        p.on_uninstalled()
         return pkg
 
-    def update(  # pylint: disable=arguments-differ, too-many-arguments
+    def update(  # pylint: disable=arguments-differ
         self,
         from_spec,
         to_spec=None,
-        only_check=False,
-        silent=False,
-        show_incompatible=True,
-        only_packages=False,
+        skip_dependencies=False,
+        project_env=None,
     ):
         pkg = self.get_package(from_spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
+        pkg = super().update(
+            from_spec,
+            to_spec,
+        )
         p = PlatformFactory.new(pkg)
-        pkgs_before = [item.metadata.name for item in p.get_installed_packages()]
-
-        new_pkg = None
-        missed_pkgs = set()
-        if not only_packages:
-            new_pkg = super(PlatformPackageManager, self).update(
-                from_spec,
-                to_spec,
-                only_check=only_check,
-                silent=silent,
-                show_incompatible=show_incompatible,
-            )
-            p = PlatformFactory.new(new_pkg)
-            missed_pkgs = set(pkgs_before) & set(p.packages)
-            missed_pkgs -= set(
-                item.metadata.name for item in p.get_installed_packages()
-            )
-
-        p.update_packages(only_check)
-
-        if missed_pkgs:
-            p.install_packages(
-                with_packages=list(missed_pkgs), skip_default_package=True
-            )
-
-        return new_pkg or pkg
+        # set logging level for underlying tool manager
+        p.pm.set_log_level(self.log.getEffectiveLevel())
+        if project_env:
+            p.configure_project_packages(project_env)
+        if not skip_dependencies:
+            p.update_packages()
+        return pkg
 
     @util.memoized(expire="5s")
     def get_installed_boards(self):
@@ -180,13 +157,13 @@ def remove_unnecessary_platform_packages(dry_run=False):
     core_packages = get_installed_core_packages()
     for platform in PlatformPackageManager().get_installed():
         p = PlatformFactory.new(platform)
-        for pkg in p.get_installed_packages(with_optional=True):
+        for pkg in p.get_installed_packages(with_optional_versions=True):
             required.add(pkg)
 
     pm = ToolPackageManager()
     for pkg in pm.get_installed():
         skip_conds = [
-            pkg.metadata.spec.url,
+            pkg.metadata.spec.uri,
             os.path.isfile(os.path.join(pkg.path, ".piokeep")),
             pkg in required,
             pkg in core_packages,

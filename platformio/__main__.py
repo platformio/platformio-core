@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=import-outside-toplevel
-
 import os
 import sys
 from traceback import format_exc
 
 import click
 
-from platformio import __version__, exception
+from platformio import __version__, exception, maintenance
 from platformio.commands import PlatformioCLI
 from platformio.compat import IS_CYGWIN, ensure_python3
 
@@ -29,7 +27,7 @@ from platformio.compat import IS_CYGWIN, ensure_python3
     cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
 )
 @click.version_option(__version__, prog_name="PlatformIO Core")
-@click.option("--force", "-f", is_flag=True, help="DEPRECATE")
+@click.option("--force", "-f", is_flag=True, help="DEPRECATED")
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
 @click.pass_context
@@ -55,29 +53,12 @@ def cli(ctx, force, caller, no_ansi):
     except:  # pylint: disable=bare-except
         pass
 
-    from platformio import maintenance
-
     maintenance.on_platformio_start(ctx, force, caller)
 
 
-try:
-
-    @cli.result_callback()
-    @click.pass_context
-    def process_result(ctx, result, *_, **__):
-        _process_result(ctx, result)
-
-except (AttributeError, TypeError):  # legacy support for CLick > 8.0.1
-
-    @cli.resultcallback()
-    @click.pass_context
-    def process_result(ctx, result, *_, **__):
-        _process_result(ctx, result)
-
-
-def _process_result(ctx, result):
-    from platformio import maintenance
-
+@cli.result_callback()
+@click.pass_context
+def process_result(ctx, result, *_, **__):
     maintenance.on_platformio_end(ctx, result)
 
 
@@ -124,10 +105,7 @@ def main(argv=None):
             exit_code = int(e.code)
     except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
-            if sys.version_info.major != 2:
-                from platformio import maintenance
-
-                maintenance.on_platformio_exception(e)
+            maintenance.on_platformio_exception(e)
             error_str = "Error: "
             if isinstance(e, exception.PlatformioException):
                 error_str += str(e)

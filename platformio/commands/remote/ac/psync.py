@@ -25,7 +25,7 @@ class ProjectSyncAsyncCmd(AsyncCommandBase):
     def __init__(self, *args, **kwargs):
         self.psync = None
         self._upstream = None
-        super(ProjectSyncAsyncCmd, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def start(self):
         project_dir = os.path.join(

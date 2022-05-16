@@ -20,7 +20,7 @@ import bottle
 
 from platformio import fs, util
 from platformio.proc import where_is_program
-from platformio.project.helpers import load_project_ide_data
+from platformio.project.helpers import load_build_metadata
 
 
 class ProjectGenerator(object):
@@ -93,7 +93,7 @@ class ProjectGenerator(object):
         # default env configuration
         tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
         # build data
-        tpl_vars.update(load_project_ide_data(self.project_dir, self.env_name) or {})
+        tpl_vars.update(load_build_metadata(self.project_dir, self.env_name) or {})
 
         with fs.cd(self.project_dir):
             tpl_vars.update(

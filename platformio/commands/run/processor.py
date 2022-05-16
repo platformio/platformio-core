@@ -12,29 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.platform import init_platform
-from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
+from platformio.package.commands.install import install_project_env_dependencies
+from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import UndefinedEnvPlatformError
+from platformio.test.runners.base import CTX_META_TEST_RUNNING_NAME
 
 # pylint: disable=too-many-instance-attributes
 
 
 class EnvironmentProcessor(object):
     def __init__(  # pylint: disable=too-many-arguments
-        self, cmd_ctx, name, config, targets, upload_port, silent, verbose, jobs
+        self,
+        cmd_ctx,
+        name,
+        config,
+        targets,
+        upload_port,
+        jobs,
+        program_args,
+        silent,
+        verbose,
     ):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
         self.targets = [str(t) for t in targets]
         self.upload_port = upload_port
+        self.jobs = jobs
+        self.program_args = program_args
         self.silent = silent
         self.verbose = verbose
-        self.jobs = jobs
         self.options = config.items(env=name, as_dict=True)
 
     def get_build_variables(self):
-        variables = {"pioenv": self.name, "project_config": self.config.path}
+        variables = dict(
+            pioenv=self.name,
+            project_config=self.config.path,
+            program_args=self.program_args,
+        )
 
         if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
             variables["piotest_running_name"] = self.cmd_ctx.meta[
@@ -64,7 +79,16 @@ class EnvironmentProcessor(object):
         if "monitor" in build_targets:
             build_targets.remove("monitor")
 
-        result = init_platform(self.options["platform"]).run(
+        if "clean" not in build_targets:
+            install_project_env_dependencies(
+                self.name,
+                {
+                    "project_targets": build_targets,
+                    "piotest_running_name": build_vars.get("piotest_running_name"),
+                },
+            )
+
+        result = PlatformFactory.new(self.options["platform"], autoinstall=True).run(
             build_vars, build_targets, self.silent, self.verbose, self.jobs
         )
         return result["returncode"] == 0

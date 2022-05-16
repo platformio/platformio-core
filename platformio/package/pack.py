@@ -33,7 +33,12 @@ from platformio.package.unpack import FileUnpacker
 
 
 class PackagePacker(object):
-    INCLUDE_DEFAULT = ManifestFileType.items().values()
+    INCLUDE_DEFAULT = list(ManifestFileType.items().values()) + [
+        "README",
+        "README.md",
+        "README.rst",
+        "LICENSE",
+    ]
     EXCLUDE_DEFAULT = [
         # PlatformIO internal files
         PackageItem.METAFILE_NAME,
@@ -83,6 +88,7 @@ class PackagePacker(object):
         "**/*.[jJ][pP][eE][gG]",
         "**/*.[pP][nN][gG]",
         "**/*.[gG][iI][fF]",
+        "**/*.[sS][vV][gG]",
         "**/*.[zZ][iI][pP]",
         "**/*.[gG][zZ]",
         "**/*.3[gG][pP]",
@@ -125,6 +131,20 @@ class PackagePacker(object):
             ),
         )
 
+    @staticmethod
+    def load_gitignore_filters(path):
+        result = []
+        with open(path, encoding="utf8") as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if not line or line.startswith(("#")):
+                    continue
+                if line.startswith("!"):
+                    result.append(f"+<{line[1:]}>")
+                else:
+                    result.append(f"-<{line}>")
+        return result
+
     def pack(self, dst=None):
         tmp_dir = tempfile.mkdtemp()
         try:
@@ -156,7 +176,7 @@ class PackagePacker(object):
             elif os.path.isdir(dst):
                 dst = os.path.join(dst, filename)
 
-            return self._create_tarball(src, dst, manifest)
+            return self.create_tarball(src, dst, manifest)
         finally:
             shutil.rmtree(tmp_dir)
 
@@ -183,7 +203,7 @@ class PackagePacker(object):
 
         return src
 
-    def _create_tarball(self, src, dst, manifest):
+    def create_tarball(self, src, dst, manifest):
         include = manifest.get("export", {}).get("include")
         exclude = manifest.get("export", {}).get("exclude")
         # remap root
@@ -224,11 +244,15 @@ class PackagePacker(object):
         result += ["-<%s>" % p for p in self.EXCLUDE_DEFAULT]
         # exclude items declared in manifest
         result += ["-<%s>" % p for p in exclude or []]
+
         # apply extra excludes if no custom "export" field in manifest
         if (not include and not exclude) or isinstance(
             self.manifest_parser, LibraryPropertiesManifestParser
         ):
             result += ["-<%s>" % p for p in exclude_extra]
-        # automatically include manifests
+            if os.path.exists(os.path.join(src, ".gitignore")):
+                result += self.load_gitignore_filters(os.path.join(src, ".gitignore"))
+
+        # always include manifests and relevant files
         result += ["+<%s>" % p for p in self.INCLUDE_DEFAULT]
         return result

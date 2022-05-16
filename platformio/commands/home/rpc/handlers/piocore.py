@@ -14,10 +14,11 @@
 
 from __future__ import absolute_import
 
+import io
 import json
 import os
 import sys
-from io import StringIO
+import threading
 
 import click
 from ajsonrpc.core import JSONRPC20DispatchException
@@ -27,27 +28,22 @@ from platformio import __main__, __version__, fs, proc
 from platformio.commands.home import helpers
 from platformio.compat import get_locale_encoding, is_bytes
 
-try:
-    from thread import get_ident as thread_get_ident
-except ImportError:
-    from threading import get_ident as thread_get_ident
-
 
 class MultiThreadingStdStream(object):
     def __init__(self, parent_stream):
-        self._buffers = {thread_get_ident(): parent_stream}
+        self._buffers = {threading.get_ident(): parent_stream}
 
     def __getattr__(self, name):
-        thread_id = thread_get_ident()
+        thread_id = threading.get_ident()
         self._ensure_thread_buffer(thread_id)
         return getattr(self._buffers[thread_id], name)
 
     def _ensure_thread_buffer(self, thread_id):
         if thread_id not in self._buffers:
-            self._buffers[thread_id] = StringIO()
+            self._buffers[thread_id] = io.StringIO()
 
     def write(self, value):
-        thread_id = thread_get_ident()
+        thread_id = threading.get_ident()
         self._ensure_thread_buffer(thread_id)
         return self._buffers[thread_id].write(
             value.decode() if is_bytes(value) else value

@@ -57,9 +57,7 @@ class BaseArchiver(object):
 
 class TARArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(TARArchiver, self).__init__(
-            tarfile_open(archpath)  # pylint: disable=consider-using-with
-        )
+        super().__init__(tarfile_open(archpath))  # pylint: disable=consider-using-with
 
     def get_items(self):
         return self._afo.getmembers()
@@ -68,7 +66,7 @@ class TARArchiver(BaseArchiver):
         return item.name
 
     @staticmethod
-    def is_link(item):
+    def is_link(item):  # pylint: disable=arguments-differ
         return item.islnk() or item.issym()
 
     @staticmethod
@@ -90,7 +88,7 @@ class TARArchiver(BaseArchiver):
             self.is_link(item) and self.is_bad_link(item, dest_dir),
         ]
         if not any(bad_conds):
-            super(TARArchiver, self).extract_item(item, dest_dir)
+            super().extract_item(item, dest_dir)
         else:
             click.secho(
                 "Blocked insecure item `%s` from TAR archive" % item.name,
@@ -101,9 +99,7 @@ class TARArchiver(BaseArchiver):
 
 class ZIPArchiver(BaseArchiver):
     def __init__(self, archpath):
-        super(ZIPArchiver, self).__init__(
-            ZipFile(archpath)  # pylint: disable=consider-using-with
-        )
+        super().__init__(ZipFile(archpath))  # pylint: disable=consider-using-with
 
     @staticmethod
     def preserve_permissions(item, dest_dir):
@@ -119,7 +115,7 @@ class ZIPArchiver(BaseArchiver):
         )
 
     @staticmethod
-    def is_link(_):
+    def is_link(_):  # pylint: disable=arguments-differ
         return False
 
     def get_items(self):

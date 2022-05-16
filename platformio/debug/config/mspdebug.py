@@ -32,5 +32,5 @@ $INIT_BREAK
 """
 
     def __init__(self, *args, **kwargs):
-        super(MspdebugDebugConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.port = ":2000"

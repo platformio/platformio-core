@@ -38,11 +38,11 @@ def get_installed_core_packages():
     return result
 
 
-def get_core_package_dir(name, auto_install=True):
+def get_core_package_dir(name, spec=None, auto_install=True):
     if name not in __core_packages__:
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
-    spec = PackageSpec(
+    spec = spec or PackageSpec(
         owner="platformio", name=name, requirements=__core_packages__[name]
     )
     pkg = pm.get_package(spec)
@@ -55,17 +55,15 @@ def get_core_package_dir(name, auto_install=True):
     return pm.get_package(spec).path
 
 
-def update_core_packages(only_check=False, silent=False):
+def update_core_packages():
     pm = ToolPackageManager()
     for name, requirements in __core_packages__.items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
-        pkg = pm.get_package(spec)
-        if not pkg:
-            continue
-        if not silent or pm.outdated(pkg, spec).is_outdated():
-            pm.update(pkg, spec, only_check=only_check)
-    if not only_check:
-        remove_unnecessary_core_packages()
+        try:
+            pm.update(spec, spec)
+        except UnknownPackageError:
+            pass
+    remove_unnecessary_core_packages()
     return True
 
 
@@ -152,7 +150,7 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
     if "linux" in systype:
         args.extend(["--no-binary", ":all:"])
     try:
-        subprocess.run(args + get_contrib_pysite_deps(), check=True)
+        subprocess.run(args + get_contrib_pysite_deps(), check=True, env=os.environ)
     except subprocess.CalledProcessError as exc:
         if "linux" in systype:
             raise UserSideException(
@@ -212,15 +210,19 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
 
 
 def get_contrib_pysite_deps():
-    twisted_version = "21.7.0"
-    result = [
-        # twisted[tls], see setup.py for %twisted_version%
-        "twisted == %s" % twisted_version,
-        # pyopenssl depends on it, use RUST-less version
-        "cryptography >= 3.3, < 35.0.0",
-        "pyopenssl >= 16.0.0, <= 21.0.0",
-        "service_identity >= 18.1.0, <= 21.1.0",
-    ]
-    if "windows" in util.get_systype():
+    systype = util.get_systype()
+    twisted_version = "22.1.0"
+    if "linux_arm" in systype:
+        result = [
+            # twisted[tls], see setup.py for %twisted_version%
+            "twisted == %s" % twisted_version,
+            # pyopenssl depends on it, use RUST-less version
+            "cryptography >= 3.3, < 35.0.0",
+            "pyopenssl >= 16.0.0, <= 21.0.0",
+            "service_identity >= 18.1.0, <= 21.1.0",
+        ]
+    else:
+        result = ["twisted[tls] == %s" % twisted_version]
+    if "windows" in systype:
         result.append("pywin32 != 226")
     return result

@@ -1,0 +1,2 @@
+.pio
+.qtc_clangd

@@ -403,7 +403,7 @@ ProjectOptions = OrderedDict(
                 group="build",
                 name="build_type",
                 description="Project build configuration",
-                type=click.Choice(["release", "debug"]),
+                type=click.Choice(["release", "test", "debug"]),
                 default="release",
             ),
             ConfigEnvOption(
@@ -419,13 +419,14 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="build",
-                name="src_build_flags",
+                name="build_src_flags",
+                oldnames=["src_build_flags"],
                 description=(
                     "The same as `build_flags` but configures flags the only for "
-                    "project source files (`src` folder)"
+                    "project source files in the `src` folder"
                 ),
                 multiple=True,
-                sysenvvar="PLATFORMIO_SRC_BUILD_FLAGS",
+                sysenvvar="PLATFORMIO_BUILD_SRC_FLAGS",
                 buildenvvar="SRC_BUILD_FLAGS",
             ),
             ConfigEnvOption(
@@ -438,13 +439,14 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="build",
-                name="src_filter",
+                name="build_src_filter",
+                oldnames=["src_filter"],
                 description=(
-                    "Control which source files should be included/excluded from a "
-                    "build process"
+                    "Control which source files from the `src` folder should "
+                    "be included/excluded from a build process"
                 ),
                 multiple=True,
-                sysenvvar="PLATFORMIO_SRC_FILTER",
+                sysenvvar="PLATFORMIO_BUILD_SRC_FILTER",
                 buildenvvar="SRC_FILTER",
                 default="+<*> -<.git/> -<.svn/>",
             ),
@@ -648,6 +650,13 @@ ProjectOptions = OrderedDict(
             # Test
             ConfigEnvOption(
                 group="test",
+                name="test_framework",
+                description="A unit testing framework",
+                type=click.Choice(["doctest", "googletest", "unity", "custom"]),
+                default="unity",
+            ),
+            ConfigEnvOption(
+                group="test",
                 name="test_filter",
                 description="Process tests where the name matches specified patterns",
                 multiple=True,
@@ -668,18 +677,24 @@ ProjectOptions = OrderedDict(
                 name="test_speed",
                 description="A connection speed (baud rate) to communicate with a target device",
                 type=click.INT,
+                default=115200,
             ),
             ConfigEnvOption(
                 group="test",
-                name="test_transport",
-                description="A transport to communicate with a target device",
-            ),
-            ConfigEnvOption(
-                group="test",
-                name="test_build_project_src",
-                description="Build project source code in a pair with test code",
+                name="test_build_src",
+                oldnames=["test_build_project_src"],
+                description="Build main source code in pair with a test code",
                 type=click.BOOL,
                 default=False,
+            ),
+            ConfigEnvOption(
+                group="test",
+                name="test_testing_command",
+                multiple=True,
+                description=(
+                    "A custom testing command that runs test cases "
+                    "and returns results to the standard output"
+                ),
             ),
             # Debug
             ConfigEnvOption(

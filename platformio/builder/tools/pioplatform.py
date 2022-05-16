@@ -19,6 +19,7 @@ import sys
 
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import fs, util
 from platformio.compat import IS_MACOS, IS_WINDOWS
@@ -32,14 +33,15 @@ from platformio.project.config import ProjectOptions
 
 
 @util.memoized()
-def PioPlatform(env):
-    variables = env.GetProjectOptions(as_dict=True)
-    if "framework" in variables:
-        # support PIO Core 3.0 dev/platforms
-        variables["pioframework"] = variables["framework"]
+def _PioPlatform():
+    env = DefaultEnvironment()
     p = PlatformFactory.new(os.path.dirname(env["PLATFORM_MANIFEST"]))
-    p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
+    p.configure_project_packages(env["PIOENV"], COMMAND_LINE_TARGETS)
     return p
+
+
+def PioPlatform(_):
+    return _PioPlatform()
 
 
 def BoardConfig(env, board=None):
@@ -160,7 +162,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             and pkg_metadata
             and pkg_metadata.spec.external
         ):
-            data.append("(%s)" % pkg_metadata.spec.url)
+            data.append("(%s)" % pkg_metadata.spec.uri)
         if board_config:
             data.extend([">", board_config.get("name")])
         return data
@@ -213,7 +215,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         data = []
         for item in platform.dump_used_packages():
             original_version = get_original_version(item["version"])
-            info = "%s %s" % (item["name"], item["version"])
+            info = "%s @ %s" % (item["name"], item["version"])
             extra = []
             if original_version:
                 extra.append(original_version)

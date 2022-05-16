@@ -27,7 +27,7 @@ from platformio.project.helpers import get_project_cache_dir
 
 class DebugClientProcess(DebugBaseProcess):
     def __init__(self, project_dir, debug_config):
-        super(DebugClientProcess, self).__init__()
+        super().__init__()
         self.project_dir = project_dir
         self.debug_config = debug_config
 
@@ -55,7 +55,7 @@ class DebugClientProcess(DebugBaseProcess):
             self.debug_config.port = await self._server_process.run()
 
     def connection_made(self, transport):
-        super(DebugClientProcess, self).connection_made(transport)
+        super().connection_made(transport)
         self._lock_session(transport.get_pid())
         # Disable SIGINT and allow GDB's Ctrl+C interrupt
         signal.signal(signal.SIGINT, lambda *args, **kwargs: None)
@@ -64,7 +64,15 @@ class DebugClientProcess(DebugBaseProcess):
     def process_exited(self):
         if self._server_process:
             self._server_process.terminate()
-        super(DebugClientProcess, self).process_exited()
+        super().process_exited()
+
+    def close(self):
+        self._unlock_session()
+        if self.working_dir and os.path.isdir(self.working_dir):
+            fs.rmtree(self.working_dir)
+
+    def __del__(self):
+        self.close()
 
     def _kill_previous_session(self):
         assert self._session_id
@@ -94,8 +102,3 @@ class DebugClientProcess(DebugBaseProcess):
             return
         with ContentCache() as cc:
             cc.delete(self._session_id)
-
-    def __del__(self):
-        self._unlock_session()
-        if self.working_dir and os.path.isdir(self.working_dir):
-            fs.rmtree(self.working_dir)

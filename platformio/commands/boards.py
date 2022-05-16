@@ -22,7 +22,7 @@ from platformio import fs
 from platformio.package.manager.platform import PlatformPackageManager
 
 
-@click.command("boards", short_help="Embedded board explorer")
+@click.command("boards", short_help="Board Explorer")
 @click.argument("query", required=False)
 @click.option("--installed", is_flag=True)
 @click.option("--json-output", is_flag=True)

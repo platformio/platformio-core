@@ -16,6 +16,7 @@ import json
 import math
 import os
 import socket
+from urllib.parse import urljoin
 
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
@@ -24,15 +25,10 @@ from platformio import __check_internet_hosts__, __default_requests_timeout__, a
 from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
 
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
-
 
 class HTTPClientError(PlatformioException):
     def __init__(self, message, response=None):
-        super(HTTPClientError, self).__init__()
+        super().__init__()
         self.message = message
         self.response = response
 
@@ -51,16 +47,14 @@ class InternetIsOffline(UserSideException):
 
 class EndpointSession(requests.Session):
     def __init__(self, base_url, *args, **kwargs):
-        super(EndpointSession, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.base_url = base_url
 
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
     ):
         # print(self.base_url, method, url, args, kwargs)
-        return super(EndpointSession, self).request(
-            method, urljoin(self.base_url, url), *args, **kwargs
-        )
+        return super().request(method, urljoin(self.base_url, url), *args, **kwargs)
 
 
 class EndpointSessionIterator(object):
@@ -78,10 +72,6 @@ class EndpointSessionIterator(object):
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
-
-    def next(self):
-        """For Python 2 compatibility"""
-        return self.__next__()
 
     def __next__(self):
         base_url = next(self.endpoints_iter)
@@ -149,7 +139,7 @@ class HTTPClient(object):
                     raise HTTPClientError(str(e))
 
     def fetch_json_data(self, method, path, **kwargs):
-        if method != "get":
+        if method not in ("get", "head", "options"):
             cleanup_content_cache("http")
         cache_valid = kwargs.pop("x_cache_valid") if "x_cache_valid" in kwargs else None
         if not cache_valid:

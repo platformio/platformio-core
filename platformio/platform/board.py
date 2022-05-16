@@ -15,6 +15,7 @@
 import os
 
 from platformio import fs, telemetry, util
+from platformio.compat import MISSING
 from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
 from platformio.exception import UserSideException
 from platformio.platform.exception import InvalidBoardManifest
@@ -34,14 +35,14 @@ class PlatformBoardConfig(object):
                 "Please specify name, url and vendor fields for " + manifest_path
             )
 
-    def get(self, path, default=None):
+    def get(self, path, default=MISSING):
         try:
             value = self._manifest
             for k in path.split("."):
                 value = value[k]
             return value
         except KeyError:
-            if default is not None:
+            if default != MISSING:
                 return default
         raise KeyError("Invalid board option '%s'" % path)
 

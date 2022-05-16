@@ -15,6 +15,7 @@
 # pylint: disable=too-many-ancestors
 
 import json
+import re
 
 import marshmallow
 import requests
@@ -25,36 +26,20 @@ from platformio.clients.http import fetch_remote_content
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
-MARSHMALLOW_2 = marshmallow.__version_info__ < (3,)
 
+class BaseSchema(Schema):
+    class Meta(object):  # pylint: disable=no-init
+        unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
 
-if MARSHMALLOW_2:
-
-    class CompatSchema(Schema):
-        pass
-
-else:
-
-    class CompatSchema(Schema):
-        class Meta(object):  # pylint: disable=no-init
-            unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
-
-        def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
-            raise ManifestValidationError(
-                error.messages,
-                data,
-                error.valid_data if hasattr(error, "valid_data") else error.data,
-            )
-
-
-class BaseSchema(CompatSchema):
     def load_manifest(self, data):
-        if MARSHMALLOW_2:
-            data, errors = self.load(data)
-            if errors:
-                raise ManifestValidationError(errors, data, data)
-            return data
         return self.load(data)
+
+    def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
+        raise ManifestValidationError(
+            error.messages,
+            data,
+            error.valid_data if hasattr(error, "valid_data") else error.data,
+        )
 
 
 class StrictSchema(BaseSchema):
@@ -66,8 +51,6 @@ class StrictSchema(BaseSchema):
             ]
         else:
             error.valid_data = None
-        if MARSHMALLOW_2:
-            error.data = error.valid_data
         raise error
 
 
@@ -76,9 +59,7 @@ class StrictListField(fields.List):
         self, value, attr, data, **kwargs
     ):
         try:
-            return super(StrictListField, self)._deserialize(
-                value, attr, data, **kwargs
-            )
+            return super()._deserialize(value, attr, data, **kwargs)
         except ValidationError as exc:
             if exc.data:
                 exc.data = [item for item in exc.data if item is not None]
@@ -151,6 +132,21 @@ class ExampleSchema(StrictSchema):
     files = StrictListField(fields.Str, required=True)
 
 
+# Fields
+
+
+class ScriptField(fields.Field):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, (str, list)):
+            return value
+        raise ValidationError(
+            "Script value must be a command (string) or list of arguments"
+        )
+
+
+# Scheme
+
+
 class ManifestSchema(BaseSchema):
     # Required fields
     name = fields.Str(
@@ -172,6 +168,10 @@ class ManifestSchema(BaseSchema):
     license = fields.Str(validate=validate.Length(min=1, max=255))
     repository = fields.Nested(RepositorySchema)
     dependencies = fields.Nested(DependencySchema, many=True)
+    scripts = fields.Dict(
+        keys=fields.Str(validate=validate.OneOf(["postinstall", "preuninstall"])),
+        values=ScriptField(),
+    )
 
     # library.json
     export = fields.Nested(ExportSchema)
@@ -236,6 +236,12 @@ class ManifestSchema(BaseSchema):
         try:
             value = str(value)
             assert "." in value
+            # check leading zeros
+            try:
+                semantic_version.Version(value)
+            except ValueError as exc:
+                if "Invalid leading zero" in str(exc):
+                    raise exc
             semantic_version.Version.coerce(value)
         except (AssertionError, ValueError):
             raise ValidationError(
@@ -248,9 +254,18 @@ class ManifestSchema(BaseSchema):
             spdx = self.load_spdx_licenses()
         except requests.exceptions.RequestException:
             raise ValidationError("Could not load SPDX licenses for validation")
-        for item in spdx.get("licenses", []):
-            if item.get("licenseId") == value:
-                return True
+        known_ids = set(item.get("licenseId") for item in spdx.get("licenses", []))
+        if value in known_ids:
+            return True
+        # parse license expression
+        # https://spdx.github.io/spdx-spec/SPDX-license-expressions/
+        package_ids = [
+            item.strip()
+            for item in re.sub(r"(\s+(?:OR|AND|WITH)\s+|[\(\)])", " ", value).split(" ")
+            if item.strip()
+        ]
+        if known_ids >= set(package_ids):
+            return True
         raise ValidationError(
             "Invalid SPDX license identifier. See valid identifiers at "
             "https://spdx.org/licenses/"
@@ -259,7 +274,7 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.16"
+        version = "3.17"
         spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data/"
             "v%s/json/licenses.json" % version

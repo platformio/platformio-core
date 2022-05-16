@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import re
 import sys
 import time
 from fnmatch import fnmatch
 from hashlib import sha1
 from io import BytesIO
-from os.path import isfile
 
-from platformio import util
 from platformio.commands import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.run.command import print_processing_header
-from platformio.commands.test.helpers import get_test_names
-from platformio.commands.test.processor import TestProcessorBase
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
+from platformio.device.list import list_serial_ports
+from platformio.test.helpers import list_test_names
+from platformio.test.result import TestSuite
+from platformio.test.runners.base import TestRunnerOptions
+from platformio.test.runners.factory import TestRunnerFactory
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
@@ -80,27 +82,25 @@ def predebug_project(
 ):  # pylint: disable=too-many-arguments
     debug_testname = project_config.get("env:" + env_name, "debug_test")
     if debug_testname:
-        test_names = get_test_names(project_config)
+        test_names = list_test_names(project_config)
         if debug_testname not in test_names:
             raise DebugInvalidOptionsError(
                 "Unknown test name `%s`. Valid names are `%s`"
                 % (debug_testname, ", ".join(test_names))
             )
         print_processing_header(env_name, project_config, verbose)
-        tp = TestProcessorBase(
-            ctx,
-            debug_testname,
-            env_name,
-            dict(
-                project_config=project_config,
-                project_dir=project_dir,
+        test_runner = TestRunnerFactory.new(
+            TestSuite(env_name, debug_testname),
+            project_config,
+            TestRunnerOptions(
+                verbose=verbose,
                 without_building=False,
-                without_uploading=True,
+                without_debugging=False,
+                without_uploading=not preload,
                 without_testing=True,
-                verbose=False,
             ),
         )
-        tp.build_or_upload(["__debug", "__test"] + (["upload"] if preload else []))
+        test_runner.start(ctx)
     else:
         ctx.invoke(
             cmd_run,
@@ -116,7 +116,7 @@ def predebug_project(
 
 
 def has_debug_symbols(prog_path):
-    if not isfile(prog_path):
+    if not os.path.isfile(prog_path):
         return False
     matched = {
         b".debug_info": False,
@@ -142,7 +142,7 @@ def has_debug_symbols(prog_path):
 
 def is_prog_obsolete(prog_path):
     prog_hash_path = prog_path + ".sha1"
-    if not isfile(prog_path):
+    if not os.path.isfile(prog_path):
         return True
     shasum = sha1()
     with open(prog_path, "rb") as fp:
@@ -153,7 +153,7 @@ def is_prog_obsolete(prog_path):
             shasum.update(data)
     new_digest = shasum.hexdigest()
     old_digest = None
-    if isfile(prog_hash_path):
+    if os.path.isfile(prog_hash_path):
         with open(prog_hash_path, encoding="utf8") as fp:
             old_digest = fp.read()
     if new_digest == old_digest:
@@ -178,7 +178,7 @@ def reveal_debug_port(env_debug_port, tool_name, tool_settings):
         return fnmatch(port, pattern)
 
     def _look_for_serial_port(hwids):
-        for item in util.get_serialports(filter_hwid=True):
+        for item in list_serial_ports(filter_hwid=True):
             if not _is_match_pattern(item["port"]):
                 continue
             port = item["port"]

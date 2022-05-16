@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import configparser
 import glob
 import json
 import os
@@ -20,14 +21,9 @@ import re
 import click
 
 from platformio import fs
-from platformio.compat import string_types
+from platformio.compat import MISSING, string_types
 from platformio.project import exception
 from platformio.project.options import ProjectOptions
-
-try:
-    import ConfigParser as ConfigParser
-except ImportError:
-    import configparser as ConfigParser
 
 CONFIG_HEADER = """
 ; PlatformIO Project Configuration File
@@ -40,9 +36,6 @@ CONFIG_HEADER = """
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
 """
-
-
-MISSING = object()
 
 
 class ProjectConfigBase(object):
@@ -87,7 +80,7 @@ class ProjectConfigBase(object):
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
+        self._parser = configparser.ConfigParser(inline_comment_prefixes=("#", ";"))
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
@@ -102,7 +95,7 @@ class ProjectConfigBase(object):
         self._parsed.append(path)
         try:
             self._parser.read(path, "utf-8")
-        except ConfigParser.Error as e:
+        except configparser.Error as e:
             raise exception.InvalidProjectConfError(path, str(e))
 
         if not parse_extra:
@@ -139,7 +132,7 @@ class ProjectConfigBase(object):
                 renamed_options.update({name: option.name for name in option.oldnames})
 
         for section in self._parser.sections():
-            scope = section.split(":", 1)[0]
+            scope = self.get_section_scope(section)
             if scope not in ("platformio", "env"):
                 continue
             for option in self._parser.options(section):
@@ -170,6 +163,10 @@ class ProjectConfigBase(object):
                         "in section [%s]" % (option, section)
                     )
         return True
+
+    @staticmethod
+    def get_section_scope(section):
+        return section.split(":", 1)[0] if ":" in section else section
 
     def walk_options(self, root_section):
         extends_queue = (
@@ -202,7 +199,7 @@ class ProjectConfigBase(object):
                 result.append(option)
 
         # handle system environment variables
-        scope = section.split(":", 1)[0]
+        scope = self.get_section_scope(section)
         for option_meta in ProjectOptions.values():
             if option_meta.scope != scope or option_meta.name in result:
                 continue
@@ -240,9 +237,29 @@ class ProjectConfigBase(object):
             value = "\n" + value
         self._parser.set(section, option, value)
 
-    def getraw(  # pylint: disable=too-many-branches
-        self, section, option, default=MISSING
-    ):
+    def getraw(self, section, option, default=MISSING):
+        try:
+            return self._getraw(section, option, default)
+        except configparser.NoOptionError as exc:
+            renamed_option = self._resolve_renamed_option(section, option)
+            if renamed_option:
+                return self._getraw(section, renamed_option, default)
+            raise exc
+
+    def _resolve_renamed_option(self, section, old_name):
+        scope = self.get_section_scope(section)
+        if scope not in ("platformio", "env"):
+            return None
+        for option_meta in ProjectOptions.values():
+            if (
+                option_meta.oldnames
+                and option_meta.scope == scope
+                and old_name in option_meta.oldnames
+            ):
+                return option_meta.name
+        return None
+
+    def _getraw(self, section, option, default):  # pylint: disable=too-many-branches
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
@@ -252,13 +269,15 @@ class ProjectConfigBase(object):
                 value = self._parser.get(sec, option)
                 break
 
-        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get(
+            "%s.%s" % (self.get_section_scope(section), option)
+        )
         if not option_meta:
             if value == MISSING:
                 value = (
                     default if default != MISSING else self._parser.get(section, option)
                 )
-            return self._expand_interpolations(value)
+            return self._expand_interpolations(section, value)
 
         if option_meta.sysenvvar:
             envvar_value = os.getenv(option_meta.sysenvvar)
@@ -281,23 +300,33 @@ class ProjectConfigBase(object):
         if value == MISSING:
             return None
 
-        return self._expand_interpolations(value)
+        return self._expand_interpolations(section, value)
 
-    def _expand_interpolations(self, value):
+    def _expand_interpolations(self, parent_section, value):
         if (
             not value
             or not isinstance(value, string_types)
             or not all(["${" in value, "}" in value])
         ):
             return value
-        return self.VARTPL_RE.sub(self._re_interpolation_handler, value)
+        return self.VARTPL_RE.sub(
+            lambda match: self._re_interpolation_handler(parent_section, match), value
+        )
 
-    def _re_interpolation_handler(self, match):
+    def _re_interpolation_handler(self, parent_section, match):
         section, option = match.group(1), match.group(2)
+        # handle system environment variables
         if section == "sysenv":
             return os.getenv(option)
+        # handle ${this.*}
+        if section == "this":
+            section = parent_section
+            if option == "__env__":
+                assert parent_section.startswith("env:")
+                return parent_section[4:]
+        # handle nested calls
         try:
-            value = self.getraw(section, option)
+            value = self.get(section, option)
         except RecursionError:
             raise exception.ProjectOptionValueError(
                 "Infinite recursion has been detected", option, section
@@ -310,10 +339,12 @@ class ProjectConfigBase(object):
         value = None
         try:
             value = self.getraw(section, option, default)
-        except ConfigParser.Error as e:
+        except configparser.Error as e:
             raise exception.InvalidProjectConfError(self.path, str(e))
 
-        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get(
+            "%s.%s" % (self.get_section_scope(section), option)
+        )
         if not option_meta:
             return value
 
@@ -345,9 +376,16 @@ class ProjectConfigBase(object):
     def default_envs(self):
         return self.get("platformio", "default_envs", [])
 
+    def get_default_env(self):
+        default_envs = self.default_envs()
+        if default_envs:
+            return default_envs[0]
+        envs = self.envs()
+        return envs[0] if envs else None
+
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
-            raise exception.NotPlatformIOProjectError(self.path)
+            raise exception.NotPlatformIOProjectError(os.path.dirname(self.path))
         # check envs
         known = set(self.envs())
         if not known:
@@ -398,7 +436,7 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def update(self, data, clear=False):
         assert isinstance(data, list)
         if clear:
-            self._parser = ConfigParser.ConfigParser()
+            self._parser = configparser.ConfigParser()
         for section, options in data:
             if not self._parser.has_section(section):
                 self._parser.add_section(section)

@@ -82,22 +82,25 @@ def test_spec_requirements():
 
 def test_spec_local_urls(tmpdir_factory):
     assert PackageSpec("file:///tmp/foo.tar.gz") == PackageSpec(
-        url="file:///tmp/foo.tar.gz", name="foo"
+        uri="file:///tmp/foo.tar.gz", name="foo"
     )
     assert PackageSpec("customName=file:///tmp/bar.zip") == PackageSpec(
-        url="file:///tmp/bar.zip", name="customName"
+        uri="file:///tmp/bar.zip", name="customName"
     )
     assert PackageSpec("file:///tmp/some-lib/") == PackageSpec(
-        url="file:///tmp/some-lib/", name="some-lib"
+        uri="file:///tmp/some-lib/", name="some-lib"
+    )
+    assert PackageSpec("symlink:///tmp/soft-link/") == PackageSpec(
+        uri="symlink:///tmp/soft-link/", name="soft-link"
     )
     # detached package
     assert PackageSpec("file:///tmp/some-lib@src-67e1043a673d2") == PackageSpec(
-        url="file:///tmp/some-lib@src-67e1043a673d2", name="some-lib"
+        uri="file:///tmp/some-lib@src-67e1043a673d2", name="some-lib"
     )
     # detached folder without scheme
     pkg_dir = tmpdir_factory.mktemp("storage").join("detached@1.2.3").mkdir()
     assert PackageSpec(str(pkg_dir)) == PackageSpec(
-        name="detached", url="file://%s" % pkg_dir
+        name="detached", uri="file://%s" % pkg_dir
     )
 
 
@@ -105,14 +108,14 @@ def test_spec_external_urls():
     assert PackageSpec(
         "https://github.com/platformio/platformio-core/archive/develop.zip"
     ) == PackageSpec(
-        url="https://github.com/platformio/platformio-core/archive/develop.zip",
+        uri="https://github.com/platformio/platformio-core/archive/develop.zip",
         name="platformio-core",
     )
     assert PackageSpec(
         "https://github.com/platformio/platformio-core/archive/develop.zip?param=value"
         " @ !=2"
     ) == PackageSpec(
-        url="https://github.com/platformio/platformio-core/archive/"
+        uri="https://github.com/platformio/platformio-core/archive/"
         "develop.zip?param=value",
         name="platformio-core",
         requirements="!=2",
@@ -125,7 +128,7 @@ def test_spec_external_urls():
     assert spec.has_custom_name()
     assert spec.name == "Custom-Name"
     assert spec == PackageSpec(
-        url="https://github.com/platformio/platformio-core/archive/develop.tar.gz",
+        uri="https://github.com/platformio/platformio-core/archive/develop.tar.gz",
         name="Custom-Name",
         requirements="4.4.0",
     )
@@ -133,40 +136,40 @@ def test_spec_external_urls():
 
 def test_spec_vcs_urls():
     assert PackageSpec("https://github.com/platformio/platformio-core") == PackageSpec(
-        name="platformio-core", url="git+https://github.com/platformio/platformio-core"
+        name="platformio-core", uri="git+https://github.com/platformio/platformio-core"
     )
     assert PackageSpec("https://gitlab.com/username/reponame") == PackageSpec(
-        name="reponame", url="git+https://gitlab.com/username/reponame"
+        name="reponame", uri="git+https://gitlab.com/username/reponame"
     )
     assert PackageSpec(
         "wolfSSL=https://os.mbed.com/users/wolfSSL/code/wolfSSL/"
     ) == PackageSpec(
-        name="wolfSSL", url="hg+https://os.mbed.com/users/wolfSSL/code/wolfSSL/"
+        name="wolfSSL", uri="hg+https://os.mbed.com/users/wolfSSL/code/wolfSSL/"
     )
     assert PackageSpec(
         "https://github.com/platformio/platformio-core.git#master"
     ) == PackageSpec(
         name="platformio-core",
-        url="git+https://github.com/platformio/platformio-core.git#master",
+        uri="git+https://github.com/platformio/platformio-core.git#master",
     )
     assert PackageSpec(
         "core=git+ssh://github.com/platformio/platformio-core.git#v4.4.0@4.4.0"
     ) == PackageSpec(
         name="core",
-        url="git+ssh://github.com/platformio/platformio-core.git#v4.4.0",
+        uri="git+ssh://github.com/platformio/platformio-core.git#v4.4.0",
         requirements="4.4.0",
     )
     assert PackageSpec(
         "username@github.com:platformio/platformio-core.git"
     ) == PackageSpec(
         name="platformio-core",
-        url="git+username@github.com:platformio/platformio-core.git",
+        uri="git+username@github.com:platformio/platformio-core.git",
     )
     assert PackageSpec(
         "pkg=git+git@github.com:platformio/platformio-core.git @ ^1.2.3,!=5"
     ) == PackageSpec(
         name="pkg",
-        url="git+git@github.com:platformio/platformio-core.git",
+        uri="git+git@github.com:platformio/platformio-core.git",
         requirements="^1.2.3,!=5",
     )
     assert PackageSpec(
@@ -176,7 +179,7 @@ def test_spec_vcs_urls():
     ) == PackageSpec(
         owner="platformio",
         name="external-repo",
-        url="git+https://github.com/platformio/platformio-core",
+        uri="git+https://github.com/platformio/platformio-core",
     )
 
 
@@ -188,7 +191,7 @@ def test_spec_as_dict():
             "id": None,
             "name": "foo",
             "requirements": "1.2.3",
-            "url": None,
+            "uri": None,
         },
     )
     assert not jsondiff.diff(
@@ -201,7 +204,7 @@ def test_spec_as_dict():
             "id": None,
             "name": "platformio-core",
             "requirements": "!=2",
-            "url": "https://github.com/platformio/platformio-core/archive/develop.zip?param=value",
+            "uri": "https://github.com/platformio/platformio-core/archive/develop.zip?param=value",
         },
     )
 
@@ -255,7 +258,7 @@ def test_metadata_as_dict():
                 "id": None,
                 "name": "toolchain",
                 "requirements": "~2.0.0",
-                "url": None,
+                "uri": None,
             },
         },
     )

@@ -44,25 +44,28 @@ clivars.AddVariables(
     ("PIOENV",),
     ("PIOTEST_RUNNING_NAME",),
     ("UPLOAD_PORT",),
+    ("PROGRAM_ARGS",),
 )
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar",
-        "as",
         "cc",
         "c++",
         "link",
+        "pioasm",
         "platformio",
-        "piotarget",
-        "pioplatform",
         "pioproject",
+        "pioplatform",
+        "piotest",
+        "piotarget",
         "piomaxlen",
         "piolib",
         "pioupload",
-        "piomisc",
-        "pioide",
         "piosize",
+        "pioino",
+        "piomisc",
+        "piointegration",
     ],
     toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
@@ -72,7 +75,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
     BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
     BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=os.path.join("$BUILD_DIR", "compile_commands.json"),
+    COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
     PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
@@ -223,12 +226,13 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
+    projenv = None
     try:
         Import("projenv")
     except:  # pylint: disable=bare-except
         projenv = env
-    data = projenv.DumpIDEData(env)
-    # dump to file for the further reading by project.helpers.load_project_ide_data
+    data = projenv.DumpIntegrationData(env)
+    # dump to file for the further reading by project.helpers.load_build_metadata
     with open(
         projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
         mode="w",

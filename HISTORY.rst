@@ -1,301 +1,114 @@
 Release Notes
 =============
 
+.. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
+.. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
+
+.. _release_notes_6:
+
+PlatformIO Core 6
+-----------------
+
+**A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
+
+6.0.0 (2022-05-16)
+~~~~~~~~~~~~~~~~~~
+
+Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/latest/core/migration.html>`__.
+
+* **Package Management**
+
+  - New unified Package Management CLI (``pio pkg``):
+
+    * `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`_ - run command from package tool (`issue #4163 <https://github.com/platformio/platformio-core/issues/4163>`_)
+    * `pio pkg install <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`_ - install the project dependencies or custom packages
+    * `pio pkg list <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_list.html>`__ - list installed packages
+    * `pio pkg outdated <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_outdated.html>`__ - check for project outdated packages
+    * `pio pkg search <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_search.html>`__ - search for packages
+    * `pio pkg show <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_show.html>`__ - show package information
+    * `pio pkg uninstall <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_uninstall.html>`_ - uninstall the project dependencies or custom packages
+    * `pio pkg update <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_update.html>`__ - update the project dependencies or custom packages
+
+  - Package Manifest
+
+    * Added support for `"scripts" <https://docs.platformio.org/en/latest/librarymanager/config.html#scripts>`__ (`issue #485 <https://github.com/platformio/platformio-core/issues/485>`_)
+    * Added support for `multi-licensed <https://docs.platformio.org/en/latest/librarymanager/config.html#license>`__ packages using SPDX Expressions (`issue #4037 <https://github.com/platformio/platformio-core/issues/4037>`_)
+    * Added support for `"dependencies" <https://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`__ declared in a "tool" package manifest
+
+  - Added support for `symbolic links <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#local-folder>`__ allowing pointing the local source folder to the Package Manager (`issue #3348 <https://github.com/platformio/platformio-core/issues/3348>`_)
+  - Automatically install dependencies of the local (private) project libraries (`issue #2910 <https://github.com/platformio/platformio-core/issues/2910>`_)
+  - Improved detection of a package type from the tarball archive (`issue #3828 <https://github.com/platformio/platformio-core/issues/3828>`_)
+  - Ignore files according to the patterns declared in ".gitignore" when using the `pio package pack <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_pack.html>`__ command (`issue #4188 <https://github.com/platformio/platformio-core/issues/4188>`_)
+  - Dropped automatic updates of global libraries and development platforms (`issue #4179 <https://github.com/platformio/platformio-core/issues/4179>`_)
+  - Dropped support for the "pythonPackages" field in "platform.json" manifest in favor of `Extra Python Dependencies <https://docs.platformio.org/en/latest/scripting/examples/extra_python_packages.html>`__
+  - Fixed an issue when manually removed dependencies from the |PIOCONF| were not uninstalled from the storage (`issue #3076 <https://github.com/platformio/platformio-core/issues/3076>`_)
+
+* **Unit Testing**
+
+  - Refactored from scratch `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`_ solution and its documentation
+  - New: `Test Hierarchy <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
+  - New: `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework (`issue #4240 <https://github.com/platformio/platformio-core/issues/4240>`_)
+  - New: `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework (`issue #3572 <https://github.com/platformio/platformio-core/issues/3572>`_)
+  - New: `Semihosting <https://docs.platformio.org/en/latest/advanced/unit-testing/semihosting.html>`__ (`issue #3516 <https://github.com/platformio/platformio-core/issues/3516>`_)
+  - New: Hardware `Simulators <https://docs.platformio.org/en/latest/advanced/unit-testing/simulators/index.html>`__ for Unit Testing (QEMU, Renode, SimAVR, and custom solutions)
+  - New: ``test`` `build configuration <https://docs.platformio.org/en/latest/projectconf/build_configurations.html>`__
+  - Added support for a `custom testing framework <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/custom/index.html>`_
+  - Added support for a custom `testing command <https://docs.platformio.org/en/latest/projectconf/section_env_test.html#test-testing-command>`__
+  - Added support for a `custom Unity library <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/custom/examples/custom_unity_library.html>`__ (`issue #3980 <https://github.com/platformio/platformio-core/issues/3980>`_)
+  - Added support for the ``socket://`` and ``rfc2217://`` protocols using `test_port <https://docs.platformio.org/en/latest/projectconf/section_env_test.html#test-port>`__ option (`issue #4229 <https://github.com/platformio/platformio-core/issues/4229>`_)
+  - List available project tests with a new `pio test --list-tests <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-list-tests>`__ option
+  - Pass extra arguments to the testing program with a new `pio test --program-arg <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-a>`__ option (`issue #3132 <https://github.com/platformio/platformio-core/issues/3132>`_)
+  - Generate reports in JUnit and JSON formats using the `pio test <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html>`__ command (`issue #2891 <https://github.com/platformio/platformio-core/issues/2891>`_)
+  - Provide more information when the native program crashed on a host (errored with a non-zero return code) (`issue #3429 <https://github.com/platformio/platformio-core/issues/3429>`_)
+  - Improved automatic detection of a testing serial port (`issue #4076 <https://github.com/platformio/platformio-core/issues/4076>`_)
+  - Fixed an issue when command line parameters (``--ignore``, ``--filter``) do not override values defined in the |PIOCONF| (`issue #3845 <https://github.com/platformio/platformio-core/issues/3845>`_)
+  - Renamed the "test_build_project_src" project configuration option to the `test_build_src <https://docs.platformio.org/en/latest//projectconf/section_env_test.html#test-build-src>`__
+  - Removed the "test_transport" option in favor of the `Custom "unity_config.h" <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/unity.html>`_
+
+* **Static Code Analysis**
+
+  - Updated analysis tools:
+
+    * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.7 with various checker improvements and fixed false positives
+    * `PVS-Studio <https://docs.platformio.org/en/latest/plus/check-tools/pvs-studio.html>`__ v7.18 with improved and updated semantic analysis system
+
+  - Added support for the custom `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ configuration file (`issue #4186 <https://github.com/platformio/platformio-core/issues/4186>`_)
+  - Added ability to override a tool version using the `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3798 <https://github.com/platformio/platformio-core/issues/3798>`_)
+  - Fixed an issue with improper handling of defects that don't specify a source file (`issue #4237 <https://github.com/platformio/platformio-core/issues/4237>`_)
+
+* **Build System**
+
+  - Show project dependency licenses when building in the verbose mode
+  - Fixed an issue when |LDF| ignores the project `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ while resolving library dependencies (`issue #3598 <https://github.com/platformio/platformio-core/issues/3598>`_)
+  - Fixed an issue with calling an extra script located outside a project (`issue #4220 <https://github.com/platformio/platformio-core/issues/4220>`_)
+  - Fixed an issue when GCC preprocessor was applied to the ".s" assembly files on case-sensitive OS such as Window OS (`issue #3917 <https://github.com/platformio/platformio-core/issues/3917>`_)
+  - Fixed an issue when |LDF| ignores `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ in the "deep+" mode (`issue #4253 <https://github.com/platformio/platformio-core/issues/4253>`_)
+
+* **Integration**
+
+  - Added a new build variable (``COMPILATIONDB_INCLUDE_TOOLCHAIN``) to include toolchain paths in the compilation database (`issue #3735 <https://github.com/platformio/platformio-core/issues/3735>`_)
+  - Changed a default path for compilation database `compile_commands.json <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ to the project root
+  - Enhanced integration for Qt Creator (`issue #3046 <https://github.com/platformio/platformio-core/issues/3046>`_)
+
+* **Project Configuration**
+
+  - Extended `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__  with ``${this}`` pattern (`issue #3953 <https://github.com/platformio/platformio-core/issues/3953>`_)
+  - Embed environment name of the current section in the |PIOCONF| using ``${this.__env__}`` pattern
+  - Renamed the "src_build_flags" project configuration option to the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__
+  - Renamed the "src_filter" project configuration option to the `build_src_filter <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-filter>`__
+
+* **Miscellaneous**
+
+  - Pass extra arguments to the `native <https://docs.platformio.org/en/latest/platforms/native.html>`__ program with a new `pio run --program-arg <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-a>`__ option (`issue #4246 <https://github.com/platformio/platformio-core/issues/4246>`_)
+  - Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
+  - Finally removed all tracks to the Python 2.7, the Python 3.6 is the minimum supported version.
+
 .. _release_notes_5:
 
 PlatformIO Core 5
 -----------------
 
-**A professional collaborative platform for embedded development**
-
-5.2.5 (2022-02-10)
-~~~~~~~~~~~~~~~~~~
-
-- Improved support for private packages in `PlatformIO Registry <https://registry.platformio.org/>`__
-- Improved checking of available Internet connection for IPv6-only workstations (`pull #4151 <https://github.com/platformio/platformio-core/pull/4151>`_)
-- Better detecting of default PlatformIO project directory on Linux OS (`pull #4158 <https://github.com/platformio/platformio-core/pull/4158>`_)
-- Respect disabling debugging server from "platformio.ini" passing an empty value to the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option
-- Fixed a "module 'asyncio' has no attribute 'run'" error when launching PIO Home using Python 3.6 (`issue #4169 <https://github.com/platformio/platformio-core/issues/4169>`_)
-
-5.2.4 (2021-12-15)
-~~~~~~~~~~~~~~~~~~
-
-- Added support for a new ``headers`` field in `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html>`__ (declare a list of header files that can be included in a project source files using ``#include <...>`` directive)
-- Improved tab completion support for Bash, ZSH, and Fish shells (`issue #4114 <https://github.com/platformio/platformio-core/issues/4114>`_)
-- Improved support for projects located on a network share (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_, `issue #3926 <https://github.com/platformio/platformio-core/issues/3926>`_, `issue #4099 <https://github.com/platformio/platformio-core/issues/4099>`_)
-- Improved PIO Remote setup on credit-card sized computers (Raspberry Pi, BeagleBon, etc) (`issue #3865 <https://github.com/platformio/platformio-core/issues/3865>`_)
-- Upgraded build engine to the SCons 4.3 (`release notes <https://github.com/SCons/scons/blob/rel_4.3.0/CHANGES.txt>`__)
-- Fixed an issue with the CLion project generator when a macro contains a space (`issue #4102 <https://github.com/platformio/platformio-core/issues/4102>`_)
-- Fixed an issue with the NetBeans project generator when the path to PlatformIO contains a space (`issue #4096 <https://github.com/platformio/platformio-core/issues/4096>`_)
-- Fixed an issue when the system environment variable does not override a project configuration option (`issue #4125 <https://github.com/platformio/platformio-core/issues/4125>`_)
-- Fixed an issue when referencing ``*_dir`` option from a custom project configuration environment (`issue #4110 <https://github.com/platformio/platformio-core/issues/4110>`_)
-- Fixed an issue with the CLion template that generated a broken CMake file if user's home directory contained an unescaped backslash (`issue #4071 <https://github.com/platformio/platformio-core/issues/4071>`_)
-- Fixed an issue with wrong detecting Windows architecture when Python 32bit is used (`issue #4134 <https://github.com/platformio/platformio-core/issues/4134>`_)
-
-5.2.3 (2021-11-05)
-~~~~~~~~~~~~~~~~~~
-
-- Automatically synchronize active projects between IDE and `PlatformIO Home <https://docs.platformio.org/en/latest/home/index.html>`__
-- Added support for custom `device monitor filters <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #3924 <https://github.com/platformio/platformio-core/issues/3924>`_)
-- Show human-readable message when infinite recursion is detected while processing `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__ (`issue #3883 <https://github.com/platformio/platformio-core/issues/3883>`_)
-- Improved directory interpolation (``${platformio.***_dir}``) in `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file (`issue #3934 <https://github.com/platformio/platformio-core/issues/3934>`_)
-- Ignore resolving of SCons variables (e.g., ``${(SOURCE.get_abspath())}``) when preprocessing interpolations (`issue #3933 <https://github.com/platformio/platformio-core/issues/3933>`_)
-- Added "inc" as a sign that it's the root of the library (`issue #4093 <https://github.com/platformio/platformio-core/issues/4093>`_)
-- Fixed an issue when the ``$PROJECT_DIR`` variable was not properly replaced in the `debug_server <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server>`__ option (`issue #4086 <https://github.com/platformio/platformio-core/issues/4086>`_)
-- Fixed an issue when `PIO Remote <https://docs.platformio.org/en/latest/plus/pio-remote.html>`__ device monitor crashes on the first keypress (`issue #3832 <https://github.com/platformio/platformio-core/issues/3832>`_)
-- Fixed "Do not know how to make File target 'debug'" issue when debugging project using `CLion IDE <https://docs.platformio.org/en/latest/integration/ide/clion.html>`__ (`pull #4089 <https://github.com/platformio/platformio-core/issues/4089>`_)
-- Fixed "UnicodeEncodeError" when a build output contains non-ASCII characters (`issue #3971 <https://github.com/platformio/platformio-core/issues/3971>`_)
-- Fixed an issue when VSCode's debugger does not the honor default environment (`issue #4098 <https://github.com/platformio/platformio-core/issues/4098>`_)
-
-5.2.2 (2021-10-20)
-~~~~~~~~~~~~~~~~~~
-
-- Override debugging firmware loading mode using ``--load-mode`` option for `pio debug <https://docs.platformio.org/en/latest/core/userguide/cmd_debug.html>`__ command
-- Added support for CLion IDE 2021.3 (`pull #4085 <https://github.com/platformio/platformio-core/issues/4085>`_)
-- Removed debugging "legacy Click" message from CLI (`issue #4083 <https://github.com/platformio/platformio-core/issues/4083>`_)
-- Fixed a "TypeError: sequence item 1: expected str instance, list found" issue when extending configuration option in `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ with the multi-line default value (`issue #4082 <https://github.com/platformio/platformio-core/issues/4082>`_)
-
-5.2.1 (2021-10-11)
-~~~~~~~~~~~~~~~~~~
-
-- Clean a build environment and installed library dependencies using a new ``cleanall`` target (`issue #4062 <https://github.com/platformio/platformio-core/issues/4062>`_)
-- Override a default library builder via a new ``builder`` field in a ``build`` group of `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html#build>`__ manifest (`issue #3957 <https://github.com/platformio/platformio-core/issues/3957>`_)
-- Updated `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.6 with new checks, increased reliability of advanced addons (MISRA/CERT) and various improvements
-- Handle the "test" folder as a part of CLion project (`issue #4005 <https://github.com/platformio/platformio-core/issues/4005>`_)
-- Improved handling of a library root based on "Conan" or "CMake" build systems (`issue #3887 <https://github.com/platformio/platformio-core/issues/3887>`_)
-- Fixed a "KeyError: Invalid board option 'build.cpu'" when using a precompiled library with a board that does not have a CPU field in the manifest (`issue #4056 <https://github.com/platformio/platformio-core/issues/4056>`_)
-- Fixed a "FileExist" error when the `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with the ``--keep-build-dir`` option (`issue #4011 <https://github.com/platformio/platformio-core/issues/4011>`_)
-- Fixed an issue with draft values of C++ language standards that broke static analysis via Cppcheck (`issue #3944 <https://github.com/platformio/platformio-core/issues/3944>`_)
-
-5.2.0 (2021-09-13)
-~~~~~~~~~~~~~~~~~~
-
-* **PlatformIO Debugging**
-
-  - Boosted `PlatformIO Debugging <https://docs.platformio.org/en/latest/plus/debugging.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
-  - `Debug unit tests <https://docs.platformio.org/en/latest/plus/debugging.html#debug-unit-tests>`__ created with `PlatformIO Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html>`__ solution  (`issue #948 <https://github.com/platformio/platformio-core/issues/948>`_)
-  - Debug native (desktop) applications on a host machine (`issue #980 <https://github.com/platformio/platformio-core/issues/980>`_)
-  - Support debugging on Windows using Windows CMD/CLI (`pio debug <https://docs.platformio.org/en/latest/core/userguide/cmd_debug.html>`__) (`issue #3793 <https://github.com/platformio/platformio-core/issues/3793>`_)
-  - Configure a custom pattern to determine when debugging server is started with a new `debug_server_ready_pattern <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-server-ready-pattern>`__ option
-  - Fixed an issue with silent hanging when a custom debug server is not found (`issue #3756 <https://github.com/platformio/platformio-core/issues/3756>`_)
-
-* **Package Management**
-
-  - Improved a package publishing process:
-
-    * Show package details
-    * Check for conflicting names in the PlatformIO Trusted Registry
-    * Check for duplicates and used version
-    * Validate package manifest
-
-  - Added a new option ``--non-interactive`` to `pio package publish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_publish.html>`__ command
-
-* **Build System**
-
-  - Process "precompiled" and "ldflags" properties of the "library.properties" manifest (`issue #3994 <https://github.com/platformio/platformio-core/issues/3994>`_)
-  - Upgraded build engine to the SCons 4.2 (`release notes <https://github.com/SCons/scons/blob/rel_4.2.0/CHANGES.txt>`__)
-  - Fixed an issue with broken binary file extension when a custom ``PROGNAME`` contains dot symbols (`issue #3906 <https://github.com/platformio/platformio-core/issues/3906>`_)
-  - Fixed an issue when PlatformIO archives a library that does not contain C/C++ source files (`issue #4019 <https://github.com/platformio/platformio-core/issues/4019>`_)
-
-* **Static Code Analysis**
-
-  - Updated analysis tools:
-
-    * `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ v12.0.1 with new modules and extended checks list
-    * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.5.0 with improved code analysis and MISRA improvements
-    * `PVS-Studio <https://docs.platformio.org/en/latest/plus/check-tools/pvs-studio.html>`__ v7.14 with support for intermodular analysis, improved MISRA support and new diagnostics
-
-* **Miscellaneous**
-
-  - Ensure that a serial port is ready before running unit tests on a remote target (`issue #3742 <https://github.com/platformio/platformio-core/issues/3742>`_)
-  - Fixed an error "Unknown development platform" when running unit tests on a clean machine (`issue #3901 <https://github.com/platformio/platformio-core/issues/3901>`_)
-  - Fixed an issue when "main.cpp" was generated for a new project for 8-bit development platforms (`issue #3872 <https://github.com/platformio/platformio-core/issues/3872>`_)
-
-5.1.1 (2021-03-17)
-~~~~~~~~~~~~~~~~~~
-
-* Fixed a "The command line is too long" issue with a linking process on Windows (`issue #3827 <https://github.com/platformio/platformio-core/issues/3827>`_)
-* Fixed an issue with `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ when the "send_on_enter" filter didn't send EOL chars (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
-* Fixed an issue with silent mode when unwanted data is printed to stdout (`issue #3837 <https://github.com/platformio/platformio-core/issues/3837>`_)
-* Fixed an issue when code inspection fails with "Bad JSON" (`issue #3790 <https://github.com/platformio/platformio-core/issues/3790>`_)
-* Fixed an issue with overriding user-specified debugging configuration information in VSCode (`issue #3824 <https://github.com/platformio/platformio-core/issues/3824>`_)
-
-5.1.0 (2021-01-28)
-~~~~~~~~~~~~~~~~~~
-
-* **PlatformIO Home**
-
-  - Boosted `PlatformIO Home <https://docs.platformio.org/en/latest/home/index.html>`__  performance thanks to migrating the codebase to the pure Python 3 Asynchronous I/O stack
-  - Added a new ``--session-id`` option to `pio home <https://docs.platformio.org/en/latest/core/userguide/cmd_home.html>`__ command that helps to keep PlatformIO Home isolated from other instances and protect from 3rd party access (`issue #3397 <https://github.com/platformio/platformio-core/issues/3397>`_)
-
-* **Build System**
-
-  - Upgraded build engine to the SCons 4.1 (`release notes <https://scons.org/scons-410-is-available.html>`_)
-  - Refactored a workaround for a maximum command line character limitation (`issue #3792 <https://github.com/platformio/platformio-core/issues/3792>`_)
-  - Fixed an issue with Python 3.8+ on Windows when a network drive is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
-
-* **Package Management**
-
-  - New options for `pio system prune <https://docs.platformio.org/en/latest/core/userguide/system/cmd_prune.html>`__ command:
-
-    + ``--dry-run`` option to show data that will be removed
-    + ``--core-packages`` option to remove unnecessary core packages
-    + ``--platform-packages`` option to remove unnecessary development platform packages (`issue #923 <https://github.com/platformio/platformio-core/issues/923>`_)
-
-  - Added new `check_prune_system_threshold <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html#check-prune-system-threshold>`__ setting
-  - Disabled automatic removal of unnecessary development platform packages (`issue #3708 <https://github.com/platformio/platformio-core/issues/3708>`_, `issue #3770 <https://github.com/platformio/platformio-core/issues/3770>`_)
-  - Fixed an issue when unnecessary packages were removed in  ``update --dry-run`` mode (`issue #3809 <https://github.com/platformio/platformio-core/issues/3809>`_)
-  - Fixed a "ValueError: Invalid simple block" when uninstalling a package with a custom name and external source (`issue #3816 <https://github.com/platformio/platformio-core/issues/3816>`_)
-
-* **Debugging**
-
-  - Configure a custom debug adapter speed using a new `debug_speed <https://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-speed>`__ option (`issue #3799 <https://github.com/platformio/platformio-core/issues/3799>`_)
-  - Handle debugging server's "ready_pattern" in "stderr" output
-
-* **Miscellaneous**
-
-  - Improved listing of `multicast DNS services <https://docs.platformio.org/en/latest/core/userguide/device/cmd_list.html>`_
-  - Fixed a "UnicodeDecodeError: 'utf-8' codec can't decode byte" when using J-Link for firmware uploading on Linux (`issue #3804 <https://github.com/platformio/platformio-core/issues/3804>`_)
-  - Fixed an issue with a compiler driver for ".ccls" language server (`issue #3808 <https://github.com/platformio/platformio-core/issues/3808>`_)
-  - Fixed an issue when `pio device monitor --eol <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-eol>`__ and "send_on_enter" filter do not work properly (`issue #3787 <https://github.com/platformio/platformio-core/issues/3787>`_)
-
-5.0.4 (2020-12-30)
-~~~~~~~~~~~~~~~~~~
-
-- Added "Core" suffix when showing PlatformIO Core version using ``pio --version`` command
-- Improved ".ccls" configuration file for Emacs, Vim, and Sublime Text integrations
-- Updated analysis tools:
-
-  * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.3 with improved C++ parser and several new MISRA rules
-  * `PVS-Studio <https://docs.platformio.org/en/latest/plus/check-tools/pvs-studio.html>`__ v7.11 with new diagnostics and updated mass suppression mechanism
-
-- Show a warning message about deprecated support for Python 2 and Python 3.5
-- Do not provide "intelliSenseMode" option when generating configuration for VSCode C/C++ extension
-- Fixed a "git-sh-setup: file not found" error when installing project dependencies from Git VCS (`issue #3740 <https://github.com/platformio/platformio-core/issues/3740>`_)
-- Fixed an issue with package publishing on Windows when Unix permissions are not preserved (`issue #3776 <https://github.com/platformio/platformio-core/issues/3776>`_)
-
-5.0.3 (2020-11-12)
-~~~~~~~~~~~~~~~~~~
-
-- Added an error selector for `Sublime Text <https://docs.platformio.org/en/latest/integration/ide/sublimetext.html>`__ build runner (`issue #3733 <https://github.com/platformio/platformio-core/issues/3733>`_)
-- Generate a working "projectEnvName" for PlatformIO IDE's debugger for VSCode
-- Force VSCode's intelliSenseMode to "gcc-x64" when GCC toolchain is used
-- Print ignored test suites and environments in the test summary report only in verbose mode (`issue #3726 <https://github.com/platformio/platformio-core/issues/3726>`_)
-- Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
-- Fixed an issue when `pio package pack <https://docs.platformio.org/en/latest/core/userguide/package/cmd_pack.html>`__ ignores some folders (`issue #3730 <https://github.com/platformio/platformio-core/issues/3730>`_)
-
-5.0.2 (2020-10-30)
-~~~~~~~~~~~~~~~~~~
-
-- Initialize a new project or update the existing passing working environment name and its options (`issue #3686 <https://github.com/platformio/platformio-core/issues/3686>`_)
-- Automatically build PlatformIO Core extra Python dependencies on a host machine if they are missed in the registry (`issue #3700 <https://github.com/platformio/platformio-core/issues/3700>`_)
-- Improved "core.call" RPC for PlatformIO Home (`issue #3671 <https://github.com/platformio/platformio-core/issues/3671>`_)
-- Fixed a "PermissionError: [WinError 5]" on Windows when an external repository is used with `lib_deps <https://docs.platformio.org/en/latest/projectconf/section_env_library.html#lib-deps>`__ option (`issue #3664 <https://github.com/platformio/platformio-core/issues/3664>`_)
-- Fixed a "KeyError: 'versions'" when dependency does not exist in the registry (`issue #3666 <https://github.com/platformio/platformio-core/issues/3666>`_)
-- Fixed an issue with GCC linker when "native" dev-platform is used in pair with library dependencies (`issue #3669 <https://github.com/platformio/platformio-core/issues/3669>`_)
-- Fixed an "AssertionError: ensure_dir_exists" when checking library updates from simultaneous subprocesses (`issue #3677 <https://github.com/platformio/platformio-core/issues/3677>`_)
-- Fixed an issue when `pio package publish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_publish.html>`__ command removes original archive after submitting to the registry (`issue #3716 <https://github.com/platformio/platformio-core/issues/3716>`_)
-- Fixed an issue when multiple `pio lib install <https://docs.platformio.org/en/latest/core/userguide/lib/cmd_install.html>`__ command with the same local library results in duplicates in ``lib_deps`` (`issue #3715 <https://github.com/platformio/platformio-core/issues/3715>`_)
-- Fixed an issue with a "wrong" timestamp in device monitor output using `"time" filter <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #3712 <https://github.com/platformio/platformio-core/issues/3712>`_)
-
-5.0.1 (2020-09-10)
-~~~~~~~~~~~~~~~~~~
-
-- Added support for "owner" requirement when declaring ``dependencies`` using `library.json <https://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`__
-- Fixed an issue when using a custom git/ssh package with `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3624 <https://github.com/platformio/platformio-core/issues/3624>`_)
-- Fixed an issue with "ImportError: cannot import name '_get_backend' from 'cryptography.hazmat.backends'" when using `Remote Development <https://docs.platformio.org/en/latest/plus/pio-remote.html>`__ on RaspberryPi device (`issue #3652 <https://github.com/platformio/platformio-core/issues/3652>`_)
-- Fixed an issue when `pio package unpublish <https://docs.platformio.org/en/latest/core/userguide/package/cmd_unpublish.html>`__ command crashes (`issue #3660 <https://github.com/platformio/platformio-core/issues/3660>`_)
-- Fixed an issue when the package manager tries to install a built-in library from the registry (`issue #3662 <https://github.com/platformio/platformio-core/issues/3662>`_)
-- Fixed an issue with incorrect value for C++ language standard in IDE projects when an in-progress language standard is used (`issue #3653 <https://github.com/platformio/platformio-core/issues/3653>`_)
-- Fixed an issue with "Invalid simple block (semantic_version)" from library dependency that refs to an external source (repository, ZIP/Tar archives) (`issue #3658 <https://github.com/platformio/platformio-core/issues/3658>`_)
-- Fixed an issue when can not remove update or remove external dev-platform using PlatformIO Home (`issue #3663 <https://github.com/platformio/platformio-core/issues/3663>`_)
-
-5.0.0 (2020-09-03)
-~~~~~~~~~~~~~~~~~~
-
-Please check `Migration guide from 4.x to 5.0 <https://docs.platformio.org/en/latest/core/migration.html>`__.
-
-* Integration with the new **PlatformIO Trusted Registry**
-
-  - Enterprise-grade package storage with high availability (multi replicas)
-  - Secure, fast, and reliable global content delivery network (CDN)
-  - Universal support for all packages:
-
-    * Libraries
-    * Development platforms
-    * Toolchains
-
-  - Built-in fine-grained access control (role-based, teams, organizations)
-  - New CLI commands:
-
-    * `pio package <https://docs.platformio.org/en/latest/core/userguide/package/index.html>`__ – manage packages in the registry
-    * `pio access <https://docs.platformio.org/en/latest/core/userguide/access/index.html>`__ – manage package access for users, teams, and maintainers
-
-* Integration with the new **Account Management System**
-
-  - `Manage organizations <https://docs.platformio.org/en/latest/core/userguide/org/index.html>`__
-  - `Manage teams and team memberships <https://docs.platformio.org/en/latest/core/userguide/team/index.html>`__
-
-* New **Package Management System**
-
-  - Integrated PlatformIO Core with the new PlatformIO Registry
-  - Support for owner-based dependency declaration (resolves name conflicts) (`issue #1824 <https://github.com/platformio/platformio-core/issues/1824>`_)
-  - Automatically save dependencies to `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ when installing using PlatformIO CLI (`issue #2964 <https://github.com/platformio/platformio-core/issues/2964>`_)
-  - Follow SemVer complaint version constraints when checking library updates `issue #1281 <https://github.com/platformio/platformio-core/issues/1281>`_)
-  - Dropped support for "packageRepositories" section in "platform.json" manifest (please publish packages directly to the registry)
-
-* **Build System**
-
-  - Upgraded build engine to the `SCons 4.0 - a next-generation software construction tool <https://scons.org/>`__
-
-    * `Configuration files are Python scripts <https://docs.platformio.org/en/latest/projectconf/advanced_scripting.html>`__ – use the power of a real programming language to solve build problems
-    * Built-in reliable and automatic dependency analysis
-    * Improved support for parallel builds
-    * Ability to `share built files in a cache <https://docs.platformio.org/en/latest/projectconf/section_platformio.html#projectconf-pio-build-cache-dir>`__ to speed up multiple builds
-
-  - New `Custom Targets <https://docs.platformio.org/en/latest/projectconf/advanced_scripting.html#custom-targets>`__
-
-    * Pre/Post processing based on dependent sources (another target, source file, etc.)
-    * Command launcher with own arguments
-    * Launch command with custom options declared in `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__
-    * Python callback as a target (use the power of Python interpreter and PlatformIO Build API)
-    * List available project targets (including dev-platform specific and custom targets) with a new `pio run --list-targets <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-platformio-run-list-targets>`__ command (`issue #3544 <https://github.com/platformio/platformio-core/issues/3544>`_)
-
-  - Enable "cyclic reference" for GCC linker only for the embedded dev-platforms (`issue #3570 <https://github.com/platformio/platformio-core/issues/3570>`_)
-  - Automatically enable LDF dependency `chain+ mode (evaluates C/C++ Preprocessor conditional syntax) <https://docs.platformio.org/en/latest/librarymanager/ldf.html#dependency-finder-mode>`__ for Arduino library when "library.property" has "depends" field (`issue #3607 <https://github.com/platformio/platformio-core/issues/3607>`_)
-  - Fixed an issue with improper processing of source files added via multiple Build Middlewares (`issue #3531 <https://github.com/platformio/platformio-core/issues/3531>`_)
-  - Fixed an issue with the ``clean`` target on Windows when project and build directories are located on different logical drives (`issue #3542 <https://github.com/platformio/platformio-core/issues/3542>`_)
-
-* **Project Management**
-
-  - Added support for "globstar/`**`" (recursive) pattern for the different commands and configuration options (`pio ci <https://docs.platformio.org/en/latest/core/userguide/cmd_ci.html>`__, `src_filter <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#src-filter>`__, `check_patterns <https://docs.platformio.org/en/latest/projectconf/section_env_check.html#check-patterns>`__, `library.json > srcFilter <https://docs.platformio.org/en/latest/librarymanager/config.html#srcfilter>`__). Python 3.5+ is required
-  - Added a new ``-e, --environment`` option to `pio project init <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html#cmdoption-platformio-project-init-e>`__ command that helps to update a PlatformIO project using the existing environment
-  - Dump build system data intended for IDE extensions/plugins using a new `pio project data <https://docs.platformio.org/en/latest/core/userguide/project/cmd_data.html>`__ command
-  - Do not generate ".travis.yml" for a new project, let the user have a choice
-
-* **Unit Testing**
-
-  - Updated PIO Unit Testing support for Mbed framework and added compatibility with Mbed OS 6
-  - Fixed an issue when running multiple test environments (`issue #3523 <https://github.com/platformio/platformio-core/issues/3523>`_)
-  - Fixed an issue when Unit Testing engine fails with a custom project configuration file (`issue #3583 <https://github.com/platformio/platformio-core/issues/3583>`_)
-
-* **Static Code Analysis**
-
-  - Updated analysis tools:
-
-    * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.1 with a new "soundy" analysis option and improved code parser
-    * `PVS-Studio <https://docs.platformio.org/en/latest/plus/check-tools/pvs-studio.html>`__ v7.09 with a new file list analysis mode and an extended list of analysis diagnostics
-
-  - Added Cppcheck package for ARM-based single-board computers (`issue #3559 <https://github.com/platformio/platformio-core/issues/3559>`_)
-  - Fixed an issue with PIO Check when a defect with a multiline error message is not reported in verbose mode (`issue #3631 <https://github.com/platformio/platformio-core/issues/3631>`_)
-
-* **Miscellaneous**
-
-  - Display system-wide information using a new `pio system info <https://docs.platformio.org/en/latest/core/userguide/system/cmd_info.html>`__ command (`issue #3521 <https://github.com/platformio/platformio-core/issues/3521>`_)
-  - Remove unused data using a new `pio system prune <https://docs.platformio.org/en/latest/core/userguide/system/cmd_prune.html>`__ command (`issue #3522 <https://github.com/platformio/platformio-core/issues/3522>`_)
-  - Show ignored project environments only in the verbose mode (`issue #3641 <https://github.com/platformio/platformio-core/issues/3641>`_)
-  - Do not escape compiler arguments in VSCode template on Windows
-  - Drop support for Python 2 and 3.5
+See `PlatformIO Core 5.0 history <https://github.com/platformio/platformio-core/blob/v5.2.5/HISTORY.rst>`__.
 
 .. _release_notes_4:
 

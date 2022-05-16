@@ -26,7 +26,7 @@ class PlatformFactory(object):
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)
-        return "%s%sPlatform" % (name.upper()[0], name.lower()[1:])
+        return "%sPlatform" % name.lower().capitalize()
 
     @staticmethod
     def load_module(name, path):
@@ -36,28 +36,32 @@ class PlatformFactory(object):
             raise UnknownPlatform(name)
 
     @classmethod
-    def new(cls, pkg_or_spec):
+    def new(cls, pkg_or_spec, autoinstall=False) -> PlatformBase:
         # pylint: disable=import-outside-toplevel
+        from platformio.package.manager.platform import PlatformPackageManager
 
         platform_dir = None
         platform_name = None
         if isinstance(pkg_or_spec, PackageItem):
             platform_dir = pkg_or_spec.path
             platform_name = pkg_or_spec.metadata.name
-        elif os.path.isdir(pkg_or_spec):
+        elif isinstance(pkg_or_spec, (str, bytes)) and os.path.isdir(pkg_or_spec):
             platform_dir = pkg_or_spec
         else:
-            from platformio.package.manager.platform import PlatformPackageManager
-
             pkg = PlatformPackageManager().get_package(pkg_or_spec)
-            if not pkg:
-                raise UnknownPlatform(pkg_or_spec)
-            platform_dir = pkg.path
-            platform_name = pkg.metadata.name
+            if pkg:
+                platform_dir = pkg.path
+                platform_name = pkg.metadata.name
 
         if not platform_dir or not os.path.isfile(
             os.path.join(platform_dir, "platform.json")
         ):
+            if autoinstall:
+                return cls.new(
+                    PlatformPackageManager().install(
+                        pkg_or_spec, skip_dependencies=True
+                    )
+                )
             raise UnknownPlatform(pkg_or_spec)
 
         if not platform_name:

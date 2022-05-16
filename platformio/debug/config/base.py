@@ -20,7 +20,7 @@ from platformio.compat import string_types
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.helpers import reveal_debug_port
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import load_project_ide_data
+from platformio.project.helpers import load_build_metadata
 from platformio.project.options import ProjectOptions
 
 
@@ -147,7 +147,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         )
 
     def _load_build_data(self):
-        data = load_project_ide_data(os.getcwd(), self.env_name, cache=True)
+        data = load_build_metadata(os.getcwd(), self.env_name, cache=True)
         if data:
             return data
         raise DebugInvalidOptionsError("Could not load a build configuration")
@@ -186,11 +186,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                 else None
             )
             if server_package and not server_package_dir:
-                self.platform.install_packages(
-                    with_packages=[server_package],
-                    skip_default_package=True,
-                    silent=True,
-                )
+                self.platform.install_package(server_package)
                 server_package_dir = self.platform.get_package_dir(server_package)
             result.update(
                 dict(

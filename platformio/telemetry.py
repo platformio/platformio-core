@@ -16,6 +16,7 @@ import atexit
 import hashlib
 import json
 import os
+import queue
 import re
 import shutil
 import sys
@@ -31,11 +32,6 @@ from platformio.commands import PlatformioCLI
 from platformio.compat import hashlib_encode_data, string_types
 from platformio.proc import is_ci, is_container
 from platformio.project.helpers import is_platformio_project
-
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 
 
 class TelemetryBase(object):
@@ -68,7 +64,7 @@ class MeasurementProtocol(TelemetryBase):
     }
 
     def __init__(self):
-        super(MeasurementProtocol, self).__init__()
+        super().__init__()
         self["v"] = 1
         self["tid"] = self.TID
         self["cid"] = app.get_cid()
@@ -86,12 +82,12 @@ class MeasurementProtocol(TelemetryBase):
     def __getitem__(self, name):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        return super(MeasurementProtocol, self).__getitem__(name)
+        return super().__getitem__(name)
 
     def __setitem__(self, name, value):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        super(MeasurementProtocol, self).__setitem__(name, value)
+        super().__setitem__(name, value)
 
     def _prefill_appinfo(self):
         self["av"] = __version__

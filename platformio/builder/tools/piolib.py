@@ -27,14 +27,16 @@ import sys
 import click
 import SCons.Scanner  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
-from platformio.package.exception import UnknownPackageError
+from platformio.package.exception import (
+    MissingPackageManifestError,
+    UnknownPackageError,
+)
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manifest.parser import (
     ManifestParserError,
@@ -54,9 +56,9 @@ class LibBuilderFactory(object):
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
             common_frameworks = set(env.get("PIOFRAMEWORK", [])) & set(used_frameworks)
             if common_frameworks:
-                clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
+                clsname = "%sLibBuilder" % list(common_frameworks)[0].capitalize()
             elif used_frameworks:
-                clsname = "%sLibBuilder" % used_frameworks[0].title()
+                clsname = "%sLibBuilder" % used_frameworks[0].capitalize()
 
         obj = getattr(sys.modules[__name__], clsname)(env, path, verbose=verbose)
 
@@ -136,9 +138,11 @@ class LibBuilderBase(object):
             )
             self._manifest = {}
 
-        self._is_dependent = False
-        self._is_built = False
-        self._depbuilders = []
+        self.is_dependent = False
+        self.is_built = False
+        self.depbuilders = []
+
+        self._deps_are_processed = False
         self._circular_deps = []
         self._processed_files = []
 
@@ -159,7 +163,12 @@ class LibBuilderBase(object):
             p2 = p2.lower()
         if p1 == p2:
             return True
-        return os.path.commonprefix((p1 + os.path.sep, p2)) == p1 + os.path.sep
+        if os.path.commonprefix([p1 + os.path.sep, p2]) == p1 + os.path.sep:
+            return True
+        # try to resolve paths
+        p1 = os.path.os.path.realpath(p1)
+        p2 = os.path.os.path.realpath(p2)
+        return os.path.commonprefix([p1 + os.path.sep, p2]) == p1 + os.path.sep
 
     @property
     def name(self):
@@ -168,6 +177,11 @@ class LibBuilderBase(object):
     @property
     def version(self):
         return self._manifest.get("version")
+
+    @property
+    def dependent(self):
+        """Backward compatibility with ESP-IDF"""
+        return self.is_dependent
 
     @property
     def dependencies(self):
@@ -224,18 +238,6 @@ class LibBuilderBase(object):
     @property
     def extra_script(self):
         return None
-
-    @property
-    def depbuilders(self):
-        return self._depbuilders
-
-    @property
-    def dependent(self):
-        return self._is_dependent
-
-    @property
-    def is_built(self):
-        return self._is_built
 
     @property
     def lib_archive(self):
@@ -296,8 +298,9 @@ class LibBuilderBase(object):
             self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
-        if not self.dependencies:
+        if not self.dependencies or self._deps_are_processed:
             return
+        self._deps_are_processed = True
         for item in self.dependencies:
             found = False
             for lb in self.env.GetLibBuilders():
@@ -305,7 +308,7 @@ class LibBuilderBase(object):
                     continue
                 found = True
                 if lb not in self.depbuilders:
-                    self.depend_recursive(lb)
+                    self.depend_on(lb)
                 break
 
             if not found and self.verbose:
@@ -400,7 +403,29 @@ class LibBuilderBase(object):
 
         return result
 
-    def depend_recursive(self, lb, search_files=None):
+    def search_deps_recursive(self, search_files=None):
+        self.process_dependencies()
+
+        # when LDF is disabled
+        if self.lib_ldf_mode == "off":
+            return
+
+        if self.lib_ldf_mode.startswith("deep"):
+            search_files = self.get_search_files()
+
+        lib_inc_map = {}
+        for inc in self._get_found_includes(search_files):
+            for lb in self.env.GetLibBuilders():
+                if inc.get_abspath() in lb:
+                    if lb not in lib_inc_map:
+                        lib_inc_map[lb] = []
+                    lib_inc_map[lb].append(inc.get_abspath())
+                    break
+
+        for lb, lb_search_files in lib_inc_map.items():
+            self.depend_on(lb, search_files=lb_search_files)
+
+    def depend_on(self, lb, search_files=None, recursive=True):
         def _already_depends(_lb):
             if self in _lb.depbuilders:
                 return True
@@ -418,38 +443,17 @@ class LibBuilderBase(object):
                         "between `%s` and `%s`\n" % (self.path, lb.path)
                     )
                 self._circular_deps.append(lb)
-            elif lb not in self._depbuilders:
-                self._depbuilders.append(lb)
+            elif lb not in self.depbuilders:
+                self.depbuilders.append(lb)
+                lb.is_dependent = True
                 LibBuilderBase._INCLUDE_DIRS_CACHE = None
-        lb.search_deps_recursive(search_files)
 
-    def search_deps_recursive(self, search_files=None):
-        if not self._is_dependent:
-            self._is_dependent = True
-            self.process_dependencies()
-
-            if self.lib_ldf_mode.startswith("deep"):
-                search_files = self.get_search_files()
-
-        # when LDF is disabled
-        if self.lib_ldf_mode == "off":
-            return
-
-        lib_inc_map = {}
-        for inc in self._get_found_includes(search_files):
-            for lb in self.env.GetLibBuilders():
-                if inc.get_abspath() in lb:
-                    if lb not in lib_inc_map:
-                        lib_inc_map[lb] = []
-                    lib_inc_map[lb].append(inc.get_abspath())
-                    break
-
-        for lb, lb_search_files in lib_inc_map.items():
-            self.depend_recursive(lb, lb_search_files)
+        if recursive:
+            lb.search_deps_recursive(search_files)
 
     def build(self):
         libs = []
-        for lb in self._depbuilders:
+        for lb in self.depbuilders:
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
@@ -458,9 +462,9 @@ class LibBuilderBase(object):
         for lb in self._circular_deps:
             self.env.PrependUnique(CPPPATH=lb.get_include_dirs())
 
-        if self._is_built:
+        if self.is_built:
             return libs
-        self._is_built = True
+        self.is_built = True
 
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
 
@@ -632,7 +636,7 @@ class MbedLibBuilder(LibBuilderBase):
 
     def process_extra_options(self):
         self._process_mbed_lib_confs()
-        return super(MbedLibBuilder, self).process_extra_options()
+        return super().process_extra_options()
 
     def _process_mbed_lib_confs(self):
         mbed_lib_paths = [
@@ -851,7 +855,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
     def __init__(self, env, *args, **kwargs):
         # backup original value, will be reset in base.__init__
         project_src_filter = env.get("SRC_FILTER")
-        super(ProjectAsLibBuilder, self).__init__(env, *args, **kwargs)
+        super().__init__(env, *args, **kwargs)
         self.env["SRC_FILTER"] = project_src_filter
 
     @property
@@ -877,7 +881,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # project files
         items = LibBuilderBase.get_search_files(self)
         # test files
-        if "__test" in COMMAND_LINE_TARGETS:
+        if "test" in self.env.GetBuildType():
             items.extend(
                 [
                     os.path.join("$PROJECT_TEST_DIR", item)
@@ -902,12 +906,18 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)
 
     @property
+    def build_flags(self):
+        # pylint: disable=no-member
+        return self.env.get("SRC_BUILD_FLAGS") or LibBuilderBase.build_flags.fget(self)
+
+    @property
     def dependencies(self):
         return self.env.GetProjectOption("lib_deps", [])
 
     def process_extra_options(self):
-        # skip for project, options are already processed
-        pass
+        with fs.cd(self.path):
+            self.env.ProcessFlags(self.build_flags)
+            self.env.ProcessUnFlags(self.build_unflags)
 
     def install_dependencies(self):
         def _is_builtin(spec):
@@ -947,6 +957,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
             DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
+        found_lbs = []
         for spec in self.dependencies:
             found = False
             for storage_dir in self.env.GetLibSourceDirs():
@@ -960,7 +971,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     if pkg.path != lb.path:
                         continue
                     if lb not in self.depbuilders:
-                        self.depend_recursive(lb)
+                        self.depend_on(lb, recursive=False)
+                        found_lbs.append(lb)
                     found = True
                     break
             if found:
@@ -972,12 +984,16 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 if lb.name != spec:
                     continue
                 if lb not in self.depbuilders:
-                    self.depend_recursive(lb)
+                    self.depend_on(lb)
                 found = True
                 break
 
+        # process library dependencies
+        for lb in found_lbs:
+            lb.search_deps_recursive()
+
     def build(self):
-        self._is_built = True  # do not build Project now
+        self.is_built = True  # do not build Project now
         result = LibBuilderBase.build(self)
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         return result
@@ -1015,7 +1031,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     if DefaultEnvironment().get("__PIO_LIB_BUILDERS", None) is not None:
         return sorted(
             DefaultEnvironment()["__PIO_LIB_BUILDERS"],
-            key=lambda lb: 0 if lb.dependent else 1,
+            key=lambda lb: 0 if lb.is_dependent else 1,
         )
 
     DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=[])
@@ -1029,7 +1045,11 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             continue
         for item in sorted(os.listdir(storage_dir)):
             lib_dir = os.path.join(storage_dir, item)
-            if item == "__cores__" or not os.path.isdir(lib_dir):
+            if item == "__cores__":
+                continue
+            if LibraryPackageManager.is_symlink(lib_dir):
+                lib_dir, _ = LibraryPackageManager.resolve_symlink(lib_dir)
+            if not lib_dir or not os.path.isdir(lib_dir):
                 continue
             try:
                 lb = LibBuilderFactory.new(env, lib_dir)
@@ -1061,9 +1081,21 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def ConfigureProjectLibBuilder(env):
+    _pm_storage = {}
+
+    def _get_lib_license(pkg):
+        storage_dir = os.path.dirname(os.path.dirname(pkg.path))
+        if storage_dir not in _pm_storage:
+            _pm_storage[storage_dir] = LibraryPackageManager(storage_dir)
+        try:
+            return (_pm_storage[storage_dir].load_manifest(pkg) or {}).get("license")
+        except MissingPackageManifestError:
+            pass
+        return None
+
     def _correct_found_libs(lib_builders):
         # build full dependency graph
-        found_lbs = [lb for lb in lib_builders if lb.dependent]
+        found_lbs = [lb for lb in lib_builders if lb.is_dependent]
         for lb in lib_builders:
             if lb in found_lbs:
                 lb.search_deps_recursive(lb.get_search_files())
@@ -1075,18 +1107,20 @@ def ConfigureProjectLibBuilder(env):
     def _print_deps_tree(root, level=0):
         margin = "|   " * (level)
         for lb in root.depbuilders:
-            title = "<%s>" % lb.name
+            title = lb.name
             pkg = PackageItem(lb.path)
             if pkg.metadata:
-                title += " %s" % pkg.metadata.version
+                title += " @ %s" % pkg.metadata.version
             elif lb.version:
-                title += " %s" % lb.version
+                title += " @ %s" % lb.version
             click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                click.echo(
+                    " (License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
+                )
                 if pkg.metadata and pkg.metadata.spec.external:
-                    click.echo(" [%s]" % pkg.metadata.spec.url, nl=False)
-                click.echo(" (", nl=False)
-                click.echo(lb.path, nl=False)
+                    click.echo("URI: %s, " % pkg.metadata.spec.uri, nl=False)
+                click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")
             if lb.depbuilders:

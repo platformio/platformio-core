@@ -20,7 +20,7 @@ import tempfile
 import click
 
 from platformio import app, compat, fs, util
-from platformio.package.exception import PackageException
+from platformio.package.exception import PackageException, UnknownPackageError
 from platformio.package.meta import PackageItem
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
@@ -42,23 +42,20 @@ class PackageManagerInstallMixin(object):
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 
-    def install(self, spec, silent=False, skip_dependencies=False, force=False):
+    def install(self, spec, skip_dependencies=False, force=False):
         try:
             self.lock()
-            pkg = self._install(
-                spec, silent=silent, skip_dependencies=skip_dependencies, force=force
-            )
+            pkg = self._install(spec, skip_dependencies=skip_dependencies, force=force)
             self.memcache_reset()
             self.cleanup_expired_downloads()
             return pkg
         finally:
             self.unlock()
 
-    def _install(  # pylint: disable=too-many-arguments
+    def _install(
         self,
         spec,
-        search_filters=None,
-        silent=False,
+        search_qualifiers=None,
         skip_dependencies=False,
         force=False,
     ):
@@ -67,7 +64,7 @@ class PackageManagerInstallMixin(object):
         # avoid circle dependencies
         if not self._INSTALL_HISTORY:
             self._INSTALL_HISTORY = {}
-        if spec in self._INSTALL_HISTORY:
+        if not force and spec in self._INSTALL_HISTORY:
             return self._INSTALL_HISTORY[spec]
 
         # check if package is already installed
@@ -75,28 +72,32 @@ class PackageManagerInstallMixin(object):
 
         # if a forced installation
         if pkg and force:
-            self.uninstall(pkg, silent=silent)
+            self.uninstall(pkg)
             pkg = None
 
         if pkg:
-            if not silent:
-                self.print_message(
-                    "{name} @ {version} is already installed".format(
+            # avoid RecursionError for circular_dependencies
+            self._INSTALL_HISTORY[spec] = pkg
+
+            self.log.debug(
+                click.style(
+                    "{name}@{version} is already installed".format(
                         **pkg.metadata.as_dict()
                     ),
                     fg="yellow",
                 )
+            )
+            # ensure package dependencies are installed
+            if not skip_dependencies:
+                self.install_dependencies(pkg, print_header=False)
             return pkg
 
-        if not silent:
-            self.print_message(
-                "Installing %s" % click.style(spec.humanize(), fg="cyan")
-            )
+        self.log.info("Installing %s" % click.style(spec.humanize(), fg="cyan"))
 
         if spec.external:
-            pkg = self.install_from_url(spec.url, spec, silent=silent)
+            pkg = self.install_from_uri(spec.uri, spec)
         else:
-            pkg = self.install_from_registry(spec, search_filters, silent=silent)
+            pkg = self.install_from_registry(spec, search_qualifiers)
 
         if not pkg or not pkg.metadata:
             raise PackageException(
@@ -104,41 +105,75 @@ class PackageManagerInstallMixin(object):
                 % (spec.humanize(), util.get_systype())
             )
 
-        if not silent:
-            self.print_message(
-                "{name} @ {version} has been installed!".format(
-                    **pkg.metadata.as_dict()
-                ),
+        self.call_pkg_script(pkg, "postinstall")
+
+        self.log.info(
+            click.style(
+                "{name}@{version} has been installed!".format(**pkg.metadata.as_dict()),
                 fg="green",
             )
+        )
 
         self.memcache_reset()
-        if not skip_dependencies:
-            self.install_dependencies(pkg, silent)
+        # avoid RecursionError for circular_dependencies
         self._INSTALL_HISTORY[spec] = pkg
+
+        if not skip_dependencies:
+            self.install_dependencies(pkg)
+
         return pkg
 
-    def install_dependencies(self, pkg, silent=False):
-        pass
+    def install_dependencies(self, pkg, print_header=True):
+        assert isinstance(pkg, PackageItem)
+        dependencies = self.get_pkg_dependencies(pkg)
+        if not dependencies:
+            return
+        if print_header:
+            self.log.info("Resolving dependencies...")
+        for dependency in dependencies:
+            try:
+                self.install_dependency(dependency)
+            except UnknownPackageError:
+                if dependency.get("owner"):
+                    self.log.warning(
+                        click.style(
+                            "Warning! Could not install dependency %s for package '%s'"
+                            % (dependency, pkg.metadata.name),
+                            fg="yellow",
+                        )
+                    )
 
-    def install_from_url(self, url, spec, checksum=None, silent=False):
+    def install_dependency(self, dependency):
+        spec = self.dependency_to_spec(dependency)
+        search_qualifiers = {
+            key: value
+            for key, value in dependency.items()
+            if key in ("authors", "platforms", "frameworks")
+        }
+        return self._install(spec, search_qualifiers=search_qualifiers or None)
+
+    def install_from_uri(self, uri, spec, checksum=None):
         spec = self.ensure_spec(spec)
+
+        if spec.symlink:
+            return self.install_symlink(spec)
+
         tmp_dir = tempfile.mkdtemp(prefix="pkg-installing-", dir=self.get_tmp_dir())
         vcs = None
         try:
-            if url.startswith("file://"):
-                _url = url[7:]
-                if os.path.isfile(_url):
-                    self.unpack(_url, tmp_dir)
+            if uri.startswith("file://"):
+                _uri = uri[7:]
+                if os.path.isfile(_uri):
+                    self.unpack(_uri, tmp_dir)
                 else:
                     fs.rmtree(tmp_dir)
-                    shutil.copytree(_url, tmp_dir, symlinks=True)
-            elif url.startswith(("http://", "https://")):
-                dl_path = self.download(url, checksum, silent=silent)
+                    shutil.copytree(_uri, tmp_dir, symlinks=True)
+            elif uri.startswith(("http://", "https://")):
+                dl_path = self.download(uri, checksum)
                 assert os.path.isfile(dl_path)
                 self.unpack(dl_path, tmp_dir)
             else:
-                vcs = VCSClientFactory.new(tmp_dir, url)
+                vcs = VCSClientFactory.new(tmp_dir, uri)
                 assert vcs.export()
 
             root_dir = self.find_pkg_root(tmp_dir, spec)
@@ -185,7 +220,7 @@ class PackageManagerInstallMixin(object):
             )
         elif dst_pkg.metadata:
             if dst_pkg.metadata.spec.external:
-                if dst_pkg.metadata.spec.url != tmp_pkg.metadata.spec.url:
+                if dst_pkg.metadata.spec.uri != tmp_pkg.metadata.spec.uri:
                     action = "detach-existing"
             elif (
                 dst_pkg.metadata.version != tmp_pkg.metadata.version
@@ -206,11 +241,11 @@ class PackageManagerInstallMixin(object):
                 tmp_pkg.get_safe_dirname(),
                 dst_pkg.metadata.version,
             )
-            if dst_pkg.metadata.spec.url:
+            if dst_pkg.metadata.spec.uri:
                 target_dirname = "%s@src-%s" % (
                     tmp_pkg.get_safe_dirname(),
                     hashlib.md5(
-                        compat.hashlib_encode_data(dst_pkg.metadata.spec.url)
+                        compat.hashlib_encode_data(dst_pkg.metadata.spec.uri)
                     ).hexdigest(),
                 )
             # move existing into the new place
@@ -231,7 +266,7 @@ class PackageManagerInstallMixin(object):
                 target_dirname = "%s@src-%s" % (
                     tmp_pkg.get_safe_dirname(),
                     hashlib.md5(
-                        compat.hashlib_encode_data(tmp_pkg.metadata.spec.url)
+                        compat.hashlib_encode_data(tmp_pkg.metadata.spec.uri)
                     ).hexdigest(),
                 )
             pkg_dir = os.path.join(self.package_dir, target_dirname)

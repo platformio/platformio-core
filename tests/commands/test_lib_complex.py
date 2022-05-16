@@ -20,6 +20,7 @@ import re
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib.command import cli as cmd_lib
 from platformio.package.exception import UnknownPackageError
+from platformio.util import strip_ansi_codes
 
 PlatformioCLI.leftover_args = ["--json-output"]  # hook for click
 
@@ -248,13 +249,13 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert "__pkg_dir" in oudated[0]
     result = clirunner.invoke(cmd_lib, ["-g", "update", oudated[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert "Removing NeoPixelBus @ 2.2.4" in result.output
+    assert "Removing NeoPixelBus @ 2.2.4" in strip_ansi_codes(result.output)
 
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert result.output.count("[Detached]") == 1
-    assert result.output.count("[Up-to-date]") == 13
+    assert result.output.count("+sha.") == 4
+    assert result.output.count("already up-to-date") == 14
 
     # update unknown library
     result = clirunner.invoke(cmd_lib, ["-g", "update", "Unknown"])
@@ -270,7 +271,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     items = sorted(items, key=lambda item: item["__pkg_dir"])
     result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert ("Removing %s" % items[0]["name"]) in result.output
+    assert ("Removing %s" % items[0]["name"]) in strip_ansi_codes(result.output)
 
     # uninstall the rest libraries
     result = clirunner.invoke(
@@ -288,17 +289,18 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
 
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
-        "ArduinoJson",
-        "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "AsyncMqttClient",
-        "AsyncTCP",
-        "ESP32WebServer",
-        "ESPAsyncTCP",
-        "NeoPixelBus",
-        "PJON",
-        "PJON@src-79de467ebe19de18287becff0a1fb42d",
         "platformio-libmirror",
         "PubSubClient",
+        "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
+        "ESPAsyncTCP@1.2.0",
+        "AsyncTCP",
+        "ArduinoJson",
+        "ESPAsyncTCP",
+        "ESP32WebServer",
+        "PJON",
+        "NeoPixelBus",
+        "PJON@src-79de467ebe19de18287becff0a1fb42d",
         "SomeLib",
     ]
     assert set(items1) == set(items2)
@@ -335,17 +337,14 @@ def test_lib_stats(clirunner, validate_cliresult):
 
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])
     validate_cliresult(result)
-    assert (
-        set(
-            [
-                "dlweek",
-                "added",
-                "updated",
-                "topkeywords",
-                "dlmonth",
-                "dlday",
-                "lastkeywords",
-            ]
-        )
-        == set(json.loads(result.output).keys())
-    )
+    assert set(
+        [
+            "dlweek",
+            "added",
+            "updated",
+            "topkeywords",
+            "dlmonth",
+            "dlday",
+            "lastkeywords",
+        ]
+    ) == set(json.loads(result.output).keys())

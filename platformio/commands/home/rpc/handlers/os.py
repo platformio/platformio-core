@@ -22,10 +22,11 @@ from functools import cmp_to_key
 
 import click
 
-from platformio import __default_requests_timeout__, fs, util
+from platformio import __default_requests_timeout__, fs
 from platformio.cache import ContentCache
 from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
+from platformio.device.list import list_logical_devices
 
 
 class OSRPC:
@@ -154,7 +155,7 @@ class OSRPC:
     @staticmethod
     def get_logical_devices():
         items = []
-        for item in util.get_logical_devices():
+        for item in list_logical_devices():
             if item["name"]:
                 item["name"] = item["name"]
             items.append(item)

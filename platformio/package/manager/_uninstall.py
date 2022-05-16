@@ -19,33 +19,36 @@ import click
 
 from platformio import fs
 from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import PackageSpec
+from platformio.package.meta import PackageItem, PackageSpec
 
 
 class PackageManagerUninstallMixin(object):
-    def uninstall(self, spec, silent=False, skip_dependencies=False):
+    def uninstall(self, spec, skip_dependencies=False):
         try:
             self.lock()
-            return self._uninstall(spec, silent, skip_dependencies)
+            return self._uninstall(spec, skip_dependencies)
         finally:
             self.unlock()
 
-    def _uninstall(self, spec, silent=False, skip_dependencies=False):
+    def _uninstall(self, spec, skip_dependencies=False):
         pkg = self.get_package(spec)
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(spec)
 
-        if not silent:
-            self.print_message(
-                "Removing %s @ %s"
-                % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version),
-            )
+        self.log.info(
+            "Removing %s @ %s"
+            % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version)
+        )
+
+        self.call_pkg_script(pkg, "preuninstall")
 
         # firstly, remove dependencies
         if not skip_dependencies:
-            self.uninstall_dependencies(pkg, silent)
+            self.uninstall_dependencies(pkg)
 
-        if os.path.islink(pkg.path):
+        if pkg.metadata.spec.symlink:
+            self.uninstall_symlink(pkg.metadata.spec)
+        elif os.path.islink(pkg.path):
             os.unlink(pkg.path)
         else:
             fs.rmtree(pkg.path)
@@ -66,13 +69,23 @@ class PackageManagerUninstallMixin(object):
             )
             self.memcache_reset()
 
-        if not silent:
-            self.print_message(
-                "{name} @ {version} has been removed!".format(**pkg.metadata.as_dict()),
+        self.log.info(
+            click.style(
+                "{name}@{version} has been removed!".format(**pkg.metadata.as_dict()),
                 fg="green",
             )
+        )
 
         return pkg
 
-    def uninstall_dependencies(self, pkg, silent=False):
-        pass
+    def uninstall_dependencies(self, pkg):
+        assert isinstance(pkg, PackageItem)
+        dependencies = self.get_pkg_dependencies(pkg)
+        if not dependencies:
+            return
+        self.log.info("Removing dependencies...")
+        for dependency in dependencies:
+            pkg = self.get_package(self.dependency_to_spec(dependency))
+            if not pkg:
+                continue
+            self._uninstall(pkg)

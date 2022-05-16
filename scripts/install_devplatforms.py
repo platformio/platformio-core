@@ -33,9 +33,7 @@ import click
 )
 def main(desktop, ignore, ownernames):
     platforms = json.loads(
-        subprocess.check_output(
-            ["platformio", "platform", "search", "--json-output"]
-        ).decode()
+        subprocess.check_output(["pio", "platform", "search", "--json-output"]).decode()
     )
     ignore = [n.strip() for n in (ignore or "").split(",") if n.strip()]
     ownernames = [n.strip() for n in (ownernames or "").split(",") if n.strip()]
@@ -47,7 +45,16 @@ def main(desktop, ignore, ownernames):
         ]
         if any(skip):
             continue
-        subprocess.check_call(["platformio", "platform", "install", platform["name"]])
+        subprocess.check_call(
+            [
+                "pio",
+                "pkg",
+                "install",
+                "--global",
+                "--platform",
+                "{ownername}/{name}".format(**platform),
+            ]
+        )
 
 
 if __name__ == "__main__":

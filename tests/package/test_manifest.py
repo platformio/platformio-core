@@ -322,6 +322,9 @@ def test_library_json_schema():
   "frameworks": "arduino",
   "platforms": "*",
   "license": "MIT",
+  "scripts": {
+      "postinstall": "script.py"
+  },
   "examples": [
     {
         "name": "JsonConfigFile",
@@ -372,6 +375,7 @@ def test_library_json_schema():
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
+            "scripts": {"postinstall": "script.py"},
             "examples": [
                 {
                     "name": "JsonConfigFile",
@@ -423,6 +427,25 @@ def test_library_json_schema():
                     "frameworks": ["arduino"],
                 }
             ],
+        },
+    )
+
+    # test multiple licenses
+    contents = """
+{
+    "name": "MultiLicense",
+    "version": "1.0.0",
+    "license": "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)"
+}
+"""
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert not jsondiff.diff(
+        data,
+        {
+            "name": "MultiLicense",
+            "version": "1.0.0",
+            "license": "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)",
         },
     )
 
@@ -859,6 +882,11 @@ def test_broken_schemas():
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
         ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+    # version with leading zeros
+    with pytest.raises(
+        ManifestValidationError, match=("Invalid semantic versioning format")
+    ):
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="01.02.00"))
 
     # broken value for Nested
     with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):

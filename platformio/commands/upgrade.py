@@ -22,13 +22,15 @@ import click
 from platformio import VERSION, __version__, app, exception
 from platformio.clients.http import fetch_remote_content
 from platformio.compat import IS_WINDOWS
+from platformio.package.manager.core import update_core_packages
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
 
-@click.command("upgrade", short_help="Upgrade PlatformIO to the latest version")
+@click.command("upgrade", short_help="Upgrade PlatformIO Core to the latest version")
 @click.option("--dev", is_flag=True, help="Use development branch")
 def cli(dev):
+    update_core_packages()
     if not dev and __version__ == get_latest_version():
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "

@@ -146,33 +146,40 @@ def path_endswith_ext(path, extensions):
 
 
 def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
-    def _append_build_item(items, item, src_dir):
+    def _add_candidate(items, item, src_dir):
         if not src_exts or path_endswith_ext(item, src_exts):
             items.add(os.path.relpath(item, src_dir))
+
+    def _find_candidates(pattern):
+        candidates = set()
+        for item in glob.glob(
+            os.path.join(glob.escape(src_dir), pattern), recursive=True
+        ):
+            if not os.path.isdir(item):
+                _add_candidate(candidates, item, src_dir)
+                continue
+            for root, dirs, files in os.walk(item, followlinks=followlinks):
+                for d in dirs if not followlinks else []:
+                    if os.path.islink(os.path.join(root, d)):
+                        _add_candidate(candidates, os.path.join(root, d), src_dir)
+                for f in files:
+                    _add_candidate(candidates, os.path.join(root, f), src_dir)
+        return candidates
 
     src_filter = src_filter or ""
     if isinstance(src_filter, (list, tuple)):
         src_filter = " ".join(src_filter)
 
-    matches = set()
+    result = set()
     # correct fs directory separator
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
     for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
-        items = set()
-        for item in glob.glob(
-            os.path.join(glob.escape(src_dir), pattern), recursive=True
-        ):
-            if os.path.isdir(item):
-                for root, _, files in os.walk(item, followlinks=followlinks):
-                    for f in files:
-                        _append_build_item(items, os.path.join(root, f), src_dir)
-            else:
-                _append_build_item(items, item, src_dir)
+        candidates = _find_candidates(pattern)
         if action == "+":
-            matches |= items
+            result |= candidates
         else:
-            matches -= items
-    return sorted(list(matches))
+            result -= candidates
+    return sorted(list(result))
 
 
 def to_unix_path(path):

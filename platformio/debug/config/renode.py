@@ -35,11 +35,11 @@ monitor start
 """
 
     def __init__(self, *args, **kwargs):
-        super(RenodeDebugConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.port = ":3333"
 
     @property
     def server_ready_pattern(self):
-        return super(RenodeDebugConfig, self).server_ready_pattern or (
+        return super().server_ready_pattern or (
             "GDB server with all CPUs started on port"
         )

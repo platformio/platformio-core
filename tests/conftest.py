@@ -37,8 +37,10 @@ def validate_cliresult():
 
 
 @pytest.fixture(scope="session")
-def clirunner(request):
+def clirunner(request, tmpdir_factory):
+    cache_dir = tmpdir_factory.mktemp(".cache")
     backup_env_vars = {
+        "PLATFORMIO_CACHE_DIR": {"new": str(cache_dir)},
         "PLATFORMIO_WORKSPACE_DIR": {"new": None},
     }
     for key, item in backup_env_vars.items():
@@ -61,16 +63,26 @@ def clirunner(request):
     return CliRunner()
 
 
-@pytest.fixture(scope="module")
-def isolated_pio_core(request, tmpdir_factory):
+def _isolated_pio_core(request, tmpdir_factory):
     core_dir = tmpdir_factory.mktemp(".platformio")
     os.environ["PLATFORMIO_CORE_DIR"] = str(core_dir)
 
     def fin():
-        del os.environ["PLATFORMIO_CORE_DIR"]
+        if "PLATFORMIO_CORE_DIR" in os.environ:
+            del os.environ["PLATFORMIO_CORE_DIR"]
 
     request.addfinalizer(fin)
     return core_dir
+
+
+@pytest.fixture(scope="module")
+def isolated_pio_core(request, tmpdir_factory):
+    return _isolated_pio_core(request, tmpdir_factory)
+
+
+@pytest.fixture(scope="function")
+def func_isolated_pio_core(request, tmpdir_factory):
+    return _isolated_pio_core(request, tmpdir_factory)
 
 
 @pytest.fixture(scope="function")

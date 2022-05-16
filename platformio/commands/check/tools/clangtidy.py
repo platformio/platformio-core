@@ -17,11 +17,10 @@ from os.path import join
 
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
-from platformio.package.manager.core import get_core_package_dir
 
 
 class ClangtidyCheckTool(CheckToolBase):
-    def tool_output_filter(self, line):
+    def tool_output_filter(self, line):  # pylint: disable=arguments-differ
         if not self.options.get("verbose") and "[clang-diagnostic-error]" in line:
             return ""
 
@@ -34,7 +33,7 @@ class ClangtidyCheckTool(CheckToolBase):
 
         return ""
 
-    def parse_defect(self, raw_line):
+    def parse_defect(self, raw_line):  # pylint: disable=arguments-differ
         match = re.match(r"^(.*):(\d+):(\d+):\s+([^:]+):\s(.+)\[([^]]+)\]$", raw_line)
         if not match:
             return raw_line
@@ -56,11 +55,13 @@ class ClangtidyCheckTool(CheckToolBase):
         return cmd_result["returncode"] < 2
 
     def configure_command(self):
-        tool_path = join(get_core_package_dir("tool-clangtidy"), "clang-tidy")
+        tool_path = join(self.get_tool_dir("tool-clangtidy"), "clang-tidy")
 
         cmd = [tool_path, "--quiet"]
         flags = self.get_flags("clangtidy")
-        if not self.is_flag_set("--checks", flags):
+        if not (
+            self.is_flag_set("--checks", flags) or self.is_flag_set("--config", flags)
+        ):
             cmd.append("--checks=*")
 
         project_files = self.get_project_target_files(self.options["patterns"])

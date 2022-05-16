@@ -24,30 +24,27 @@ from platformio import (
     __url__,
     __version__,
 )
-from platformio.compat import PY2
 
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click>=8.0.3,<9",
+    "click%s" % (">=8.0.3,<9" if sys.version_info >= (3, 7) else "==8.0.4"),
     "colorama",
-    "marshmallow%s" % (">=2,<3" if PY2 else ">=2,<4"),
+    "marshmallow==3.*",
     "pyelftools>=0.27,<1",
     "pyserial==3.*",
     "requests==2.*",
     "semantic_version==2.9.*",
     "tabulate==0.8.*",
+    "zeroconf<1",
 ]
-
-if not PY2:
-    minimal_requirements.append("zeroconf==0.38.*")
 
 home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
-    "starlette==0.18.*",
+    "starlette==%s" % ("0.20.*" if sys.version_info >= (3, 7) else "0.19.1"),
     "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
-    "wsproto==1.0.*",
+    "wsproto==%s" % ("1.1.*" if sys.version_info >= (3, 7) else "1.0.0"),
 ]
 
 setup(
@@ -59,7 +56,8 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=minimal_requirements + ([] if PY2 else home_requirements),
+    install_requires=minimal_requirements + home_requirements,
+    python_requires=">=3.6",
     packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
     package_data={
         "platformio": [

@@ -22,7 +22,7 @@ class PlatformioCLI(click.MultiCommand):
     leftover_args = []
 
     def __init__(self, *args, **kwargs):
-        super(PlatformioCLI, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._pio_cmds_dir = os.path.dirname(__file__)
 
     @staticmethod
@@ -41,7 +41,7 @@ class PlatformioCLI(click.MultiCommand):
         PlatformioCLI.leftover_args = ctx.args
         if hasattr(ctx, "protected_args"):
             PlatformioCLI.leftover_args = ctx.protected_args + ctx.args
-        return super(PlatformioCLI, self).invoke(ctx)
+        return super().invoke(ctx)
 
     def list_commands(self, ctx):
         cmds = []
@@ -74,7 +74,13 @@ class PlatformioCLI(click.MultiCommand):
     def _handle_obsolate_command(name):
         # pylint: disable=import-outside-toplevel
         if name == "init":
-            from platformio.commands.project import project_init
+            from platformio.project.commands.init import project_init_cmd
 
-            return project_init
+            return project_init_cmd
+
+        if name == "package":
+            from platformio.commands.pkg import cli
+
+            return cli
+
         raise AttributeError()

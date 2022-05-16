@@ -14,7 +14,6 @@
 
 import click
 
-from platformio.cache import cleanup_content_cache
 from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib.command import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
@@ -23,7 +22,9 @@ from platformio.package.manager.library import LibraryPackageManager
 
 
 @click.command(
-    "update", short_help="Update installed platforms, packages and libraries"
+    "update",
+    short_help="Update installed platforms, packages and libraries",
+    hidden=True,
 )
 @click.option("--core-packages", is_flag=True, help="Update only the core packages")
 @click.option(
@@ -37,12 +38,10 @@ from platformio.package.manager.library import LibraryPackageManager
 )
 @click.pass_context
 def cli(ctx, core_packages, only_check, dry_run):
-    # cleanup lib search results, cached board and platform lists
-    cleanup_content_cache("http")
-
     only_check = dry_run or only_check
 
-    update_core_packages(only_check)
+    if not only_check:
+        update_core_packages()
 
     if core_packages:
         return

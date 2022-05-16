@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import sys
+from urllib.parse import urlparse
 
 from platformio import proc
 from platformio.package.exception import (
@@ -23,11 +24,6 @@ from platformio.package.exception import (
     PlatformioException,
     UserSideException,
 )
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 
 class VCSBaseException(PackageException):
@@ -51,7 +47,7 @@ class VCSClientFactory(object):
         if not type_:
             raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
         try:
-            obj = getattr(sys.modules[__name__], "%sClient" % type_.title())(
+            obj = getattr(sys.modules[__name__], "%sClient" % type_.capitalize())(
                 src_dir, remote_url, tag, silent
             )
             assert isinstance(obj, VCSClientBase)
@@ -135,7 +131,7 @@ class GitClient(VCSClientBase):
 
     def __init__(self, *args, **kwargs):
         self.configure()
-        super(GitClient, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def configure(cls):
@@ -217,12 +213,18 @@ class GitClient(VCSClientBase):
             return self.get_current_revision()
         branch = self.get_current_branch()
         if not branch:
-            return self.get_current_revision()
-        result = self.get_cmd_output(["ls-remote"])
+            return None
+
+        branch_ref = f"refs/heads/{branch}"
+        result = self.get_cmd_output(["ls-remote", self.remote_url, branch_ref])
+        if not result:
+            return None
+
         for line in result.split("\n"):
-            ref_pos = line.strip().find("refs/heads/" + branch)
-            if ref_pos > 0:
-                return line[:ref_pos].strip()[:7]
+            sha, ref = line.strip().split("\t")
+            if ref == branch_ref:
+                return sha[:7]
+
         return None
 
 

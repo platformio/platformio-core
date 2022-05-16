@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageSpec
 
 
@@ -37,11 +36,13 @@ class PlatformPackagesMixin(object):
         pkg = self.get_package(name)
         return str(pkg.metadata.version) if pkg else None
 
-    def get_installed_packages(self, with_optional=False):
+    def get_installed_packages(self, with_optional=True, with_optional_versions=False):
         result = []
-        for name, options in self.packages.items():
+        for name, options in dict(sorted(self.packages.items())).items():
+            if not with_optional and options.get("optional"):
+                continue
             versions = [options.get("version")]
-            if with_optional:
+            if with_optional_versions:
                 versions.extend(options.get("optionalVersions", []))
             for version in versions:
                 if not version:
@@ -61,77 +62,26 @@ class PlatformPackagesMixin(object):
                 continue
             item = {"name": pkg.metadata.name, "version": str(pkg.metadata.version)}
             if pkg.metadata.spec.external:
-                item["src_url"] = pkg.metadata.spec.url
+                item["src_url"] = pkg.metadata.spec.uri
             result.append(item)
         return result
 
-    def autoinstall_runtime_packages(self):
+    def install_package(self, name, spec=None, force=False):
+        return self.pm.install(spec or self.get_package_spec(name), force=force)
+
+    def install_required_packages(self, force=False):
         for name, options in self.packages.items():
-            if options.get("optional", False):
+            if options.get("optional"):
                 continue
-            if self.get_package(name):
-                continue
-            self.pm.install(self.get_package_spec(name))
-        return True
+            self.install_package(name, force=force)
 
-    def install_packages(  # pylint: disable=too-many-arguments
-        self,
-        with_packages=None,
-        without_packages=None,
-        skip_default_package=False,
-        silent=False,
-        force=False,
-    ):
-        with_packages = set(self._find_pkg_names(with_packages or []))
-        without_packages = set(self._find_pkg_names(without_packages or []))
-
-        upkgs = with_packages | without_packages
-        ppkgs = set(self.packages)
-        if not upkgs.issubset(ppkgs):
-            raise UnknownPackageError(", ".join(upkgs - ppkgs))
-
-        for name, options in self.packages.items():
-            if name in without_packages:
-                continue
-            if name in with_packages or not (
-                skip_default_package or options.get("optional", False)
-            ):
-                self.pm.install(self.get_package_spec(name), silent=silent, force=force)
-
-        return True
-
-    def _find_pkg_names(self, candidates):
-        result = []
-        for candidate in candidates:
-            found = False
-
-            # lookup by package types
-            for _name, _opts in self.packages.items():
-                if _opts.get("type") == candidate:
-                    result.append(_name)
-                    found = True
-
-            if (
-                self.frameworks
-                and candidate.startswith("framework-")
-                and candidate[10:] in self.frameworks
-            ):
-                result.append(self.frameworks[candidate[10:]]["package"])
-                found = True
-
-            if not found:
-                result.append(candidate)
-
-        return result
-
-    def update_packages(self, only_check=False):
+    def uninstall_packages(self):
         for pkg in self.get_installed_packages():
-            self.pm.update(
-                pkg,
-                to_spec=self.get_package_spec(pkg.metadata.name),
-                only_check=only_check,
-                show_incompatible=False,
-            )
+            self.pm.uninstall(pkg)
+
+    def update_packages(self):
+        for pkg in self.get_installed_packages():
+            self.pm.update(pkg, to_spec=self.get_package_spec(pkg.metadata.name))
 
     def are_outdated_packages(self):
         for pkg in self.get_installed_packages():

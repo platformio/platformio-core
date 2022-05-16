@@ -13,11 +13,14 @@
 # limitations under the License.
 
 import hashlib
+import logging
 import os
 import tempfile
 import time
 
-from platformio import app, compat
+import click
+
+from platformio import app, compat, util
 from platformio.package.download import FileDownloader
 from platformio.package.lockfile import LockFile
 
@@ -40,7 +43,8 @@ class PackageManagerDownloadMixin(object):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
             state[os.path.basename(path)] = int(time.time() if not utime else utime)
 
-    def cleanup_expired_downloads(self):
+    @util.memoized(DOWNLOAD_CACHE_EXPIRE)
+    def cleanup_expired_downloads(self, _=None):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
             # remove outdated
             for fname in list(state.keys()):
@@ -51,7 +55,8 @@ class PackageManagerDownloadMixin(object):
                 if os.path.isfile(dl_path):
                     os.remove(dl_path)
 
-    def download(self, url, checksum=None, silent=False):
+    def download(self, url, checksum=None):
+        silent = not self.log.isEnabledFor(logging.INFO)
         dl_path = self.compute_download_path(url, checksum or "")
         if os.path.isfile(dl_path):
             self.set_download_utime(dl_path)
@@ -75,10 +80,11 @@ class PackageManagerDownloadMixin(object):
                         except IOError:
                             raise_error = True
                     if raise_error:
-                        self.print_message(
-                            "Error: Please read https://bit.ly/package-manager-ioerror",
-                            fg="red",
-                            err=True,
+                        self.log.error(
+                            click.style(
+                                "Error: Please read https://bit.ly/package-manager-ioerror",
+                                fg="red",
+                            )
                         )
                         raise e
             if checksum:

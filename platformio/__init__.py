@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (5, 2, 5)
+VERSION = (6, 0, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -38,9 +38,9 @@ __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-present PlatformIO Labs"
 
 __accounts_api__ = "https://api.accounts.platformio.org"
-__registry_api__ = [
-    "https://api.registry.platformio.org",
-    "https://api.registry.ns1.platformio.org",
+__registry_mirror_hosts__ = [
+    "registry.platformio.org",
+    "registry.nm1.platformio.org",
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
@@ -49,16 +49,14 @@ __default_requests_timeout__ = (10, None)  # (connect, read)
 __core_packages__ = {
     "contrib-piohome": "~3.4.1",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-    "tool-unity": "~1.20500.0",
     "tool-scons": "~4.40300.0",
-    "tool-cppcheck": "~1.260.0",
+    "tool-cppcheck": "~1.270.0",
     "tool-clangtidy": "~1.120001.0",
-    "tool-pvs-studio": "~7.14.0",
+    "tool-pvs-studio": "~7.18.0",
 }
 
 __check_internet_hosts__ = [
     "185.199.110.153",  # Github.com
     "88.198.170.159",  # platformio.org
     "github.com",
-    "platformio.org",
-]
+] + __registry_mirror_hosts__

@@ -62,7 +62,7 @@ class BuildAsyncPipe(AsyncPipeBase):
     def __init__(self, line_callback, data_callback):
         self.line_callback = line_callback
         self.data_callback = data_callback
-        super(BuildAsyncPipe, self).__init__()
+        super().__init__()
 
     def do_reading(self):
         line = ""
@@ -95,7 +95,7 @@ class BuildAsyncPipe(AsyncPipeBase):
 class LineBufferedAsyncPipe(AsyncPipeBase):
     def __init__(self, line_callback):
         self.line_callback = line_callback
-        super(LineBufferedAsyncPipe, self).__init__()
+        super().__init__()
 
     def do_reading(self):
         for line in iter(self._pipe_reader.readline, ""):

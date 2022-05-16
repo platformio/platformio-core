@@ -22,12 +22,12 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
-from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.commands.run.processor import EnvironmentProcessor
-from platformio.commands.test.processor import CTX_META_TEST_IS_RUNNING
+from platformio.device.commands.monitor import device_monitor_cmd
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import find_project_dir_above, load_project_ide_data
+from platformio.project.helpers import find_project_dir_above, load_build_metadata
+from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 
@@ -66,10 +66,17 @@ except NotImplementedError:
         "Default is a number of CPUs in a system (N=%d)" % DEFAULT_JOB_NUMS
     ),
 )
-@click.option("-s", "--silent", is_flag=True)
-@click.option("-v", "--verbose", is_flag=True)
+@click.option(
+    "-a",
+    "--program-arg",
+    "program_args",
+    multiple=True,
+    help="A program argument (multiple are allowed)",
+)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.option("--list-targets", is_flag=True)
+@click.option("-s", "--silent", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(
     ctx,
@@ -79,10 +86,11 @@ def cli(
     project_dir,
     project_conf,
     jobs,
-    silent,
-    verbose,
+    program_args,
     disable_auto_clean,
     list_targets,
+    silent,
+    verbose,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -92,6 +100,7 @@ def cli(
 
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
 
+    results = []
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
@@ -114,7 +123,6 @@ def cli(
         handle_legacy_libdeps(project_dir, config)
 
         default_envs = config.default_envs()
-        results = []
         for env in config.envs():
             skipenv = any(
                 [
@@ -138,21 +146,25 @@ def cli(
                     environment,
                     target,
                     upload_port,
+                    jobs,
+                    program_args,
+                    is_test_running,
                     silent,
                     verbose,
-                    jobs,
-                    is_test_running,
                 )
             )
 
-        command_failed = any(r.get("succeeded") is False for r in results)
+    command_failed = any(r.get("succeeded") is False for r in results)
 
-        if not is_test_running and (command_failed or not silent) and len(results) > 1:
-            print_processing_summary(results, verbose)
+    if not is_test_running and (command_failed or not silent) and len(results) > 1:
+        print_processing_summary(results, verbose)
 
-        if command_failed:
-            raise exception.ReturnErrorCode(1)
-        return True
+    # Reset custom project config
+    app.set_session_var("custom_project_conf", None)
+
+    if command_failed:
+        raise exception.ReturnErrorCode(1)
+    return True
 
 
 def process_env(
@@ -162,16 +174,25 @@ def process_env(
     environments,
     targets,
     upload_port,
+    jobs,
+    program_args,
+    is_test_running,
     silent,
     verbose,
-    jobs,
-    is_test_running,
 ):
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
 
     ep = EnvironmentProcessor(
-        ctx, name, config, targets, upload_port, silent, verbose, jobs
+        ctx,
+        name,
+        config,
+        targets,
+        upload_port,
+        jobs,
+        program_args,
+        silent,
+        verbose,
     )
     result = {"env": name, "duration": time(), "succeeded": ep.process()}
     result["duration"] = time() - result["duration"]
@@ -186,7 +207,7 @@ def process_env(
         and "nobuild" not in ep.get_build_targets()
     ):
         ctx.invoke(
-            cmd_device_monitor, environment=environments[0] if environments else None
+            device_monitor_cmd, environment=environments[0] if environments else None
         )
 
     return result
@@ -273,7 +294,7 @@ def print_processing_summary(results, verbose=False):
 
 def print_target_list(envs):
     tabular_data = []
-    for env, data in load_project_ide_data(os.getcwd(), envs).items():
+    for env, data in load_build_metadata(os.getcwd(), envs).items():
         tabular_data.extend(
             sorted(
                 [

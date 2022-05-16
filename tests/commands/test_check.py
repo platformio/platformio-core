@@ -15,6 +15,7 @@
 # pylint: disable=redefined-outer-name
 
 import json
+import sys
 from os.path import isfile, join
 
 import pytest
@@ -119,6 +120,56 @@ def test_check_tool_defines_passed(clirunner, check_dir):
 
     assert "PLATFORMIO=" in output
     assert "__GNUC__" in output
+
+
+def test_check_tool_complex_defines_handled(
+    clirunner, validate_cliresult, tmpdir_factory
+):
+    project_dir = tmpdir_factory.mktemp("project_dir")
+
+    project_dir.join("platformio.ini").write(
+        DEFAULT_CONFIG
+        + R"""
+check_tool = cppcheck, clangtidy, pvs-studio
+build_flags =
+    -DEXTERNAL_INCLUDE_FILE=\"test.h\"
+    "-DDEFINE_WITH_SPACE="Hello World!""
+"""
+    )
+
+    src_dir = project_dir.mkdir("src")
+    src_dir.join("test.h").write(
+        """
+#ifndef TEST_H
+#define TEST_H
+#define ARBITRARY_CONST_VALUE 10
+#endif
+"""
+    )
+
+    src_dir.join("main.c").write(
+        PVS_STUDIO_FREE_LICENSE_HEADER
+        + """
+#if !defined(EXTERNAL_INCLUDE_FILE)
+#error "EXTERNAL_INCLUDE_FILE is not declared!"
+#else
+#include EXTERNAL_INCLUDE_FILE
+#endif
+
+int main()
+{
+    /* Index out of bounds */
+    int arr[ARBITRARY_CONST_VALUE];
+    for(int i=0; i < ARBITRARY_CONST_VALUE+1; i++) {
+        arr[i] = 0; /* High */
+    }
+    return 0;
+}
+"""
+    )
+
+    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(project_dir)])
+    validate_cliresult(default_result)
 
 
 def test_check_language_standard_definition_passed(clirunner, tmpdir):
@@ -464,6 +515,38 @@ def test_check_pvs_studio_fails_without_license(clirunner, tmpdir):
 
     assert verbose_result.exit_code != 0
     assert "license was not entered" in verbose_result.output.lower()
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32",
+    reason="For some reason the error message is different on Windows",
+)
+def test_check_pvs_studio_fails_broken_license(clirunner, tmpdir):
+    config = (
+        DEFAULT_CONFIG
+        + """
+check_tool = pvs-studio
+check_flags = --lic-file=./pvs-studio.lic
+"""
+    )
+
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
+    tmpdir.join("pvs-studio.lic").write(
+        """
+TEST
+TEST-TEST-TEST-TEST
+"""
+    )
+
+    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    verbose_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
+
+    assert default_result.exit_code != 0
+    assert "failed to perform check" in default_result.output.lower()
+
+    assert verbose_result.exit_code != 0
+    assert "license information is incorrect" in verbose_result.output.lower()
 
 
 def test_check_embedded_platform_all_tools(clirunner, validate_cliresult, tmpdir):

@@ -23,22 +23,21 @@ from platformio import proc
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
 from platformio.compat import IS_WINDOWS
-from platformio.package.manager.core import get_core_package_dir
 
 
 class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-attributes
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._tmp_dir = tempfile.mkdtemp(prefix="piocheck")
         self._tmp_preprocessed_file = self._generate_tmp_file_path() + ".i"
         self._tmp_output_file = self._generate_tmp_file_path() + ".pvs"
         self._tmp_cfg_file = self._generate_tmp_file_path() + ".cfg"
         self._tmp_cmd_file = self._generate_tmp_file_path() + ".cmd"
         self.tool_path = os.path.join(
-            get_core_package_dir("tool-pvs-studio"),
+            self.get_tool_dir("tool-pvs-studio"),
             "x64" if IS_WINDOWS else "bin",
             "pvs-studio",
         )
-        super(PvsStudioCheckTool, self).__init__(*args, **kwargs)
 
         with open(self._tmp_cfg_file, mode="w", encoding="utf8") as fp:
             fp.write(
@@ -53,8 +52,14 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
                 )
             )
 
-    def tool_output_filter(self, line):
-        if "license was not entered" in line.lower():
+    def tool_output_filter(self, line):  # pylint: disable=arguments-differ
+        if any(
+            err_msg in line.lower()
+            for err_msg in (
+                "license was not entered",
+                "license information is incorrect",
+            )
+        ):
             self._bad_input = True
         return line
 
@@ -70,7 +75,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
     def _demangle_report(self, output_file):
         converter_tool = os.path.join(
-            get_core_package_dir("tool-pvs-studio"),
+            self.get_tool_dir("tool-pvs-studio"),
             "HtmlGenerator" if IS_WINDOWS else os.path.join("bin", "plog-converter"),
         )
 
@@ -194,7 +199,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             '"%s"' % self._tmp_preprocessed_file,
         ]
         cmd.extend([f for f in flags if f])
-        cmd.extend(["-D%s" % d for d in self.cpp_defines])
+        cmd.extend(['"-D%s"' % d.replace('"', '\\"') for d in self.cpp_defines])
         cmd.append('@"%s"' % self._tmp_cmd_file)
 
         # Explicitly specify C++ as the language used in .ino files
@@ -209,7 +214,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             self._bad_input = True
 
     def clean_up(self):
-        super(PvsStudioCheckTool, self).clean_up()
+        super().clean_up()
         if os.path.isdir(self._tmp_dir):
             shutil.rmtree(self._tmp_dir)
 
