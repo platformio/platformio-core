@@ -11,6 +11,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.0.1 (2022-05-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue when calling built-in `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ filter
+
 6.0.0 (2022-05-16)
 ~~~~~~~~~~~~~~~~~~
 

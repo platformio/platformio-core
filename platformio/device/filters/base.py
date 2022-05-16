@@ -71,7 +71,7 @@ def register_filters(platform=None, options=None):
         )
     # default filters
     load_monitor_filters(
-        os.path.join(fs.get_source_dir(), "commands", "device", "filters"),
+        os.path.join(fs.get_source_dir(), "device", "filters"),
         options=options,
     )
 
