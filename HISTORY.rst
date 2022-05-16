@@ -11,7 +11,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.0.0 (2022-??-??)
+6.0.0 (2022-05-16)
 ~~~~~~~~~~~~~~~~~~
 
 Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/en/latest/core/migration.html>`__.
