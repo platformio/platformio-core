@@ -101,9 +101,13 @@ debug_flags = -D DEBUG=1
 debug_server =
     ${platformio.packages_dir}/tool-openocd/openocd
     --help
+src_filter = -<*>
+    +<a>
+    +<b>
 
 [env:extra_2]
 build_flags = -Og
+src_filter = ${custom.src_filter} +<c>
 """
 
 DEFAULT_CORE_DIR = os.path.join(fs.expanduser("~"), ".platformio")
@@ -130,7 +134,7 @@ def test_empty_config():
 
 def test_warnings(config):
     config.validate(["extra_2", "base"], silent=True)
-    assert len(config.warnings) == 2
+    assert len(config.warnings) == 3
     assert "lib_install" in config.warnings[1]
 
     with pytest.raises(UnknownEnvNamesError):
@@ -213,8 +217,9 @@ def test_options(config):
 def test_has_option(config):
     assert config.has_option("env:base", "monitor_speed")
     assert not config.has_option("custom", "monitor_speed")
-    assert not config.has_option("env:extra_1", "lib_install")
+    assert config.has_option("env:extra_1", "lib_install")
     assert config.has_option("env:test_extends", "lib_compat_mode")
+    assert config.has_option("env:extra_2", "src_filter")
 
 
 def test_sysenv_options(config):
@@ -312,6 +317,8 @@ def test_getraw_value(config):
     assert config.getraw("platformio", "build_dir") == "~/tmp/pio-$PROJECT_HASH"
 
     # renamed option
+    assert config.getraw("env:extra_1", "lib_install") == "574"
+    assert config.getraw("env:extra_1", "lib_deps") == "574"
     assert config.getraw("env:base", "debug_load_cmd") == ["load"]
 
 
@@ -349,6 +356,11 @@ def test_get_value(config):
     )
     assert "$PROJECT_HASH" not in config.get("platformio", "build_dir")
 
+    # renamed option
+    assert config.get("env:extra_1", "lib_install") == ["574"]
+    assert config.get("env:extra_1", "lib_deps") == ["574"]
+    assert config.get("env:base", "debug_load_cmd") == ["load"]
+
 
 def test_items(config):
     assert config.items("custom") == [
@@ -363,6 +375,7 @@ def test_items(config):
             "\n%s/tool-openocd/openocd\n--help"
             % os.path.join(DEFAULT_CORE_DIR, "packages"),
         ),
+        ("src_filter", "-<*>\n+<a>\n+<b>"),
     ]
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
@@ -379,9 +392,10 @@ def test_items(config):
             "build_flags",
             ["-fdata-sections", "-Wl,--gc-sections", "-lc -lm", "-D DEBUG=1"],
         ),
-        ("lib_deps", ["574"]),
+        ("lib_install", ["574"]),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
+        ("lib_deps", ["574"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
         ("custom_builtin_option", "release"),
     ]
@@ -396,6 +410,7 @@ def test_items(config):
                 "--help",
             ],
         ),
+        ("src_filter", ["-<*>", "+<a>", "+<b> +<c>"]),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
@@ -496,10 +511,10 @@ def test_dump(tmpdir_factory):
         (
             "platformio",
             [
+                ("env_default", ["base", "extra_2"]),
                 ("src_dir", "${custom.src_dir}"),
                 ("build_dir", "${custom.build_dir}"),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
-                ("default_envs", ["base", "extra_2"]),
             ],
         ),
         (

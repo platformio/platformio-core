@@ -14,6 +14,7 @@ PlatformIO Core 6
 6.0.1 (2022-05-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved support for the renamed configuration options (`issue #4270 <https://github.com/platformio/platformio-core/issues/4270>`_)
 * Fixed an issue when calling built-in `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ filter
 
 6.0.0 (2022-05-16)

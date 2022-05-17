@@ -43,6 +43,8 @@ class ProjectConfigBase(object):
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}\()]+)\.([^\}]+)\}")
 
+    CUSTOM_OPTION_PREFIXES = ("custom_", "board_")
+
     expand_interpolations = True
     warnings = []
 
@@ -109,23 +111,6 @@ class ProjectConfigBase(object):
                 self.read(item)
 
     def _maintain_renaimed_options(self):
-        # legacy `lib_extra_dirs` in [platformio]
-        if self._parser.has_section("platformio") and self._parser.has_option(
-            "platformio", "lib_extra_dirs"
-        ):
-            if not self._parser.has_section("env"):
-                self._parser.add_section("env")
-            self._parser.set(
-                "env",
-                "lib_extra_dirs",
-                self._parser.get("platformio", "lib_extra_dirs"),
-            )
-            self._parser.remove_option("platformio", "lib_extra_dirs")
-            self.warnings.append(
-                "`lib_extra_dirs` configuration option is deprecated in "
-                "section [platformio]! Please move it to global `env` section"
-            )
-
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
@@ -143,19 +128,20 @@ class ProjectConfigBase(object):
                         "Please use `%s` instead"
                         % (option, section, renamed_options[option])
                     )
-                    # rename on-the-fly
-                    self._parser.set(
-                        section,
-                        renamed_options[option],
-                        self._parser.get(section, option),
-                    )
-                    self._parser.remove_option(section, option)
+                    # # rename on-the-fly
+                    # self._parser.set(
+                    #     section,
+                    #     renamed_options[option],
+                    #     self._parser.get(section, option),
+                    # )
+                    # self._parser.remove_option(section, option)
                     continue
 
                 # unknown
                 unknown_conditions = [
                     ("%s.%s" % (scope, option)) not in ProjectOptions,
-                    scope != "env" or not option.startswith(("custom_", "board_")),
+                    scope != "env"
+                    or not option.startswith(self.CUSTOM_OPTION_PREFIXES),
                 ]
                 if all(unknown_conditions):
                     self.warnings.append(
@@ -237,16 +223,7 @@ class ProjectConfigBase(object):
             value = "\n" + value
         self._parser.set(section, option, value)
 
-    def getraw(self, section, option, default=MISSING):
-        try:
-            return self._getraw(section, option, default)
-        except configparser.NoOptionError as exc:
-            renamed_option = self._resolve_renamed_option(section, option)
-            if renamed_option:
-                return self._getraw(section, renamed_option, default)
-            raise exc
-
-    def _resolve_renamed_option(self, section, old_name):
+    def resolve_renamed_option(self, section, old_name):
         scope = self.get_section_scope(section)
         if scope not in ("platformio", "env"):
             return None
@@ -259,19 +236,39 @@ class ProjectConfigBase(object):
                 return option_meta.name
         return None
 
-    def _getraw(self, section, option, default):  # pylint: disable=too-many-branches
+    def find_option_meta(self, section, option):
+        scope = self.get_section_scope(section)
+        if scope not in ("platformio", "env"):
+            return None
+        option_meta = ProjectOptions.get("%s.%s" % (scope, option))
+        if option_meta:
+            return option_meta
+        for option_meta in ProjectOptions.values():
+            if option_meta.scope == scope and option in (option_meta.oldnames or []):
+                return option_meta
+        return None
+
+    def _traverse_for_value(self, section, option, option_meta=None):
+        for _section, _option in self.walk_options(section):
+            if _option == option or (
+                option_meta
+                and (
+                    option_meta.name == _option
+                    or _option in (option_meta.oldnames or [])
+                )
+            ):
+                return self._parser.get(_section, _option)
+        return MISSING
+
+    def getraw(
+        self, section, option, default=MISSING
+    ):  # pylint: disable=too-many-branches
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
-        value = MISSING
-        for sec, opt in self.walk_options(section):
-            if opt == option:
-                value = self._parser.get(sec, option)
-                break
+        option_meta = self.find_option_meta(section, option)
+        value = self._traverse_for_value(section, option, option_meta)
 
-        option_meta = ProjectOptions.get(
-            "%s.%s" % (self.get_section_scope(section), option)
-        )
         if not option_meta:
             if value == MISSING:
                 value = (
@@ -342,9 +339,7 @@ class ProjectConfigBase(object):
         except configparser.Error as e:
             raise exception.InvalidProjectConfError(self.path, str(e))
 
-        option_meta = ProjectOptions.get(
-            "%s.%s" % (self.get_section_scope(section), option)
-        )
+        option_meta = self.find_option_meta(section, option)
         if not option_meta:
             return value
 
