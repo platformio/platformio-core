@@ -14,12 +14,6 @@
 
 import click
 
-from platformio.commands.lib.command import CTX_META_STORAGE_DIRS_KEY
-from platformio.commands.lib.command import lib_update as cmd_lib_update
-from platformio.commands.platform import platform_update as cmd_platform_update
-from platformio.package.manager.core import update_core_packages
-from platformio.package.manager.library import LibraryPackageManager
-
 
 @click.command(
     "update",
@@ -36,23 +30,9 @@ from platformio.package.manager.library import LibraryPackageManager
 @click.option(
     "--dry-run", is_flag=True, help="Do not update, only check for the new versions"
 )
-@click.pass_context
-def cli(ctx, core_packages, only_check, dry_run):
-    only_check = dry_run or only_check
-
-    if not only_check:
-        update_core_packages()
-
-    if core_packages:
-        return
-
-    click.echo()
-    click.echo("Platform Manager")
-    click.echo("================")
-    ctx.invoke(cmd_platform_update, only_check=only_check)
-
-    click.echo()
-    click.echo("Library Manager")
-    click.echo("===============")
-    ctx.meta[CTX_META_STORAGE_DIRS_KEY] = [LibraryPackageManager().package_dir]
-    ctx.invoke(cmd_lib_update, only_check=only_check)
+def cli(*_, **__):
+    click.secho(
+        "This command is deprecated and will be removed in the next releases. \n"
+        "Please use `pio pkg update` instead.",
+        fg="yellow",
+    )

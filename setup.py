@@ -28,9 +28,9 @@ from platformio import (
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click%s" % (">=8.0.3,<9" if sys.version_info >= (3, 7) else "==8.0.4"),
+    "click%s" % (">=8.0.4,<9" if sys.version_info >= (3, 7) else "==8.0.4"),
     "colorama",
-    "marshmallow==3.*",
+    "marshmallow==%s" % ("3.*" if sys.version_info >= (3, 7) else "3.14.1"),
     "pyelftools>=0.27,<1",
     "pyserial==3.*",
     "requests==2.*",

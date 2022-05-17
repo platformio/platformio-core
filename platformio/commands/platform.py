@@ -18,6 +18,7 @@ import os
 
 import click
 
+from platformio.commands import PlatformioCLI
 from platformio.commands.boards import print_boards
 from platformio.exception import UserSideException
 from platformio.package.exception import UnknownPackageError
@@ -30,7 +31,12 @@ from platformio.platform.factory import PlatformFactory
 
 @click.group(short_help="Platform manager", hidden=True)
 def cli():
-    pass
+    if not PlatformioCLI.in_silence():
+        click.secho(
+            "\nWARNING!!! This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg` instead.\n",
+            fg="yellow",
+        )
 
 
 @cli.command("search", short_help="Search for development platform")
