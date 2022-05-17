@@ -69,13 +69,6 @@ def get_project_global_lib_dir():
 @click.pass_context
 def cli(ctx, **options):
     in_silence = PlatformioCLI.in_silence()
-    if not in_silence:
-        click.secho(
-            "\nWARNING!!! This command is deprecated and will be removed in "
-            "the next releases. \nPlease use `pio pkg` instead.\n",
-            fg="yellow",
-        )
-
     storage_cmds = ("install", "uninstall", "update", "list")
     # skip commands that don't need storage folder
     if ctx.invoked_subcommand not in storage_cmds or (
@@ -148,6 +141,11 @@ def cli(ctx, **options):
 def lib_install(  # pylint: disable=too-many-arguments,unused-argument
     ctx, libraries, save, silent, interactive, force
 ):
+    click.secho(
+        "\nWARNING: This command is deprecated and will be removed in "
+        "the next releases. \nPlease use `pio pkg install` instead.\n",
+        fg="yellow",
+    )
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     storage_libdeps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, [])
 
@@ -211,6 +209,11 @@ def _save_deps(ctx, pkgs, action="add"):
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.pass_context
 def lib_uninstall(ctx, libraries, save, silent):
+    click.secho(
+        "\nWARNING: This command is deprecated and will be removed in "
+        "the next releases. \nPlease use `pio pkg uninstall` instead.\n",
+        fg="yellow",
+    )
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     uninstalled_pkgs = {}
     for storage_dir in storage_dirs:
@@ -244,6 +247,13 @@ def lib_update(  # pylint: disable=too-many-arguments
     if only_check and not json_output:
         raise exception.UserSideException(
             "This command is deprecated, please use `pio pkg outdated` instead"
+        )
+
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg update` instead.\n",
+            fg="yellow",
         )
 
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
@@ -305,6 +315,12 @@ def lib_update(  # pylint: disable=too-many-arguments
 @click.option("--json-output", is_flag=True)
 @click.pass_context
 def lib_list(ctx, json_output):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg list` instead.\n",
+            fg="yellow",
+        )
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:
@@ -348,6 +364,12 @@ def lib_list(ctx, json_output):
     help="Do not prompt, automatically paginate with delay",
 )
 def lib_search(query, json_output, page, noninteractive, **filters):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg search` instead.\n",
+            fg="yellow",
+        )
     regclient = LibraryPackageManager().get_registry_client_instance()
     if not query:
         query = []
@@ -444,6 +466,12 @@ def lib_builtin(storage, json_output):
 @click.argument("library", metavar="[LIBRARY]")
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg show` instead.\n",
+            fg="yellow",
+        )
     lm = LibraryPackageManager()
     lm.set_log_level(logging.ERROR if json_output else logging.DEBUG)
     lib_id = lm.reveal_registry_package_id(library)

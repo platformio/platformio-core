@@ -18,7 +18,6 @@ import os
 
 import click
 
-from platformio.commands import PlatformioCLI
 from platformio.commands.boards import print_boards
 from platformio.exception import UserSideException
 from platformio.package.exception import UnknownPackageError
@@ -31,18 +30,19 @@ from platformio.platform.factory import PlatformFactory
 
 @click.group(short_help="Platform manager", hidden=True)
 def cli():
-    if not PlatformioCLI.in_silence():
-        click.secho(
-            "\nWARNING!!! This command is deprecated and will be removed in "
-            "the next releases. \nPlease use `pio pkg` instead.\n",
-            fg="yellow",
-        )
+    pass
 
 
 @cli.command("search", short_help="Search for development platform")
 @click.argument("query", required=False)
 @click.option("--json-output", is_flag=True)
 def platform_search(query, json_output):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg search` instead.\n",
+            fg="yellow",
+        )
     platforms = []
     for platform in _get_registry_platforms():
         if query == "all":
@@ -94,6 +94,12 @@ def platform_frameworks(query, json_output):
 @cli.command("list", short_help="List installed development platforms")
 @click.option("--json-output", is_flag=True)
 def platform_list(json_output):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg list` instead.\n",
+            fg="yellow",
+        )
     platforms = []
     pm = PlatformPackageManager()
     for pkg in pm.get_installed():
@@ -112,6 +118,12 @@ def platform_list(json_output):
 @click.argument("platform")
 @click.option("--json-output", is_flag=True)
 def platform_show(platform, json_output):  # pylint: disable=too-many-branches
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg show` instead.\n",
+            fg="yellow",
+        )
     data = _get_platform_data(platform)
     if not data:
         raise UnknownPlatform(platform)
@@ -195,6 +207,12 @@ def platform_install(  # pylint: disable=too-many-arguments,too-many-locals
     silent,
     force,
 ):
+    click.secho(
+        "\nWARNING: This command is deprecated and will be removed in "
+        "the next releases. \nPlease use `pio pkg install` instead.\n",
+        fg="yellow",
+    )
+
     def _find_pkg_names(p, candidates):
         result = []
         for candidate in candidates:
@@ -251,6 +269,11 @@ def platform_install(  # pylint: disable=too-many-arguments,too-many-locals
 @cli.command("uninstall", short_help="Uninstall development platform")
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
 def platform_uninstall(platforms):
+    click.secho(
+        "\nWARNING: This command is deprecated and will be removed in "
+        "the next releases. \nPlease use `pio pkg uninstall` instead.\n",
+        fg="yellow",
+    )
     pm = PlatformPackageManager()
     pm.set_log_level(logging.DEBUG)
     for platform in platforms:
@@ -283,6 +306,13 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
     if only_check and not json_output:
         raise UserSideException(
             "This command is deprecated, please use `pio pkg outdated` instead"
+        )
+
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg update` instead.\n",
+            fg="yellow",
         )
 
     pm = PlatformPackageManager()
