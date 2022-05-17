@@ -346,6 +346,7 @@ def dump_run_environment(options):
         "check_tool",
         "debug_tool",
         "monitor_filters",
+        "test_framework",
     ]
     safe_options = {k: v for k, v in options.items() if k in non_sensitive_data}
     if is_platformio_project(os.getcwd()):

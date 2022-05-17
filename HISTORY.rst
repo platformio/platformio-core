@@ -12,7 +12,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.0.1 (2022-05-??)
+6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved support for the renamed configuration options (`issue #4270 <https://github.com/platformio/platformio-core/issues/4270>`_)
