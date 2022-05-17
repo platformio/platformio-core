@@ -3,6 +3,7 @@ Release Notes
 
 .. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
 .. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
+.. |INTERPOLATION| replace:: `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__
 
 .. _release_notes_6:
 
@@ -15,7 +16,8 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Improved support for the renamed configuration options (`issue #4270 <https://github.com/platformio/platformio-core/issues/4270>`_)
-* Fixed an issue when calling built-in `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ filter
+* Fixed an issue when calling the built-in `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ filter
+* Fixed an issue when using |INTERPOLATION| and merging str+int options (`issue #4271 <https://github.com/platformio/platformio-core/issues/4271>`_)
 
 6.0.0 (2022-05-16)
 ~~~~~~~~~~~~~~~~~~
@@ -98,7 +100,7 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
 
 * **Project Configuration**
 
-  - Extended `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__  with ``${this}`` pattern (`issue #3953 <https://github.com/platformio/platformio-core/issues/3953>`_)
+  - Extended |INTERPOLATION| with ``${this}`` pattern (`issue #3953 <https://github.com/platformio/platformio-core/issues/3953>`_)
   - Embed environment name of the current section in the |PIOCONF| using ``${this.__env__}`` pattern
   - Renamed the "src_build_flags" project configuration option to the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__
   - Renamed the "src_filter" project configuration option to the `build_src_filter <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-filter>`__

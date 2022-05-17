@@ -85,6 +85,7 @@ build_flags =
     -Wl,--gc-sections
     ${custom.lib_flags}
     ${custom.debug_flags}
+    -D SERIAL_BAUD_RATE=${this.monitor_speed}
 lib_install = 574
 
 [env:extra_2]
@@ -297,9 +298,9 @@ def test_getraw_value(config):
     # known
     assert config.getraw("env:base", "targets") == ""
     assert config.getraw("env:extra_1", "lib_deps") == "574"
-    assert (
-        config.getraw("env:extra_1", "build_flags")
-        == "\n-fdata-sections\n-Wl,--gc-sections\n-lc -lm\n-D DEBUG=1"
+    assert config.getraw("env:extra_1", "build_flags") == (
+        "\n-fdata-sections\n-Wl,--gc-sections\n"
+        "-lc -lm\n-D DEBUG=1\n-D SERIAL_BAUD_RATE=9600"
     )
 
     # extended
@@ -329,6 +330,7 @@ def test_get_value(config):
         "-Wl,--gc-sections",
         "-lc -lm",
         "-D DEBUG=1",
+        "-D SERIAL_BAUD_RATE=9600",
     ]
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
     assert config.get("env:extra_2", "monitor_speed") == 9600
@@ -390,7 +392,13 @@ def test_items(config):
     assert config.items(env="extra_1") == [
         (
             "build_flags",
-            ["-fdata-sections", "-Wl,--gc-sections", "-lc -lm", "-D DEBUG=1"],
+            [
+                "-fdata-sections",
+                "-Wl,--gc-sections",
+                "-lc -lm",
+                "-D DEBUG=1",
+                "-D SERIAL_BAUD_RATE=9600",
+            ],
         ),
         ("lib_install", ["574"]),
         ("monitor_speed", 9600),

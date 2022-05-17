@@ -330,7 +330,7 @@ class ProjectConfigBase(object):
             )
         if isinstance(value, list):
             return "\n".join(value)
-        return value
+        return str(value)
 
     def get(self, section, option, default=MISSING):
         value = None
