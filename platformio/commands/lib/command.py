@@ -68,6 +68,14 @@ def get_project_global_lib_dir():
 )
 @click.pass_context
 def cli(ctx, **options):
+    in_silence = PlatformioCLI.in_silence()
+    if not in_silence:
+        click.secho(
+            "\nWARNING!!! This command is deprecated and will be removed in "
+            "the next releases. \nPlease use `pio pkg` instead.\n",
+            fg="yellow",
+        )
+
     storage_cmds = ("install", "uninstall", "update", "list")
     # skip commands that don't need storage folder
     if ctx.invoked_subcommand not in storage_cmds or (
@@ -94,7 +102,6 @@ def cli(ctx, **options):
             get_project_dir(), get_project_global_lib_dir(), ctx.invoked_subcommand
         )
 
-    in_silence = PlatformioCLI.in_silence()
     ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY] = options["environment"]
     ctx.meta[CTX_META_INPUT_DIRS_KEY] = storage_dirs
     ctx.meta[CTX_META_STORAGE_DIRS_KEY] = []
