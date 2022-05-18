@@ -1,11 +1,6 @@
 name: Projects
 
-on:
-  push:
-    branches:
-      - release/*
-      - project*
-      - feature/project*
+on: [push, pull_request]
 
 jobs:
   build:
