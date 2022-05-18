@@ -83,7 +83,7 @@ def validate_password(value):
 def account_register(username, email, password, firstname, lastname):
     client = AccountClient()
     client.registration(username, email, password, firstname, lastname)
-    return click.secho(
+    click.secho(
         "An account has been successfully created. "
         "Please check your mail to activate your account and verify your email address.",
         fg="green",
@@ -96,14 +96,14 @@ def account_register(username, email, password, firstname, lastname):
 def account_login(username, password):
     client = AccountClient()
     client.login(username, password)
-    return click.secho("Successfully logged in!", fg="green")
+    click.secho("Successfully logged in!", fg="green")
 
 
 @cli.command("logout", short_help="Log out of PlatformIO Account")
 def account_logout():
     client = AccountClient()
     client.logout()
-    return click.secho("Successfully logged out!", fg="green")
+    click.secho("Successfully logged out!", fg="green")
 
 
 @cli.command("password", short_help="Change password")
@@ -112,7 +112,7 @@ def account_logout():
 def account_password(old_password, new_password):
     client = AccountClient()
     client.change_password(old_password, new_password)
-    return click.secho("Password successfully changed!", fg="green")
+    click.secho("Password successfully changed!", fg="green")
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
@@ -123,8 +123,9 @@ def account_token(password, regenerate, json_output):
     client = AccountClient()
     auth_token = client.auth_token(password, regenerate)
     if json_output:
-        return click.echo(json.dumps({"status": "success", "result": auth_token}))
-    return click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
+        click.echo(json.dumps({"status": "success", "result": auth_token}))
+        return
+    click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
 
 
 @cli.command("forgot", short_help="Forgot password")
@@ -132,7 +133,7 @@ def account_token(password, regenerate, json_output):
 def account_forgot(username):
     client = AccountClient()
     client.forgot_password(username)
-    return click.secho(
+    click.secho(
         "If this account is registered, we will send the "
         "further instructions to your email.",
         fg="green",
@@ -171,11 +172,13 @@ def account_update(current_password, **kwargs):
     except AccountNotAuthorized:
         pass
     if email_changed:
-        return click.secho(
+        click.secho(
             "Please check your mail to verify your new email address and re-login. ",
             fg="yellow",
         )
-    return click.secho("Please re-login.", fg="yellow")
+        return None
+    click.secho("Please re-login.", fg="yellow")
+    return None
 
 
 @cli.command("destroy", short_help="Destroy account")
@@ -192,7 +195,7 @@ def account_destroy():
         client.logout()
     except AccountNotAuthorized:
         pass
-    return click.secho(
+    click.secho(
         "User account has been destroyed.",
         fg="green",
     )
@@ -205,7 +208,8 @@ def account_show(offline, json_output):
     client = AccountClient()
     info = client.get_account_info(offline)
     if json_output:
-        return click.echo(json.dumps(info))
+        click.echo(json.dumps(info))
+        return
     click.echo()
     if info.get("profile"):
         print_profile(info["profile"])
@@ -213,7 +217,7 @@ def account_show(offline, json_output):
         print_packages(info["packages"])
     if info.get("subscriptions"):
         print_subscriptions(info["subscriptions"])
-    return click.echo()
+    click.echo()
 
 
 def print_profile(profile):

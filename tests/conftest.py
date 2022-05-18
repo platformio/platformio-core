@@ -93,9 +93,9 @@ def without_internet(monkeypatch):
 @pytest.fixture
 def receive_email():  # pylint:disable=redefined-outer-name, too-many-locals
     def _receive_email(from_who):
-        test_email = os.environ.get("TEST_EMAIL_LOGIN")
-        test_password = os.environ.get("TEST_EMAIL_PASSWORD")
-        imap_server = os.environ.get("TEST_EMAIL_IMAP_SERVER") or "imap.gmail.com"
+        test_email = os.environ["TEST_EMAIL_LOGIN"]
+        test_password = os.environ["TEST_EMAIL_PASSWORD"]
+        imap_server = os.environ["TEST_EMAIL_IMAP_SERVER"]
 
         def get_body(msg):
             if msg.is_multipart():
