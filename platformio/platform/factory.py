@@ -31,11 +31,11 @@ class PlatformFactory(object):
 
     @staticmethod
     def load_platform_module(name, path):
-        # support for legacy dev-platforms
+        # backward compatibiility with the legacy dev-platforms
         sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)
-        except ImportError as exc:
+        except ImportError:
             raise UnknownPlatform(name)
 
     @classmethod
