@@ -34,6 +34,12 @@ jobs:
             config_dir: "OpenMQTTGateway"
             env_name: "esp32-m5atom"
         os: [ubuntu-latest, windows-latest, macos-latest]
+        exclude:
+          - os: macos-latest
+            project: esphome
+        exclude:
+          - os: windows-latest
+            project: esphome
 
     runs-on: ${{ matrix.os }}
     steps:
