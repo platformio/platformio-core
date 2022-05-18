@@ -37,7 +37,6 @@ jobs:
         exclude:
           - os: macos-latest
             project: esphome
-        exclude:
           - os: windows-latest
             project: esphome
 
