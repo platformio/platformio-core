@@ -29,14 +29,13 @@ class PlatformFactory(object):
         name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)
         return "%sPlatform" % name.lower().capitalize()
 
-    @classmethod
-    def load_platform_module(cls, name, path, by_fallback=False):
+    @staticmethod
+    def load_platform_module(cls, name, path):
+        # support for legacy dev-platforms
+        sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)
         except ImportError as exc:
-            if "platformio.managers" in str(exc) and not by_fallback:
-                sys.modules["platformio.managers.platform"] = base
-                return cls.load_platform_module(name, path, by_fallback=True)
             raise UnknownPlatform(name)
 
     @classmethod
