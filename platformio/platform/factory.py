@@ -30,7 +30,7 @@ class PlatformFactory(object):
         return "%sPlatform" % name.lower().capitalize()
 
     @staticmethod
-    def load_platform_module(cls, name, path):
+    def load_platform_module(name, path):
         # support for legacy dev-platforms
         sys.modules["platformio.managers.platform"] = base
         try:
