@@ -12,7 +12,7 @@ jobs:
             repository: "MarlinFirmware/Marlin"
             folder: "Marlin"
             config_dir: "Marlin"
-            env_name: "teensy36"
+            env_name: "mega2560"
           - esphome:
             repository: "esphome/esphome"
             folder: "esphome"
@@ -59,19 +59,11 @@ jobs:
           repository: ${{ matrix.project.repository }}
           path: ${{ matrix.project.folder }}
 
-      - name: Configure Marlin target
-        # The board is selected in the 'Configuration.h' file. Currently, there is no
-        # way to pass the board via a build flag (e.g. -D) as there is a prescript that
-        # carries out some validations before the build step
-        if: ${{ contains(matrix.project.repository, 'Marlin') }}
-        run: sed -i 's/#define MOTHERBOARD BOARD_RAMPS_14_EFB/#define MOTHERBOARD BOARD_TEENSY35_36/g' ${{ matrix.project.folder }}/Marlin/Configuration.h
-
       - name: Install ESPHome dependencies
         # Requires esptool package as it's used in a custom prescript
         if: ${{ contains(matrix.project.repository, 'esphome') }}
         run: pip install esptool==3.*
 
       - name: Compile ${{ matrix.project.repository }}
-        run: |
-          pio run -d ${{ matrix.project.config_dir }} -e ${{ matrix.project.env_name }}
+        run: pio run -d ${{ matrix.project.config_dir }} -e ${{ matrix.project.env_name }}
 
