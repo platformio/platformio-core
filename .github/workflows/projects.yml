@@ -33,9 +33,8 @@ jobs:
             folder: "OpenMQTTGateway"
             config_dir: "OpenMQTTGateway"
             env_name: "esp32-m5atom"
-        os: [ubuntu-latest]
-        # Note: espurna doesn't work with Python 3.6
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -45,7 +44,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
 
       - name: Install PlatformIO
         run: |
