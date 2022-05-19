@@ -7,15 +7,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: [3.7]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: "recursive"
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -23,26 +23,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox
 
+      - name: Configure dev-platform installer
+        env:
+          PIO_INSTALL_DEVPLATFORM_OWNERNAMES: "platformio"
+          PIO_INSTALL_DEVPLATFORM_NAMES: "aceinna_imu,atmelavr,atmelmegaavr,atmelsam,espressif32,espressif8266,nordicnrf52,raspberrypi,ststm32,teensy"
+
       - name: Run on Linux
         if: startsWith(matrix.os, 'ubuntu')
-        env:
-          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,intel_mcs51"
         run: |
-          # ChipKIT issue: install 32-bit support for GCC PIC32
-          sudo apt-get install libc6-i386
           # Free space
           sudo apt clean
           docker rmi $(docker image ls -aq)
           df -h
-          # Run
           tox -e testexamples
 
       - name: Run on macOS
         if: startsWith(matrix.os, 'macos')
-        env:
-          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,lattice_ice40,gd32v"
         run: |
           df -h
           tox -e testexamples
@@ -52,8 +48,6 @@ jobs:
         env:
           PLATFORMIO_CORE_DIR: C:/pio
           PLATFORMIO_WORKSPACE_DIR: C:/pio-workspace/$PROJECT_HASH
-          PIO_INSTALL_DEVPLATFORMS_OWNERNAMES: "platformio"
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap"
         run: |
           tox -e testexamples
 

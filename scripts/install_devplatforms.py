@@ -22,35 +22,38 @@ import click
 @click.command()
 @click.option("--desktop", is_flag=True, default=False)
 @click.option(
-    "--ignore",
-    envvar="PIO_INSTALL_DEVPLATFORMS_IGNORE",
-    help="Ignore names split by comma",
+    "--names",
+    envvar="PIO_INSTALL_DEVPLATFORM_NAMES",
+    help="Install specified platform (split by comma)",
 )
 @click.option(
     "--ownernames",
-    envvar="PIO_INSTALL_DEVPLATFORMS_OWNERNAMES",
-    help="Filter dev-platforms by ownernames (split by comma)",
+    envvar="PIO_INSTALL_DEVPLATFORM_OWNERNAMES",
+    help="Filter by ownernames (split by comma)",
 )
-def main(desktop, ignore, ownernames):
+def main(desktop, names, ownernames):
     platforms = json.loads(
         subprocess.check_output(["pio", "platform", "search", "--json-output"]).decode()
     )
-    ignore = [n.strip() for n in (ignore or "").split(",") if n.strip()]
+    names = [n.strip() for n in (names or "").split(",") if n.strip()]
     ownernames = [n.strip() for n in (ownernames or "").split(",") if n.strip()]
     for platform in platforms:
         skip = [
             not desktop and platform["forDesktop"],
-            platform["name"] in ignore,
+            names and platform["name"] not in names,
             ownernames and platform["ownername"] not in ownernames,
         ]
         if any(skip):
             continue
+        print(platform['name'])
+        continue
         subprocess.check_call(
             [
                 "pio",
                 "pkg",
                 "install",
                 "--global",
+                "--skip-dependencies",
                 "--platform",
                 "{ownername}/{name}".format(**platform),
             ]
