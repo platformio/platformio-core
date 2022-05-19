@@ -1127,9 +1127,7 @@ def ConfigureProjectLibBuilder(env):
             if lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
-    print(1, env.get("CPPDEFINES"))
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    print(2, env.get("CPPDEFINES"))
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
     click.echo("LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf")
@@ -1140,7 +1138,6 @@ def ConfigureProjectLibBuilder(env):
 
     project.install_dependencies()
 
-    print(3, env.get("CPPDEFINES"))
     lib_builders = env.GetLibBuilders()
     click.echo("Found %d compatible libraries" % len(lib_builders))
 
