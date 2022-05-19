@@ -264,7 +264,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             return
 
         test_case = self.parse_test_case(line)
-        if test_case:
+        if test_case and not self.options.verbose:
             click.echo(test_case.humanize())
 
         if all(s in line for s in ("Tests", "Failures", "Ignored")):

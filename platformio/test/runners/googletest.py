@@ -110,7 +110,7 @@ class GoogletestTestRunner(TestRunnerBase):
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
-        if test_case:
+        if test_case and not self.options.verbose:
             click.echo(test_case.humanize())
             self.test_suite.add_case(test_case)
 

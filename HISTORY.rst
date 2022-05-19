@@ -4,6 +4,7 @@ Release Notes
 .. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
 .. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
 .. |INTERPOLATION| replace:: `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__
+.. |UNITTESTING| replace:: `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`__
 
 .. _release_notes_6:
 
@@ -15,7 +16,8 @@ PlatformIO Core 6
 6.0.2 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ were applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
+* Control |UNITTESTING| verbosity with a new `test_verbosity_level <https://docs.platformio.org/en/latest/projectconf/section_env_test.html#test_verbosity_level>`__ configuration option (`issue #4276 <https://github.com/platformio/platformio-core/issues/4276>`_)
+* Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ option was applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
 
 6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
@@ -58,7 +60,7 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
 
 * **Unit Testing**
 
-  - Refactored from scratch `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`_ solution and its documentation
+  - Refactored from scratch |UNITTESTING| solution and its documentation
   - New: `Test Hierarchy <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
   - New: `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework (`issue #4240 <https://github.com/platformio/platformio-core/issues/4240>`_)
   - New: `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework (`issue #3572 <https://github.com/platformio/platformio-core/issues/3572>`_)

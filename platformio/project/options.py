@@ -675,7 +675,8 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="test",
                 name="test_speed",
-                description="A connection speed (baud rate) to communicate with a target device",
+                description="A connection speed (baud rate) to communicate with "
+                "a target device",
                 type=click.INT,
                 default=115200,
             ),
@@ -695,6 +696,19 @@ ProjectOptions = OrderedDict(
                     "A custom testing command that runs test cases "
                     "and returns results to the standard output"
                 ),
+            ),
+            ConfigEnvOption(
+                group="test",
+                name="test_verbosity_level",
+                description=(
+                    "Verbosity level: "
+                    "0=normal verbosity (default), "
+                    "1=raw testing output, "
+                    "2=base verbosity for buidling/uploading, "
+                    "3=extra verbosity for building/uploading"
+                ),
+                type=click.IntRange(min=0, max=3),
+                default=0,
             ),
             # Debug
             ConfigEnvOption(

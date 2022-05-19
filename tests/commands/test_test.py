@@ -94,6 +94,7 @@ def test_group_and_custom_runner(clirunner, validate_cliresult, tmp_path: Path):
 [env:native]
 platform = native
 test_framework = custom
+test_verbosity_level = 1
 """
     )
     test_dir = project_dir / "test"
@@ -187,6 +188,7 @@ int main() {
         ["-d", str(project_dir), "-e", "native", "--verbose"],
     )
     validate_cliresult(result)
+    assert "1 Tests 0 Failures 0 Ignored" in result.output
     assert "Called from my_extra_fun" in result.output
     assert "CustomTestRunner::TearDown called" in result.output
     assert "Disabled test suite" not in result.output

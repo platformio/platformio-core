@@ -85,7 +85,12 @@ from platformio.test.runners.factory import TestRunnerFactory
 @click.option("--list-tests", is_flag=True)
 @click.option("--json-output-path", type=click.Path(resolve_path=True))
 @click.option("--junit-output-path", type=click.Path(resolve_path=True))
-@click.option("--verbose", "-v", is_flag=True)
+@click.option(
+    "--verbose",
+    "-v",
+    count=True,
+    help="Increase verbosity level, maximum is 3 levels (-vvv), see docs for details",
+)
 @click.pass_context
 def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
     ctx,
@@ -121,7 +126,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
         test_names = sorted(set(s.test_name for s in test_suites))
 
         if not verbose:
-            click.echo("Verbose mode can be enabled via `-v, --verbose` option")
+            click.echo("Verbosity level can be increased via `-v, --verbose` option")
         click.secho("Collected %d tests" % len(test_names), bold=True, nl=not verbose)
         if verbose:
             click.echo(" (%s)" % ", ".join(test_names))
@@ -134,7 +139,10 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
                 test_suite,
                 project_config,
                 TestRunnerOptions(
-                    verbose=verbose,
+                    verbose=verbose
+                    or project_config.get(
+                        f"env:{test_suite.env_name}", "test_verbosity_level"
+                    ),
                     without_building=without_building,
                     without_uploading=without_uploading,
                     without_testing=without_testing,
