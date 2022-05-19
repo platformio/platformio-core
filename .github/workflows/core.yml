@@ -15,7 +15,9 @@ jobs:
           - os: windows-latest
             python-version: "3.10"
 
+    environment: private
     runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -37,7 +39,6 @@ jobs:
 
       - name: Integration Tests
         env:
-          TOX_TESTENV_PASSENV: ${{ secrets.TOX_TESTENV_PASSENV }}
           TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
           TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
           TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
