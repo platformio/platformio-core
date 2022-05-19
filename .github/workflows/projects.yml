@@ -34,6 +34,9 @@ jobs:
             config_dir: "OpenMQTTGateway"
             env_name: "esp32-m5atom"
         os: [ubuntu-latest, windows-latest, macos-latest]
+        exclude:
+        - os: windows-latest
+          project: {"esphome": "", "repository": "esphome/esphome", "folder": "esphome", "config_dir": "esphome", "env_name": "esp32-arduino"}
 
     runs-on: ${{ matrix.os }}
     steps:
