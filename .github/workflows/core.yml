@@ -37,6 +37,7 @@ jobs:
 
       - name: Integration Tests
         env:
+          TOX_TESTENV_PASSENV: ${{ secrets.TOX_TESTENV_PASSENV }}
           TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
           TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
           TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
