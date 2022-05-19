@@ -143,6 +143,7 @@ def ProcessProgramDeps(env):
 
 def ProcessProjectDeps(env):
     project_lib_builder = env.ConfigureProjectLibBuilder()
+    projenv = project_lib_builder.env
 
     # prepend project libs to the beginning of list
     env.Prepend(LIBS=project_lib_builder.build())
@@ -154,13 +155,6 @@ def ProcessProjectDeps(env):
             if project_lib_builder.env.get(key)
         }
     )
-
-    projenv = env.Clone()
-
-    # CPPPATH from dependencies
-    projenv.PrependUnique(CPPPATH=project_lib_builder.env.get("CPPPATH"))
-    # extra build flags from `platformio.ini`
-    projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
     if "test" in env.GetBuildType():
         projenv.BuildSources(

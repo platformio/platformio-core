@@ -1027,14 +1027,15 @@ def IsCompatibleLibBuilder(env, lb, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)))
     return True
 
 
-def GetLibBuilders(env):  # pylint: disable=too-many-branches
-    if DefaultEnvironment().get("__PIO_LIB_BUILDERS", None) is not None:
+def GetLibBuilders(_):  # pylint: disable=too-many-branches
+    env = DefaultEnvironment()
+    if env.get("__PIO_LIB_BUILDERS", None) is not None:
         return sorted(
-            DefaultEnvironment()["__PIO_LIB_BUILDERS"],
+            env["__PIO_LIB_BUILDERS"],
             key=lambda lb: 0 if lb.is_dependent else 1,
         )
 
-    DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=[])
+    env.Replace(__PIO_LIB_BUILDERS=[])
 
     verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
     found_incompat = False
@@ -1060,13 +1061,13 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
                     )
                 continue
             if env.IsCompatibleLibBuilder(lb):
-                DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
+                env.Append(__PIO_LIB_BUILDERS=[lb])
             else:
                 found_incompat = True
 
     for lb in env.get("EXTRA_LIB_BUILDERS", []):
         if env.IsCompatibleLibBuilder(lb):
-            DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
+            env.Append(__PIO_LIB_BUILDERS=[lb])
         else:
             found_incompat = True
 
@@ -1077,7 +1078,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             "ldf-compat-mode\n"
         )
 
-    return DefaultEnvironment()["__PIO_LIB_BUILDERS"]
+    return env["__PIO_LIB_BUILDERS"]
 
 
 def ConfigureProjectLibBuilder(env):
@@ -1126,7 +1127,9 @@ def ConfigureProjectLibBuilder(env):
             if lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
+    print(1, env.get("CPPDEFINES"))
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
+    print(2, env.get("CPPDEFINES"))
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
     click.echo("LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf")
@@ -1137,6 +1140,7 @@ def ConfigureProjectLibBuilder(env):
 
     project.install_dependencies()
 
+    print(3, env.get("CPPDEFINES"))
     lib_builders = env.GetLibBuilders()
     click.echo("Found %d compatible libraries" % len(lib_builders))
 

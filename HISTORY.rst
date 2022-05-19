@@ -12,6 +12,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.0.2 (2022-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ were applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
+
 6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
 
