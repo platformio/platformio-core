@@ -15,7 +15,6 @@ jobs:
           - os: windows-latest
             python-version: "3.10"
 
-    environment: private
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -38,10 +37,6 @@ jobs:
           tox -e lint
 
       - name: Integration Tests
-        env:
-          TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
-          TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
-          TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
         run: |
           tox -e testcore
 

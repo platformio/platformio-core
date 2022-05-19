@@ -1,0 +1,52 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - "releases/**"
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+
+      - name: Deployment Tests
+        env:
+          TEST_EMAIL_LOGIN: ${{ secrets.TEST_EMAIL_LOGIN }}
+          TEST_EMAIL_PASSWORD: ${{ secrets.TEST_EMAIL_PASSWORD }}
+          TEST_EMAIL_IMAP_SERVER: ${{ secrets.TEST_EMAIL_IMAP_SERVER }}
+        run: |
+          tox -e testcore
+
+      - name: Publish package to PyPI
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: failure()
+        with:
+          type: ${{ job.status }}
+          job_name: '*Core*'
+          commit: true
+          url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
+          token: ${{ secrets.SLACK_GITHUB_TOKEN }}
