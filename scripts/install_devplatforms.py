@@ -45,8 +45,6 @@ def main(desktop, names, ownernames):
         ]
         if any(skip):
             continue
-        print(platform['name'])
-        continue
         subprocess.check_call(
             [
                 "pio",
