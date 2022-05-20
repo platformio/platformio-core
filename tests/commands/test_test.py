@@ -94,7 +94,6 @@ def test_group_and_custom_runner(clirunner, validate_cliresult, tmp_path: Path):
 [env:native]
 platform = native
 test_framework = custom
-test_verbosity_level = 1
 """
     )
     test_dir = project_dir / "test"

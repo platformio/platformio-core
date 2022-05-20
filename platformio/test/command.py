@@ -126,7 +126,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
         test_names = sorted(set(s.test_name for s in test_suites))
 
         if not verbose:
-            click.echo("Verbosity level can be increased via `-v, --verbose` option")
+            click.echo("Verbosity level can be increased via `-v, -vv, or -vvv` option")
         click.secho("Collected %d tests" % len(test_names), bold=True, nl=not verbose)
         if verbose:
             click.echo(" (%s)" % ", ".join(test_names))
@@ -139,10 +139,7 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
                 test_suite,
                 project_config,
                 TestRunnerOptions(
-                    verbose=verbose
-                    or project_config.get(
-                        f"env:{test_suite.env_name}", "test_verbosity_level"
-                    ),
+                    verbose=verbose,
                     without_building=without_building,
                     without_uploading=without_uploading,
                     without_testing=without_testing,
