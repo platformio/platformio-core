@@ -114,7 +114,15 @@ def ConfigureDebugTarget(env):
     ]
 
     if optimization_flags:
-        env.AppendUnique(ASFLAGS=optimization_flags, LINKFLAGS=optimization_flags)
+        env.AppendUnique(
+            ASFLAGS=[
+                # skip -O flags for assembler
+                f
+                for f in optimization_flags
+                if f.startswith("-g")
+            ],
+            LINKFLAGS=optimization_flags,
+        )
 
 
 def GetExtraScripts(env, scope):

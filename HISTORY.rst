@@ -18,6 +18,7 @@ PlatformIO Core 6
 
 * Control |UNITTESTING| verbosity with a new multilevel `pio test -v <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-v>`__ command option (`issue #4276 <https://github.com/platformio/platformio-core/issues/4276>`_)
 * Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ option was applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
+* Fixed an issue with debugging assembly files without preprocessor (".s")
 
 6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
