@@ -135,7 +135,7 @@ class RemoteAgentService(RemoteClientBase):
     def _process_cmd_test(self, options):
         return self._process_cmd_run_or_test("test", options)
 
-    def _process_cmd_run_or_test(  # pylint: disable=too-many-locals,too-many-branches
+    def _process_cmd_run_or_test(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         self, command, options
     ):
         assert options and "project_id" in options
@@ -172,6 +172,8 @@ class RemoteAgentService(RemoteClientBase):
             cmd_args.extend(["-e", env])
         for target in options.get("target", []):
             cmd_args.extend(["-t", target])
+        for filter_ in options.get("filter", []):
+            cmd_args.extend(["-f", filter_])
         for ignore in options.get("ignore", []):
             cmd_args.extend(["-i", ignore])
         if options.get("upload_port", False):
