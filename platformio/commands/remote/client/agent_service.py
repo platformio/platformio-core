@@ -172,8 +172,8 @@ class RemoteAgentService(RemoteClientBase):
             cmd_args.extend(["-e", env])
         for target in options.get("target", []):
             cmd_args.extend(["-t", target])
-        for _filter in options.get("filter", []):
-            cmd_args.extend(["-f", _filter])
+        for filter_ in options.get("filter", []):
+            cmd_args.extend(["-f", filter_])
         for ignore in options.get("ignore", []):
             cmd_args.extend(["-i", ignore])
         if options.get("upload_port", False):
