@@ -18,6 +18,7 @@ PlatformIO Core 6
 
 * Control |UNITTESTING| verbosity with a new multilevel `pio test -v <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-v>`__ command option (`issue #4276 <https://github.com/platformio/platformio-core/issues/4276>`_)
 * Follow symbolic links during searching for the unit test suites (`issue #4288 <https://github.com/platformio/platformio-core/issues/4288>`_)
+* Show a warning when testing an empty project without a test suite (`issue #4278 <https://github.com/platformio/platformio-core/issues/4278>`_)
 * Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ option was applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
 * Fixed an issue with debugging assembly files without preprocessor (".s")
 

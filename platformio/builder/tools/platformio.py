@@ -165,11 +165,17 @@ def ProcessProjectDeps(env):
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
 
-    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
-        sys.stderr.write(
-            "Error: Nothing to build. Please put your source code files "
-            "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
-        )
+    if not env.get("PIOBUILDFILES"):
+        if not COMMAND_LINE_TARGETS:
+            sys.stderr.write(
+                "Error: Nothing to build. Please put your source code files "
+                "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
+            )
+        elif "test" in env.GetBuildType():
+            sys.stderr.write(
+                "Error: Nothing to build. Please put your test suites "
+                "to the '%s' folder\n" % env.subst("$PROJECT_TEST_DIR")
+            )
         env.Exit(1)
 
     Export("projenv")
