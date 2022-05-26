@@ -24,7 +24,7 @@ def list_test_names(project_config):
     if not os.path.isdir(test_dir):
         raise TestDirNotExistsError(test_dir)
     names = []
-    for root, _, __ in os.walk(test_dir):
+    for root, _, __ in os.walk(test_dir, followlinks=True):
         if not os.path.basename(root).startswith("test_"):
             continue
         names.append(os.path.relpath(root, test_dir).replace("\\", "/"))
