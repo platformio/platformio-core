@@ -126,7 +126,7 @@ def load_build_metadata(project_dir, env_or_envs, cache=False):
         env_names = [env_names]
 
     with fs.cd(project_dir):
-        result = _load_cached_project_ide_data(project_dir, env_names) if cache else {}
+        result = _get_cached_build_metadata(project_dir, env_names) if cache else {}
         missed_env_names = set(env_names) - set(result.keys())
         if missed_env_names:
             result.update(_load_build_metadata(project_dir, missed_env_names))
@@ -154,10 +154,10 @@ def _load_build_metadata(project_dir, env_names):
         raise result.exception
     if '"includes":' not in result.output:
         raise exception.PlatformioException(result.output)
-    return _load_cached_project_ide_data(project_dir, env_names)
+    return _get_cached_build_metadata(project_dir, env_names)
 
 
-def _load_cached_project_ide_data(project_dir, env_names):
+def _get_cached_build_metadata(project_dir, env_names):
     build_dir = ProjectConfig.get_instance(
         os.path.join(project_dir, "platformio.ini")
     ).get("platformio", "build_dir")

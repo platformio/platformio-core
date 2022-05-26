@@ -171,12 +171,13 @@ def ProcessProjectDeps(env):
                 "Error: Nothing to build. Please put your source code files "
                 "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
             )
-        elif "test" in env.GetBuildType():
+            env.Exit(1)
+        if "test" in env.GetBuildType():
             sys.stderr.write(
                 "Error: Nothing to build. Please put your test suites "
                 "to the '%s' folder\n" % env.subst("$PROJECT_TEST_DIR")
             )
-        env.Exit(1)
+            env.Exit(1)
 
     Export("projenv")
 
