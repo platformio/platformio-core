@@ -111,7 +111,7 @@ class LibBuilderFactory(object):
         return []
 
 
-class LibBuilderBase(object):
+class LibBuilderBase:
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
@@ -514,7 +514,7 @@ class ArduinoLibBuilder(LibBuilderBase):
         return os.path.join(self.path, "include")
 
     def get_include_dirs(self):
-        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs = super().get_include_dirs()
         if os.path.isdir(os.path.join(self.path, "src")):
             return include_dirs
         if os.path.isdir(os.path.join(self.path, "utility")):
@@ -612,7 +612,7 @@ class MbedLibBuilder(LibBuilderBase):
         return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     def get_include_dirs(self):
-        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs = super().get_include_dirs()
         if self.path not in include_dirs:
             include_dirs.append(self.path)
 
@@ -833,7 +833,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return util.items_in_list(frameworks, self._manifest.get("frameworks") or ["*"])
 
     def get_include_dirs(self):
-        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs = super().get_include_dirs()
 
         # backwards compatibility with PlatformIO 2.0
         if (
@@ -872,14 +872,14 @@ class ProjectAsLibBuilder(LibBuilderBase):
         project_include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
         if os.path.isdir(project_include_dir):
             include_dirs.append(project_include_dir)
-        for include_dir in LibBuilderBase.get_include_dirs(self):
+        for include_dir in super().get_include_dirs():
             if include_dir not in include_dirs:
                 include_dirs.append(include_dir)
         return include_dirs
 
     def get_search_files(self):
         # project files
-        items = LibBuilderBase.get_search_files(self)
+        items = super().get_search_files()
         # test files
         if "test" in self.env.GetBuildType():
             items.extend(
@@ -994,7 +994,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self.is_built = True  # do not build Project now
-        result = LibBuilderBase.build(self)
+        result = super().build()
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         return result
 

@@ -168,7 +168,7 @@ def ProcessProjectDeps(env):
     if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
+            "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
         )
         env.Exit(1)
 
@@ -321,23 +321,16 @@ def BuildFrameworks(env, frameworks):
         )
         env.Exit(1)
 
-    board_frameworks = env.BoardConfig().get("frameworks", [])
-    if frameworks == ["platformio"]:
-        if board_frameworks:
-            frameworks.insert(0, board_frameworks[0])
-        else:
-            sys.stderr.write("Error: Please specify `board` in `platformio.ini`\n")
-            env.Exit(1)
-
-    for f in frameworks:
-        if f == "arduino":
-            # Arduino IDE appends .o the end of filename
+    supported_frameworks = env.BoardConfig().get("frameworks", [])
+    for name in frameworks:
+        if name == "arduino":
+            # Arduino IDE appends .o to the end of filename
             Builder.match_splitext = scons_patched_match_splitext
             if "nobuild" not in COMMAND_LINE_TARGETS:
                 env.ConvertInoToCpp()
 
-        if f in board_frameworks:
-            SConscript(env.GetFrameworkScript(f), exports="env")
+        if name in supported_frameworks:
+            SConscript(env.GetFrameworkScript(name), exports="env")
         else:
             sys.stderr.write("Error: This board doesn't support %s framework!\n" % f)
             env.Exit(1)
