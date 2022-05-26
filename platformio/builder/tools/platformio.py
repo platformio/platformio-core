@@ -332,7 +332,7 @@ def BuildFrameworks(env, frameworks):
         if name in supported_frameworks:
             SConscript(env.GetFrameworkScript(name), exports="env")
         else:
-            sys.stderr.write("Error: This board doesn't support %s framework!\n" % f)
+            sys.stderr.write("Error: This board doesn't support %s framework!\n" % name)
             env.Exit(1)
 
 
