@@ -453,11 +453,17 @@ class LibBuilderBase:
 
     def build(self):
         libs = []
+        shared_scopes = ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS")
         for lb in self.depbuilders:
             libs.extend(lb.build())
             # copy shared information to self env
-            for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                self.env.PrependUnique(**{key: lb.env.get(key)})
+            self.env.PrependUnique(
+                **{
+                    scope: lb.env.get(scope)
+                    for scope in shared_scopes
+                    if lb.env.get(scope)
+                }
+            )
 
         for lb in self._circular_deps:
             self.env.PrependUnique(CPPPATH=lb.get_include_dirs())
@@ -472,8 +478,13 @@ class LibBuilderBase:
             for lb in self.env.GetLibBuilders():
                 if self == lb or not lb.is_built:
                     continue
-                for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                    self.env.PrependUnique(**{key: lb.env.get(key)})
+                self.env.PrependUnique(
+                    **{
+                        scope: lb.env.get(scope)
+                        for scope in shared_scopes
+                        if lb.env.get(scope)
+                    }
+                )
 
         do_not_archive = not self.lib_archive
         if not do_not_archive:
