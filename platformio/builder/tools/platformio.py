@@ -157,27 +157,28 @@ def ProcessProjectDeps(env):
     )
 
     if "test" in env.GetBuildType():
+        build_files_before_nums = len(env.get("PIOBUILDFILES", []))
         projenv.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
-    if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
-        projenv.BuildSources(
-            "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
-        )
-
-    if not env.get("PIOBUILDFILES"):
-        if not COMMAND_LINE_TARGETS:
-            sys.stderr.write(
-                "Error: Nothing to build. Please put your source code files "
-                "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
-            )
-            env.Exit(1)
-        if "test" in env.GetBuildType():
+        if len(env.get("PIOBUILDFILES", [])) - build_files_before_nums < 1:
             sys.stderr.write(
                 "Error: Nothing to build. Please put your test suites "
                 "to the '%s' folder\n" % env.subst("$PROJECT_TEST_DIR")
             )
             env.Exit(1)
+
+    if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
+        projenv.BuildSources(
+            "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
+        )
+
+    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
+        sys.stderr.write(
+            "Error: Nothing to build. Please put your source code files "
+            "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
+        )
+        env.Exit(1)
 
     Export("projenv")
 
