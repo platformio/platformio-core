@@ -31,8 +31,8 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
-from platformio.clients.http import HTTPClientError, InternetIsOffline
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
+from platformio.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,

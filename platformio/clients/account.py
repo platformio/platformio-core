@@ -16,8 +16,8 @@ import os
 import time
 
 from platformio import __accounts_api__, app
-from platformio.clients.http import HTTPClient, HTTPClientError
 from platformio.exception import PlatformioException
+from platformio.http import HTTPClient, HTTPClientError
 
 
 class AccountError(PlatformioException):

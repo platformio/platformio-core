@@ -20,8 +20,8 @@ import click
 
 from platformio import __registry_mirror_hosts__
 from platformio.cache import ContentCache
-from platformio.clients.http import HTTPClient
 from platformio.clients.registry import RegistryClient
+from platformio.http import HTTPClient
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageSpec
 from platformio.package.version import cast_version_to_semver

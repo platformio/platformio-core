@@ -20,7 +20,7 @@ import time
 import pytest
 from click.testing import CliRunner
 
-from platformio.clients import http
+from platformio import http
 
 
 def pytest_configure(config):

@@ -24,9 +24,9 @@ import click
 
 from platformio import __default_requests_timeout__, fs
 from platformio.cache import ContentCache
-from platformio.clients.http import ensure_internet_on
 from platformio.commands.home import helpers
 from platformio.device.list import list_logical_devices
+from platformio.http import ensure_internet_on
 
 
 class OSRPC:

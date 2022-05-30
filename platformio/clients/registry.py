@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments
+
 from platformio import __registry_mirror_hosts__, fs
 from platformio.clients.account import AccountClient, AccountError
-from platformio.clients.http import HTTPClient, HTTPClientError
-
-# pylint: disable=too-many-arguments
+from platformio.http import HTTPClient, HTTPClientError
 
 
 class RegistryClient(HTTPClient):
