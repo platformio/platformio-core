@@ -21,8 +21,8 @@ import pytest
 import semantic_version
 
 from platformio.commands.lib.command import cli as cmd_lib
+from platformio.package.client import RegistryClient
 from platformio.package.meta import PackageType
-from platformio.package.registry import RegistryClient
 from platformio.package.vcsclient import VCSClientFactory
 from platformio.project.config import ProjectConfig
 

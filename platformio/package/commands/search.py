@@ -17,7 +17,7 @@ import math
 import click
 
 from platformio import util
-from platformio.package.registry import RegistryClient
+from platformio.package.client import RegistryClient
 
 
 @click.command("search", short_help="Search for packages")
