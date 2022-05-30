@@ -115,7 +115,7 @@ class HTTPClient(object):
         )
         if with_authorization and "Authorization" not in headers:
             # pylint: disable=import-outside-toplevel
-            from platformio.clients.account import AccountClient
+            from platformio.account.client import AccountClient
 
             headers["Authorization"] = (
                 "Bearer %s" % AccountClient().fetch_authentication_token()

@@ -19,8 +19,8 @@ import json
 import click
 from tabulate import tabulate
 
-from platformio.clients.account import AccountClient
-from platformio.commands.account import validate_email, validate_username
+from platformio.account.client import AccountClient
+from platformio.account.helpers import validate_email, validate_username
 
 
 @click.group("org", short_help="Manage organizations")

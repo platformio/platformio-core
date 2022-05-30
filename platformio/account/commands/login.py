@@ -12,18 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ajsonrpc.core import JSONRPC20DispatchException
+import click
 
 from platformio.account.client import AccountClient
 
 
-class AccountRPC:
-    @staticmethod
-    def call_client(method, *args, **kwargs):
-        try:
-            client = AccountClient()
-            return getattr(client, method)(*args, **kwargs)
-        except Exception as e:  # pylint: disable=bare-except
-            raise JSONRPC20DispatchException(
-                code=4003, message="PIO Account Call Error", data=str(e)
-            )
+@click.command("login", short_help="Log in to PlatformIO Account")
+@click.option("-u", "--username", prompt="Username or email")
+@click.option("-p", "--password", prompt=True, hide_input=True)
+def account_login_cmd(username, password):
+    client = AccountClient()
+    client.login(username, password)
+    click.secho("Successfully logged in!", fg="green")

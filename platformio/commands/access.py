@@ -20,7 +20,7 @@ import re
 import click
 from tabulate import tabulate
 
-from platformio.commands.account import validate_username
+from platformio.account.helpers import validate_username
 from platformio.commands.team import validate_orgname_teamname
 from platformio.package.registry import RegistryClient
 

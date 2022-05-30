@@ -14,7 +14,7 @@
 
 import click
 
-from platformio.clients.account import AccountClient
+from platformio.account.client import AccountClient
 from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.registry import RegistryClient
 

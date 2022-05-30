@@ -15,7 +15,7 @@
 # pylint: disable=too-many-arguments
 
 from platformio import __registry_mirror_hosts__, fs
-from platformio.clients.account import AccountClient, AccountError
+from platformio.account.client import AccountClient, AccountError
 from platformio.http import HTTPClient, HTTPClientError
 
 

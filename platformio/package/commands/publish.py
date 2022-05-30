@@ -21,7 +21,7 @@ import click
 from tabulate import tabulate
 
 from platformio import fs
-from platformio.clients.account import AccountClient
+from platformio.account.client import AccountClient
 from platformio.exception import UserSideException
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
