@@ -15,8 +15,8 @@
 import click
 
 from platformio.clients.account import AccountClient
-from platformio.clients.registry import RegistryClient
 from platformio.package.meta import PackageSpec, PackageType
+from platformio.package.registry import RegistryClient
 
 
 @click.command("unpublish", short_help="Remove a pushed package from the registry")
