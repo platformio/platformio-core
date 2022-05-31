@@ -50,7 +50,6 @@ def get_project_all_lib_dirs():
     result = [
         config.get("platformio", "globallib_dir"),
         config.get("platformio", "lib_dir"),
-        libdeps_dir,
     ]
     if not os.path.isdir(libdeps_dir):
         return result
