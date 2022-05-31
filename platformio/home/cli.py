@@ -16,8 +16,8 @@ import mimetypes
 
 import click
 
-from platformio.commands.home.helpers import is_port_used
-from platformio.commands.home.run import run_server
+from platformio.home.helpers import is_port_used
+from platformio.home.run import run_server
 
 
 @click.command("home", short_help="GUI to manage PlatformIO")

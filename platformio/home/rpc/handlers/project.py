@@ -21,8 +21,8 @@ import time
 from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio import exception, fs
-from platformio.commands.home.rpc.handlers.app import AppRPC
-from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
+from platformio.home.rpc.handlers.app import AppRPC
+from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError

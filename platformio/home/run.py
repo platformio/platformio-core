@@ -24,16 +24,16 @@ from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 from starlette.status import HTTP_403_FORBIDDEN
 
-from platformio.commands.home.rpc.handlers.account import AccountRPC
-from platformio.commands.home.rpc.handlers.app import AppRPC
-from platformio.commands.home.rpc.handlers.ide import IDERPC
-from platformio.commands.home.rpc.handlers.misc import MiscRPC
-from platformio.commands.home.rpc.handlers.os import OSRPC
-from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.commands.home.rpc.handlers.project import ProjectRPC
-from platformio.commands.home.rpc.server import WebSocketJSONRPCServerFactory
 from platformio.compat import aio_get_running_loop
 from platformio.exception import PlatformioException
+from platformio.home.rpc.handlers.account import AccountRPC
+from platformio.home.rpc.handlers.app import AppRPC
+from platformio.home.rpc.handlers.ide import IDERPC
+from platformio.home.rpc.handlers.misc import MiscRPC
+from platformio.home.rpc.handlers.os import OSRPC
+from platformio.home.rpc.handlers.piocore import PIOCoreRPC
+from platformio.home.rpc.handlers.project import ProjectRPC
+from platformio.home.rpc.server import WebSocketJSONRPCServerFactory
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import force_exit
 
