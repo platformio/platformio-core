@@ -174,7 +174,7 @@ class TestRunnerBase:
 
     def run_project_targets(self, targets):
         # pylint: disable=import-outside-toplevel
-        from platformio.commands.run.command import cli as run_cmd
+        from platformio.run.cli import cli as run_cmd
 
         assert self.cmd_ctx
         return self.cmd_ctx.invoke(

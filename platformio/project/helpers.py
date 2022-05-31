@@ -142,7 +142,7 @@ load_project_ide_data = load_build_metadata
 
 def _load_build_metadata(project_dir, env_names):
     # pylint: disable=import-outside-toplevel
-    from platformio.commands.run.command import cli as cmd_run
+    from platformio.run.cli import cli as cmd_run
 
     args = ["--project-dir", project_dir, "--target", "_idedata"]
     for name in env_names:

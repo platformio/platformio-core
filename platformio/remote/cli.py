@@ -24,7 +24,6 @@ from time import sleep
 import click
 
 from platformio import fs, proc
-from platformio.commands.run.command import cli as cmd_run
 from platformio.device.commands.monitor import (
     apply_project_monitor_options,
     device_monitor_cmd,
@@ -34,6 +33,7 @@ from platformio.device.commands.monitor import (
 from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.options import ProjectOptions
+from platformio.run.cli import cli as cmd_run
 from platformio.test.cli import test_cmd
 
 

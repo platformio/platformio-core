@@ -14,7 +14,7 @@
 
 from pathlib import Path
 
-from platformio.commands.run.command import cli as cmd_run
+from platformio.run.cli import cli as cmd_run
 
 
 def test_build_flags(clirunner, validate_cliresult, tmpdir):

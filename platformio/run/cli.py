@@ -22,11 +22,11 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
-from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
-from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.device.commands.monitor import device_monitor_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
+from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps
+from platformio.run.processor import EnvironmentProcessor
 from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
