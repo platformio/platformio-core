@@ -18,13 +18,13 @@ from twisted.logger import LogLevel  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
 from platformio import proc
-from platformio.commands.remote.ac.process import ProcessAsyncCmd
-from platformio.commands.remote.ac.psync import ProjectSyncAsyncCmd
-from platformio.commands.remote.ac.serial import SerialPortAsyncCmd
-from platformio.commands.remote.client.base import RemoteClientBase
 from platformio.device.list import list_serial_ports
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
+from platformio.remote.ac.process import ProcessAsyncCmd
+from platformio.remote.ac.psync import ProjectSyncAsyncCmd
+from platformio.remote.ac.serial import SerialPortAsyncCmd
+from platformio.remote.client.base import RemoteClientBase
 
 
 class RemoteAgentService(RemoteClientBase):

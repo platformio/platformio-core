@@ -60,14 +60,14 @@ def remote_agent():
     type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
 )
 def remote_agent_start(name, share, working_dir):
-    from platformio.commands.remote.client.agent_service import RemoteAgentService
+    from platformio.remote.client.agent_service import RemoteAgentService
 
     RemoteAgentService(name, share, working_dir).connect()
 
 
 @remote_agent.command("list", short_help="List active agents")
 def remote_agent_list():
-    from platformio.commands.remote.client.agent_list import AgentListClient
+    from platformio.remote.client.agent_list import AgentListClient
 
     AgentListClient().connect()
 
@@ -84,7 +84,7 @@ def remote_agent_list():
 )
 @click.pass_obj
 def remote_update(agents, only_check, dry_run):
-    from platformio.commands.remote.client.update_core import UpdateCoreClient
+    from platformio.remote.client.update_core import UpdateCoreClient
 
     UpdateCoreClient("update", agents, dict(only_check=only_check or dry_run)).connect()
 
@@ -120,7 +120,7 @@ def remote_run(
     verbose,
 ):
 
-    from platformio.commands.remote.client.run_or_test import RunOrTestClient
+    from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(
         "run",
@@ -213,7 +213,7 @@ def remote_test(  # pylint: disable=redefined-builtin
     verbose,
 ):
 
-    from platformio.commands.remote.client.run_or_test import RunOrTestClient
+    from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(
         "test",
@@ -263,7 +263,7 @@ def remote_device():
 @click.option("--json-output", is_flag=True)
 @click.pass_obj
 def device_list(agents, json_output):
-    from platformio.commands.remote.client.device_list import DeviceListClient
+    from platformio.remote.client.device_list import DeviceListClient
 
     DeviceListClient(agents, json_output).connect()
 
@@ -346,7 +346,7 @@ def device_list(agents, json_output):
 @click.pass_obj
 @click.pass_context
 def device_monitor(ctx, agents, **kwargs):
-    from platformio.commands.remote.client.device_monitor import DeviceMonitorClient
+    from platformio.remote.client.device_monitor import DeviceMonitorClient
 
     if kwargs["sock"]:
         return DeviceMonitorClient(agents, **kwargs).connect()

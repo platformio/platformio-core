@@ -17,8 +17,8 @@ import os
 import zlib
 from io import BytesIO
 
-from platformio.commands.remote.ac.base import AsyncCommandBase
-from platformio.commands.remote.projectsync import PROJECT_SYNC_STAGE, ProjectSync
+from platformio.remote.ac.base import AsyncCommandBase
+from platformio.remote.projectsync import PROJECT_SYNC_STAGE, ProjectSync
 
 
 class ProjectSyncAsyncCmd(AsyncCommandBase):

@@ -26,8 +26,8 @@ from twisted.spread import pb  # pylint: disable=import-error
 from zope.interface import provider  # pylint: disable=import-error
 
 from platformio import __pioremote_endpoint__, __version__, app, exception, maintenance
-from platformio.commands.remote.factory.client import RemoteClientFactory
-from platformio.commands.remote.factory.ssl import SSLContextFactory
+from platformio.remote.factory.client import RemoteClientFactory
+from platformio.remote.factory.ssl import SSLContextFactory
 
 
 class RemoteClientBase(  # pylint: disable=too-many-instance-attributes

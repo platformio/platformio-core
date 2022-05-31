@@ -12,27 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import datetime
-
-import click
-
-from platformio.commands.remote.client.base import RemoteClientBase
+from platformio.remote.client.async_base import AsyncClientBase
 
 
-class AgentListClient(RemoteClientBase):
+class UpdateCoreClient(AsyncClientBase):
     def agent_pool_ready(self):
-        d = self.agentpool.callRemote("list", True)
-        d.addCallback(self._cbResult)
+        d = self.agentpool.callRemote("cmd", self.agents, self.command, self.options)
+        d.addCallback(self.cb_async_result)
         d.addErrback(self.cb_global_error)
-
-    def _cbResult(self, result):
-        for item in result:
-            click.secho(item["name"], fg="cyan")
-            click.echo("-" * len(item["name"]))
-            click.echo("ID: %s" % item["id"])
-            click.echo(
-                "Started: %s"
-                % datetime.fromtimestamp(item["started"]).strftime("%Y-%m-%d %H:%M:%S")
-            )
-            click.echo("")
-        self.disconnect()
