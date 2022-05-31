@@ -264,7 +264,8 @@ def _uninstall_project_unused_libdeps(project_env, options):
                 lm.uninstall(spec)
             except UnknownPackageError:
                 pass
-    storage_dir.mkdir(parents=True, exist_ok=True)
+    if not storage_dir.is_dir():
+        storage_dir.mkdir(parents=True)
     integrity_dat.write_text("\n".join(lib_deps), encoding="utf-8")
 
 

@@ -237,7 +237,8 @@ void unityOutputComplete(void) { unittest_uart_end(); }
 
     def generate_unity_extras(self, dst_dir):
         dst_dir = Path(dst_dir)
-        dst_dir.mkdir(parents=True, exist_ok=True)
+        if not dst_dir.is_dir():
+            dst_dir.mkdir(parents=True)
         unity_h = dst_dir / "unity_config.h"
         if not unity_h.is_file():
             unity_h.write_text(
