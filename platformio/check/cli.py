@@ -26,8 +26,8 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
-from platformio.commands.check.defect import DefectItem
-from platformio.commands.check.tools import CheckToolFactory
+from platformio.check.defect import DefectItem
+from platformio.check.tools import CheckToolFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, get_project_dir
 

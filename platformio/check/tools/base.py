@@ -19,7 +19,7 @@ import tempfile
 import click
 
 from platformio import fs, proc
-from platformio.commands.check.defect import DefectItem
+from platformio.check.defect import DefectItem
 from platformio.package.manager.core import get_core_package_dir
 from platformio.package.meta import PackageSpec
 from platformio.project.helpers import load_build_metadata

@@ -20,8 +20,8 @@ from xml.etree.ElementTree import fromstring
 import click
 
 from platformio import proc
-from platformio.commands.check.defect import DefectItem
-from platformio.commands.check.tools.base import CheckToolBase
+from platformio.check.defect import DefectItem
+from platformio.check.tools.base import CheckToolBase
 from platformio.compat import IS_WINDOWS
 
 

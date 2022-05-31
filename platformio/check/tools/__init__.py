@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from platformio import exception
-from platformio.commands.check.tools.clangtidy import ClangtidyCheckTool
-from platformio.commands.check.tools.cppcheck import CppcheckCheckTool
-from platformio.commands.check.tools.pvsstudio import PvsStudioCheckTool
+from platformio.check.tools.clangtidy import ClangtidyCheckTool
+from platformio.check.tools.cppcheck import CppcheckCheckTool
+from platformio.check.tools.pvsstudio import PvsStudioCheckTool
 
 
 class CheckToolFactory(object):
