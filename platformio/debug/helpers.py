@@ -20,7 +20,7 @@ from fnmatch import fnmatch
 from hashlib import sha1
 from io import BytesIO
 
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.commands.run.command import cli as cmd_run
 from platformio.commands.run.command import print_processing_header
 from platformio.compat import IS_WINDOWS, is_bytes

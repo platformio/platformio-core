@@ -21,7 +21,7 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version

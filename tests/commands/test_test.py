@@ -21,7 +21,7 @@ import pytest
 
 from platformio import proc
 from platformio.fs import load_json
-from platformio.test.command import test_cmd as pio_test_cmd
+from platformio.test.cli import test_cmd as pio_test_cmd
 
 
 def test_calculator_example(tmp_path: Path):

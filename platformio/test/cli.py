@@ -175,6 +175,9 @@ def test_cmd(  # pylint: disable=too-many-arguments,too-many-locals,redefined-bu
         raise exception.ReturnErrorCode(1)
 
 
+cli = test_cmd
+
+
 def print_suite_header(test_suite):
     click.echo(
         "Processing %s in %s environment"

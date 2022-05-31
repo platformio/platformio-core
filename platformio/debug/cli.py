@@ -93,6 +93,9 @@ def debug_cmd(
         )
 
 
+cli = debug_cmd
+
+
 def _debug_in_project_dir(
     ctx,
     project_dir,

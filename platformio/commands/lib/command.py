@@ -24,7 +24,7 @@ import click
 from tabulate import tabulate
 
 from platformio import exception, fs, util
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.commands.lib.helpers import get_builtin_libs, save_project_libdeps
 from platformio.package.exception import NotGlobalLibDir, UnknownPackageError
 from platformio.package.manager.library import LibraryPackageManager
