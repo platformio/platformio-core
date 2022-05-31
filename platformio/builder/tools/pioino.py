@@ -230,6 +230,10 @@ def ConvertInoToCpp(env):
     ino_nodes = env.Glob(os.path.join(src_dir, "*.ino")) + env.Glob(
         os.path.join(src_dir, "*.pde")
     )
+    # append files from any folder in src_dir starting with ino_ too
+    ino_nodes = ino_nodes + env.Glob(os.path.join(src_dir, "ino_*", "*.ino")) + env.Glob(
+        os.path.join(src_dir, "ino_*", "*.pde")
+    )
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
