@@ -23,13 +23,13 @@ from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
 from platformio.cli import PlatformioCLI
 from platformio.commands.platform import platform_update as cmd_platform_update
-from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version
 from platformio.http import HTTPClientError, InternetIsOffline, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.package.version import pepver_to_semver
+from platformio.system.prune import calculate_unnecessary_system_data
 
 
 def on_platformio_start(ctx, force, caller):

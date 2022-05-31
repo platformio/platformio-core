@@ -20,21 +20,21 @@ import click
 from tabulate import tabulate
 
 from platformio import __version__, compat, fs, proc, util
-from platformio.commands.system.completion import (
+from platformio.package.manager.library import LibraryPackageManager
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.package.manager.tool import ToolPackageManager
+from platformio.project.config import ProjectConfig
+from platformio.system.completion import (
     ShellType,
     get_completion_install_path,
     install_completion_code,
     uninstall_completion_code,
 )
-from platformio.commands.system.prune import (
+from platformio.system.prune import (
     prune_cached_data,
     prune_core_packages,
     prune_platform_packages,
 )
-from platformio.package.manager.library import LibraryPackageManager
-from platformio.package.manager.platform import PlatformPackageManager
-from platformio.package.manager.tool import ToolPackageManager
-from platformio.project.config import ProjectConfig
 
 
 @click.group("system", short_help="Miscellaneous system commands")
