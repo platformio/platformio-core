@@ -61,7 +61,7 @@ from platformio.project.options import ProjectOptions
 @click.option("--interface", type=click.Choice(["gdb"]))
 @click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def debug_cmd(
+def cli(
     ctx,
     project_dir,
     project_conf,
@@ -91,9 +91,6 @@ def debug_cmd(
             interface,
             __unprocessed,
         )
-
-
-cli = debug_cmd
 
 
 def _debug_in_project_dir(

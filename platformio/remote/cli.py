@@ -34,7 +34,7 @@ from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.options import ProjectOptions
 from platformio.run.cli import cli as cmd_run
-from platformio.test.cli import test_cmd
+from platformio.test.cli import cli as test_cmd
 
 
 @click.group("remote", short_help="Remote Development")
