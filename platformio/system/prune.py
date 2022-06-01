@@ -66,7 +66,7 @@ def _prune_packages(force, dry_run, silent, handler):
         for pkg in handler(dry_run=True)
     ]
     items = sorted(items, key=itemgetter(1), reverse=True)
-    reclaimed_space = sum([item[1] for item in items])
+    reclaimed_space = sum(item[1] for item in items)
     if items and not silent:
         click.echo(
             tabulate(
