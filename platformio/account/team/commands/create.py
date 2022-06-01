@@ -15,24 +15,25 @@
 import click
 
 from platformio.account.client import AccountClient
-from platformio.account.validate import validate_email, validate_orgname
+from platformio.account.validate import validate_orgname_teamname
 
 
-@click.command("create", short_help="Create a new organization")
+@click.command("create", short_help="Create a new team")
 @click.argument(
-    "orgname",
-    callback=lambda _, __, value: validate_orgname(value),
+    "orgname_teamname",
+    metavar="ORGNAME:TEAMNAME",
+    callback=lambda _, __, value: validate_orgname_teamname(
+        value, teamname_validate=True
+    ),
 )
 @click.option(
-    "--email", callback=lambda _, __, value: validate_email(value) if value else value
+    "--description",
 )
-@click.option(
-    "--displayname",
-)
-def org_create_cmd(orgname, email, displayname):
+def team_create_cmd(orgname_teamname, description):
+    orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
-    client.create_org(orgname, email, displayname)
+    client.create_team(orgname, teamname, description)
     return click.secho(
-        "The organization `%s` has been successfully created." % orgname,
+        "The team %s has been successfully created." % teamname,
         fg="green",
     )

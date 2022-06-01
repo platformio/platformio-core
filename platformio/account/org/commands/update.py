@@ -15,7 +15,7 @@
 import click
 
 from platformio.account.client import AccountClient
-from platformio.account.helpers import validate_email, validate_orgname
+from platformio.account.validate import validate_email, validate_orgname
 
 
 @click.command("update", short_help="Update organization")

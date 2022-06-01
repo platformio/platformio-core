@@ -23,7 +23,7 @@ import requests
 
 from platformio.account.cli import cli as cmd_account
 from platformio.account.org.cli import cli as cmd_org
-from platformio.commands.team import cli as cmd_team
+from platformio.account.team.cli import cli as cmd_team
 
 pytestmark = pytest.mark.skipif(
     not all(

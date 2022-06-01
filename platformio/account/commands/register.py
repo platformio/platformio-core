@@ -15,7 +15,7 @@
 import click
 
 from platformio.account.client import AccountClient
-from platformio.account.helpers import (
+from platformio.account.validate import (
     validate_email,
     validate_password,
     validate_username,

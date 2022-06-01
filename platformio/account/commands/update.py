@@ -15,7 +15,7 @@
 import click
 
 from platformio.account.client import AccountClient, AccountNotAuthorized
-from platformio.account.helpers import validate_email, validate_username
+from platformio.account.validate import validate_email, validate_username
 
 
 @click.command("update", short_help="Update profile information")

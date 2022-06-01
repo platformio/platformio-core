@@ -15,24 +15,26 @@
 import click
 
 from platformio.account.client import AccountClient
-from platformio.account.validate import validate_email, validate_orgname
+from platformio.account.validate import validate_orgname_teamname
 
 
-@click.command("create", short_help="Create a new organization")
+@click.command("destroy", short_help="Destroy a team")
 @click.argument(
-    "orgname",
-    callback=lambda _, __, value: validate_orgname(value),
+    "orgname_teamname",
+    metavar="ORGNAME:TEAMNAME",
+    callback=lambda _, __, value: validate_orgname_teamname(value),
 )
-@click.option(
-    "--email", callback=lambda _, __, value: validate_email(value) if value else value
-)
-@click.option(
-    "--displayname",
-)
-def org_create_cmd(orgname, email, displayname):
+def team_destroy_cmd(orgname_teamname):
+    orgname, teamname = orgname_teamname.split(":", 1)
+    click.confirm(
+        click.style(
+            "Are you sure you want to destroy the %s team?" % teamname, fg="yellow"
+        ),
+        abort=True,
+    )
     client = AccountClient()
-    client.create_org(orgname, email, displayname)
+    client.destroy_team(orgname, teamname)
     return click.secho(
-        "The organization `%s` has been successfully created." % orgname,
+        "The team %s has been successfully destroyed." % teamname,
         fg="green",
     )

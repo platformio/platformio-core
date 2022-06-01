@@ -11,24 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import re
-
-import click
-
-from platformio.account.validate import validate_orgname_teamname, validate_username
-
-
-def validate_urn(value):
-    value = str(value).strip()
-    if not re.match(r"^prn:reg:pkg:(\d+):(\w+)$", value, flags=re.I):
-        raise click.BadParameter("Invalid URN format.")
-    return value
-
-
-def validate_client(value):
-    if ":" in value:
-        validate_orgname_teamname(value)
-    else:
-        validate_username(value)
-    return value
