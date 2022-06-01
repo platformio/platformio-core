@@ -21,15 +21,15 @@ import semantic_version
 
 from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
-from platformio.clients import http
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.commands.platform import platform_update as cmd_platform_update
-from platformio.commands.system.prune import calculate_unnecessary_system_data
 from platformio.commands.upgrade import get_latest_version
+from platformio.http import HTTPClientError, InternetIsOffline, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.package.version import pepver_to_semver
+from platformio.system.prune import calculate_unnecessary_system_data
 
 
 def on_platformio_start(ctx, force, caller):
@@ -51,8 +51,8 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         check_platformio_upgrade()
         check_prune_system()
     except (
-        http.HTTPClientError,
-        http.InternetIsOffline,
+        HTTPClientError,
+        InternetIsOffline,
         exception.GetLatestVersionError,
     ):
         click.secho(
@@ -142,8 +142,8 @@ def after_upgrade(ctx):
         )
         click.secho("Please remove multiple PIO Cores from a system:", fg="yellow")
         click.secho(
-            "https://docs.platformio.org/page/faq.html"
-            "#multiple-platformio-cores-in-a-system",
+            "https://docs.platformio.org/en/latest/core"
+            "/installation/troubleshooting.html",
             fg="cyan",
         )
         click.secho("*" * terminal_width, fg="yellow")
@@ -213,7 +213,7 @@ def check_platformio_upgrade():
     if not last_checked_time:
         return
 
-    http.ensure_internet_on(raise_exception=True)
+    ensure_internet_on(raise_exception=True)
 
     # Update PlatformIO Core packages
     update_core_packages()

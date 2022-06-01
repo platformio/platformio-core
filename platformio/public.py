@@ -19,7 +19,7 @@ from platformio.device.list import list_serial_ports
 from platformio.fs import to_unix_path
 from platformio.platform.base import PlatformBase
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import load_build_metadata
+from platformio.project.helpers import get_project_watch_lib_dirs, load_build_metadata
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
 from platformio.test.runners.doctest import DoctestTestCaseParser

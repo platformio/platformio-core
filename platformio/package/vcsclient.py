@@ -15,7 +15,6 @@
 import os
 import re
 import subprocess
-import sys
 from urllib.parse import urlparse
 
 from platformio import proc
@@ -47,12 +46,12 @@ class VCSClientFactory(object):
         if not type_:
             raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
         try:
-            obj = getattr(sys.modules[__name__], "%sClient" % type_.capitalize())(
+            obj = globals()["%sClient" % type_.capitalize()](
                 src_dir, remote_url, tag, silent
             )
             assert isinstance(obj, VCSClientBase)
             return obj
-        except (AttributeError, AssertionError):
+        except (KeyError, AssertionError):
             raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
 
 

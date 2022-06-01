@@ -20,10 +20,10 @@ import tempfile
 import click
 
 from platformio import app, fs
-from platformio.commands.run.command import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
 from platformio.project.commands.init import project_init_cmd, validate_boards
 from platformio.project.config import ProjectConfig
+from platformio.run.cli import cli as cmd_run
 
 
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument

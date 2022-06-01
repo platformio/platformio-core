@@ -15,7 +15,7 @@
 import os
 
 from platformio import util
-from platformio.clients.http import HTTPClientError, InternetIsOffline
+from platformio.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.manager.core import get_installed_core_packages

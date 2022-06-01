@@ -675,7 +675,8 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="test",
                 name="test_speed",
-                description="A connection speed (baud rate) to communicate with a target device",
+                description="A connection speed (baud rate) to communicate with "
+                "a target device",
                 type=click.INT,
                 default=115200,
             ),

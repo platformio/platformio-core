@@ -20,12 +20,12 @@ from fnmatch import fnmatch
 from hashlib import sha1
 from io import BytesIO
 
-from platformio.commands import PlatformioCLI
-from platformio.commands.run.command import cli as cmd_run
-from platformio.commands.run.command import print_processing_header
+from platformio.cli import PlatformioCLI
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.device.list import list_serial_ports
+from platformio.run.cli import cli as cmd_run
+from platformio.run.cli import print_processing_header
 from platformio.test.helpers import list_test_names
 from platformio.test.result import TestSuite
 from platformio.test.runners.base import TestRunnerOptions

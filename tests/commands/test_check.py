@@ -21,7 +21,7 @@ from os.path import isfile, join
 import pytest
 
 from platformio import fs
-from platformio.commands.check.command import cli as cmd_check
+from platformio.check.cli import cli as cmd_check
 
 DEFAULT_CONFIG = """
 [env:native]

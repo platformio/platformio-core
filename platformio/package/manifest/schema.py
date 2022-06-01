@@ -22,7 +22,7 @@ import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
-from platformio.clients.http import fetch_remote_content
+from platformio.http import fetch_remote_content
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 

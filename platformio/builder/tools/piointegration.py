@@ -19,8 +19,13 @@ import os
 
 import SCons.Defaults  # pylint: disable=import-error
 import SCons.Subst  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio.proc import exec_command, where_is_program
+
+
+def IsIntegrationDump(_):
+    return set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS)
 
 
 def DumpIntegrationIncludes(env):
@@ -60,7 +65,7 @@ def DumpIntegrationIncludes(env):
     return result
 
 
-def _get_gcc_defines(env):
+def get_gcc_defines(env):
     items = []
     try:
         sysenv = os.environ.copy()
@@ -83,7 +88,7 @@ def _get_gcc_defines(env):
     return items
 
 
-def _dump_defines(env):
+def dump_defines(env):
     defines = []
     # global symbols
     for item in SCons.Defaults.processDefines(env.get("CPPDEFINES", [])):
@@ -108,12 +113,12 @@ def _dump_defines(env):
 
     # built-in GCC marcos
     # if env.GetCompilerType() == "gcc":
-    #     defines.extend(_get_gcc_defines(env))
+    #     defines.extend(get_gcc_defines(env))
 
     return defines
 
 
-def _get_svd_path(env):
+def dump_svd_path(env):
     svd_path = env.GetProjectOption("debug_svd_path")
     if svd_path:
         return os.path.abspath(svd_path)
@@ -146,13 +151,13 @@ def DumpIntegrationData(env, globalenv):
     data = {
         "env_name": env["PIOENV"],
         "libsource_dirs": [env.subst(item) for item in env.GetLibSourceDirs()],
-        "defines": _dump_defines(env),
+        "defines": dump_defines(env),
         "includes": env.DumpIntegrationIncludes(),
         "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
         "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path": env.subst("$PROG_PATH"),
-        "svd_path": _get_svd_path(env),
+        "svd_path": dump_svd_path(env),
         "compiler_type": env.GetCompilerType(),
         "targets": globalenv.DumpTargets(),
         "extra": dict(
@@ -162,7 +167,9 @@ def DumpIntegrationData(env, globalenv):
             ]
         ),
     }
-    data["extra"].update(env.get("IDE_EXTRA_DATA", {}))
+    data["extra"].update(
+        env.get("INTEGRATION_EXTRA_DATA", env.get("IDE_EXTRA_DATA", {}))
+    )
 
     env_ = env.Clone()
     # https://github.com/platformio/platformio-atom-ide/issues/34
@@ -191,6 +198,7 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(IsIntegrationDump)
     env.AddMethod(DumpIntegrationIncludes)
     env.AddMethod(DumpIntegrationData)
     return env

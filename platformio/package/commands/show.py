@@ -18,10 +18,10 @@ import click
 from tabulate import tabulate
 
 from platformio import fs, util
-from platformio.clients.registry import RegistryClient
 from platformio.exception import UserSideException
 from platformio.package.manager._registry import PackageManagerRegistryMixin
 from platformio.package.meta import PackageSpec, PackageType
+from platformio.registry.client import RegistryClient
 
 
 @click.command("show", short_help="Show package information")

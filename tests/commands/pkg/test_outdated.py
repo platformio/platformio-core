@@ -51,7 +51,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
     # validate output
     assert "Checking" in result.output
     assert re.search(
-        r"^atmelavr\s+2\.2\.0\s+3\.\d+\.\d+\s+3\.\d+\.\d+\s+Platform\s+devkit",
+        r"^atmelavr\s+2\.2\.0\s+3\.\d+\.\d+\s+[456789]\.\d+\.\d+\s+Platform\s+devkit",
         result.output,
         re.MULTILINE,
     )

@@ -21,7 +21,7 @@ import pytest
 
 from platformio import proc
 from platformio.fs import load_json
-from platformio.test.command import test_cmd as pio_test_cmd
+from platformio.test.cli import cli as pio_test_cmd
 
 
 def test_calculator_example(tmp_path: Path):
@@ -187,6 +187,7 @@ int main() {
         ["-d", str(project_dir), "-e", "native", "--verbose"],
     )
     validate_cliresult(result)
+    assert "1 Tests 0 Failures 0 Ignored" in result.output
     assert "Called from my_extra_fun" in result.output
     assert "CustomTestRunner::TearDown called" in result.output
     assert "Disabled test suite" not in result.output

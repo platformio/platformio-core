@@ -28,7 +28,7 @@ CTX_META_TEST_RUNNING_NAME = __name__ + ".test_running_name"
 class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        verbose=False,
+        verbose=0,
         without_building=False,
         without_uploading=False,
         without_testing=False,
@@ -96,6 +96,8 @@ class TestRunnerBase:
             self.setup()
             for stage in ("building", "uploading", "testing"):
                 getattr(self, f"stage_{stage}")()
+                if self.options.verbose:
+                    click.echo()
         except Exception as exc:  # pylint: disable=broad-except
             click.secho(str(exc), fg="red", err=True)
             self.test_suite.add_case(
@@ -126,7 +128,7 @@ class TestRunnerBase:
         except ReturnErrorCode:
             raise UnitTestSuiteError(
                 "Building stage has failed, see errors above. "
-                "Use `pio test --verbose` option to enable verbose output."
+                "Use `pio test -vvv` option to enable verbose output."
             )
 
     def stage_uploading(self):
@@ -145,7 +147,7 @@ class TestRunnerBase:
         except ReturnErrorCode:
             raise UnitTestSuiteError(
                 "Uploading stage has failed, see errors above. "
-                "Use `pio test --verbose` option to enable verbose output."
+                "Use `pio test -vvv` option to enable verbose output."
             )
 
     def stage_testing(self):
@@ -172,15 +174,15 @@ class TestRunnerBase:
 
     def run_project_targets(self, targets):
         # pylint: disable=import-outside-toplevel
-        from platformio.commands.run.command import cli as run_cmd
+        from platformio.run.cli import cli as run_cmd
 
         assert self.cmd_ctx
         return self.cmd_ctx.invoke(
             run_cmd,
             project_conf=self.project_config.path,
             upload_port=self.options.upload_port,
-            verbose=self.options.verbose,
-            silent=not self.options.verbose,
+            verbose=self.options.verbose > 2,
+            silent=self.options.verbose < 2,
             environment=[self.test_suite.env_name],
             disable_auto_clean="nobuild" in targets,
             target=targets,

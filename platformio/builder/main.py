@@ -225,7 +225,7 @@ if "envdump" in COMMAND_LINE_TARGETS:
     click.echo(env.Dump())
     env.Exit(0)
 
-if set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS):
+if env.IsIntegrationDump():
     projenv = None
     try:
         Import("projenv")

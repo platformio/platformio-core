@@ -19,7 +19,7 @@ from traceback import format_exc
 import click
 
 from platformio import __version__, exception, maintenance
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.compat import IS_CYGWIN, ensure_python3
 
 
@@ -27,7 +27,7 @@ from platformio.compat import IS_CYGWIN, ensure_python3
     cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
 )
 @click.version_option(__version__, prog_name="PlatformIO Core")
-@click.option("--force", "-f", is_flag=True, help="DEPRECATED")
+@click.option("--force", "-f", is_flag=True, help="DEPRECATED", hidden=True)
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
 @click.pass_context
@@ -120,7 +120,7 @@ An unexpected error occurred. Further steps:
   `pip install -U platformio` command
 
 * Try to find answer in FAQ Troubleshooting section
-  https://docs.platformio.org/page/faq.html
+  https://docs.platformio.org/page/faq/index.html
 
 * Report this problem to the developers
   https://github.com/platformio/platformio-core/issues

@@ -21,7 +21,7 @@ import click
 import semantic_version
 
 from platformio import fs, util
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.compat import ci_strings_are_equal
 from platformio.package.exception import ManifestException, MissingPackageManifestError
 from platformio.package.lockfile import LockFile

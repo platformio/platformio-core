@@ -20,8 +20,8 @@ from zipfile import ZipFile
 import click
 
 from platformio import VERSION, __version__, app, exception
-from platformio.clients.http import fetch_remote_content
 from platformio.compat import IS_WINDOWS
+from platformio.http import fetch_remote_content
 from platformio.package.manager.core import update_core_packages
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir

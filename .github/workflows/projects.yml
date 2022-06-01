@@ -1,0 +1,69 @@
+name: Projects
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - marlin:
+            repository: "MarlinFirmware/Marlin"
+            folder: "Marlin"
+            config_dir: "Marlin"
+            env_name: "mega2560"
+          - esphome:
+            repository: "esphome/esphome"
+            folder: "esphome"
+            config_dir: "esphome"
+            env_name: "esp32-arduino"
+          - smartknob:
+            repository: "scottbez1/smartknob"
+            folder: "smartknob"
+            config_dir: "smartknob/firmware"
+            env_name: "view"
+          - espurna:
+            repository: "xoseperez/espurna"
+            folder: "espurna"
+            config_dir: "espurna/code"
+            env_name: "nodemcu-lolin"
+          - OpenMQTTGateway:
+            repository: "1technophile/OpenMQTTGateway"
+            folder: "OpenMQTTGateway"
+            config_dir: "OpenMQTTGateway"
+            env_name: "esp32-m5atom"
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        exclude:
+        - os: windows-latest
+          project: {"esphome": "", "repository": "esphome/esphome", "folder": "esphome", "config_dir": "esphome", "env_name": "esp32-arduino"}
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Install PlatformIO
+        run: pip install -U .
+
+      - name: Check out ${{ matrix.project.repository }}
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+          repository: ${{ matrix.project.repository }}
+          path: ${{ matrix.project.folder }}
+
+      - name: Install ESPHome dependencies
+        # Requires esptool package as it's used in a custom prescript
+        if: ${{ contains(matrix.project.repository, 'esphome') }}
+        run: pip install esptool==3.*
+
+      - name: Compile ${{ matrix.project.repository }}
+        run: pio run -d ${{ matrix.project.config_dir }} -e ${{ matrix.project.env_name }}
+

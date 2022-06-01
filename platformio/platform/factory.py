@@ -14,11 +14,12 @@
 
 import os
 import re
+import sys
 
 from platformio import fs
 from platformio.compat import load_python_module
 from platformio.package.meta import PackageItem
-from platformio.platform.base import PlatformBase
+from platformio.platform import base
 from platformio.platform.exception import UnknownPlatform
 
 
@@ -29,14 +30,16 @@ class PlatformFactory(object):
         return "%sPlatform" % name.lower().capitalize()
 
     @staticmethod
-    def load_module(name, path):
+    def load_platform_module(name, path):
+        # backward compatibiility with the legacy dev-platforms
+        sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)
         except ImportError:
             raise UnknownPlatform(name)
 
     @classmethod
-    def new(cls, pkg_or_spec, autoinstall=False) -> PlatformBase:
+    def new(cls, pkg_or_spec, autoinstall=False) -> base.PlatformBase:
         # pylint: disable=import-outside-toplevel
         from platformio.package.manager.platform import PlatformPackageManager
 
@@ -72,16 +75,16 @@ class PlatformFactory(object):
         platform_cls = None
         if os.path.isfile(os.path.join(platform_dir, "platform.py")):
             platform_cls = getattr(
-                cls.load_module(
+                cls.load_platform_module(
                     platform_name, os.path.join(platform_dir, "platform.py")
                 ),
                 cls.get_clsname(platform_name),
             )
         else:
             platform_cls = type(
-                str(cls.get_clsname(platform_name)), (PlatformBase,), {}
+                str(cls.get_clsname(platform_name)), (base.PlatformBase,), {}
             )
 
         _instance = platform_cls(os.path.join(platform_dir, "platform.json"))
-        assert isinstance(_instance, PlatformBase)
+        assert isinstance(_instance, base.PlatformBase)
         return _instance

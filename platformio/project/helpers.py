@@ -43,21 +43,23 @@ def find_project_dir_above(path):
     return None
 
 
-def get_project_all_lib_dirs():
+def get_project_watch_lib_dirs():
     """Used by platformio-node-helpers.project.observer.fetchLibDirs"""
     config = ProjectConfig.get_instance()
-    libdeps_dir = config.get("platformio", "libdeps_dir")
     result = [
         config.get("platformio", "globallib_dir"),
         config.get("platformio", "lib_dir"),
-        libdeps_dir,
     ]
+    libdeps_dir = config.get("platformio", "libdeps_dir")
     if not os.path.isdir(libdeps_dir):
         return result
     for d in os.listdir(libdeps_dir):
         if os.path.isdir(os.path.join(libdeps_dir, d)):
             result.append(os.path.join(libdeps_dir, d))
     return result
+
+
+get_project_all_lib_dirs = get_project_watch_lib_dirs
 
 
 def get_project_cache_dir():
@@ -126,7 +128,7 @@ def load_build_metadata(project_dir, env_or_envs, cache=False):
         env_names = [env_names]
 
     with fs.cd(project_dir):
-        result = _load_cached_project_ide_data(project_dir, env_names) if cache else {}
+        result = _get_cached_build_metadata(project_dir, env_names) if cache else {}
         missed_env_names = set(env_names) - set(result.keys())
         if missed_env_names:
             result.update(_load_build_metadata(project_dir, missed_env_names))
@@ -142,7 +144,7 @@ load_project_ide_data = load_build_metadata
 
 def _load_build_metadata(project_dir, env_names):
     # pylint: disable=import-outside-toplevel
-    from platformio.commands.run.command import cli as cmd_run
+    from platformio.run.cli import cli as cmd_run
 
     args = ["--project-dir", project_dir, "--target", "_idedata"]
     for name in env_names:
@@ -154,10 +156,10 @@ def _load_build_metadata(project_dir, env_names):
         raise result.exception
     if '"includes":' not in result.output:
         raise exception.PlatformioException(result.output)
-    return _load_cached_project_ide_data(project_dir, env_names)
+    return _get_cached_build_metadata(project_dir, env_names)
 
 
-def _load_cached_project_ide_data(project_dir, env_names):
+def _get_cached_build_metadata(project_dir, env_names):
     build_dir = ProjectConfig.get_instance(
         os.path.join(project_dir, "platformio.ini")
     ).get("platformio", "build_dir")

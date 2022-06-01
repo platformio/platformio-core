@@ -8,18 +8,18 @@ PlatformIO Core
 .. image:: https://github.com/platformio/platformio-core/workflows/Core/badge.svg
     :target: https://docs.platformio.org/en/latest/core/index.html
     :alt:  CI Build for PlatformIO Core
-.. image:: https://github.com/platformio/platformio-core/workflows/Examples/badge.svg
-    :target: https://github.com/platformio/platformio-examples
-    :alt:  CI Build for dev-platform examples
 .. image:: https://github.com/platformio/platformio-core/workflows/Docs/badge.svg
     :target: https://docs.platformio.org?utm_source=github&utm_medium=core
     :alt:  CI Build for Docs
+.. image:: https://github.com/platformio/platformio-core/workflows/Examples/badge.svg
+    :target: https://github.com/platformio/platformio-examples
+    :alt:  CI Build for dev-platform examples
+.. image:: https://github.com/platformio/platformio-core/workflows/Projects/badge.svg
+    :target: https://docs.platformio.org/en/latest/tutorials/index.html#projects
+    :alt:  CI Build for the Community Projects
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
-    :target: https://pypi.python.org/pypi/platformio/
-    :alt:  License
 .. image:: https://img.shields.io/badge/PlatformIO-Labs-orange.svg
    :alt: PlatformIO Labs
    :target: https://piolabs.com/?utm_source=github&utm_medium=core

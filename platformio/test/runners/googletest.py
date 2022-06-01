@@ -22,7 +22,7 @@ from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
 
 
-class DoctestTestCaseParser:
+class GoogletestTestCaseParser:
 
     # Examples:
     # [ RUN      ] FooTest.Bar
@@ -95,7 +95,7 @@ class GoogletestTestRunner(TestRunnerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._tc_parser = DoctestTestCaseParser()
+        self._tc_parser = GoogletestTestCaseParser()
         os.environ["GTEST_COLOR"] = "no"  # disable ANSI symbols
 
     def configure_build_env(self, env):
@@ -110,7 +110,7 @@ class GoogletestTestRunner(TestRunnerBase):
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
-        if test_case:
+        if test_case and not self.options.verbose:
             click.echo(test_case.humanize())
             self.test_suite.add_case(test_case)
 

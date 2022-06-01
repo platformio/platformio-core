@@ -4,6 +4,7 @@ Release Notes
 .. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
 .. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
 .. |INTERPOLATION| replace:: `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__
+.. |UNITTESTING| replace:: `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`__
 
 .. _release_notes_6:
 
@@ -11,6 +12,16 @@ PlatformIO Core 6
 -----------------
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
+
+6.0.2 (2022-06-01)
+~~~~~~~~~~~~~~~~~~
+
+* Control |UNITTESTING| verbosity with a new multilevel `pio test -v <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-v>`__ command option (`issue #4276 <https://github.com/platformio/platformio-core/issues/4276>`_)
+* Follow symbolic links during searching for the unit test suites (`issue #4288 <https://github.com/platformio/platformio-core/issues/4288>`_)
+* Show a warning when testing an empty project without a test suite (`issue #4278 <https://github.com/platformio/platformio-core/issues/4278>`_)
+* Improved support for `Asking for input (prompts) <https://docs.platformio.org/en/latest/scripting/examples/asking_for_input.html>`_
+* Fixed an issue when the `build_src_flags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-src-flags>`__ option was applied outside the project scope (`issue #4277 <https://github.com/platformio/platformio-core/issues/4277>`_)
+* Fixed an issue with debugging assembly files without preprocessor (".s")
 
 6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
@@ -53,7 +64,7 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
 
 * **Unit Testing**
 
-  - Refactored from scratch `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`_ solution and its documentation
+  - Refactored from scratch |UNITTESTING| solution and its documentation
   - New: `Test Hierarchy <https://docs.platformio.org/en/latest/advanced/unit-testing/structure.html>`_ (`issue #4135 <https://github.com/platformio/platformio-core/issues/4135>`_)
   - New: `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework (`issue #4240 <https://github.com/platformio/platformio-core/issues/4240>`_)
   - New: `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework (`issue #3572 <https://github.com/platformio/platformio-core/issues/3572>`_)

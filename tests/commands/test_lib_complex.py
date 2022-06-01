@@ -17,7 +17,7 @@
 import json
 import re
 
-from platformio.commands import PlatformioCLI
+from platformio.cli import PlatformioCLI
 from platformio.commands.lib.command import cli as cmd_lib
 from platformio.package.exception import UnknownPackageError
 from platformio.util import strip_ansi_codes

@@ -14,7 +14,7 @@
 
 from pathlib import Path
 
-from platformio.commands.run.command import cli as cmd_run
+from platformio.run.cli import cli as cmd_run
 
 
 def test_build_flags(clirunner, validate_cliresult, tmpdir):
@@ -29,6 +29,8 @@ def test_build_flags(clirunner, validate_cliresult, tmpdir):
 [env:native]
 platform = native
 extra_scripts = extra.py
+lib_ldf_mode = deep+
+build_src_flags = -DI_AM_ONLY_SRC_FLAG
 build_flags =
     ; -DCOMMENTED_MACRO
     %s ; inline comment
@@ -46,12 +48,22 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
 
     tmpdir.mkdir("src").join("main.cpp").write(
         """
+#ifdef I_AM_ONLY_SRC_FLAG
+#include <component.h>
+#else
+#error "I_AM_ONLY_SRC_FLAG"
+#endif
+
 #if !defined(TEST_INT) || TEST_INT != 13
 #error "TEST_INT"
 #endif
 
 #ifndef TEST_STR_SPACE
 #error "TEST_STR_SPACE"
+#endif
+
+#ifndef I_AM_COMPONENT
+#error "I_AM_COMPONENT"
 #endif
 
 #ifndef POST_SCRIPT_MACRO
@@ -65,6 +77,27 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
 int main() {
 }
 """
+    )
+    component_dir = tmpdir.mkdir("lib").mkdir("component")
+    component_dir.join("component.h").write(
+        """
+#define I_AM_COMPONENT
+
+#ifndef I_AM_ONLY_SRC_FLAG
+#error "I_AM_ONLY_SRC_FLAG"
+#endif
+
+void dummy(void);
+    """
+    )
+    component_dir.join("component.cpp").write(
+        """
+#ifdef I_AM_ONLY_SRC_FLAG
+#error "I_AM_ONLY_SRC_FLAG"
+#endif
+
+void dummy(void ) {};
+    """
     )
 
     result = clirunner.invoke(cmd_run, ["--project-dir", str(tmpdir), "--verbose"])
