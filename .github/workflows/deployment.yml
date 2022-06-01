@@ -3,8 +3,9 @@ name: Deployment
 on:
   push:
     branches:
-      - master
       - "release/**"
+    tags:
+      - v*
 
 jobs:
   deployment:
