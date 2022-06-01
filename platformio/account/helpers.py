@@ -46,3 +46,7 @@ def validate_password(value):
             " including a number and a lowercase letter"
         )
     return value
+
+
+def validate_orgname(value):
+    return validate_username(value, "Organization name")
