@@ -18,7 +18,7 @@ import pytest
 import requests
 
 from platformio import __check_internet_hosts__, http, proc
-from platformio.package.client import RegistryClient
+from platformio.registry.client import RegistryClient
 
 
 def test_platformio_cli():

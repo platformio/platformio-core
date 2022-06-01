@@ -23,12 +23,12 @@ from tabulate import tabulate
 from platformio import fs
 from platformio.account.client import AccountClient
 from platformio.exception import UserSideException
-from platformio.package.client import RegistryClient
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.package.meta import PackageType
 from platformio.package.pack import PackagePacker
 from platformio.package.unpack import FileUnpacker, TARArchiver
+from platformio.registry.client import RegistryClient
 
 
 def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument

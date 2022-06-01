@@ -21,10 +21,10 @@ import pytest
 import semantic_version
 
 from platformio.commands.lib.command import cli as cmd_lib
-from platformio.package.client import RegistryClient
 from platformio.package.meta import PackageType
 from platformio.package.vcsclient import VCSClientFactory
 from platformio.project.config import ProjectConfig
+from platformio.registry.client import RegistryClient
 
 
 def test_saving_deps(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory):

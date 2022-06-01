@@ -22,7 +22,7 @@ from tabulate import tabulate
 
 from platformio.account.helpers import validate_username
 from platformio.commands.team import validate_orgname_teamname
-from platformio.package.client import RegistryClient
+from platformio.registry.client import RegistryClient
 
 
 def validate_client(value):

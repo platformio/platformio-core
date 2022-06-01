@@ -19,9 +19,9 @@ from tabulate import tabulate
 
 from platformio import fs, util
 from platformio.exception import UserSideException
-from platformio.package.client import RegistryClient
 from platformio.package.manager._registry import PackageManagerRegistryMixin
 from platformio.package.meta import PackageSpec, PackageType
+from platformio.registry.client import RegistryClient
 
 
 @click.command("show", short_help="Show package information")
