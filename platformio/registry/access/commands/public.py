@@ -14,7 +14,7 @@
 
 import click
 
-from platformio.registry.access.helpers import validate_urn
+from platformio.registry.access.validate import validate_urn
 from platformio.registry.client import RegistryClient
 
 

@@ -16,7 +16,7 @@ import re
 
 import click
 
-from platformio.account.helpers import validate_username
+from platformio.account.validate import validate_username
 from platformio.commands.team import validate_orgname_teamname
 
 
