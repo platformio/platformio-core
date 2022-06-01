@@ -43,20 +43,23 @@ def find_project_dir_above(path):
     return None
 
 
-def get_project_all_lib_dirs():
+def get_project_watch_lib_dirs():
     """Used by platformio-node-helpers.project.observer.fetchLibDirs"""
     config = ProjectConfig.get_instance()
-    libdeps_dir = config.get("platformio", "libdeps_dir")
     result = [
         config.get("platformio", "globallib_dir"),
         config.get("platformio", "lib_dir"),
     ]
+    libdeps_dir = config.get("platformio", "libdeps_dir")
     if not os.path.isdir(libdeps_dir):
         return result
     for d in os.listdir(libdeps_dir):
         if os.path.isdir(os.path.join(libdeps_dir, d)):
             result.append(os.path.join(libdeps_dir, d))
     return result
+
+
+get_project_all_lib_dirs = get_project_watch_lib_dirs
 
 
 def get_project_cache_dir():
