@@ -28,7 +28,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import compat, fs
+from platformio import app, compat, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
@@ -110,6 +110,8 @@ env.Replace(
 
 # Setup project optional directories
 config = env.GetProjectConfig()
+app.set_session_var("custom_project_conf", config.path)
+
 env.Replace(
     PROJECT_DIR=get_project_dir(),
     PROJECT_CORE_DIR=config.get("platformio", "core_dir"),

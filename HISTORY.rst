@@ -13,6 +13,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.0.3 (2022-??-??)
+~~~~~~~~~~~~~~~~~~
+
+- Fixed an issue when a custom `pio test --project-config <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-c>`__ was not handled properly (`issue #4299 <https://github.com/platformio/platformio-core/issues/4299>`_)
+
 6.0.2 (2022-06-01)
 ~~~~~~~~~~~~~~~~~~
 
