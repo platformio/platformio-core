@@ -18,7 +18,7 @@ from fnmatch import fnmatch
 import serial
 
 from platformio.compat import IS_WINDOWS
-from platformio.device.list import list_logical_devices, list_serial_ports
+from platformio.device.list.util import list_logical_devices, list_serial_ports
 
 
 def is_pattern_port(port):

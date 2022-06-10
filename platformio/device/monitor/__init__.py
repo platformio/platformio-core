@@ -11,20 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import click
-
-from platformio.device.list.command import device_list_cmd
-from platformio.device.monitor.command import device_monitor_cmd
-
-
-@click.group(
-    "device",
-    commands=[
-        device_list_cmd,
-        device_monitor_cmd,
-    ],
-    short_help="Device manager & Serial/Socket monitor",
-)
-def cli():
-    pass
