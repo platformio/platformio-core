@@ -161,7 +161,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.8.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec("OneWire@2.3.7"),
         ]
         assert pkgs_to_specs(PlatformPackageManager().get_installed()) == [
             PackageSpec("atmelavr@2.2.0")
@@ -187,8 +187,8 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         assert pkgs[0].metadata.name == "atmelavr"
         assert pkgs[0].metadata.version.major == 3
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.9.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("OneWire@2.3.7"),
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
@@ -230,7 +230,7 @@ def test_custom_project_libraries(
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.8.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec("OneWire@2.3.7"),
         ]
         # update package
         result = clirunner.invoke(
@@ -260,8 +260,8 @@ def test_custom_project_libraries(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.9.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("OneWire@2.3.7"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
             "milesburton/DallasTemperature@^3.8.0"
