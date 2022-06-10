@@ -113,7 +113,7 @@ def device_monitor_cmd(**kwargs):  # pylint: disable=too-many-branches
             board_config=platform.board_config(project_options.get("board"))
             if platform and project_options.get("board")
             else None,
-            upload_protocol=project_options.get("upload_port"),
+            upload_protocol=project_options.get("upload_protocol"),
         )
 
     # override system argv with patched options

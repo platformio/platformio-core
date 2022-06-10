@@ -71,7 +71,7 @@ class SerialTestOutputReader:
             board_config=self.test_runner.platform.board_config(
                 project_options["board"]
             ),
-            upload_protocol=project_options.get("upload_port"),
+            upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
         )
 
