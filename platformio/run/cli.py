@@ -22,7 +22,7 @@ import click
 from tabulate import tabulate
 
 from platformio import app, exception, fs, util
-from platformio.device.commands.monitor import device_monitor_cmd
+from platformio.device.monitor.command import device_monitor_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
 from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps

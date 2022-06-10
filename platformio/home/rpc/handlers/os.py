@@ -24,7 +24,7 @@ import click
 
 from platformio import __default_requests_timeout__, fs
 from platformio.cache import ContentCache
-from platformio.device.list import list_logical_devices
+from platformio.device.list.util import list_logical_devices
 from platformio.home import helpers
 from platformio.http import ensure_internet_on
 

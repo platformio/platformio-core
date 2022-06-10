@@ -23,7 +23,7 @@ from io import BytesIO
 from platformio.cli import PlatformioCLI
 from platformio.compat import IS_WINDOWS, is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.device.list import list_serial_ports
+from platformio.device.list.util import list_serial_ports
 from platformio.run.cli import cli as cmd_run
 from platformio.run.cli import print_processing_header
 from platformio.test.helpers import list_test_names

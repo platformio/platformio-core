@@ -27,7 +27,7 @@ from serial import Serial, SerialException
 
 from platformio import exception, fs
 from platformio.device.finder import find_mbed_disk, find_serial_port, is_pattern_port
-from platformio.device.list import list_serial_ports
+from platformio.device.list.util import list_serial_ports
 from platformio.proc import exec_command
 
 

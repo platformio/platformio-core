@@ -18,7 +18,7 @@ from twisted.logger import LogLevel  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
 from platformio import proc
-from platformio.device.list import list_serial_ports
+from platformio.device.list.util import list_serial_ports
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.remote.ac.process import ProcessAsyncCmd

@@ -24,7 +24,7 @@ from time import sleep
 import click
 
 from platformio import fs, proc
-from platformio.device.commands.monitor import (
+from platformio.device.monitor.command import (
     apply_project_monitor_options,
     device_monitor_cmd,
     get_project_options,
