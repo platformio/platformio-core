@@ -34,6 +34,7 @@ minimal_requirements = [
     "pyelftools>=0.27,<1",
     "pyserial==3.*",
     "requests==2.*",
+    "requests==%s" % ("2.*" if sys.version_info >= (3, 7) else "2.27.1"),
     "semantic_version==2.10.*",
     "tabulate==0.8.*",
     "zeroconf<1",
