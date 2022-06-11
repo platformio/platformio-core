@@ -32,7 +32,7 @@ minimal_requirements = [
     "colorama",
     "marshmallow==%s" % ("3.*" if sys.version_info >= (3, 7) else "3.14.1"),
     "pyelftools>=0.27,<1",
-    "pyserial==3.*",
+    "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
     "requests==%s" % ("2.*" if sys.version_info >= (3, 7) else "2.27.1"),
     "semantic_version==2.10.*",

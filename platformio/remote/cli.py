@@ -28,7 +28,6 @@ from platformio.device.monitor.command import (
     apply_project_monitor_options,
     device_monitor_cmd,
     get_project_options,
-    project_options_to_monitor_argv,
 )
 from platformio.package.manager.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
@@ -360,6 +359,7 @@ def device_monitor(ctx, agents, **kwargs):
         pass
 
     kwargs["baud"] = kwargs["baud"] or ProjectOptions["env.monitor_speed"].default
+    kwargs["reconnect"] = False
 
     def _tx_target(sock_dir):
         subcmd_argv = ["remote"]
@@ -387,3 +387,27 @@ def device_monitor(ctx, agents, **kwargs):
         fs.rmtree(sock_dir)
 
     return True
+
+
+def project_options_to_monitor_argv(cli_options, project_options, ignore=None):
+    confmon_flags = project_options.get("monitor_flags", [])
+    result = confmon_flags[::]
+
+    for f in project_options.get("monitor_filters", []):
+        result.extend(["--filter", f])
+
+    for k, v in cli_options.items():
+        if v is None or (ignore and k in ignore):
+            continue
+        k = "--" + k.replace("_", "-")
+        if k in confmon_flags:
+            continue
+        if isinstance(v, bool):
+            if v:
+                result.append(k)
+        elif isinstance(v, tuple):
+            for i in v:
+                result.extend([k, i])
+        else:
+            result.extend([k, str(v)])
+    return result

@@ -30,10 +30,6 @@ class ReturnErrorCode(PlatformioException):
     MESSAGE = "{0}"
 
 
-class MinitermException(PlatformioException):
-    pass
-
-
 class UserSideException(PlatformioException):
     pass
 
