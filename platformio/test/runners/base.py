@@ -117,6 +117,9 @@ class TestRunnerBase:
     def stage_building(self):
         if self.options.without_building:
             return None
+        # run "building" once at the "uploading" stage for the embedded target
+        if not self.options.without_uploading and self.platform.is_embedded():
+            return None
         click.secho("Building...", bold=True)
         targets = ["__test"]
         if not self.options.without_debugging:
@@ -132,9 +135,12 @@ class TestRunnerBase:
             )
 
     def stage_uploading(self):
-        if self.options.without_uploading or not self.platform.is_embedded():
+        is_embedded = self.platform.is_embedded()
+        if self.options.without_uploading or not is_embedded:
             return None
-        click.secho("Uploading...", bold=True)
+        click.secho(
+            "Building & Uploading..." if is_embedded else "Uploading...", bold=True
+        )
         targets = ["upload"]
         if self.options.without_building:
             targets.append("nobuild")

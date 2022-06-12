@@ -22,6 +22,7 @@ PlatformIO Core 6
   - Added new `pio device monitor --no-reconnect <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-no-reconnect>`__ option to disable automatic reconnection
   - Handle disconnects more gracefully (`issue #3939 <https://github.com/platformio/platformio-core/issues/3939>`_)
 
+* Merged the |UNITTESTING| "building" stage with "uploading" for the embedded target (`issue #4307 <https://github.com/platformio/platformio-core/issues/4307>`_)
 * Fixed an issue when a custom `pio test --project-config <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-c>`__ was not handled properly (`issue #4299 <https://github.com/platformio/platformio-core/issues/4299>`_)
 
 6.0.2 (2022-06-01)
