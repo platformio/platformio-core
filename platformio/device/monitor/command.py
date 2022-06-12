@@ -33,30 +33,30 @@ from platformio.project.options import ProjectOptions
     "--baud",
     type=int,
     default=ProjectOptions["env.monitor_speed"].default,
-    help="Set baud/speed, default=%d" % ProjectOptions["env.monitor_speed"].default,
+    show_default=True,
+    help="Set baud/speed",
 )
 @click.option(
     "--parity",
     default="N",
+    show_default=True,
     type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity, default=N",
+    help="Set parity",
 )
-@click.option("--rtscts", is_flag=True, help="Enable RTS/CTS flow control, default=Off")
-@click.option(
-    "--xonxoff", is_flag=True, help="Enable software flow control, default=Off"
-)
+@click.option("--rtscts", is_flag=True, help="Enable RTS/CTS flow control")
+@click.option("--xonxoff", is_flag=True, help="Enable software flow control")
 @click.option(
     "--rts", default=None, type=click.IntRange(0, 1), help="Set initial RTS line state"
 )
 @click.option(
     "--dtr", default=None, type=click.IntRange(0, 1), help="Set initial DTR line state"
 )
-@click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
+@click.option("--echo", is_flag=True, help="Enable local echo")
 @click.option(
     "--encoding",
     default="UTF-8",
-    help="Set the encoding for the serial port (e.g. hexlify, "
-    "Latin1, UTF-8), default: UTF-8",
+    show_default=True,
+    help="Set the encoding for the serial port (e.g. hexlify, Latin1, UTF-8)",
 )
 @click.option(
     "-f", "--filter", "filters", multiple=True, help="Add filters/text transformations"
@@ -64,36 +64,35 @@ from platformio.project.options import ProjectOptions
 @click.option(
     "--eol",
     default="CRLF",
+    show_default=True,
     type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode, default=CRLF",
+    help="End of line mode",
 )
 @click.option("--raw", is_flag=True, help="Do not apply any encodings/transformations")
 @click.option(
     "--exit-char",
     type=int,
     default=3,
+    show_default=True,
     help="ASCII code of special character that is used to exit "
-    "the application, default=3 (Ctrl+C)",
+    "the application [default=3 (Ctrl+C)]",
 )
 @click.option(
     "--menu-char",
     type=int,
     default=20,
     help="ASCII code of special character that is used to "
-    "control terminal (menu), default=20 (DEC)",
+    "control terminal (menu) [default=20 (DEC)]",
 )
 @click.option(
     "--quiet",
     is_flag=True,
-    help="Diagnostics: suppress non-error messages, default=Off",
+    help="Diagnostics: suppress non-error messages",
 )
 @click.option(
-    "--reconnect/--no-reconnect",
-    default=True,
-    help=(
-        "If established connection fails, "
-        "silently retry on the same port, default=True"
-    ),
+    "--no-reconnect",
+    is_flag=True,
+    help="Disable automatic reconnection if the established connection fails",
 )
 @click.option(
     "-d",
@@ -104,7 +103,7 @@ from platformio.project.options import ProjectOptions
 @click.option(
     "-e",
     "--environment",
-    help="Load configuration from `platformio.ini` and specified environment",
+    help="Load configuration from `platformio.ini` and the specified environment",
 )
 def device_monitor_cmd(**options):
     platform = None
@@ -131,6 +130,7 @@ def device_monitor_cmd(**options):
             "--exit-char can not be the same as --menu-char"
         )
 
+    print(options)
     start_terminal(options)
 
 

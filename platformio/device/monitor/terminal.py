@@ -68,7 +68,7 @@ def start_terminal(options):
                     fg="red",
                     err=True,
                 )
-                if options["reconnect"]:
+                if not options["no_reconnect"]:
                     raise UserSideException(term.pio_unexpected_exception)
             return
         except UserSideException as exc:
