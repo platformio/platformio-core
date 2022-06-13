@@ -130,7 +130,6 @@ def device_monitor_cmd(**options):
             "--exit-char can not be the same as --menu-char"
         )
 
-    print(options)
     start_terminal(options)
 
 

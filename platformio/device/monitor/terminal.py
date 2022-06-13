@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import signal
+import sys
 import threading
 
 import click
@@ -60,8 +61,17 @@ def start_terminal(options):
             except KeyboardInterrupt:
                 pass
             term.join()
+
+            # cleanup
             term.console.cleanup()
+
+            # restore original standard streams
+            sys.stdin = sys.__stdin__
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+
             term.close()
+
             if term.pio_unexpected_exception:
                 click.secho(
                     "Disconnected (%s)" % term.pio_unexpected_exception,
@@ -70,6 +80,7 @@ def start_terminal(options):
                 )
                 if not options["no_reconnect"]:
                     raise UserSideException(term.pio_unexpected_exception)
+
             return
         except UserSideException as exc:
             if not is_port_valid:
