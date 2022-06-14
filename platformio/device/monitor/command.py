@@ -32,9 +32,8 @@ from platformio.project.options import ProjectOptions
     "-b",
     "--baud",
     type=int,
-    default=ProjectOptions["env.monitor_speed"].default,
     show_default=True,
-    help="Set baud/speed",
+    help="Set baud/speed [default=%d]" % ProjectOptions["env.monitor_speed"].default,
 )
 @click.option(
     "--parity",
