@@ -270,60 +270,67 @@ def device_list(agents, json_output):
 @remote_device.command("monitor", short_help="Monitor remote device")
 @click.option("--port", "-p", help="Port, a number or a device name")
 @click.option(
-    "--baud",
     "-b",
-    type=int,
-    help="Set baud rate, default=%d" % ProjectOptions["env.monitor_speed"].default,
+    "--baud",
+    type=ProjectOptions["env.monitor_speed"].type,
+    help="Set baud/speed [default=%d]" % ProjectOptions["env.monitor_speed"].default,
 )
 @click.option(
     "--parity",
-    default="N",
-    type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity, default=N",
+    type=ProjectOptions["env.monitor_parity"].type,
+    help="Set parity [default=%s]" % ProjectOptions["env.monitor_parity"].default,
 )
-@click.option("--rtscts", is_flag=True, help="Enable RTS/CTS flow control, default=Off")
+@click.option("--rtscts", is_flag=True, help="Enable RTS/CTS flow control")
+@click.option("--xonxoff", is_flag=True, help="Enable software flow control")
 @click.option(
-    "--xonxoff", is_flag=True, help="Enable software flow control, default=Off"
+    "--rts",
+    type=ProjectOptions["env.monitor_rts"].type,
+    help="Set initial RTS line state",
 )
 @click.option(
-    "--rts", default=None, type=click.IntRange(0, 1), help="Set initial RTS line state"
+    "--dtr",
+    type=ProjectOptions["env.monitor_dtr"].type,
+    help="Set initial DTR line state",
 )
-@click.option(
-    "--dtr", default=None, type=click.IntRange(0, 1), help="Set initial DTR line state"
-)
-@click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
+@click.option("--echo", is_flag=True, help="Enable local echo")
 @click.option(
     "--encoding",
     default="UTF-8",
-    help="Set the encoding for the serial port (e.g. hexlify, "
-    "Latin1, UTF-8), default: UTF-8",
+    show_default=True,
+    help="Set the encoding for the serial port (e.g. hexlify, Latin1, UTF-8)",
 )
-@click.option("--filter", "-f", multiple=True, help="Add text transformation")
+@click.option(
+    "-f",
+    "--filter",
+    "filters",
+    multiple=True,
+    help="Apply filters/text transformations",
+)
 @click.option(
     "--eol",
-    default="CRLF",
-    type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode, default=CRLF",
+    type=ProjectOptions["env.monitor_eol"].type,
+    help="End of line mode [default=%s]" % ProjectOptions["env.monitor_eol"].default,
 )
-@click.option("--raw", is_flag=True, help="Do not apply any encodings/transformations")
+@click.option("--raw", is_flag=True, help=ProjectOptions["env.monitor_raw"].description)
 @click.option(
     "--exit-char",
     type=int,
     default=3,
+    show_default=True,
     help="ASCII code of special character that is used to exit "
-    "the application, default=3 (Ctrl+C)",
+    "the application [default=3 (Ctrl+C)]",
 )
 @click.option(
     "--menu-char",
     type=int,
     default=20,
     help="ASCII code of special character that is used to "
-    "control miniterm (menu), default=20 (DEC)",
+    "control terminal (menu) [default=20 (DEC)]",
 )
 @click.option(
     "--quiet",
     is_flag=True,
-    help="Diagnostics: suppress non-error messages, default=Off",
+    help="Diagnostics: suppress non-error messages",
 )
 @click.option(
     "-d",
@@ -354,19 +361,17 @@ def device_monitor(ctx, agents, **kwargs):
     try:
         with fs.cd(kwargs["project_dir"]):
             project_options = get_project_options(kwargs["environment"])
-        kwargs = apply_project_monitor_options(kwargs, project_options)
     except NotPlatformIOProjectError:
         pass
 
-    kwargs["baud"] = kwargs["baud"] or ProjectOptions["env.monitor_speed"].default
-    kwargs["reconnect"] = False
+    kwargs = apply_project_monitor_options(kwargs, project_options)
 
     def _tx_target(sock_dir):
         subcmd_argv = ["remote"]
         for agent in agents:
             subcmd_argv.extend(["--agent", agent])
         subcmd_argv.extend(["device", "monitor"])
-        subcmd_argv.extend(project_options_to_monitor_argv(kwargs, project_options))
+        subcmd_argv.extend(project_options_to_monitor_argv(kwargs))
         subcmd_argv.extend(["--sock", sock_dir])
         subprocess.call([proc.where_is_program("platformio")] + subcmd_argv)
 
@@ -381,6 +386,7 @@ def device_monitor(ctx, agents, **kwargs):
             return
         with open(sock_file, encoding="utf8") as fp:
             kwargs["port"] = fp.read()
+        kwargs["no_reconnect"] = True
         ctx.invoke(device_monitor_cmd, **kwargs)
         t.join(2)
     finally:
@@ -389,19 +395,14 @@ def device_monitor(ctx, agents, **kwargs):
     return True
 
 
-def project_options_to_monitor_argv(cli_options, project_options, ignore=None):
-    confmon_flags = project_options.get("monitor_flags", [])
-    result = confmon_flags[::]
-
-    for f in project_options.get("monitor_filters", []):
-        result.extend(["--filter", f])
-
+def project_options_to_monitor_argv(cli_options):
+    result = []
+    for item in cli_options["filters"] or []:
+        result.extend(["--filter", item])
     for k, v in cli_options.items():
-        if v is None or (ignore and k in ignore):
+        if v is None or k == "filters":
             continue
         k = "--" + k.replace("_", "-")
-        if k in confmon_flags:
-            continue
         if isinstance(v, bool):
             if v:
                 result.append(k)

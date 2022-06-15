@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import sys
 
 import click
 
@@ -31,24 +32,26 @@ from platformio.project.options import ProjectOptions
 @click.option(
     "-b",
     "--baud",
-    type=int,
-    show_default=True,
+    type=ProjectOptions["env.monitor_speed"].type,
     help="Set baud/speed [default=%d]" % ProjectOptions["env.monitor_speed"].default,
 )
 @click.option(
     "--parity",
-    default="N",
-    show_default=True,
-    type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity",
+    type=ProjectOptions["env.monitor_parity"].type,
+    help="Enable parity checking [default=%s]"
+    % ProjectOptions["env.monitor_parity"].default,
 )
 @click.option("--rtscts", is_flag=True, help="Enable RTS/CTS flow control")
 @click.option("--xonxoff", is_flag=True, help="Enable software flow control")
 @click.option(
-    "--rts", default=None, type=click.IntRange(0, 1), help="Set initial RTS line state"
+    "--rts",
+    type=ProjectOptions["env.monitor_rts"].type,
+    help="Set initial RTS line state",
 )
 @click.option(
-    "--dtr", default=None, type=click.IntRange(0, 1), help="Set initial DTR line state"
+    "--dtr",
+    type=ProjectOptions["env.monitor_dtr"].type,
+    help="Set initial DTR line state",
 )
 @click.option("--echo", is_flag=True, help="Enable local echo")
 @click.option(
@@ -58,16 +61,18 @@ from platformio.project.options import ProjectOptions
     help="Set the encoding for the serial port (e.g. hexlify, Latin1, UTF-8)",
 )
 @click.option(
-    "-f", "--filter", "filters", multiple=True, help="Add filters/text transformations"
+    "-f",
+    "--filter",
+    "filters",
+    multiple=True,
+    help="Apply filters/text transformations",
 )
 @click.option(
     "--eol",
-    default="CRLF",
-    show_default=True,
-    type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode",
+    type=ProjectOptions["env.monitor_eol"].type,
+    help="End of line mode [default=%s]" % ProjectOptions["env.monitor_eol"].default,
 )
-@click.option("--raw", is_flag=True, help="Do not apply any encodings/transformations")
+@click.option("--raw", is_flag=True, help=ProjectOptions["env.monitor_raw"].description)
 @click.option(
     "--exit-char",
     type=int,
@@ -105,16 +110,17 @@ from platformio.project.options import ProjectOptions
     help="Load configuration from `platformio.ini` and the specified environment",
 )
 def device_monitor_cmd(**options):
-    platform = None
-    project_options = {}
     with fs.cd(options["project_dir"]):
+        platform = None
+        project_options = {}
         try:
             project_options = get_project_options(options["environment"])
-            options = apply_project_monitor_options(options, project_options)
             if "platform" in project_options:
                 platform = PlatformFactory.new(project_options["platform"])
         except NotPlatformIOProjectError:
             pass
+
+        options = apply_project_monitor_options(options, project_options)
         register_filters(platform=platform, options=options)
         options["port"] = find_serial_port(
             initial_port=options["port"],
@@ -124,8 +130,6 @@ def device_monitor_cmd(**options):
             upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
         )
-
-    options["baud"] = options["baud"] or ProjectOptions["env.monitor_speed"].default
 
     if options["menu_char"] == options["exit_char"]:
         raise exception.UserSideException(
@@ -143,12 +147,18 @@ def get_project_options(environment=None):
 
 
 def apply_project_monitor_options(initial_options, project_options):
-    for k in ("port", "speed", "rts", "dtr"):
-        k2 = "monitor_%s" % k
-        if k == "speed":
-            k = "baud"
-        if initial_options[k] is None and k2 in project_options:
-            initial_options[k] = project_options[k2]
-            if k != "port":
-                initial_options[k] = int(initial_options[k])
+    for option_meta in ProjectOptions.values():
+        if option_meta.group != "monitor":
+            continue
+        cli_key = option_meta.name.split("_", 1)[1]
+        if cli_key == "speed":
+            cli_key = "baud"
+        # value set from CLI, skip overriding
+        if initial_options[cli_key] not in (None, (), []) and (
+            option_meta.type != click.BOOL or f"--{cli_key}" in sys.argv[1:]
+        ):
+            continue
+        initial_options[cli_key] = project_options.get(
+            option_meta.name, option_meta.default
+        )
     return initial_options

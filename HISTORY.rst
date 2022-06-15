@@ -21,6 +21,8 @@ PlatformIO Core 6
   - Automatically reconnect if a connection fails
   - Added new `pio device monitor --no-reconnect <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-no-reconnect>`__ option to disable automatic reconnection
   - Handle disconnects more gracefully (`issue #3939 <https://github.com/platformio/platformio-core/issues/3939>`_)
+  - Replaced ``monitor_flags`` with independent project configuration options: `monitor_parity <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-parity>`__, `monitor_eol <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-eol>`__, `monitor_raw <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-raw>`__, `monitor_echo <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-echo>`__
+  - Fixed an issue when the monitor filters were not applied in their order (`issue #4320 <https://github.com/platformio/platformio-core/issues/4320>`_)
 
 * Improved a serial port finder for a board with predefined HWIDs
 * Merged the |UNITTESTING| "building" stage with "uploading" for the embedded target (`issue #4307 <https://github.com/platformio/platformio-core/issues/4307>`_)

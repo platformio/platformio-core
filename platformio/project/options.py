@@ -521,6 +521,13 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="monitor",
+                name="monitor_parity",
+                description="A monitor parity checking",
+                type=click.Choice(["N", "E", "O", "S", "M"]),
+                default="N",
+            ),
+            ConfigEnvOption(
+                group="monitor",
                 name="monitor_filters",
                 description=(
                     "Apply the filters and text transformations to monitor output"
@@ -541,12 +548,24 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="monitor",
-                name="monitor_flags",
-                description=(
-                    "The extra flags and options for `platformio device monitor` "
-                    "command"
-                ),
-                multiple=True,
+                name="monitor_eol",
+                description="A monitor end of line mode",
+                type=click.Choice(["CR", "LF", "CRLF"]),
+                default="CRLF",
+            ),
+            ConfigEnvOption(
+                group="monitor",
+                name="monitor_raw",
+                description="Disable encodings/transformations of device output",
+                type=click.BOOL,
+                default=False,
+            ),
+            ConfigEnvOption(
+                group="monitor",
+                name="monitor_echo",
+                description="Enable a monitor local echo",
+                type=click.BOOL,
+                default=False,
             ),
             # Library
             ConfigEnvOption(
