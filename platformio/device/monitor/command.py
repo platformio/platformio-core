@@ -122,7 +122,10 @@ def device_monitor_cmd(**options):
             if platform and project_options.get("board")
             else None,
             upload_protocol=project_options.get("upload_protocol"),
+            ensure_ready=True,
         )
+
+    options["baud"] = options["baud"] or ProjectOptions["env.monitor_speed"].default
 
     if options["menu_char"] == options["exit_char"]:
         raise exception.UserSideException(

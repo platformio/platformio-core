@@ -19,6 +19,7 @@ import serial
 
 from platformio.compat import IS_WINDOWS
 from platformio.device.list.util import list_logical_devices, list_serial_ports
+from platformio.util import retry
 
 
 def is_pattern_port(port):
@@ -44,21 +45,20 @@ def is_serial_port_ready(port, timeout=1):
 
 
 def find_serial_port(
-    initial_port, board_config=None, upload_protocol=None, ensure_ready=False
+    initial_port, board_config=None, upload_protocol=None, ensure_ready=False, timeout=3
 ):
     if initial_port:
         if not is_pattern_port(initial_port):
             return initial_port
         return match_serial_port(initial_port)
-    port = None
+
     if upload_protocol and upload_protocol.startswith("blackmagic"):
-        port = find_blackmagic_serial_port()
-    if not port and board_config:
-        port = find_board_serial_port(board_config)
-    if port:
-        return port
+        return find_blackmagic_serial_port(timeout=timeout)
+    if board_config and board_config.get("build.hwids"):
+        return find_board_serial_port(board_config.get("build.hwids"), timeout=timeout)
 
     # pick the last PID:VID USB device
+    port = None
     usb_port = None
     for item in list_serial_ports():
         if ensure_ready and not is_serial_port_ready(item["port"]):
@@ -69,26 +69,41 @@ def find_serial_port(
     return usb_port or port
 
 
-def find_blackmagic_serial_port():
-    for item in list_serial_ports():
-        port = item["port"]
-        if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
-            port = "\\\\.\\%s" % port
-        if "GDB" in item["description"]:
-            return port
+def find_blackmagic_serial_port(timeout=0):
+    try:
+
+        @retry(timeout=timeout)
+        def wrapper():
+            for item in list_serial_ports():
+                port = item["port"]
+                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
+                    port = "\\\\.\\%s" % port
+                if "GDB" in item["description"]:
+                    return port
+            raise retry.RetryNextException()
+
+        return wrapper()
+    except retry.RetryStopException:
+        pass
     return None
 
 
-def find_board_serial_port(board_config):
-    board_hwids = board_config.get("build.hwids", [])
-    if not board_hwids:
-        return None
-    for item in list_serial_ports(filter_hwid=True):
-        port = item["port"]
-        for hwid in board_hwids:
-            hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-            if hwid_str in item["hwid"]:
-                return port
+def find_board_serial_port(hwids, timeout=0):
+    try:
+
+        @retry(timeout=timeout)
+        def wrapper():
+            for item in list_serial_ports(filter_hwid=True):
+                port = item["port"]
+                for hwid in hwids:
+                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                    if hwid_str in item["hwid"]:
+                        return port
+            raise retry.RetryNextException()
+
+        return wrapper()
+    except retry.RetryStopException:
+        pass
     return None
 
 

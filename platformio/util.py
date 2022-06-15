@@ -78,6 +78,50 @@ class throttle(object):
         return wrapper
 
 
+# Retry: Begin
+
+
+class RetryException(Exception):
+    pass
+
+
+class RetryNextException(RetryException):
+    pass
+
+
+class RetryStopException(RetryException):
+    pass
+
+
+class retry(object):
+
+    RetryNextException = RetryNextException
+    RetryStopException = RetryStopException
+
+    def __init__(self, timeout=0, step=0.25):
+        self.timeout = timeout
+        self.step = step
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = 0
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except self.RetryNextException:
+                    pass
+                if elapsed >= self.timeout:
+                    raise self.RetryStopException()
+                elapsed += self.step
+                time.sleep(self.step)
+
+        return wrapper
+
+
+# Retry: End
+
+
 def singleton(cls):
     """From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples"""
     _instances = {}
