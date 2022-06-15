@@ -889,10 +889,13 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return include_dirs
 
     def get_search_files(self):
+        items = []
+        build_type = self.env.GetBuildType()
         # project files
-        items = super().get_search_files()
+        if "test" not in build_type or self.env.GetProjectOption("test_build_src"):
+            items.extend(super().get_search_files())
         # test files
-        if "test" in self.env.GetBuildType():
+        if "test" in build_type:
             items.extend(
                 [
                     os.path.join("$PROJECT_TEST_DIR", item)
