@@ -99,7 +99,7 @@ def new_terminal(options):
         new_serial_instance(options),
         echo=options["echo"],
         eol=options["eol"].lower(),
-        filters=options["filters"] or ["default"],
+        filters=list(reversed(options["filters"] or ["default"])),
     )
     term.exit_character = chr(options["exit_char"])
     term.menu_character = chr(options["menu_char"])
