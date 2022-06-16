@@ -1142,6 +1142,8 @@ def ConfigureProjectLibBuilder(env):
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
+    env.Export(dict(projenv=project.env))
+
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
     click.echo("LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf")

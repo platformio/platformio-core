@@ -30,6 +30,7 @@ PlatformIO Core 6
   - Do not resolve dependencies from the project "src" folder when the `test_build_src <https://docs.platformio.org/en/latest//projectconf/section_env_test.html#test-build-src>`__ option is not enabled
   - Fixed an issue when a custom `pio test --project-config <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-c>`__ was not handled properly (`issue #4299 <https://github.com/platformio/platformio-core/issues/4299>`_)
 
+* Allowed to ``Import("projenv")`` in a library extra script (`issue #4305 <https://github.com/platformio/platformio-core/issues/4305>`_)
 * Improved a serial port finder for a board with predefined HWIDs
 
 6.0.2 (2022-06-01)

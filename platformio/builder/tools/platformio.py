@@ -23,7 +23,6 @@ from SCons.Node import FS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
-from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
 from platformio import __version__, fs
@@ -179,8 +178,6 @@ def ProcessProjectDeps(env):
             "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
         )
         env.Exit(1)
-
-    Export("projenv")
 
 
 def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
