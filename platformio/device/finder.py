@@ -15,11 +15,31 @@
 import os
 from fnmatch import fnmatch
 
+import click
 import serial
 
 from platformio.compat import IS_WINDOWS
 from platformio.device.list.util import list_logical_devices, list_serial_ports
+from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.factory import PlatformFactory
 from platformio.util import retry
+
+KNOWN_UART_HWIDS = (
+    # Silicon Labs
+    "10C4:EA60",  # CP210X
+    "10C4:EA61",  # CP210X
+    "10C4:EA63",  # CP210X
+    "10C4:EA70",  # CP2105
+    "10C4:EA71",  # CP2108
+    "10C4:EA80",  # CP2110
+    "10C4:80A9",  # CP210X
+)
+
+
+def normalize_board_hwid(value):
+    if isinstance(value, (list, tuple)):
+        value = ("%s:%s" % (value[0], value[1])).replace("0x", "")
+    return value.upper()
 
 
 def is_pattern_port(port):
@@ -53,20 +73,22 @@ def find_serial_port(
         return match_serial_port(initial_port)
 
     if upload_protocol and upload_protocol.startswith("blackmagic"):
-        return find_blackmagic_serial_port(timeout=timeout)
+        return find_blackmagic_serial_port(timeout)
     if board_config and board_config.get("build.hwids", []):
-        return find_board_serial_port(board_config.get("build.hwids"), timeout=timeout)
+        return find_board_serial_port(board_config, timeout)
+    port = find_known_uart_port(ensure_ready, timeout)
+    if port:
+        return port
 
-    # pick the last PID:VID USB device
-    port = None
-    usb_port = None
+    # pick the best PID:VID USB device
+    best_port = None
     for item in list_serial_ports():
         if ensure_ready and not is_serial_port_ready(item["port"]):
             continue
         port = item["port"]
         if "VID:PID" in item["hwid"]:
-            usb_port = port
-    return usb_port or port
+            best_port = port
+    return best_port or port
 
 
 def find_blackmagic_serial_port(timeout=0):
@@ -88,22 +110,69 @@ def find_blackmagic_serial_port(timeout=0):
     return None
 
 
-def find_board_serial_port(hwids, timeout=0):
+def find_board_serial_port(board_config, timeout=0):
+    hwids = board_config.get("build.hwids", [])
+    try:
+
+        @retry(timeout=timeout)
+        def wrapper():
+            for item in list_serial_ports(filter_hwid=True):
+                hwid = item["hwid"].upper()
+                for board_hwid in hwids:
+                    if normalize_board_hwid(board_hwid) in hwid:
+                        return item["port"]
+            raise retry.RetryNextException()
+
+        return wrapper()
+    except retry.RetryStopException:
+        pass
+
+    click.secho(
+        "TimeoutError: Could not automatically find serial port "
+        "for the `%s` board based on the declared HWIDs=%s"
+        % (board_config.get("name", "unknown"), hwids),
+        fg="yellow",
+        err=True,
+    )
+
+    return None
+
+
+def find_known_uart_port(ensure_ready=False, timeout=0):
+    known_hwids = list(KNOWN_UART_HWIDS)
+    # load HWIDs from installed dev-platforms
+    for platform in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(platform)
+        for board_config in p.get_boards().values():
+            for board_hwid in board_config.get("build.hwids", []):
+                board_hwid = normalize_board_hwid(board_hwid)
+                if board_hwid not in known_hwids:
+                    known_hwids.append(board_hwid)
+
     try:
 
         @retry(timeout=timeout)
         def wrapper():
             for item in list_serial_ports(filter_hwid=True):
                 port = item["port"]
-                for hwid in hwids:
-                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                    if hwid_str in item["hwid"]:
-                        return port
+                hwid = item["hwid"].upper()
+                if not any(item in hwid for item in known_hwids):
+                    continue
+                if not ensure_ready or is_serial_port_ready(port):
+                    return port
             raise retry.RetryNextException()
 
         return wrapper()
     except retry.RetryStopException:
         pass
+
+    click.secho(
+        "TimeoutError: Could not automatically find serial port "
+        "based on the known UART bridges",
+        fg="yellow",
+        err=True,
+    )
+
     return None
 
 
