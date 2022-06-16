@@ -54,7 +54,7 @@ def find_serial_port(
 
     if upload_protocol and upload_protocol.startswith("blackmagic"):
         return find_blackmagic_serial_port(timeout=timeout)
-    if board_config and board_config.get("build.hwids"):
+    if board_config and board_config.get("build.hwids", []):
         return find_board_serial_port(board_config.get("build.hwids"), timeout=timeout)
 
     # pick the last PID:VID USB device
