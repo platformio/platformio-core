@@ -18,13 +18,16 @@ from fnmatch import fnmatch
 import click
 import serial
 
-from platformio.compat import IS_WINDOWS
+from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.device.list.util import list_logical_devices, list_serial_ports
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 from platformio.util import retry
 
-KNOWN_UART_HWIDS = (
+BLACK_MAGIC_HWIDS = [
+    "1D50:6018",
+]
+KNOWN_UART_HWIDS = BLACK_MAGIC_HWIDS + [
     # Silicon Labs
     "10C4:EA60",  # CP210X
     "10C4:EA61",  # CP210X
@@ -33,7 +36,7 @@ KNOWN_UART_HWIDS = (
     "10C4:EA71",  # CP2108
     "10C4:EA80",  # CP2110
     "10C4:80A9",  # CP210X
-)
+]
 
 
 def normalize_board_hwid(value):
@@ -91,18 +94,44 @@ def find_serial_port(
     return best_port or port
 
 
-def find_blackmagic_serial_port(timeout=0):
+def find_blackmagic_serial_port(timeout=0, only_gdb_port=False):
     try:
 
         @retry(timeout=timeout)
         def wrapper():
-            for item in list_serial_ports():
-                port = item["port"]
-                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
-                    port = "\\\\.\\%s" % port
-                if "GDB" in item["description"]:
-                    return port
-            raise retry.RetryNextException()
+            candidates = []
+            for item in list_serial_ports(filter_hwid=True):
+                if (
+                    not any(hwid in item["hwid"].upper() for hwid in BLACK_MAGIC_HWIDS)
+                    and not "Black Magic" in item["description"]
+                ):
+                    continue
+                if (
+                    IS_WINDOWS
+                    and item["port"].startswith("COM")
+                    and len(item["port"]) > 4
+                ):
+                    item["port"] = "\\\\.\\%s" % item["port"]
+                candidates.append(item)
+
+            if not candidates:
+                raise retry.RetryNextException()
+
+            for item in candidates:
+                if ("GDB" if only_gdb_port else "UART") in item["description"]:
+                    return item["port"]
+            if IS_MACOS:
+                # 1 - GDB, 3 - UART
+                for item in candidates:
+                    if item["port"].endswith("1" if only_gdb_port else "3"):
+                        return item["port"]
+
+            candidates = sorted(candidates, key=lambda item: item["port"])
+            return (
+                candidates[0]  # first port is GDB?
+                if len(candidates) == 1 or only_gdb_port
+                else candidates[1]
+            )["port"]
 
         return wrapper()
     except retry.RetryStopException:
@@ -192,4 +221,16 @@ def find_mbed_disk(initial_port):
             return item["path"]
         if item["name"] and any(l in item["name"].lower() for l in msdlabels):
             return item["path"]
+    return None
+
+
+def find_debug_port(initial_port, tool_name, tool_settings):
+    if initial_port:
+        if not is_pattern_port(initial_port):
+            return initial_port
+        return match_serial_port(initial_port)
+    if not tool_settings.get("require_debug_port"):
+        return None
+    if tool_name.startswith("blackmagic"):
+        return find_blackmagic_serial_port(timeout=0, only_gdb_port=True)
     return None

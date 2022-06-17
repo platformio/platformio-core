@@ -16,14 +16,12 @@ import os
 import re
 import sys
 import time
-from fnmatch import fnmatch
 from hashlib import sha1
 from io import BytesIO
 
 from platformio.cli import PlatformioCLI
-from platformio.compat import IS_WINDOWS, is_bytes
+from platformio.compat import is_bytes
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.device.list.util import list_serial_ports
 from platformio.run.cli import cli as cmd_run
 from platformio.run.cli import print_processing_header
 from platformio.test.helpers import list_test_names
@@ -161,44 +159,3 @@ def is_prog_obsolete(prog_path):
     with open(prog_hash_path, mode="w", encoding="utf8") as fp:
         fp.write(new_digest)
     return True
-
-
-def reveal_debug_port(env_debug_port, tool_name, tool_settings):
-    def _get_pattern():
-        if not env_debug_port:
-            return None
-        if set(["*", "?", "[", "]"]) & set(env_debug_port):
-            return env_debug_port
-        return None
-
-    def _is_match_pattern(port):
-        pattern = _get_pattern()
-        if not pattern:
-            return True
-        return fnmatch(port, pattern)
-
-    def _look_for_serial_port(hwids):
-        for item in list_serial_ports(filter_hwid=True):
-            if not _is_match_pattern(item["port"]):
-                continue
-            port = item["port"]
-            if tool_name.startswith("blackmagic"):
-                if IS_WINDOWS and port.startswith("COM") and len(port) > 4:
-                    port = "\\\\.\\%s" % port
-                if "GDB" in item["description"]:
-                    return port
-            for hwid in hwids:
-                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                if hwid_str in item["hwid"]:
-                    return port
-        return None
-
-    if env_debug_port and not _get_pattern():
-        return env_debug_port
-    if not tool_settings.get("require_debug_port"):
-        return None
-
-    debug_port = _look_for_serial_port(tool_settings.get("hwids", []))
-    if not debug_port:
-        raise DebugInvalidOptionsError("Please specify `debug_port` for environment")
-    return debug_port

@@ -18,7 +18,7 @@ import os
 from platformio import fs, proc, util
 from platformio.compat import string_types
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.debug.helpers import reveal_debug_port
+from platformio.device.finder import find_debug_port
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import load_build_metadata
 from platformio.project.options import ProjectOptions
@@ -119,11 +119,21 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def port(self):
-        return reveal_debug_port(
+        initial_port = (
             self.env_options.get("debug_port", self.tool_settings.get("port"))
-            or self._port,
+            or self._port
+        )
+        port = find_debug_port(
+            initial_port,
             self.tool_name,
             self.tool_settings,
+        )
+        if port:
+            return port
+        if not self.tool_settings.get("require_debug_port"):
+            return None
+        raise DebugInvalidOptionsError(
+            "Please specify `debug_port` for the working environment"
         )
 
     @port.setter
