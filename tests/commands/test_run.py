@@ -112,7 +112,16 @@ def test_build_unflags(clirunner, validate_cliresult, tmpdir):
         """
 [env:native]
 platform = native
-build_unflags = -DTMP_MACRO1=45 -I. -DNON_EXISTING_MACRO -lunknownLib -Os
+build_unflags =
+    -DTMP_MACRO_1=45
+    -DTMP_MACRO_3=13
+    -DTMP_MACRO_4
+    -DNON_EXISTING_MACRO
+    -I.
+    -lunknownLib
+    -Os
+build_flags =
+    -DTMP_MACRO_3=10
 extra_scripts = pre:extra.py
 """
     )
@@ -121,9 +130,10 @@ extra_scripts = pre:extra.py
         """
 Import("env")
 env.Append(CPPPATH="%s")
-env.Append(CPPDEFINES="TMP_MACRO1")
-env.Append(CPPDEFINES=["TMP_MACRO2"])
-env.Append(CPPDEFINES=("TMP_MACRO3", 13))
+env.Append(CPPDEFINES="TMP_MACRO_1")
+env.Append(CPPDEFINES=["TMP_MACRO_2"])
+env.Append(CPPDEFINES=[("TMP_MACRO_3", 13)])
+env.Append(CPPDEFINES=[("TMP_MACRO_4", 4)])
 env.Append(CCFLAGS=["-Os"])
 env.Append(LIBS=["unknownLib"])
     """
@@ -132,8 +142,20 @@ env.Append(LIBS=["unknownLib"])
 
     tmpdir.mkdir("src").join("main.c").write(
         """
-#ifdef TMP_MACRO1
-#error "TMP_MACRO1 should be removed"
+#ifndef TMP_MACRO_1
+#error "TMP_MACRO_1 should be defined"
+#endif
+
+#ifndef TMP_MACRO_2
+#error "TMP_MACRO_2 should be defined"
+#endif
+
+#if TMP_MACRO_3 != 10
+#error "TMP_MACRO_3 should be 10"
+#endif
+
+#ifdef TMP_MACRO_4
+#error "TMP_MACRO_4 should not be defined"
 #endif
 
 int main() {

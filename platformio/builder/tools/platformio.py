@@ -243,27 +243,19 @@ def ProcessUnFlags(env, flags):
     if not flags:
         return
     parsed = env.ParseFlagsExtended(flags)
-
-    # get all flags and copy them to each "*FLAGS" variable
-    all_flags = []
-    for key, unflags in parsed.items():
-        if key.endswith("FLAGS"):
-            all_flags.extend(unflags)
-    for key, unflags in parsed.items():
-        if key.endswith("FLAGS"):
-            parsed[key].extend(all_flags)
-
-    for key, unflags in parsed.items():
-        for unflag in unflags:
-            for current in env.get(key, []):
-                conditions = [
-                    unflag == current,
-                    not isinstance(unflag, (tuple, list))
-                    and isinstance(current, (tuple, list))
-                    and unflag == current[0],
-                ]
-                if any(conditions):
-                    env[key].remove(current)
+    unflag_scopes = tuple(set(["ASPPFLAGS"] + list(parsed.keys())))
+    for scope in unflag_scopes:
+        for unflags in parsed.values():
+            for unflag in unflags:
+                for current in env.get(scope, []):
+                    conditions = [
+                        unflag == current,
+                        not isinstance(unflag, (tuple, list))
+                        and isinstance(current, (tuple, list))
+                        and unflag == current[0],
+                    ]
+                    if any(conditions):
+                        env[scope].remove(current)
 
 
 def StringifyMacro(env, value):  # pylint: disable=unused-argument
