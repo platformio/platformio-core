@@ -264,6 +264,10 @@ def ProcessUnFlags(env, flags):
                     env[key].remove(current)
 
 
+def StringifyMacro(env, value):
+    return '\\"%s\\"' % value.replace('"', '\\\\\\"')
+
+
 def MatchSourceFiles(env, src_dir, src_filter=None):
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
@@ -368,6 +372,7 @@ def generate(env):
     env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
+    env.AddMethod(StringifyMacro)
     env.AddMethod(MatchSourceFiles)
     env.AddMethod(CollectBuildFiles)
     env.AddMethod(AddBuildMiddleware)

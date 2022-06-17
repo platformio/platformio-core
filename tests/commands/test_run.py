@@ -252,5 +252,51 @@ platform = native
 lib_deps = symlink://../External
     """
     )
-    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir), "--verbose"])
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
     validate_cliresult(result)
+
+
+def test_stringification(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    src_dir = project_dir / "src"
+    src_dir.mkdir(parents=True)
+    (src_dir / "main.c").write_text(
+        """
+#include <stdio.h>
+int main(void) {
+    printf("MACRO_1=<%s>\\n", MACRO_1);
+    printf("MACRO_2=<%s>\\n", MACRO_2);
+    printf("MACRO_3=<%s>\\n", MACRO_3);
+    printf("MACRO_4=<%s>\\n", MACRO_4);
+    return(0);
+}
+"""
+    )
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:native]
+platform = native
+extra_scripts = script.py
+build_flags =
+    '-DMACRO_1="Hello World!"'
+    '-DMACRO_2="Text is \\\\"Quoted\\\\""'
+    """
+    )
+    (project_dir / "script.py").write_text(
+        """
+Import("projenv")
+
+projenv.Append(CPPDEFINES=[
+    ("MACRO_3", projenv.StringifyMacro('Hello "World"! Isn\\'t true?')),
+    ("MACRO_4", projenv.StringifyMacro("Special chars: ',(,),[,],:"))
+])
+    """
+    )
+    result = clirunner.invoke(
+        cmd_run, ["--project-dir", str(project_dir), "-t", "exec"]
+    )
+    validate_cliresult(result)
+    assert "MACRO_1=<Hello World!>" in result.output
+    assert 'MACRO_2=<Text is "Quoted">' in result.output
+    assert 'MACRO_3=<Hello "World"! Isn\'t true?>' in result.output
+    assert 'MACRO_4=<Special chars: \',(,),[,],:>' in result.output
