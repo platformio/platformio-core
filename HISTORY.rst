@@ -32,6 +32,7 @@ PlatformIO Core 6
 
 * Allowed to ``Import("projenv")`` in a library extra script (`issue #4305 <https://github.com/platformio/platformio-core/issues/4305>`_)
 * Improved a serial port finder for a board with predefined HWIDs
+* Documented `Stringification <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#stringification>`__  – converting a macro argument into a string constant (`issue #4310 <https://github.com/platformio/platformio-core/issues/4310>`_)
 * Added ``env.StringifyMacro(value)`` helper function for the `Advanced Scripting <https://docs.platformio.org/en/latest/scripting/index.html>`__
 
 6.0.2 (2022-06-01)
