@@ -258,7 +258,9 @@ def ProcessUnFlags(env, flags):
             for current in env.get(key, []):
                 conditions = [
                     unflag == current,
-                    isinstance(current, (tuple, list)) and unflag[0] == current[0],
+                    not isinstance(unflag, (tuple, list))
+                    and isinstance(current, (tuple, list))
+                    and unflag == current[0],
                 ]
                 if any(conditions):
                     env[key].remove(current)
