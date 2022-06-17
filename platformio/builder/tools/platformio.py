@@ -264,7 +264,7 @@ def ProcessUnFlags(env, flags):
                     env[key].remove(current)
 
 
-def StringifyMacro(env, value):
+def StringifyMacro(env, value):  # pylint: disable=unused-argument
     return '\\"%s\\"' % value.replace('"', '\\\\\\"')
 
 

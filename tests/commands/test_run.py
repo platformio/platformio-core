@@ -299,4 +299,4 @@ projenv.Append(CPPDEFINES=[
     assert "MACRO_1=<Hello World!>" in result.output
     assert 'MACRO_2=<Text is "Quoted">' in result.output
     assert 'MACRO_3=<Hello "World"! Isn\'t true?>' in result.output
-    assert 'MACRO_4=<Special chars: \',(,),[,],:>' in result.output
+    assert "MACRO_4=<Special chars: ',(,),[,],:>" in result.output
