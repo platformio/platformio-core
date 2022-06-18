@@ -18,7 +18,7 @@ import os
 from platformio import fs, proc, util
 from platformio.compat import string_types
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.device.finder import find_debug_port
+from platformio.device.finder import find_serial_port, is_pattern_port
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import load_build_metadata
 from platformio.project.options import ProjectOptions
@@ -123,10 +123,13 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
             self.env_options.get("debug_port", self.tool_settings.get("port"))
             or self._port
         )
-        port = find_debug_port(
+        if initial_port and not is_pattern_port(initial_port):
+            return initial_port
+        port = find_serial_port(
             initial_port,
-            self.tool_name,
-            self.tool_settings,
+            board_config=self.board_config,
+            upload_protocol=self.tool_name,
+            prefer_gdb_port=True,
         )
         if port:
             return port

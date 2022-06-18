@@ -67,8 +67,13 @@ def is_serial_port_ready(port, timeout=1):
     return False
 
 
-def find_serial_port(
-    initial_port, board_config=None, upload_protocol=None, ensure_ready=False, timeout=3
+def find_serial_port(  # pylint: disable=too-many-arguments
+    initial_port,
+    board_config=None,
+    upload_protocol=None,
+    ensure_ready=False,
+    prefer_gdb_port=False,
+    timeout=3,
 ):
     if initial_port:
         if not is_pattern_port(initial_port):
@@ -76,7 +81,7 @@ def find_serial_port(
         return match_serial_port(initial_port)
 
     if upload_protocol and upload_protocol.startswith("blackmagic"):
-        return find_blackmagic_serial_port(timeout)
+        return find_blackmagic_serial_port(prefer_gdb_port, timeout)
     if board_config and board_config.get("build.hwids", []):
         return find_board_serial_port(board_config, timeout)
     port = find_known_uart_port(ensure_ready, timeout)
@@ -94,7 +99,7 @@ def find_serial_port(
     return best_port or port
 
 
-def find_blackmagic_serial_port(timeout=0, only_gdb_port=False):
+def find_blackmagic_serial_port(prefer_gdb_port=False, timeout=0):
     try:
 
         @retry(timeout=timeout)
@@ -118,18 +123,18 @@ def find_blackmagic_serial_port(timeout=0, only_gdb_port=False):
                 raise retry.RetryNextException()
 
             for item in candidates:
-                if ("GDB" if only_gdb_port else "UART") in item["description"]:
+                if ("GDB" if prefer_gdb_port else "UART") in item["description"]:
                     return item["port"]
             if IS_MACOS:
                 # 1 - GDB, 3 - UART
                 for item in candidates:
-                    if item["port"].endswith("1" if only_gdb_port else "3"):
+                    if item["port"].endswith("1" if prefer_gdb_port else "3"):
                         return item["port"]
 
             candidates = sorted(candidates, key=lambda item: item["port"])
             return (
                 candidates[0]  # first port is GDB?
-                if len(candidates) == 1 or only_gdb_port
+                if len(candidates) == 1 or prefer_gdb_port
                 else candidates[1]
             )["port"]
 
@@ -221,16 +226,4 @@ def find_mbed_disk(initial_port):
             return item["path"]
         if item["name"] and any(l in item["name"].lower() for l in msdlabels):
             return item["path"]
-    return None
-
-
-def find_debug_port(initial_port, tool_name, tool_settings):
-    if initial_port:
-        if not is_pattern_port(initial_port):
-            return initial_port
-        return match_serial_port(initial_port)
-    if not tool_settings.get("require_debug_port"):
-        return None
-    if tool_name.startswith("blackmagic"):
-        return find_blackmagic_serial_port(timeout=0, only_gdb_port=True)
     return None

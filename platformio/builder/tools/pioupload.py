@@ -116,6 +116,7 @@ def AutodetectUploadPort(*args, **kwargs):
                 initial_port=initial_port,
                 board_config=env.BoardConfig() if "BOARD" in env else None,
                 upload_protocol=upload_protocol,
+                prefer_gdb_port="blackmagic" in upload_protocol,
             )
         )
 
