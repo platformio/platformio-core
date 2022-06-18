@@ -15,6 +15,7 @@
 # pylint: disable=unused-argument
 
 import json
+import os
 
 from platformio.commands import platform as cli_platform
 from platformio.package.exception import UnknownPackageError
@@ -36,7 +37,7 @@ def test_search_json_output(clirunner, validate_cliresult, isolated_pio_core):
 def test_search_raw_output(clirunner, validate_cliresult):
     result = clirunner.invoke(cli_platform.platform_search, ["arduino"])
     validate_cliresult(result)
-    assert "teensy" in result.output
+    assert "atmelavr" in result.output
 
 
 def test_install_unknown_version(clirunner):
@@ -75,8 +76,7 @@ def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core)
     validate_cliresult(result)
     output = strip_ansi_codes(result.output)
     assert "atmelavr @ 2.0.0" in output
-    assert "Installing tool-avrdude @" in output
-    assert len(isolated_pio_core.join("packages").listdir()) == 1
+    assert not os.path.isdir(str(isolated_pio_core.join("packages")))
 
 
 def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_core):
@@ -89,7 +89,7 @@ def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_core):
     )
     validate_cliresult(result)
     assert "espressif8266" in result.output
-    assert len(isolated_pio_core.join("packages").listdir()) == 1
+    assert not os.path.isdir(str(isolated_pio_core.join("packages")))
 
 
 def test_list_json_output(clirunner, validate_cliresult):
@@ -110,6 +110,11 @@ def test_list_raw_output(clirunner, validate_cliresult):
 
 def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
+        cli_platform.package_install_cmd,
+        ["--global", "--tool", "platformio/tool-avrdude@~1.60300.0"],
+    )
+    validate_cliresult(result)
+    result = clirunner.invoke(
         cli_platform.platform_update, ["--dry-run", "--json-output"]
     )
     validate_cliresult(result)
@@ -120,7 +125,7 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_core):
 
 
 def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
-    result = clirunner.invoke(cli_platform.platform_update)
+    result = clirunner.invoke(cli_platform.platform_update, ["atmelavr"])
     validate_cliresult(result)
     output = strip_ansi_codes(result.output)
     assert "Removing atmelavr @ 2.0.0" in output
