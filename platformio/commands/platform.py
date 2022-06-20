@@ -74,8 +74,8 @@ def platform_frameworks(query, json_output):
     if not json_output:
         click.secho(
             "\nWARNING: This command is deprecated and will be removed in "
-            "the next releases. \nPlease https://docs.platformio.org"
-            "/en/latest/frameworks/index.html.\n",
+            "the next releases. \nPlease visit https://docs.platformio.org"
+            "/en/latest/frameworks/index.html\n",
             fg="yellow",
         )
         return

@@ -20,7 +20,7 @@ import os
 import pytest
 import semantic_version
 
-from platformio.commands.lib.command import cli as cmd_lib
+from platformio.commands.lib import cli as cmd_lib
 from platformio.package.meta import PackageType
 from platformio.package.vcsclient import VCSClientFactory
 from platformio.project.config import ProjectConfig
@@ -137,11 +137,7 @@ lib_deps =
     # test list
     result = clirunner.invoke(cmd_lib, ["-d", str(project_dir), "list"])
     validate_cliresult(result)
-    assert "Version: 0.8.3+sha." in result.stdout
-    assert (
-        "Source: git+https://github.com/OttoWinter/async-mqtt-client.git#v0.8.3"
-        in result.stdout
-    )
+    assert "AsyncMqttClient-esphome @ 0.8.3+sha.f5aa899" in result.stdout
     result = clirunner.invoke(
         cmd_lib, ["-d", str(project_dir), "list", "--json-output"]
     )
