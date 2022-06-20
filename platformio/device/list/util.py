@@ -24,12 +24,15 @@ from platformio import __version__, exception, proc
 from platformio.compat import IS_MACOS, IS_WINDOWS
 
 
-def list_serial_ports(filter_hwid=False):
+def list_serial_ports(filter_hwid=False, as_objects=False):
     try:
         # pylint: disable=import-outside-toplevel
         from serial.tools.list_ports import comports
     except ImportError:
         raise exception.GetSerialPortsError(os.name)
+
+    if as_objects:
+        return comports()
 
     result = []
     for p, d, h in comports():

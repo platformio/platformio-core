@@ -20,6 +20,7 @@ import serial
 
 from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.device.list.util import list_logical_devices, list_serial_ports
+from platformio.fs import get_platformio_udev_rules_path
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 from platformio.util import retry
@@ -27,16 +28,29 @@ from platformio.util import retry
 BLACK_MAGIC_HWIDS = [
     "1D50:6018",
 ]
-KNOWN_UART_HWIDS = BLACK_MAGIC_HWIDS + [
-    # Silicon Labs
-    "10C4:EA60",  # CP210X
-    "10C4:EA61",  # CP210X
-    "10C4:EA63",  # CP210X
-    "10C4:EA70",  # CP2105
-    "10C4:EA71",  # CP2108
-    "10C4:EA80",  # CP2110
-    "10C4:80A9",  # CP210X
-]
+
+
+def parse_udev_rules_hwids(path):
+    result = []
+    with open(path, mode="r", encoding="utf8") as fp:
+        for line in fp.readlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            attrs = {}
+            for attr in line.split(","):
+                attr = attr.replace("==", "=").replace('"', "").strip()
+                if "=" not in attr:
+                    continue
+                name, value = attr.split("=", 1)
+                attrs[name] = value
+            hwid = "%s:%s" % (
+                attrs.get("ATTRS{idVendor}", "*"),
+                attrs.get("ATTRS{idProduct}", "*"),
+            )
+            if hwid != "*:*":
+                result.append(hwid.upper())
+    return result
 
 
 def normalize_board_hwid(value):
@@ -73,7 +87,7 @@ def find_serial_port(  # pylint: disable=too-many-arguments
     upload_protocol=None,
     ensure_ready=False,
     prefer_gdb_port=False,
-    timeout=3,
+    timeout=2,
 ):
     if initial_port:
         if not is_pattern_port(initial_port):
@@ -173,8 +187,14 @@ def find_board_serial_port(board_config, timeout=0):
 
 
 def find_known_uart_port(ensure_ready=False, timeout=0):
-    known_hwids = list(KNOWN_UART_HWIDS)
-    # load HWIDs from installed dev-platforms
+    known_hwids = list(BLACK_MAGIC_HWIDS)
+
+    # load from UDEV rules
+    udev_rules_path = get_platformio_udev_rules_path()
+    if os.path.isfile(udev_rules_path):
+        known_hwids.extend(parse_udev_rules_hwids(udev_rules_path))
+
+    # load from installed dev-platforms
     for platform in PlatformPackageManager().get_installed():
         p = PlatformFactory.new(platform)
         for board_config in p.get_boards().values():
@@ -187,13 +207,15 @@ def find_known_uart_port(ensure_ready=False, timeout=0):
 
         @retry(timeout=timeout)
         def wrapper():
-            for item in list_serial_ports(filter_hwid=True):
-                port = item["port"]
-                hwid = item["hwid"].upper()
-                if not any(item in hwid for item in known_hwids):
+            for item in list_serial_ports(as_objects=True):
+                if not item.vid or not item.pid:
                     continue
-                if not ensure_ready or is_serial_port_ready(port):
-                    return port
+                hwid = "{:04X}:{:04X}".format(item.vid, item.pid)
+                for pattern in known_hwids:
+                    if fnmatch(hwid, pattern) and (
+                        not ensure_ready or is_serial_port_ready(item.device)
+                    ):
+                        return item.device
             raise retry.RetryNextException()
 
         return wrapper()

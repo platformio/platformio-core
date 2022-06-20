@@ -97,6 +97,12 @@ def calculate_folder_size(path):
     return result
 
 
+def get_platformio_udev_rules_path():
+    return os.path.abspath(
+        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
+    )
+
+
 def ensure_udev_rules():
     from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 
@@ -119,9 +125,7 @@ def ensure_udev_rules():
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
-    origin_path = os.path.abspath(
-        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
-    )
+    origin_path = get_platformio_udev_rules_path()
     if not os.path.isfile(origin_path):
         return None
 
