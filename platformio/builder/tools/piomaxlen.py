@@ -19,6 +19,7 @@ import os
 import re
 
 from SCons.Platform import TempFileMunge  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Subst import quote_spaces  # pylint: disable=import-error
 
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
@@ -70,11 +71,13 @@ def _file_long_data(env, data):
     return tmp_file
 
 
-def exists(_):
-    return True
+def exists(env):
+    return "compiledb" not in COMMAND_LINE_TARGETS and not env.IsIntegrationDump()
 
 
 def generate(env):
+    if not exists(env):
+        return env
     kwargs = dict(
         _long_sources_hook=long_sources_hook,
         TEMPFILE=TempFileMunge,
