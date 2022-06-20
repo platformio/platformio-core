@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import os
+import re
+import subprocess
 from enum import Enum
 
 import click
@@ -24,6 +26,14 @@ class ShellType(Enum):
     FISH = "fish"
     ZSH = "zsh"
     BASH = "bash"
+
+
+def get_bash_version():
+    result = subprocess.run(["bash", "--version"], capture_output=True, check=True)
+    match = re.search(r"version\s+(\d+)\.(\d+)", result.stdout.decode())
+    if match:
+        return (int(match.group(1)), int(match.group(2)))
+    return (0, 0)
 
 
 def get_completion_install_path(shell):
@@ -59,6 +69,8 @@ def is_completion_code_installed(shell, path):
 
 
 def install_completion_code(shell, path):
+    if shell == ShellType.BASH and get_bash_version() < (4, 4):
+        raise click.ClickException("The minimal supported Bash version is 4.4")
     if is_completion_code_installed(shell, path):
         return None
     append = shell != ShellType.FISH
