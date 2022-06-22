@@ -35,8 +35,9 @@ monitor start
 """
 
     def __init__(self, *args, **kwargs):
+        if "port" not in kwargs:
+            kwargs["port"] = ":3333"
         super().__init__(*args, **kwargs)
-        self.port = ":3333"
 
     @property
     def server_ready_pattern(self):

@@ -38,8 +38,9 @@ $INIT_BREAK
 """
 
     def __init__(self, *args, **kwargs):
+        if "port" not in kwargs:
+            kwargs["port"] = ":2331"
         super().__init__(*args, **kwargs)
-        self.port = ":2331"
 
     @property
     def server_ready_pattern(self):
