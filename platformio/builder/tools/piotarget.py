@@ -104,19 +104,6 @@ def DumpTargets(env):
         t["group"] == "Platform" for t in targets.values()
     ):
         targets["upload"] = dict(name="upload", group="Platform", title="Upload")
-    targets["compiledb"] = dict(
-        name="compiledb",
-        title="Compilation Database",
-        description="Generate compilation database `compile_commands.json`",
-        group="Advanced",
-    )
-    targets["clean"] = dict(name="clean", title="Clean", group="General")
-    targets["cleanall"] = dict(
-        name="cleanall",
-        title="Clean All",
-        group="General",
-        description="Clean a build environment and installed library dependencies",
-    )
     return list(targets.values())
 
 
