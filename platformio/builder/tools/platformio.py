@@ -262,12 +262,11 @@ def StringifyMacro(env, value):  # pylint: disable=unused-argument
     return '\\"%s\\"' % value.replace('"', '\\\\\\"')
 
 
-def MatchSourceFiles(env, src_dir, src_filter=None):
+def MatchSourceFiles(env, src_dir, src_filter=None, src_exts=None):
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    return fs.match_src_files(
-        env.subst(src_dir), src_filter, SRC_BUILD_EXT + SRC_HEADER_EXT
-    )
+    src_exts = src_exts or (SRC_BUILD_EXT + SRC_HEADER_EXT)
+    return fs.match_src_files(env.subst(src_dir), src_filter, src_exts)
 
 
 def CollectBuildFiles(
@@ -280,7 +279,7 @@ def CollectBuildFiles(
     if src_dir.endswith(os.sep):
         src_dir = src_dir[:-1]
 
-    for item in env.MatchSourceFiles(src_dir, src_filter):
+    for item in env.MatchSourceFiles(src_dir, src_filter, SRC_BUILD_EXT):
         _reldir = os.path.dirname(item)
         _src_dir = os.path.join(src_dir, _reldir) if _reldir else src_dir
         _var_dir = os.path.join(variant_dir, _reldir) if _reldir else variant_dir
@@ -289,8 +288,7 @@ def CollectBuildFiles(
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
-        if fs.path_endswith_ext(item, SRC_BUILD_EXT):
-            sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
+        sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
     middlewares = env.get("__PIO_BUILD_MIDDLEWARES")
     if not middlewares:
