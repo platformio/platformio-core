@@ -866,8 +866,6 @@ class ProjectAsLibBuilder(LibBuilderBase):
         project_src_filter = env.get("SRC_FILTER")
         super().__init__(env, *args, **kwargs)
         self.env["SRC_FILTER"] = project_src_filter
-        if "test" in self.env.GetBuildType():
-            self.env.ConfigureTestTarget()
 
     @property
     def include_dir(self):
@@ -1133,6 +1131,9 @@ def ConfigureProjectLibBuilder(env):
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     env.Export(dict(projenv=project.env))
+
+    if "test" in env.GetBuildType():
+        project.env.ConfigureTestTarget()
 
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
 
