@@ -332,7 +332,9 @@ class LibBuilderBase:
         if not LibBuilderBase._INCLUDE_DIRS_CACHE:
             LibBuilderBase._INCLUDE_DIRS_CACHE = [
                 self.env.Dir(d)
-                for d in ProjectAsLibBuilder.get_instance().get_include_dirs()
+                for d in ProjectAsLibBuilder(
+                    self.envorigin, "$PROJECT_DIR"
+                ).get_include_dirs()
             ]
             for lb in self.env.GetLibBuilders():
                 LibBuilderBase._INCLUDE_DIRS_CACHE.extend(
@@ -859,9 +861,6 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 
 class ProjectAsLibBuilder(LibBuilderBase):
-
-    _INSTANCE = None
-
     def __init__(self, env, *args, **kwargs):
         # backup original value, will be reset in base.__init__
         project_src_filter = env.get("SRC_FILTER")
@@ -869,12 +868,6 @@ class ProjectAsLibBuilder(LibBuilderBase):
         self.env["SRC_FILTER"] = project_src_filter
         if "test" in self.env.GetBuildType():
             self.env.ConfigureTestTarget()
-
-    @classmethod
-    def get_instance(cls, *args, **kwargs):
-        if not cls._INSTANCE:
-            cls._INSTANCE = ProjectAsLibBuilder(*args, **kwargs)
-        return cls._INSTANCE
 
     @property
     def include_dir(self):
@@ -1138,7 +1131,7 @@ def ConfigureProjectLibBuilder(env):
             if lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
-    project = ProjectAsLibBuilder.get_instance(env, "$PROJECT_DIR")
+    project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     env.Export(dict(projenv=project.env))
 
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
