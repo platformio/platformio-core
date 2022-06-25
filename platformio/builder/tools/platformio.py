@@ -141,23 +141,22 @@ def ProcessProgramDeps(env):
 
 
 def ProcessProjectDeps(env):
-    project_lib_builder = env.ConfigureProjectLibBuilder()
-    projenv = project_lib_builder.env
+    plb = env.ConfigureProjectLibBuilder()
 
     # prepend project libs to the beginning of list
-    env.Prepend(LIBS=project_lib_builder.build())
+    env.Prepend(LIBS=plb.build())
     # prepend extra linker related options from libs
     env.PrependUnique(
         **{
-            key: project_lib_builder.env.get(key)
+            key: plb.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
-            if project_lib_builder.env.get(key)
+            if plb.env.get(key)
         }
     )
 
     if "test" in env.GetBuildType():
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
         if len(env.get("PIOBUILDFILES", [])) - build_files_before_nums < 1:
@@ -168,7 +167,7 @@ def ProcessProjectDeps(env):
             env.Exit(1)
 
     if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
 
