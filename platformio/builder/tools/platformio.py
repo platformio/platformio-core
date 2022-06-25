@@ -126,8 +126,6 @@ def ProcessProgramDeps(env):
 
     if "debug" in env.GetBuildType():
         env.ConfigureDebugTarget()
-    if "test" in env.GetBuildType():
-        env.ConfigureTestTarget()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
