@@ -309,10 +309,15 @@ platform = native
 """
     )
     test_dir = project_dir.mkdir("test")
-    test_dir.join("test_main.c").write(
+    test_dir.join("test_main.h").write(
         """
 #include <stdio.h>
 #include <unity.h>
+    """
+    )
+    test_dir.join("test_main.c").write(
+        """
+#include "test_main.h"
 
 void setUp(){
     printf("setUp called");

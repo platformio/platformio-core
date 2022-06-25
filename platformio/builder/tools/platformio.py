@@ -126,8 +126,6 @@ def ProcessProgramDeps(env):
 
     if "debug" in env.GetBuildType():
         env.ConfigureDebugTarget()
-    if "test" in env.GetBuildType():
-        env.ConfigureTestTarget()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
@@ -141,23 +139,22 @@ def ProcessProgramDeps(env):
 
 
 def ProcessProjectDeps(env):
-    project_lib_builder = env.ConfigureProjectLibBuilder()
-    projenv = project_lib_builder.env
+    plb = env.ConfigureProjectLibBuilder()
 
     # prepend project libs to the beginning of list
-    env.Prepend(LIBS=project_lib_builder.build())
+    env.Prepend(LIBS=plb.build())
     # prepend extra linker related options from libs
     env.PrependUnique(
         **{
-            key: project_lib_builder.env.get(key)
+            key: plb.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
-            if project_lib_builder.env.get(key)
+            if plb.env.get(key)
         }
     )
 
     if "test" in env.GetBuildType():
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
         if len(env.get("PIOBUILDFILES", [])) - build_files_before_nums < 1:
@@ -168,7 +165,7 @@ def ProcessProjectDeps(env):
             env.Exit(1)
 
     if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
 
@@ -262,12 +259,11 @@ def StringifyMacro(env, value):  # pylint: disable=unused-argument
     return '\\"%s\\"' % value.replace('"', '\\\\\\"')
 
 
-def MatchSourceFiles(env, src_dir, src_filter=None):
+def MatchSourceFiles(env, src_dir, src_filter=None, src_exts=None):
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    return fs.match_src_files(
-        env.subst(src_dir), src_filter, SRC_BUILD_EXT + SRC_HEADER_EXT
-    )
+    src_exts = src_exts or (SRC_BUILD_EXT + SRC_HEADER_EXT)
+    return fs.match_src_files(env.subst(src_dir), src_filter, src_exts)
 
 
 def CollectBuildFiles(
@@ -280,7 +276,7 @@ def CollectBuildFiles(
     if src_dir.endswith(os.sep):
         src_dir = src_dir[:-1]
 
-    for item in env.MatchSourceFiles(src_dir, src_filter):
+    for item in env.MatchSourceFiles(src_dir, src_filter, SRC_BUILD_EXT):
         _reldir = os.path.dirname(item)
         _src_dir = os.path.join(src_dir, _reldir) if _reldir else src_dir
         _var_dir = os.path.join(variant_dir, _reldir) if _reldir else variant_dir
@@ -289,8 +285,7 @@ def CollectBuildFiles(
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
-        if fs.path_endswith_ext(item, SRC_BUILD_EXT):
-            sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
+        sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
     middlewares = env.get("__PIO_BUILD_MIDDLEWARES")
     if not middlewares:
