@@ -17,7 +17,6 @@ import re
 
 import click
 
-from platformio.compat import IS_WINDOWS
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
 
@@ -97,13 +96,6 @@ class GoogletestTestRunner(TestRunnerBase):
         super().__init__(*args, **kwargs)
         self._tc_parser = GoogletestTestCaseParser()
         os.environ["GTEST_COLOR"] = "no"  # disable ANSI symbols
-
-    def configure_build_env(self, env):
-        if self.platform.is_embedded():
-            return
-        env.Append(CXXFLAGS=["-std=c++11"])
-        if not IS_WINDOWS:
-            env.Append(CCFLAGS=["-pthread"], LINKFLAGS=["-pthread"])
 
     def on_testing_line_output(self, line):
         if self.options.verbose:
