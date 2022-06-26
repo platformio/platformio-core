@@ -28,6 +28,8 @@ from platformio import __version__
 
 # pylint: disable=unused-import
 from platformio.device.list.util import list_serial_ports as get_serial_ports
+# also export as get_serialports to be backward compatiblty with arduinosam@3.6.1 and possibly others
+from platformio.device.list.util import list_serial_ports as get_serialports
 from platformio.fs import cd, load_json
 from platformio.proc import exec_command
 
