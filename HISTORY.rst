@@ -26,7 +26,6 @@ PlatformIO Core 6
 
 * **Unit Testing**
 
-  - Updated "Getting Started" documentation for `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework
   - Export |UNITTESTING| flags only to the project build environment (``projenv``, files in "src" folder)
   - Merged the "building" stage with "uploading" for the embedded target (`issue #4307 <https://github.com/platformio/platformio-core/issues/4307>`_)
   - Do not resolve dependencies from the project "src" folder when the `test_build_src <https://docs.platformio.org/en/latest//projectconf/section_env_test.html#test-build-src>`__ option is not enabled
