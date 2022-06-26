@@ -71,14 +71,21 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     help="Notify by email when package is processed",
 )
 @click.option(
-    "--non-interactive",
+    "--no-interactive",
     is_flag=True,
     help="Do not show interactive prompt",
 )
+@click.option(
+    "--non-interactive",
+    is_flag=True,
+    help="Do not show interactive prompt",
+    hidden=True,
+)
 def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
-    package, owner, type_, released_at, private, notify, non_interactive
+    package, owner, type_, released_at, private, notify, no_interactive, non_interactive
 ):
     click.secho("Preparing a package...", fg="cyan")
+    no_interactive = no_interactive or non_interactive
     owner = owner or AccountClient().get_logged_username()
     do_not_pack = (
         not os.path.isdir(package)
@@ -118,7 +125,7 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
         # look for duplicates
         check_package_duplicates(owner, type_, name, version, manifest.get("system"))
 
-        if not non_interactive:
+        if not no_interactive:
             click.confirm(
                 "Are you sure you want to publish the %s %s to the registry?\n"
                 % (
