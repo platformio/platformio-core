@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.0.3 (2022-??-??)
+6.1.0 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * **Device Manager**
@@ -36,9 +36,14 @@ PlatformIO Core 6
 
 * **Build System**
 
+  - Significantly improved support for `Pre & Post Actions <https://docs.platformio.org/en/latest/scripting/actions.html>`__
+
+    * Allowed to declare actions in the `PRE-type scripts <https://docs.platformio.org/en/latest/scripting/launch_types.html>`__ even if the target is not ready yet
+    * Allowed library maintainers to use Pre & Post Actions in the library `extraScript <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/extrascript.html>`__
+
+  - Allowed to ``Import("projenv")`` in a library extra script (`issue #4305 <https://github.com/platformio/platformio-core/issues/4305>`_)
   - Documented `Stringification <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#stringification>`__  – converting a macro argument into a string constant (`issue #4310 <https://github.com/platformio/platformio-core/issues/4310>`_)
   - Added ``env.StringifyMacro(value)`` helper function for the `Advanced Scripting <https://docs.platformio.org/en/latest/scripting/index.html>`__
-  - Allowed to ``Import("projenv")`` in a library extra script (`issue #4305 <https://github.com/platformio/platformio-core/issues/4305>`_)
   - Fixed an issue when the `build_unflags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-unflags>`__ operation ignores a flag value (`issue #4309 <https://github.com/platformio/platformio-core/issues/4309>`_)
   - Fixed an issue when the `build_unflags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-unflags>`__ option was not applied to the ``ASPPFLAGS`` scope
   - Fixed an issue on Windows OS when flags were wrapped to the temporary file while generating the `Compilation database "compile_commands.json" <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__

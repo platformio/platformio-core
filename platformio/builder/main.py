@@ -53,6 +53,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "cc",
         "c++",
         "link",
+        "piohooks",
         "pioasm",
         "platformio",
         "pioproject",
@@ -220,6 +221,8 @@ env.AddPreAction(
 
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
+
+env.ProcessDelayedActions()
 
 ##############################################################################
 

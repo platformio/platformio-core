@@ -17,7 +17,7 @@ from pathlib import Path
 from platformio.run.cli import cli as cmd_run
 
 
-def test_build_flags(clirunner, validate_cliresult, tmpdir):
+def test_generic_build(clirunner, validate_cliresult, tmpdir):
     build_flags = [
         ("-D TEST_INT=13", "-DTEST_INT=13"),
         ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
@@ -28,7 +28,9 @@ def test_build_flags(clirunner, validate_cliresult, tmpdir):
         """
 [env:native]
 platform = native
-extra_scripts = extra.py
+extra_scripts =
+    pre:pre_script.py
+    post_script.py
 lib_ldf_mode = deep+
 build_src_flags = -DI_AM_ONLY_SRC_FLAG
 build_flags =
@@ -38,7 +40,17 @@ build_flags =
         % " ".join([f[0] for f in build_flags])
     )
 
-    tmpdir.join("extra.py").write(
+    tmpdir.join("pre_script.py").write(
+        """
+Import("env")
+
+def post_prog_action(source, target, env):
+    print("post_prog_action is called")
+
+env.AddPostAction("$PROG_PATH", post_prog_action)
+    """
+    )
+    tmpdir.join("post_script.py").write(
         """
 Import("projenv")
 
@@ -102,6 +114,7 @@ void dummy(void ) {};
 
     result = clirunner.invoke(cmd_run, ["--project-dir", str(tmpdir), "--verbose"])
     validate_cliresult(result)
+    assert "post_prog_action is called" in result.output
     build_output = result.output[result.output.find("Scanning dependencies...") :]
     for flag in build_flags:
         assert flag[1] in build_output, flag
