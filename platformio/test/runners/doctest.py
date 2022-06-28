@@ -113,9 +113,10 @@ class DoctestTestRunner(TestRunnerBase):
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
-        if test_case and not self.options.verbose:
-            click.echo(test_case.humanize())
+        if test_case:
             self.test_suite.add_case(test_case)
+            if not self.options.verbose:
+                click.echo(test_case.humanize())
 
         if "[doctest] Status:" in line:
             self.test_suite.on_finish()

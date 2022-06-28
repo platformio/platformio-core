@@ -265,8 +265,10 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             return
 
         test_case = self.parse_test_case(line)
-        if test_case and not self.options.verbose:
-            click.echo(test_case.humanize())
+        if test_case:
+            self.test_suite.add_case(test_case)
+            if not self.options.verbose:
+                click.echo(test_case.humanize())
 
         if all(s in line for s in ("Tests", "Failures", "Ignored")):
             self.test_suite.on_finish()
@@ -286,12 +288,10 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             source = TestCaseSource(
                 filename=data["source_file"], line=int(data.get("source_line"))
             )
-        test_case = TestCase(
+        return TestCase(
             name=data.get("name").strip(),
             status=TestStatus.from_string(data.get("status")),
             message=(data.get("message") or "").strip() or None,
             stdout=line,
             source=source,
         )
-        self.test_suite.add_case(test_case)
-        return test_case
