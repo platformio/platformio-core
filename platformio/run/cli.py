@@ -41,6 +41,7 @@ except NotImplementedError:
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
+@click.option("--monitor-port")
 @click.option(
     "-d",
     "--project-dir",
@@ -83,6 +84,7 @@ def cli(
     environment,
     target,
     upload_port,
+    monitor_port,
     project_dir,
     project_conf,
     jobs,
@@ -146,6 +148,7 @@ def cli(
                     environment,
                     target,
                     upload_port,
+                    monitor_port,
                     jobs,
                     program_args,
                     is_test_running,
@@ -174,6 +177,7 @@ def process_env(
     environments,
     targets,
     upload_port,
+    monitor_port,
     jobs,
     program_args,
     is_test_running,
@@ -207,7 +211,9 @@ def process_env(
         and "nobuild" not in ep.get_build_targets()
     ):
         ctx.invoke(
-            device_monitor_cmd, environment=environments[0] if environments else None
+            device_monitor_cmd,
+            port=monitor_port,
+            environment=environments[0] if environments else None,
         )
 
     return result
