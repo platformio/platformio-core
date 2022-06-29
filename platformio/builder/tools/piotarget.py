@@ -43,9 +43,8 @@ def PioClean(env, clean_all=False):
 
     def _clean_dir(path):
         clean_rel_path = _relpath(path)
-        print(f"Removing `{clean_rel_path}` folder...", end="")
+        print(f"Removing {clean_rel_path}")
         fs.rmtree(path)
-        print(" done!")
 
     build_dir = env.subst("$BUILD_DIR")
     libdeps_dir = env.subst("$PROJECT_LIBDEPS_DIR")
