@@ -17,11 +17,21 @@ from __future__ import absolute_import
 
 def AddActionWrapper(handler):
     def wraps(env, files, action):
-        nodes = env.arg2nodes(files, env.fs.Entry)
-        unknown_nodes = [node for node in nodes if not node.exists()]
-        if unknown_nodes:
-            env.Append(**{"_PIO_DELAYED_ACTIONS": [(handler, unknown_nodes, action)]})
-        return handler([node for node in nodes if node.exists()], action)
+        if not isinstance(files, (list, tuple, set)):
+            files = [files]
+        known_nodes = []
+        unknown_files = []
+        for item in files:
+            nodes = env.arg2nodes(item, env.fs.Entry)
+            if nodes and nodes[0].exists():
+                known_nodes.extend(nodes)
+            else:
+                unknown_files.append(item)
+        if unknown_files:
+            env.Append(**{"_PIO_DELAYED_ACTIONS": [(handler, unknown_files, action)]})
+        if known_nodes:
+            return handler(known_nodes, action)
+        return []
 
     return wraps
 
