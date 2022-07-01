@@ -47,7 +47,7 @@ Import("env")
 def post_prog_action(source, target, env):
     print("post_prog_action is called")
 
-env.AddPostAction("$PROG_PATH", post_prog_action)
+env.AddPostAction("$PROGPATH", post_prog_action)
     """
     )
     tmpdir.join("post_script.py").write(
