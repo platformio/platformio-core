@@ -75,7 +75,7 @@ def BuildProgram(env):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
-    program = env.Program("$PROGPATH", env["PIOBUILDFILES"])
+    program = env.Program(env.subst("$PROGPATH"), env["PIOBUILDFILES"])
     env.Replace(PIOMAINPROG=program)
 
     AlwaysBuild(
