@@ -79,7 +79,8 @@ DEFAULT_ENV_OPTIONS = dict(
     COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
-    PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
     IDE_EXTRA_DATA={},
 )
@@ -200,7 +201,7 @@ for item in env.GetExtraScripts("post"):
 if env.get("SIZETOOL") and not (
     set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
 ):
-    env.Depends(["upload", "program"], "checkprogsize")
+    env.Depends("upload", "checkprogsize")
     # Replace platform's "size" target with our
     _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
     Default(None)
@@ -212,7 +213,7 @@ if "compiledb" in COMMAND_LINE_TARGETS:
 
 # Print configured protocols
 env.AddPreAction(
-    ["upload", "program"],
+    "upload",
     env.VerboseAction(
         lambda source, target, env: env.PrintUploadInfo(),
         "Configuring upload protocol...",
