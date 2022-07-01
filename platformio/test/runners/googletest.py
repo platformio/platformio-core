@@ -90,7 +90,7 @@ class GoogletestTestCaseParser:
 
 class GoogletestTestRunner(TestRunnerBase):
 
-    EXTRA_LIB_DEPS = ["google/googletest@^1.12.0"]
+    EXTRA_LIB_DEPS = ["google/googletest@^1.12.1"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
