@@ -163,9 +163,7 @@ def list_project_packages(options):
         for env in config.envs():
             if environments and env not in environments:
                 continue
-            click.echo(
-                "Resolving %s environment packages..." % click.style(env, fg="cyan")
-            )
+            click.echo("Resolving %s dependencies..." % click.style(env, fg="cyan"))
             found = False
             if not only_packages or only_platform_packages:
                 _found = print_project_env_platform_packages(env, options)

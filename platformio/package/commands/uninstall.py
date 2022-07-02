@@ -92,9 +92,7 @@ def uninstall_project_dependencies(options):
             if environments and env not in environments:
                 continue
             if not options["silent"]:
-                click.echo(
-                    "Resolving %s environment packages..." % click.style(env, fg="cyan")
-                )
+                click.echo("Resolving %s dependencies..." % click.style(env, fg="cyan"))
             already_up_to_date = not uninstall_project_env_dependencies(env, options)
             if not options["silent"] and already_up_to_date:
                 click.secho("Already up-to-date.", fg="green")
