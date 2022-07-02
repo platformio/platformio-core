@@ -37,8 +37,8 @@ def team_list_cmd(orgname, json_output):
         return click.echo(json.dumps(data[orgname] if orgname else data))
     if not any(data.values()):
         return click.secho("You do not have any teams.", fg="yellow")
-    for org_name in data:
-        for team in data[org_name]:
+    for org_name, teams in data.items():
+        for team in teams:
             click.echo()
             click.secho("%s:%s" % (org_name, team.get("name")), fg="cyan")
             click.echo("-" * len("%s:%s" % (org_name, team.get("name"))))

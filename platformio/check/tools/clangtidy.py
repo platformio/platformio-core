@@ -67,8 +67,8 @@ class ClangtidyCheckTool(CheckToolBase):
         project_files = self.get_project_target_files(self.options["patterns"])
 
         src_files = []
-        for scope in project_files:
-            src_files.extend(project_files[scope])
+        for items in project_files.values():
+            src_files.extend(items)
 
         cmd.extend(flags + src_files + ["--"])
         cmd.extend(

@@ -28,7 +28,7 @@ from platformio.util import memoized
 
 
 class BaseSchema(Schema):
-    class Meta:  # pylint: disable=no-init
+    class Meta:
         unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
 
     def load_manifest(self, data):
@@ -232,7 +232,7 @@ class ManifestSchema(BaseSchema):
     )
 
     @validates("version")
-    def validate_version(self, value):  # pylint: disable=no-self-use
+    def validate_version(self, value):
         try:
             value = str(value)
             assert "." in value

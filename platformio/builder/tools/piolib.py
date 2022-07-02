@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
-# pylint: disable=assignment-from-no-return
+# pylint: disable=assignment-from-no-return, unused-argument, too-many-lines
 
 from __future__ import absolute_import
 

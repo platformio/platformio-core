@@ -194,7 +194,7 @@ class TestRunnerBase:
             target=targets,
         )
 
-    def configure_build_env(self, env):  # pylint: disable=no-self-use
+    def configure_build_env(self, env):
         """
         Configure SCons build environment
         Called in "builder/tools/piotest" tool
@@ -212,5 +212,5 @@ class TestRunnerBase:
             self._testing_output_buffer = self._testing_output_buffer[nl_pos + 1 :]
             self.on_testing_line_output(line)
 
-    def on_testing_line_output(self, line):  # pylint: disable=no-self-use
+    def on_testing_line_output(self, line):
         click.echo(line, nl=False)
