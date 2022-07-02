@@ -32,7 +32,7 @@ from platformio.package.meta import PackageItem
 from platformio.package.unpack import FileUnpacker
 
 
-class PackagePacker(object):
+class PackagePacker:
     INCLUDE_DEFAULT = list(ManifestFileType.items().values()) + [
         "README",
         "README.md",

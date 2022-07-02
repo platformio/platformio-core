@@ -31,7 +31,7 @@ class ExtractArchiveItemError(PackageException):
     )
 
 
-class BaseArchiver(object):
+class BaseArchiver:
     def __init__(self, arhfileobj):
         self._afo = arhfileobj
 
@@ -129,7 +129,7 @@ class ZIPArchiver(BaseArchiver):
         self.preserve_mtime(item, dest_dir)
 
 
-class FileUnpacker(object):
+class FileUnpacker:
     def __init__(self, path):
         self.path = path
         self._archiver = None

@@ -44,7 +44,7 @@ class LockFileTimeoutError(PlatformioException):
     pass
 
 
-class LockFile(object):
+class LockFile:
     def __init__(self, path, timeout=LOCKFILE_TIMEOUT, delay=LOCKFILE_DELAY):
         self.timeout = timeout
         self.delay = delay

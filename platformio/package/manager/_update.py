@@ -21,7 +21,7 @@ from platformio.package.meta import PackageItem, PackageOutdatedResult, PackageS
 from platformio.package.vcsclient import VCSBaseException, VCSClientFactory
 
 
-class PackageManagerUpdateMixin(object):
+class PackageManagerUpdateMixin:
     def outdated(self, pkg, spec=None):
         assert isinstance(pkg, PackageItem)
         assert pkg.metadata

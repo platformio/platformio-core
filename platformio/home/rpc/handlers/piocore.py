@@ -29,7 +29,7 @@ from platformio.compat import get_locale_encoding, is_bytes
 from platformio.home import helpers
 
 
-class MultiThreadingStdStream(object):
+class MultiThreadingStdStream:
     def __init__(self, parent_stream):
         self._buffers = {threading.get_ident(): parent_stream}
 

@@ -38,7 +38,7 @@ CONFIG_HEADER = """
 """
 
 
-class ProjectConfigBase(object):
+class ProjectConfigBase:
 
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}\()]+)\.([^\}]+)\}")
@@ -352,7 +352,9 @@ class ProjectConfigBase(object):
         except click.BadParameter as exc:
             if not self.expand_interpolations:
                 return value
-            raise exception.ProjectOptionValueError(exc.format_message(), option, section)
+            raise exception.ProjectOptionValueError(
+                exc.format_message(), option, section
+            )
 
     @staticmethod
     def cast_to(value, to_type):
@@ -394,7 +396,7 @@ class ProjectConfigBase(object):
         return True
 
 
-class ProjectConfigDirsMixin(object):
+class ProjectConfigDirsMixin:
     def get_optional_dir(self, name):
         """
         Deprecated, used by platformio-node-helpers.project.observer.fetchLibDirs

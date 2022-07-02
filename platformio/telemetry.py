@@ -34,7 +34,7 @@ from platformio.proc import is_ci, is_container
 from platformio.project.helpers import is_platformio_project
 
 
-class TelemetryBase(object):
+class TelemetryBase:
     def __init__(self):
         self._params = {}
 
@@ -198,7 +198,7 @@ class MeasurementProtocol(TelemetryBase):
 
 
 @util.singleton
-class MPDataPusher(object):
+class MPDataPusher:
 
     MAX_WORKERS = 5
 

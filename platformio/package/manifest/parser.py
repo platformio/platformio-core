@@ -27,7 +27,7 @@ from platformio.package.exception import ManifestParserError, UnknownManifestErr
 from platformio.project.helpers import is_platformio_project
 
 
-class ManifestFileType(object):
+class ManifestFileType:
     PLATFORM_JSON = "platform.json"
     LIBRARY_JSON = "library.json"
     LIBRARY_PROPERTIES = "library.properties"
@@ -53,7 +53,7 @@ class ManifestFileType(object):
         return None
 
 
-class ManifestParserFactory(object):
+class ManifestParserFactory:
     @staticmethod
     def read_manifest_contents(path):
         last_err = None
@@ -139,7 +139,7 @@ class ManifestParserFactory(object):
         raise UnknownManifestError("Unknown manifest file type %s" % type)
 
 
-class BaseManifestParser(object):
+class BaseManifestParser:
     def __init__(self, contents, remote_url=None, package_dir=None):
         self.remote_url = remote_url
         self.package_dir = package_dir

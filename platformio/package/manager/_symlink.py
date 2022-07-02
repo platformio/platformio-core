@@ -20,7 +20,7 @@ from platformio.package.exception import PackageException
 from platformio.package.meta import PackageItem, PackageSpec
 
 
-class PackageManagerSymlinkMixin(object):
+class PackageManagerSymlinkMixin:
     @staticmethod
     def is_symlink(path):
         return path and path.endswith(".pio-link") and os.path.isfile(path)

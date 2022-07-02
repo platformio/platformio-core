@@ -84,7 +84,7 @@ def list_logical_devices():
 
 
 def list_mdns_services():
-    class mDNSListener(object):
+    class mDNSListener:
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
             self._found_types = []

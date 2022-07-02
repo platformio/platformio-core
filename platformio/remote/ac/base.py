@@ -16,7 +16,7 @@ from twisted.internet import defer  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
 
-class AsyncCommandBase(object):
+class AsyncCommandBase:
 
     MAX_BUFFER_SIZE = 1024 * 1024  # 1Mb
 

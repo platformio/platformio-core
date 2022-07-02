@@ -23,7 +23,7 @@ from platformio.platform import base
 from platformio.platform.exception import UnknownPlatform
 
 
-class PlatformFactory(object):
+class PlatformFactory:
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)

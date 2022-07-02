@@ -46,7 +46,7 @@ from platformio.package.meta import PackageItem
 from platformio.project.options import ProjectOptions
 
 
-class LibBuilderFactory(object):
+class LibBuilderFactory:
     @staticmethod
     def new(env, path, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
         clsname = "UnknownLibBuilder"

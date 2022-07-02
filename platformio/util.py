@@ -38,7 +38,7 @@ from platformio.proc import exec_command
 get_serialports = get_serial_ports
 
 
-class memoized(object):
+class memoized:
     def __init__(self, expire=0):
         expire = str(expire)
         if expire.isdigit():
@@ -65,7 +65,7 @@ class memoized(object):
         self.cache.clear()
 
 
-class throttle(object):
+class throttle:
     def __init__(self, threshhold):
         self.threshhold = threshhold  # milliseconds
         self.last = 0
@@ -97,7 +97,7 @@ class RetryStopException(RetryException):
     pass
 
 
-class retry(object):
+class retry:
 
     RetryNextException = RetryNextException
     RetryStopException = RetryStopException

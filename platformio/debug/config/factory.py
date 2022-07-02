@@ -19,7 +19,7 @@ from platformio.debug.config.generic import GenericDebugConfig
 from platformio.debug.config.native import NativeDebugConfig
 
 
-class DebugConfigFactory(object):
+class DebugConfigFactory:
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_\-]+", "", name, flags=re.I)

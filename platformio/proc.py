@@ -27,7 +27,7 @@ from platformio.compat import (
 )
 
 
-class AsyncPipeBase(object):
+class AsyncPipeBase:
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
         self._pipe_reader = os.fdopen(

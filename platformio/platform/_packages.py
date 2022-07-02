@@ -15,7 +15,7 @@
 from platformio.package.meta import PackageSpec
 
 
-class PlatformPackagesMixin(object):
+class PlatformPackagesMixin:
     def get_package_spec(self, name, version=None):
         return PackageSpec(
             owner=self.packages[name].get("owner"),

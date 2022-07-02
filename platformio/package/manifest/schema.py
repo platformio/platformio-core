@@ -28,7 +28,7 @@ from platformio.util import memoized
 
 
 class BaseSchema(Schema):
-    class Meta(object):  # pylint: disable=no-init
+    class Meta:  # pylint: disable=no-init
         unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
 
     def load_manifest(self, data):
@@ -253,7 +253,9 @@ class ManifestSchema(BaseSchema):
         try:
             spdx = self.load_spdx_licenses()
         except requests.exceptions.RequestException as exc:
-            raise ValidationError("Could not load SPDX licenses for validation") from exc
+            raise ValidationError(
+                "Could not load SPDX licenses for validation"
+            ) from exc
         known_ids = set(item.get("licenseId") for item in spdx.get("licenses", []))
         if value in known_ids:
             return True

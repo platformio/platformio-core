@@ -23,7 +23,7 @@ from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
 
 
-class ProjectGenerator(object):
+class ProjectGenerator:
     def __init__(self, config, env_name, ide, board_ids=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)

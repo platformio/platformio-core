@@ -23,7 +23,7 @@ from platformio.test.result import TestSuite
 from platformio.test.runners.base import TestRunnerBase, TestRunnerOptions
 
 
-class TestRunnerFactory(object):
+class TestRunnerFactory:
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_\-]+", "", name, flags=re.I)

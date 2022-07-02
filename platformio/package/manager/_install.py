@@ -26,7 +26,7 @@ from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
 
 
-class PackageManagerInstallMixin(object):
+class PackageManagerInstallMixin:
 
     _INSTALL_HISTORY = None  # avoid circle dependencies
 

@@ -57,7 +57,7 @@ class EndpointSession(requests.Session):
         return super().request(method, urljoin(self.base_url, url), *args, **kwargs)
 
 
-class EndpointSessionIterator(object):
+class EndpointSessionIterator:
     def __init__(self, endpoints):
         if not isinstance(endpoints, list):
             endpoints = [endpoints]
@@ -82,7 +82,7 @@ class EndpointSessionIterator(object):
         return session
 
 
-class HTTPClient(object):
+class HTTPClient:
     def __init__(self, endpoints):
         self._session_iter = EndpointSessionIterator(endpoints)
         self._session = None

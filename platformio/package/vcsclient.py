@@ -29,7 +29,7 @@ class VCSBaseException(PackageException):
     pass
 
 
-class VCSClientFactory(object):
+class VCSClientFactory:
     @staticmethod
     def new(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
@@ -52,10 +52,12 @@ class VCSClientFactory(object):
             assert isinstance(obj, VCSClientBase)
             return obj
         except (KeyError, AssertionError) as exc:
-            raise VCSBaseException("VCS: Unknown repository type %s" % remote_url) from exc
+            raise VCSBaseException(
+                "VCS: Unknown repository type %s" % remote_url
+            ) from exc
 
 
-class VCSClientBase(object):
+class VCSClientBase:
 
     command = None
 
@@ -109,7 +111,9 @@ class VCSClientBase(object):
             subprocess.check_call(args, **kwargs)
             return True
         except subprocess.CalledProcessError as exc:
-            raise VCSBaseException("VCS: Could not process command %s" % exc.cmd) from exc
+            raise VCSBaseException(
+                "VCS: Could not process command %s" % exc.cmd
+            ) from exc
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args

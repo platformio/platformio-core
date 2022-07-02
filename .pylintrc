@@ -3,16 +3,10 @@ output-format=colorized
 
 [MESSAGES CONTROL]
 disable=
-    bad-continuation,
-    bad-whitespace,
     missing-docstring,
-    ungrouped-imports,
     invalid-name,
-    cyclic-import,
-    duplicate-code,
-    superfluous-parens,
     too-few-public-methods,
-    useless-object-inheritance,
+    superfluous-parens,
     useless-import-alias,
     bad-option-value,
     consider-using-dict-items,

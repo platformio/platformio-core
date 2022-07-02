@@ -22,7 +22,7 @@ from platformio.project.helpers import get_project_dir
 # pylint: disable=too-many-arguments
 
 
-class DefectItem(object):
+class DefectItem:
 
     SEVERITY_HIGH = 1
     SEVERITY_MEDIUM = 2

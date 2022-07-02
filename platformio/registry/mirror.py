@@ -21,7 +21,7 @@ from platformio.http import HTTPClient
 from platformio.registry.client import RegistryClient
 
 
-class RegistryFileMirrorIterator(object):
+class RegistryFileMirrorIterator:
 
     HTTP_CLIENT_INSTANCES = {}
 

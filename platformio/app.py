@@ -70,7 +70,7 @@ SESSION_VARS = {
 }
 
 
-class State(object):
+class State:
     def __init__(self, path=None, lock=False):
         self.path = path
         self.lock = lock

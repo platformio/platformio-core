@@ -24,7 +24,7 @@ from platformio import fs
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
 
 
-class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
+class ConfigOption:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         scope,

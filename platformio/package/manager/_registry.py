@@ -23,7 +23,7 @@ from platformio.registry.client import RegistryClient
 from platformio.registry.mirror import RegistryFileMirrorIterator
 
 
-class PackageManagerRegistryMixin(object):
+class PackageManagerRegistryMixin:
     def install_from_registry(self, spec, search_qualifiers=None):
         if spec.owner and spec.name and not search_qualifiers:
             package = self.fetch_registry_package(spec)

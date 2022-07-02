@@ -21,7 +21,7 @@ from platformio.exception import UserSideException
 from platformio.platform.exception import InvalidBoardManifest
 
 
-class PlatformBoardConfig(object):
+class PlatformBoardConfig:
     def __init__(self, manifest_path):
         self._id = os.path.basename(manifest_path)[:-5]
         assert os.path.isfile(manifest_path)

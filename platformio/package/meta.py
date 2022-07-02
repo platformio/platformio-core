@@ -27,7 +27,7 @@ from platformio.package.manifest.parser import ManifestFileType
 from platformio.package.version import cast_version_to_semver
 
 
-class PackageType(object):
+class PackageType:
     LIBRARY = "library"
     PLATFORM = "platform"
     TOOL = "tool"
@@ -63,7 +63,7 @@ class PackageType(object):
         return None
 
 
-class PackageOutdatedResult(object):
+class PackageOutdatedResult:
     UPDATE_INCREMENT_MAJOR = "major"
     UPDATE_INCREMENT_MINOR = "minor"
     UPDATE_INCREMENT_PATCH = "patch"
@@ -122,7 +122,7 @@ class PackageOutdatedResult(object):
         return True
 
 
-class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
+class PackageSpec:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
         self, raw=None, owner=None, id=None, name=None, requirements=None, uri=None
     ):
@@ -358,7 +358,7 @@ class PackageSpec(object):  # pylint: disable=too-many-instance-attributes
         return name
 
 
-class PackageMetaData(object):
+class PackageMetaData:
     def __init__(  # pylint: disable=redefined-builtin
         self, type, name, version, spec=None
     ):
@@ -426,7 +426,7 @@ class PackageMetaData(object):
         return PackageMetaData(**data)
 
 
-class PackageItem(object):
+class PackageItem:
 
     METAFILE_NAME = ".piopm"
 
