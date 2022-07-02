@@ -272,7 +272,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     items = sorted(items, key=lambda item: item["__pkg_dir"])
     result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert ("Removing %s" % items[0]["name"]) in strip_ansi_codes(result.output)
+    assert "Removing %s" % items[0]["name"] in strip_ansi_codes(result.output)
 
     # uninstall the rest libraries
     result = clirunner.invoke(

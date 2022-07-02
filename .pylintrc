@@ -6,7 +6,6 @@ disable=
     missing-docstring,
     invalid-name,
     too-few-public-methods,
-    superfluous-parens,
     useless-import-alias,
     bad-option-value,
     consider-using-dict-items,

@@ -247,7 +247,7 @@ class ProjectRPC:
             if not isinstance(platforms, list):
                 platforms = [platforms]
             c_based_platforms = ["intel_mcs51", "ststm8"]
-            is_cpp_project = not (set(platforms) & set(c_based_platforms))
+            is_cpp_project = not set(platforms) & set(c_based_platforms)
         except exception.PlatformioException:
             pass
 
