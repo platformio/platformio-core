@@ -4,6 +4,8 @@ output-format=colorized
 [MESSAGES CONTROL]
 disable=
     missing-docstring,
+    duplicate-code,
     invalid-name,
     too-few-public-methods,
-    consider-using-f-string
+    consider-using-f-string,
+    cyclic-import
