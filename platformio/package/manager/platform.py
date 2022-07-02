@@ -53,9 +53,9 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             # set logging level for underlying tool manager
             p.pm.set_log_level(self.log.getEffectiveLevel())
             p.ensure_engine_compatible()
-        except IncompatiblePlatform as e:
+        except IncompatiblePlatform as exc:
             super().uninstall(pkg, skip_dependencies=True)
-            raise e
+            raise exc
         if project_env:
             p.configure_project_packages(project_env, project_targets)
         if not skip_dependencies:

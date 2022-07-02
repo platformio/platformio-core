@@ -56,9 +56,9 @@ class PackageManagerRegistryMixin(object):
                     ),
                     checksum or pkgfile["checksum"]["sha256"],
                 )
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as exc:  # pylint: disable=broad-except
                 self.log.warning(
-                    click.style("Warning! Package Mirror: %s" % e, fg="yellow")
+                    click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
                 )
                 self.log.warning(
                     click.style("Looking for another mirror...", fg="yellow")

@@ -54,8 +54,8 @@ def load_json(file_path):
     try:
         with open(file_path, mode="r", encoding="utf8") as f:
             return json.load(f)
-    except ValueError:
-        raise exception.InvalidJSONFile(file_path)
+    except ValueError as exc:
+        raise exception.InvalidJSONFile(file_path) from exc
 
 
 def humanize_file_size(filesize):
@@ -231,9 +231,9 @@ def rmtree(path):
             if st_mode & stat.S_IREAD:
                 os.chmod(path, st_mode | stat.S_IWRITE)
             func(path)
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as exc:  # pylint: disable=broad-except
             click.secho(
-                "%s \nPlease manually remove the file `%s`" % (str(e), path),
+                "%s \nPlease manually remove the file `%s`" % (str(exc), path),
                 fg="red",
                 err=True,
             )

@@ -51,8 +51,8 @@ def BoardConfig(env, board=None):
             board = board or env.get("BOARD")
             assert board, "BoardConfig: Board is not defined"
             return p.board_config(board)
-        except (AssertionError, UnknownBoard) as e:
-            sys.stderr.write("Error: %s\n" % str(e))
+        except (AssertionError, UnknownBoard) as exc:
+            sys.stderr.write("Error: %s\n" % str(exc))
             env.Exit(1)
     return None
 

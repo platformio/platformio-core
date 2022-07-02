@@ -30,8 +30,8 @@ class AsyncCommandBase(object):
 
         try:
             self.start()
-        except Exception as e:
-            raise pb.Error(str(e))
+        except Exception as exc:
+            raise pb.Error(str(exc)) from exc
 
     @property
     def id(self):

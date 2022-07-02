@@ -45,8 +45,8 @@ class SerialTestOutputReader:
             ser.rts = self.test_runner.options.monitor_rts
             ser.dtr = self.test_runner.options.monitor_dtr
             ser.open()
-        except serial.SerialException as e:
-            click.secho(str(e), fg="red", err=True)
+        except serial.SerialException as exc:
+            click.secho(str(exc), fg="red", err=True)
             return None
 
         if not self.test_runner.options.no_reset:

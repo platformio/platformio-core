@@ -360,11 +360,11 @@ class LibBuilderBase:
                     depth=self.CCONDITIONAL_SCANNER_DEPTH,
                 )
 
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as exc:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
-                        "advanced has failed with `%s`\n" % (path, e)
+                        "advanced has failed with `%s`\n" % (path, exc)
                     )
                 candidates = self.env.File(path).get_implicit_deps(
                     self.env,
@@ -956,8 +956,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
             try:
                 lm.install(spec)
                 did_install = True
-            except (HTTPClientError, UnknownPackageError, InternetIsOffline) as e:
-                click.secho("Warning! %s" % e, fg="yellow")
+            except (HTTPClientError, UnknownPackageError, InternetIsOffline) as exc:
+                click.secho("Warning! %s" % exc, fg="yellow")
 
         # reset cache
         if did_install:

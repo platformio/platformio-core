@@ -16,8 +16,4 @@ disable=
     useless-import-alias,
     bad-option-value,
     consider-using-dict-items,
-    consider-using-f-string,
-
-    ; PY2 Compat
-    super-with-arguments,
-    raise-missing-from
+    consider-using-f-string

@@ -243,17 +243,17 @@ class ManifestSchema(BaseSchema):
                 if "Invalid leading zero" in str(exc):
                     raise exc
             semantic_version.Version.coerce(value)
-        except (AssertionError, ValueError):
+        except (AssertionError, ValueError) as exc:
             raise ValidationError(
                 "Invalid semantic versioning format, see https://semver.org/"
-            )
+            ) from exc
 
     @validates("license")
     def validate_license(self, value):
         try:
             spdx = self.load_spdx_licenses()
-        except requests.exceptions.RequestException:
-            raise ValidationError("Could not load SPDX licenses for validation")
+        except requests.exceptions.RequestException as exc:
+            raise ValidationError("Could not load SPDX licenses for validation") from exc
         known_ids = set(item.get("licenseId") for item in spdx.get("licenses", []))
         if value in known_ids:
             return True

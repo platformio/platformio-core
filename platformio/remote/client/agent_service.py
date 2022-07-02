@@ -164,8 +164,8 @@ class RemoteAgentService(RemoteClientBase):
                 origin_pio_ini,
                 (os.path.getatime(back_pio_ini), os.path.getmtime(back_pio_ini)),
             )
-        except NotPlatformIOProjectError as e:
-            raise pb.Error(str(e))
+        except NotPlatformIOProjectError as exc:
+            raise pb.Error(str(exc)) from exc
 
         cmd_args = ["platformio", "--force", command, "-d", project_dir]
         for env in options.get("environment", []):

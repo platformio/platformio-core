@@ -187,9 +187,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
                 result = ManifestParserFactory.new_from_file(item).as_dict()
                 self.memcache_set(cache_key, result)
                 return result
-            except ManifestException as e:
+            except ManifestException as exc:
                 if not PlatformioCLI.in_silence():
-                    self.log.warning(click.style(str(e), fg="yellow"))
+                    self.log.warning(click.style(str(exc), fg="yellow"))
         raise MissingPackageManifestError(", ".join(self.manifest_names))
 
     @staticmethod

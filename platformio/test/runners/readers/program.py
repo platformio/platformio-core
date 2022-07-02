@@ -108,8 +108,8 @@ class ProgramTestOutputReader:
             raise UnitTestError(
                 f"Program received signal {sig.name} ({signal_description})"
             )
-        except ValueError:
-            raise UnitTestError("Program errored with %d code" % return_code)
+        except ValueError as exc:
+            raise UnitTestError("Program errored with %d code" % return_code) from exc
 
     def begin(self):
         try:

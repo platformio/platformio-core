@@ -129,11 +129,11 @@ def _debug_in_project_dir(
 
     try:
         fs.ensure_udev_rules()
-    except exception.InvalidUdevRules as e:
+    except exception.InvalidUdevRules as exc:
         click.echo(
-            helpers.escape_gdbmi_stream("~", str(e) + "\n")
+            helpers.escape_gdbmi_stream("~", str(exc) + "\n")
             if helpers.is_gdbmi_mode()
-            else str(e) + "\n",
+            else str(exc) + "\n",
             nl=False,
         )
 

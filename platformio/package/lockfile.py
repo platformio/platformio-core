@@ -72,10 +72,10 @@ class LockFile(object):
                 msvcrt.locking(  # pylint: disable=used-before-assignment
                     self._fp.fileno(), msvcrt.LK_NBLCK, 1
                 )
-        except (BlockingIOError, IOError):
+        except (BlockingIOError, IOError) as exc:
             self._fp.close()
             self._fp = None
-            raise LockFileExists
+            raise LockFileExists from exc
         return True
 
     def _unlock(self):

@@ -35,8 +35,8 @@ class PlatformFactory(object):
         sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)
-        except ImportError:
-            raise UnknownPlatform(name)
+        except ImportError as exc:
+            raise UnknownPlatform(name) from exc
 
     @classmethod
     def new(cls, pkg_or_spec, autoinstall=False) -> base.PlatformBase:

@@ -36,8 +36,8 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
         return value
     try:
         datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-    except ValueError as e:
-        raise click.BadParameter(e)
+    except ValueError as exc:
+        raise click.BadParameter(exc)
     return value
 
 

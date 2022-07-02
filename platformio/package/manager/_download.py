@@ -70,7 +70,7 @@ class PackageManagerDownloadMixin(object):
                     fd = FileDownloader(url)
                     fd.set_destination(tmp_path)
                     fd.start(with_progress=with_progress, silent=silent)
-                except IOError as e:
+                except IOError as exc:
                     raise_error = not with_progress
                     if with_progress:
                         try:
@@ -86,7 +86,7 @@ class PackageManagerDownloadMixin(object):
                                 fg="red",
                             )
                         )
-                        raise e
+                        raise exc
             if checksum:
                 fd.verify(checksum)
             os.close(tmp_fd)

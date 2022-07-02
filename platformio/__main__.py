@@ -100,15 +100,15 @@ def main(argv=None):
         ensure_python3(raise_exception=True)
         configure()
         cli()  # pylint: disable=no-value-for-parameter
-    except SystemExit as e:
-        if e.code and str(e.code).isdigit():
-            exit_code = int(e.code)
-    except Exception as e:  # pylint: disable=broad-except
-        if not isinstance(e, exception.ReturnErrorCode):
-            maintenance.on_platformio_exception(e)
+    except SystemExit as exc:
+        if exc.code and str(exc.code).isdigit():
+            exit_code = int(exc.code)
+    except Exception as exc:  # pylint: disable=broad-except
+        if not isinstance(exc, exception.ReturnErrorCode):
+            maintenance.on_platformio_exception(exc)
             error_str = "Error: "
-            if isinstance(e, exception.PlatformioException):
-                error_str += str(e)
+            if isinstance(exc, exception.PlatformioException):
+                error_str += str(exc)
             else:
                 error_str += format_exc()
                 error_str += """
@@ -128,7 +128,7 @@ An unexpected error occurred. Further steps:
 ============================================================
 """
             click.secho(error_str, fg="red", err=True)
-        exit_code = int(str(e)) if str(e).isdigit() else 1
+        exit_code = int(str(exc)) if str(exc).isdigit() else 1
     sys.argv = prev_sys_argv
     return exit_code
 

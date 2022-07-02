@@ -39,7 +39,7 @@ def package_pack_cmd(package, output):
         ManifestSchema().load_manifest(
             ManifestParserFactory.new_from_archive(archive_path).as_dict()
         )
-    except ManifestValidationError as e:
+    except ManifestValidationError as exc:
         os.remove(archive_path)
-        raise e
+        raise exc
     click.secho('Wrote a tarball to "%s"' % archive_path, fg="green")

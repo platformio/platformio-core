@@ -156,7 +156,7 @@ def build_contrib_pysite_package(target_dir, with_metadata=True):
             raise UserSideException(
                 "\n\nPlease ensure that the next packages are installed:\n\n"
                 "sudo apt install python3-dev libffi-dev libssl-dev\n"
-            )
+            ) from exc
         raise exc
 
     # build manifests

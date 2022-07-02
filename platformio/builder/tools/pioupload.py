@@ -109,8 +109,8 @@ def AutodetectUploadPort(*args, **kwargs):
     else:
         try:
             fs.ensure_udev_rules()
-        except exception.InvalidUdevRules as e:
-            sys.stderr.write("\n%s\n\n" % e)
+        except exception.InvalidUdevRules as exc:
+            sys.stderr.write("\n%s\n\n" % exc)
         env.Replace(
             UPLOAD_PORT=find_serial_port(
                 initial_port=initial_port,

@@ -274,11 +274,11 @@ class MPDataPusher(object):
             )
             r.raise_for_status()
             return True
-        except requests.exceptions.HTTPError as e:
+        except requests.exceptions.HTTPError as exc:
             # skip Bad Request
-            if 400 >= e.response.status_code < 500:
+            if 400 >= exc.response.status_code < 500:
                 return True
-        except:  # pylint: disable=W0702
+        except:  # pylint: disable=bare-except
             pass
         self._http_offline = True
         return False

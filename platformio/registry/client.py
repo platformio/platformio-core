@@ -153,7 +153,7 @@ class RegistryClient(HTTPClient):
                 x_cache_valid="1h",
                 x_with_authorization=self.allowed_private_packages(),
             )
-        except HTTPClientError as e:
-            if e.response is not None and e.response.status_code == 404:
+        except HTTPClientError as exc:
+            if exc.response is not None and exc.response.status_code == 404:
                 return None
-            raise e
+            raise exc

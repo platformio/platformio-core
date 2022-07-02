@@ -97,8 +97,8 @@ class ProjectConfigBase(object):
         self._parsed.append(path)
         try:
             self._parser.read(path, "utf-8")
-        except configparser.Error as e:
-            raise exception.InvalidProjectConfError(path, str(e))
+        except configparser.Error as exc:
+            raise exception.InvalidProjectConfError(path, str(exc))
 
         if not parse_extra:
             return
@@ -324,10 +324,10 @@ class ProjectConfigBase(object):
         # handle nested calls
         try:
             value = self.get(section, option)
-        except RecursionError:
+        except RecursionError as exc:
             raise exception.ProjectOptionValueError(
                 "Infinite recursion has been detected", option, section
-            )
+            ) from exc
         if isinstance(value, list):
             return "\n".join(value)
         return str(value)
@@ -336,8 +336,8 @@ class ProjectConfigBase(object):
         value = None
         try:
             value = self.getraw(section, option, default)
-        except configparser.Error as e:
-            raise exception.InvalidProjectConfError(self.path, str(e))
+        except configparser.Error as exc:
+            raise exception.InvalidProjectConfError(self.path, str(exc))
 
         option_meta = self.find_option_meta(section, option)
         if not option_meta:
@@ -349,10 +349,10 @@ class ProjectConfigBase(object):
             value = self.parse_multi_values(value or [])
         try:
             return self.cast_to(value, option_meta.type)
-        except click.BadParameter as e:
+        except click.BadParameter as exc:
             if not self.expand_interpolations:
                 return value
-            raise exception.ProjectOptionValueError(e.format_message(), option, section)
+            raise exception.ProjectOptionValueError(exc.format_message(), option, section)
 
     @staticmethod
     def cast_to(value, to_type):

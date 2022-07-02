@@ -115,8 +115,8 @@ def exec_command(*args, **kwargs):
         try:
             result["out"], result["err"] = p.communicate()
             result["returncode"] = p.returncode
-        except KeyboardInterrupt:
-            raise exception.AbortedByUser()
+        except KeyboardInterrupt as exc:
+            raise exception.AbortedByUser() from exc
         finally:
             for s in ("stdout", "stderr"):
                 if isinstance(kwargs[s], AsyncPipeBase):

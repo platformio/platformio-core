@@ -132,11 +132,11 @@ class HTTPClient(object):
             except (
                 requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout,
-            ) as e:
+            ) as exc:
                 try:
                     self._next_session()
-                except:  # pylint: disable=bare-except
-                    raise HTTPClientError(str(e))
+                except Exception as exc2:
+                    raise HTTPClientError(str(exc2)) from exc
 
     def fetch_json_data(self, method, path, **kwargs):
         if method not in ("get", "head", "options"):

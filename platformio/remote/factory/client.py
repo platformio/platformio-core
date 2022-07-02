@@ -38,10 +38,10 @@ class RemoteClientFactory(pb.PBClientFactory, protocol.ReconnectingClientFactory
         auth_token = None
         try:
             auth_token = AccountClient().fetch_authentication_token()
-        except Exception as e:  # pylint:disable=broad-except
+        except Exception as exc:  # pylint:disable=broad-except
             d = defer.Deferred()
             d.addErrback(self.clientAuthorizationFailed)
-            d.errback(pb.Error(e))
+            d.errback(pb.Error(exc))
             return d
 
         d = self.login(

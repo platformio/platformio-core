@@ -36,9 +36,9 @@ class PackageManagerInstallMixin(object):
         try:
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=with_progress)
-        except IOError as e:
+        except IOError as exc:
             if not with_progress:
-                raise e
+                raise exc
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 

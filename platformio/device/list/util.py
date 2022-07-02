@@ -28,8 +28,8 @@ def list_serial_ports(filter_hwid=False, as_objects=False):
     try:
         # pylint: disable=import-outside-toplevel
         from serial.tools.list_ports import comports
-    except ImportError:
-        raise exception.GetSerialPortsError(os.name)
+    except ImportError as exc:
+        raise exception.GetSerialPortsError(os.name) from exc
 
     if as_objects:
         return comports()

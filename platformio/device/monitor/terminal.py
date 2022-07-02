@@ -137,9 +137,9 @@ def new_serial_instance(options):  # pylint: disable=too-many-branches
         if port is None or port == "-":
             try:
                 port = miniterm.ask_for_port()
-            except KeyboardInterrupt:
+            except KeyboardInterrupt as exc:
                 click.echo("", err=True)
-                raise UserSideException("User aborted and port is not given")
+                raise UserSideException("User aborted and port is not given") from exc
             else:
                 if not port:
                     raise UserSideException("Port is not given")
@@ -180,6 +180,6 @@ def new_serial_instance(options):  # pylint: disable=too-many-branches
 
             serial_instance.open()
         except serial.SerialException as exc:
-            raise UserSideException(exc)
+            raise UserSideException(exc) from exc
 
     return serial_instance

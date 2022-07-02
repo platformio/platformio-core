@@ -34,11 +34,11 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     for id_ in value:
         try:
             pm.board_config(id_)
-        except UnknownBoard:
+        except UnknownBoard as exc:
             raise click.BadParameter(
                 "`%s`. Please search for board ID using `platformio boards` "
                 "command" % id_
-            )
+            ) from exc
     return value
 
 

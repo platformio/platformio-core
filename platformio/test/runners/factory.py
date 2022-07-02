@@ -56,11 +56,11 @@ class TestRunnerFactory(object):
 
             try:
                 mod = load_python_module(module_name, custom_runner_path)
-            except (FileNotFoundError, ImportError):
+            except (FileNotFoundError, ImportError) as exc:
                 raise UserSideException(
                     "Could not find custom test runner "
                     f"by this path -> {custom_runner_path}"
-                )
+                ) from exc
         else:
             mod = importlib.import_module(module_name)
         runner_cls = getattr(mod, cls.get_clsname(test_framework))

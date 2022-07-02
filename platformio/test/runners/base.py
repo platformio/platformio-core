@@ -128,11 +128,11 @@ class TestRunnerBase:
             targets.append("checkprogsize")
         try:
             return self.run_project_targets(targets)
-        except ReturnErrorCode:
+        except ReturnErrorCode as exc:
             raise UnitTestSuiteError(
                 "Building stage has failed, see errors above. "
                 "Use `pio test -vvv` option to enable verbose output."
-            )
+            ) from exc
 
     def stage_uploading(self):
         is_embedded = self.platform.is_embedded()
@@ -150,11 +150,11 @@ class TestRunnerBase:
             targets.append("__debug")
         try:
             return self.run_project_targets(targets)
-        except ReturnErrorCode:
+        except ReturnErrorCode as exc:
             raise UnitTestSuiteError(
                 "Uploading stage has failed, see errors above. "
                 "Use `pio test -vvv` option to enable verbose output."
-            )
+            ) from exc
 
     def stage_testing(self):
         if self.options.without_testing:

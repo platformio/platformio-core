@@ -203,8 +203,8 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
     def get_init_script(self, debugger):
         try:
             return getattr(self, "%s_INIT_SCRIPT" % debugger.upper())
-        except AttributeError:
-            raise NotImplementedError
+        except AttributeError as exc:
+            raise NotImplementedError from exc
 
     def reveal_patterns(self, source, recursive=True):
         program_path = self.program_path or ""

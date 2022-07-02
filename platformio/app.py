@@ -103,8 +103,10 @@ class State(object):
             try:
                 with open(self.path, mode="w", encoding="utf8") as fp:
                     fp.write(json.dumps(self._storage))
-            except IOError:
-                raise exception.HomeDirPermissionsError(os.path.dirname(self.path))
+            except IOError as exc:
+                raise exception.HomeDirPermissionsError(
+                    os.path.dirname(self.path)
+                ) from exc
         self._unlock_state_file()
 
     def _lock_state_file(self):
@@ -113,8 +115,8 @@ class State(object):
         self._lockfile = LockFile(self.path)
         try:
             self._lockfile.acquire()
-        except IOError:
-            raise exception.HomeDirPermissionsError(os.path.dirname(self.path))
+        except IOError as exc:
+            raise exception.HomeDirPermissionsError(os.path.dirname(self.path)) from exc
 
     def _unlock_state_file(self):
         if hasattr(self, "_lockfile") and self._lockfile:
@@ -169,8 +171,8 @@ def sanitize_setting(name, value):
                 value = str(value).lower() in ("true", "yes", "y", "1")
         elif isinstance(defdata["value"], int):
             value = int(value)
-    except Exception:
-        raise exception.InvalidSettingValue(value, name)
+    except Exception as exc:
+        raise exception.InvalidSettingValue(value, name) from exc
     return value
 
 
