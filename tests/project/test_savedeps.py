@@ -54,7 +54,7 @@ def test_save_libraries(tmp_path):
         PackageSpec("https://github.com/nanopb/nanopb.git"),
     ]
 
-    # add to the sepcified environment
+    # add to the specified environment
     save_project_dependencies(
         str(project_dir), specs, scope="lib_deps", action="add", environments=["debug"]
     )
@@ -140,7 +140,7 @@ def test_save_tools(tmp_path):
         PackageSpec("platformio/tool-esptoolpy"),
     ]
 
-    # add to the sepcified environment
+    # add to the specified environment
     save_project_dependencies(
         str(project_dir),
         specs,

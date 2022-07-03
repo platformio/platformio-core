@@ -34,7 +34,7 @@ from platformio.proc import exec_command
 # pylint: enable=unused-import
 
 # also export list_serial_ports as get_serialports to be
-# backward compatiblty with arduinosam versions 3.9.0 to 3.5.0 (and possibly others)
+# backward compatibility with arduinosam versions 3.9.0 to 3.5.0 (and possibly others)
 get_serialports = get_serial_ports
 
 
