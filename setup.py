@@ -62,10 +62,10 @@ setup(
     packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
     package_data={
         "platformio": [
-            "project/tpls/*/.*.tpl",
-            "project/tpls/*/*.tpl",
-            "project/tpls/*/*/*.tpl",
-            "project/tpls/*/.*/*.tpl",
+            "project/integration/tpls/*/.*.tpl",
+            "project/integration/tpls/*/*.tpl",
+            "project/integration/tpls/*/*/*.tpl",
+            "project/integration/tpls/*/.*/*.tpl",
         ],
         "scripts": ["99-platformio-udev.rules"],
     },
