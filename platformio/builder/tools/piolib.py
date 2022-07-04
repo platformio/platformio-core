@@ -28,7 +28,7 @@ import SCons.Scanner  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
-from platformio import exception, fs, util
+from platformio import exception, fs
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.http import HTTPClientError, InternetIsOffline
@@ -41,7 +41,7 @@ from platformio.package.manifest.parser import (
     ManifestParserError,
     ManifestParserFactory,
 )
-from platformio.package.meta import PackageItem
+from platformio.package.meta import PackageCompatibility, PackageItem
 from platformio.project.options import ProjectOptions
 
 
@@ -582,10 +582,14 @@ class ArduinoLibBuilder(LibBuilderBase):
         return "chain+"
 
     def is_frameworks_compatible(self, frameworks):
-        return util.items_in_list(frameworks, ["arduino", "energia"])
+        return PackageCompatibility(frameworks=frameworks).is_compatible(
+            PackageCompatibility(frameworks=["arduino", "energia"])
+        )
 
     def is_platforms_compatible(self, platforms):
-        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
+        return PackageCompatibility(platforms=platforms).is_compatible(
+            PackageCompatibility(platforms=self._manifest.get("platforms"))
+        )
 
     @property
     def build_flags(self):
@@ -640,7 +644,9 @@ class MbedLibBuilder(LibBuilderBase):
         return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
-        return util.items_in_list(frameworks, ["mbed"])
+        return PackageCompatibility(frameworks=frameworks).is_compatible(
+            PackageCompatibility(frameworks=["mbed"])
+        )
 
     def process_extra_options(self):
         self._process_mbed_lib_confs()
@@ -853,10 +859,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
         )
 
     def is_platforms_compatible(self, platforms):
-        return util.items_in_list(platforms, self._manifest.get("platforms") or ["*"])
+        return PackageCompatibility(platforms=platforms).is_compatible(
+            PackageCompatibility(platforms=self._manifest.get("platforms"))
+        )
 
     def is_frameworks_compatible(self, frameworks):
-        return util.items_in_list(frameworks, self._manifest.get("frameworks") or ["*"])
+        return PackageCompatibility(frameworks=frameworks).is_compatible(
+            PackageCompatibility(frameworks=self._manifest.get("frameworks"))
+        )
 
 
 class ProjectAsLibBuilder(LibBuilderBase):

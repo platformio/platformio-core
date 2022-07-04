@@ -25,6 +25,7 @@ from platformio import fs
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
 from platformio.package.version import cast_version_to_semver
+from platformio.util import items_in_list
 
 
 class PackageType:
@@ -61,6 +62,46 @@ class PackageType:
                     except KeyError:
                         pass
         return None
+
+
+class PackageCompatibility:
+
+    KNOWN_QUALIFIERS = ("platforms", "frameworks", "authors")
+
+    @classmethod
+    def from_dependency(cls, dependency):
+        assert isinstance(dependency, dict)
+        qualifiers = {
+            key: value
+            for key, value in dependency.items()
+            if key in cls.KNOWN_QUALIFIERS
+        }
+        return PackageCompatibility(**qualifiers)
+
+    def __init__(self, **kwargs):
+        self.qualifiers = {}
+        for key, value in kwargs.items():
+            if key not in self.KNOWN_QUALIFIERS:
+                raise ValueError(
+                    "Unknown package compatibility qualifier -> `%s`" % key
+                )
+            self.qualifiers[key] = value
+
+    def __repr__(self):
+        return "PackageCompatibility <%s>" % self.qualifiers
+
+    def to_search_qualifiers(self):
+        return self.qualifiers
+
+    def is_compatible(self, other):
+        assert isinstance(other, PackageCompatibility)
+        for key, value in self.qualifiers.items():
+            other_value = other.qualifiers.get(key)
+            if not value or not other_value:
+                continue
+            if not items_in_list(value, other_value):
+                return False
+        return True
 
 
 class PackageOutdatedResult:

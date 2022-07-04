@@ -18,6 +18,7 @@ import jsondiff
 import semantic_version
 
 from platformio.package.meta import (
+    PackageCompatibility,
     PackageMetaData,
     PackageOutdatedResult,
     PackageSpec,
@@ -312,3 +313,25 @@ def test_metadata_load(tmpdir_factory):
     metadata.dump(str(piopm_path))
     restored_metadata = PackageMetaData.load(str(piopm_path))
     assert metadata == restored_metadata
+
+
+def test_compatibility():
+    assert PackageCompatibility().is_compatible(PackageCompatibility())
+    assert PackageCompatibility().is_compatible(
+        PackageCompatibility(platforms=["espressif32"])
+    )
+    assert PackageCompatibility(frameworks=["arduino"]).is_compatible(
+        PackageCompatibility(platforms=["espressif32"])
+    )
+    assert PackageCompatibility(platforms="espressif32").is_compatible(
+        PackageCompatibility(platforms=["espressif32"])
+    )
+    assert PackageCompatibility(
+        platforms="espressif32", frameworks=["arduino"]
+    ).is_compatible(PackageCompatibility(platforms=None))
+    assert PackageCompatibility(
+        platforms="espressif32", frameworks=["arduino"]
+    ).is_compatible(PackageCompatibility(platforms=["*"]))
+    assert not PackageCompatibility(
+        platforms="espressif32", frameworks=["arduino"]
+    ).is_compatible(PackageCompatibility(platforms=["atmelavr"]))

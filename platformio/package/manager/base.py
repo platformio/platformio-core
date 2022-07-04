@@ -59,9 +59,10 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 ):
     _MEMORY_CACHE = {}
 
-    def __init__(self, pkg_type, package_dir):
+    def __init__(self, pkg_type, package_dir, compatibility=None):
         self.pkg_type = pkg_type
         self.package_dir = package_dir
+        self.compatibility = compatibility
         self.log = self._setup_logger()
 
         self._MEMORY_CACHE = {}

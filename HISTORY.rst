@@ -53,6 +53,10 @@ PlatformIO Core 6
   - Fixed an issue with the |LDF| when recursively scanning dependencies in the ``chain`` mode
   - Fixed a "PermissionError" on Windows when running "clean" or "cleanall" targets (`issue #4331 <https://github.com/platformio/platformio-core/issues/4331>`_)
 
+* **Package Management**
+
+  - Fixed an issue when library dependencies were installed for the incompatible project environment (`issue #4338 <https://github.com/platformio/platformio-core/issues/4338>`_)
+
 * **Miscellaneous**
 
   - Warn about incompatible Bash version for the `Shell Completion <https://docs.platformio.org/en/latest/core/userguide/system/completion/index.html>`__ (`issue #4326 <https://github.com/platformio/platformio-core/issues/4326>`_)

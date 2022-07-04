@@ -24,11 +24,12 @@ from platformio.project.config import ProjectConfig
 
 
 class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
-    def __init__(self, package_dir=None):
+    def __init__(self, package_dir=None, **kwargs):
         super().__init__(
             PackageType.LIBRARY,
             package_dir
             or ProjectConfig.get_instance().get("platformio", "globallib_dir"),
+            **kwargs
         )
 
     @property

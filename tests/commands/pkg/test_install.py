@@ -29,7 +29,9 @@ from platformio.project.config import ProjectConfig
 PROJECT_CONFIG_TPL = """
 [env]
 platform = platformio/atmelavr@^3.4.0
-lib_deps = milesburton/DallasTemperature@^3.9.1
+lib_deps =
+    milesburton/DallasTemperature@^3.9.1
+    https://github.com/esphome/ESPAsyncWebServer/archive/refs/tags/v2.1.0.zip
 
 [env:baremetal]
 board = uno
@@ -134,7 +136,8 @@ def test_skip_dependencies(clirunner, validate_cliresult, isolated_pio_core, tmp
             os.path.join(ProjectConfig().get("platformio", "libdeps_dir"), "devkit")
         ).get_installed()
         assert pkgs_to_specs(installed_lib_pkgs) == [
-            PackageSpec("DallasTemperature@3.10.0")
+            PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
         ]
         assert len(ToolPackageManager().get_installed()) == 0
 
@@ -154,6 +157,7 @@ def test_baremetal_project(clirunner, validate_cliresult, isolated_pio_core, tmp
         ).get_installed()
         assert pkgs_to_specs(installed_lib_pkgs) == [
             PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
             PackageSpec("OneWire@2.3.7"),
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
@@ -177,6 +181,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
             PackageSpec("OneWire@2.3.7"),
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
@@ -184,7 +189,8 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.9.1"
+            "milesburton/DallasTemperature@^3.9.1",
+            "https://github.com/esphome/ESPAsyncWebServer/archive/refs/tags/v2.1.0.zip",
         ]
 
     # test "Already up-to-date"
@@ -270,6 +276,7 @@ def test_remove_project_unused_libdeps(
         lm = LibraryPackageManager(storage_dir)
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
             PackageSpec("OneWire@2.3.7"),
         ]
 
@@ -286,6 +293,7 @@ def test_remove_project_unused_libdeps(
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("ArduinoJson@5.13.4"),
             PackageSpec("DallasTemperature@3.10.0"),
+            PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
             PackageSpec("OneWire@2.3.7"),
         ]
 
