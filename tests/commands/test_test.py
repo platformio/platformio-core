@@ -471,10 +471,6 @@ void unittest_uart_end(){}
     validate_cliresult(result)
 
 
-@pytest.mark.skipif(
-    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS") == "true",
-    reason="skip Github Actions on Windows (MinGW issue)",
-)
 def test_doctest_framework(clirunner, tmp_path: Path):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
@@ -601,10 +597,6 @@ int main(int argc, char **argv)
     assert json_report["failure_nums"] == 1
 
 
-@pytest.mark.skipif(
-    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS") == "true",
-    reason="skip Github Actions on Windows (MinGW issue)",
-)
 def test_googletest_framework(clirunner, tmp_path: Path):
     project_dir = tmp_path / "project"
     shutil.copytree(
