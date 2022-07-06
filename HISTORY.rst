@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.0 (2022-??-??)
+6.1.0 (2022-07-06)
 ~~~~~~~~~~~~~~~~~~
 
 * **Device Manager**
