@@ -35,6 +35,9 @@ jobs:
         run: |
           tox -e testcore
 
+      - name: Build Python source tarball
+        run:  python setup.py sdist
+
       - name: Publish package to PyPI
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
