@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -26,12 +27,16 @@ from platformio.test.cli import cli as pio_test_cmd
 
 def test_calculator_example(tmp_path: Path):
     junit_output_path = tmp_path / "junit.xml"
+    project_dir = tmp_path / "project"
+    shutil.copytree(
+        os.path.join("examples", "unit-testing", "calculator"), str(project_dir)
+    )
     result = proc.exec_command(
         [
             "platformio",
             "test",
             "-d",
-            os.path.join("examples", "unit-testing", "calculator"),
+            str(project_dir),
             "-e",
             "uno",
             "-e",
@@ -67,11 +72,15 @@ def test_calculator_example(tmp_path: Path):
 
 def test_list_tests(clirunner, validate_cliresult, tmp_path: Path):
     json_output_path = tmp_path / "report.json"
+    project_dir = tmp_path / "project"
+    shutil.copytree(
+        os.path.join("examples", "unit-testing", "calculator"), str(project_dir)
+    )
     result = clirunner.invoke(
         pio_test_cmd,
         [
             "-d",
-            os.path.join("examples", "unit-testing", "calculator"),
+            str(project_dir),
             "--list-tests",
             "--json-output-path",
             str(json_output_path),
@@ -309,10 +318,15 @@ platform = native
 """
     )
     test_dir = project_dir.mkdir("test")
-    test_dir.join("test_main.c").write(
+    test_dir.join("test_main.h").write(
         """
 #include <stdio.h>
 #include <unity.h>
+    """
+    )
+    test_dir.join("test_main.c").write(
+        """
+#include "test_main.h"
 
 void setUp(){
     printf("setUp called");
@@ -587,14 +601,21 @@ int main(int argc, char **argv)
     assert json_report["failure_nums"] == 1
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32" and os.environ.get("GITHUB_ACTIONS") == "true",
+    reason="skip Github Actions on Windows (MinGW issue)",
+)
 def test_googletest_framework(clirunner, tmp_path: Path):
-    project_dir = os.path.join("examples", "unit-testing", "googletest")
+    project_dir = tmp_path / "project"
+    shutil.copytree(
+        os.path.join("examples", "unit-testing", "googletest"), str(project_dir)
+    )
     junit_output_path = tmp_path / "junit.xml"
     result = clirunner.invoke(
         pio_test_cmd,
         [
             "-d",
-            project_dir,
+            str(project_dir),
             "-e",
             "native",
             "--junit-output-path",

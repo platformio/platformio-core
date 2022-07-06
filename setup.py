@@ -32,8 +32,9 @@ minimal_requirements = [
     "colorama",
     "marshmallow==%s" % ("3.*" if sys.version_info >= (3, 7) else "3.14.1"),
     "pyelftools>=0.27,<1",
-    "pyserial==3.*",
+    "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
+    "requests==%s" % ("2.*" if sys.version_info >= (3, 7) else "2.27.1"),
     "semantic_version==2.10.*",
     "tabulate==0.8.*",
     "zeroconf<1",
@@ -43,7 +44,7 @@ home_requirements = [
     "aiofiles==0.8.*",
     "ajsonrpc==1.*",
     "starlette==%s" % ("0.20.*" if sys.version_info >= (3, 7) else "0.19.1"),
-    "uvicorn==%s" % ("0.17.*" if sys.version_info >= (3, 7) else "0.16.0"),
+    "uvicorn==%s" % ("0.18.*" if sys.version_info >= (3, 7) else "0.16.0"),
     "wsproto==%s" % ("1.1.*" if sys.version_info >= (3, 7) else "1.0.0"),
 ]
 
@@ -61,10 +62,10 @@ setup(
     packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
     package_data={
         "platformio": [
-            "project/tpls/*/.*.tpl",
-            "project/tpls/*/*.tpl",
-            "project/tpls/*/*/*.tpl",
-            "project/tpls/*/.*/*.tpl",
+            "project/integration/tpls/*/.*.tpl",
+            "project/integration/tpls/*/*.tpl",
+            "project/integration/tpls/*/*/*.tpl",
+            "project/integration/tpls/*/.*/*.tpl",
         ],
         "scripts": ["99-platformio-udev.rules"],
     },

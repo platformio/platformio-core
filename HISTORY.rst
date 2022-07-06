@@ -13,6 +13,54 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.0 (2022-07-06)
+~~~~~~~~~~~~~~~~~~
+
+* **Device Manager**
+
+  - Automatically reconnect device monitor if a connection fails
+  - Added new `pio device monitor --no-reconnect <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#cmdoption-pio-device-monitor-no-reconnect>`__ option to disable automatic reconnection
+  - Handle device monitor disconnects more gracefully (`issue #3939 <https://github.com/platformio/platformio-core/issues/3939>`_)
+  - Improved a serial port finder for `Black Magic Probe <https://docs.platformio.org/en/latest/plus/debug-tools/blackmagic.html>`__ (`issue #4023 <https://github.com/platformio/platformio-core/issues/4023>`_)
+  - Improved a serial port finder for a board with predefined HWIDs
+  - Replaced ``monitor_flags`` with independent project configuration options: `monitor_parity <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-parity>`__, `monitor_eol <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-eol>`__, `monitor_raw <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-raw>`__, `monitor_echo <https://docs.platformio.org/en/latest/projectconf/section_env_monitor.html#monitor-echo>`__
+  - Fixed an issue when the monitor filters were not applied in their order (`issue #4320 <https://github.com/platformio/platformio-core/issues/4320>`_)
+
+* **Unit Testing**
+
+  - Updated "Getting Started" documentation for `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/googletest.html>`__ testing and mocking framework
+  - Export |UNITTESTING| flags only to the project build environment (``projenv``, files in "src" folder)
+  - Merged the "building" stage with "uploading" for the embedded target (`issue #4307 <https://github.com/platformio/platformio-core/issues/4307>`_)
+  - Do not resolve dependencies from the project "src" folder when the `test_build_src <https://docs.platformio.org/en/latest//projectconf/section_env_test.html#test-build-src>`__ option is not enabled
+  - Do not immediately terminate a testing program when results are received
+  - Fixed an issue when a custom `pio test --project-config <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html#cmdoption-pio-test-c>`__ was not handled properly (`issue #4299 <https://github.com/platformio/platformio-core/issues/4299>`_)
+  - Fixed an issue when testing results were wrong in the verbose mode (`issue #4336 <https://github.com/platformio/platformio-core/issues/4336>`_)
+
+* **Build System**
+
+  - Significantly improved support for `Pre & Post Actions <https://docs.platformio.org/en/latest/scripting/actions.html>`__
+
+    * Allowed to declare actions in the `PRE-type scripts <https://docs.platformio.org/en/latest/scripting/launch_types.html>`__ even if the target is not ready yet
+    * Allowed library maintainers to use Pre & Post Actions in the library `extraScript <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/extrascript.html>`__
+
+  - Documented `Stringification <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#stringification>`__ – converting a macro argument into a string constant (`issue #4310 <https://github.com/platformio/platformio-core/issues/4310>`_)
+  - Added new `pio run --monitor-port <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-monitor-port>`__ option to specify custom device monitor port to the ``monitor`` target (`issue #4337 <https://github.com/platformio/platformio-core/issues/4337>`_)
+  - Added ``env.StringifyMacro(value)`` helper function for the `Advanced Scripting <https://docs.platformio.org/en/latest/scripting/index.html>`__
+  - Allowed to ``Import("projenv")`` in a library extra script (`issue #4305 <https://github.com/platformio/platformio-core/issues/4305>`_)
+  - Fixed an issue when the `build_unflags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-unflags>`__ operation ignores a flag value (`issue #4309 <https://github.com/platformio/platformio-core/issues/4309>`_)
+  - Fixed an issue when the `build_unflags <https://docs.platformio.org/en/latest/projectconf/section_env_build.html#build-unflags>`__ option was not applied to the ``ASPPFLAGS`` scope
+  - Fixed an issue on Windows OS when flags were wrapped to the temporary file while generating the `Compilation database "compile_commands.json" <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__
+  - Fixed an issue with the |LDF| when recursively scanning dependencies in the ``chain`` mode
+  - Fixed a "PermissionError" on Windows when running "clean" or "cleanall" targets (`issue #4331 <https://github.com/platformio/platformio-core/issues/4331>`_)
+
+* **Package Management**
+
+  - Fixed an issue when library dependencies were installed for the incompatible project environment (`issue #4338 <https://github.com/platformio/platformio-core/issues/4338>`_)
+
+* **Miscellaneous**
+
+  - Warn about incompatible Bash version for the `Shell Completion <https://docs.platformio.org/en/latest/core/userguide/system/completion/index.html>`__ (`issue #4326 <https://github.com/platformio/platformio-core/issues/4326>`_)
+
 6.0.2 (2022-06-01)
 ~~~~~~~~~~~~~~~~~~
 

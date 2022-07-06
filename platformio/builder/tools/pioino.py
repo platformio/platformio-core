@@ -26,7 +26,7 @@ import click
 from platformio.compat import get_filesystem_encoding, get_locale_encoding
 
 
-class InoToCPPConverter(object):
+class InoToCPPConverter:
 
     PROTOTYPE_RE = re.compile(
         r"""^(

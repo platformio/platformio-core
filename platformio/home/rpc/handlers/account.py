@@ -23,7 +23,7 @@ class AccountRPC:
         try:
             client = AccountClient()
             return getattr(client, method)(*args, **kwargs)
-        except Exception as e:  # pylint: disable=bare-except
+        except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
-                code=4003, message="PIO Account Call Error", data=str(e)
-            )
+                code=4003, message="PIO Account Call Error", data=str(exc)
+            ) from exc

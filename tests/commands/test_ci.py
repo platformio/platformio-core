@@ -15,7 +15,7 @@
 from os.path import isfile, join
 
 from platformio.commands.ci import cli as cmd_ci
-from platformio.commands.lib.command import cli as cmd_lib
+from platformio.package.commands.install import package_install_cmd
 
 
 def test_ci_empty(clirunner):
@@ -170,7 +170,8 @@ def test_ci_project_conf(clirunner, validate_cliresult):
 def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
     storage_dir = str(tmpdir_factory.mktemp("lib"))
     result = clirunner.invoke(
-        cmd_lib, ["--storage-dir", storage_dir, "install", "1@2.3.2"]
+        package_install_cmd,
+        ["--global", "--storage-dir", storage_dir, "--library", "1"],
     )
     validate_cliresult(result)
 
@@ -182,7 +183,7 @@ def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
                 "OneWire",
                 "examples",
                 "DS2408_Switch",
-                "DS2408_Switch.pde",
+                "DS2408_Switch.ino",
             ),
             "-l",
             join(storage_dir, "OneWire"),

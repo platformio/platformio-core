@@ -29,7 +29,7 @@ class VCSBaseException(PackageException):
     pass
 
 
-class VCSClientFactory(object):
+class VCSClientFactory:
     @staticmethod
     def new(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
@@ -51,11 +51,13 @@ class VCSClientFactory(object):
             )
             assert isinstance(obj, VCSClientBase)
             return obj
-        except (KeyError, AssertionError):
-            raise VCSBaseException("VCS: Unknown repository type %s" % remote_url)
+        except (KeyError, AssertionError) as exc:
+            raise VCSBaseException(
+                "VCS: Unknown repository type %s" % remote_url
+            ) from exc
 
 
-class VCSClientBase(object):
+class VCSClientBase:
 
     command = None
 
@@ -73,10 +75,10 @@ class VCSClientBase(object):
                 self.get_cmd_output(["--version"])
             else:
                 assert self.run_cmd(["--version"])
-        except (AssertionError, OSError, PlatformioException):
+        except (AssertionError, OSError, PlatformioException) as exc:
             raise UserSideException(
                 "VCS: `%s` client is not installed in your system" % self.command
-            )
+            ) from exc
         return True
 
     @property
@@ -108,8 +110,10 @@ class VCSClientBase(object):
         try:
             subprocess.check_call(args, **kwargs)
             return True
-        except subprocess.CalledProcessError as e:
-            raise VCSBaseException("VCS: Could not process command %s" % e.cmd)
+        except subprocess.CalledProcessError as exc:
+            raise VCSBaseException(
+                "VCS: Could not process command %s" % exc.cmd
+            ) from exc
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
@@ -152,10 +156,10 @@ class GitClient(VCSClientBase):
     def check_client(self):
         try:
             return VCSClientBase.check_client(self)
-        except UserSideException:
+        except UserSideException as exc:
             raise UserSideException(
                 "Please install Git client from https://git-scm.com/downloads"
-            )
+            ) from exc
 
     def get_branches(self):
         output = self.get_cmd_output(["branch"])

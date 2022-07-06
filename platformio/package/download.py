@@ -25,7 +25,7 @@ from platformio import __default_requests_timeout__, app, fs
 from platformio.package.exception import PackageException
 
 
-class FileDownloader(object):
+class FileDownloader:
     def __init__(self, url, dest_dir=None):
         self._request = None
         # make connection

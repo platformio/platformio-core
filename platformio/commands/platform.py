@@ -18,9 +18,13 @@ import os
 
 import click
 
-from platformio.commands.boards import print_boards
 from platformio.exception import UserSideException
-from platformio.package.exception import UnknownPackageError
+from platformio.package.commands.install import package_install_cmd
+from platformio.package.commands.list import package_list_cmd
+from platformio.package.commands.search import package_search_cmd
+from platformio.package.commands.show import package_show_cmd
+from platformio.package.commands.uninstall import package_uninstall_cmd
+from platformio.package.commands.update import package_update_cmd
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.package.version import get_original_version
@@ -36,13 +40,17 @@ def cli():
 @cli.command("search", short_help="Search for development platform")
 @click.argument("query", required=False)
 @click.option("--json-output", is_flag=True)
-def platform_search(query, json_output):
+@click.pass_context
+def platform_search(ctx, query, json_output):
     if not json_output:
         click.secho(
             "\nWARNING: This command is deprecated and will be removed in "
             "the next releases. \nPlease use `pio pkg search` instead.\n",
             fg="yellow",
         )
+        query = query or ""
+        return ctx.invoke(package_search_cmd, query=f"type:platform {query}".strip())
+
     platforms = []
     for platform in _get_registry_platforms():
         if query == "all":
@@ -55,17 +63,23 @@ def platform_search(query, json_output):
                 platform["name"], with_boards=False, expose_packages=False
             )
         )
-
-    if json_output:
-        click.echo(json.dumps(platforms))
-    else:
-        _print_platforms(platforms)
+    click.echo(json.dumps(platforms))
+    return None
 
 
 @cli.command("frameworks", short_help="List supported frameworks, SDKs")
 @click.argument("query", required=False)
 @click.option("--json-output", is_flag=True)
 def platform_frameworks(query, json_output):
+    if not json_output:
+        click.secho(
+            "\nWARNING: This command is deprecated and will be removed in "
+            "the next releases. \nPlease visit https://docs.platformio.org"
+            "/en/latest/frameworks/index.html\n",
+            fg="yellow",
+        )
+        return
+
     regclient = PlatformPackageManager().get_registry_client_instance()
     frameworks = []
     for framework in regclient.fetch_json_data(
@@ -85,21 +99,21 @@ def platform_frameworks(query, json_output):
         frameworks.append(framework)
 
     frameworks = sorted(frameworks, key=lambda manifest: manifest["name"])
-    if json_output:
-        click.echo(json.dumps(frameworks))
-    else:
-        _print_platforms(frameworks)
+    click.echo(json.dumps(frameworks))
 
 
 @cli.command("list", short_help="List installed development platforms")
 @click.option("--json-output", is_flag=True)
-def platform_list(json_output):
+@click.pass_context
+def platform_list(ctx, json_output):
     if not json_output:
         click.secho(
             "\nWARNING: This command is deprecated and will be removed in "
             "the next releases. \nPlease use `pio pkg list` instead.\n",
             fg="yellow",
         )
+        return ctx.invoke(package_list_cmd, **{"global": True, "only_platforms": True})
+
     platforms = []
     pm = PlatformPackageManager()
     for pkg in pm.get_installed():
@@ -108,81 +122,27 @@ def platform_list(json_output):
         )
 
     platforms = sorted(platforms, key=lambda manifest: manifest["name"])
-    if json_output:
-        click.echo(json.dumps(platforms))
-    else:
-        _print_platforms(platforms)
+    click.echo(json.dumps(platforms))
+    return None
 
 
 @cli.command("show", short_help="Show details about development platform")
 @click.argument("platform")
 @click.option("--json-output", is_flag=True)
-def platform_show(platform, json_output):  # pylint: disable=too-many-branches
+@click.pass_context
+def platform_show(ctx, platform, json_output):  # pylint: disable=too-many-branches
     if not json_output:
         click.secho(
             "\nWARNING: This command is deprecated and will be removed in "
             "the next releases. \nPlease use `pio pkg show` instead.\n",
             fg="yellow",
         )
+        return ctx.invoke(package_show_cmd, pkg_type="platform", spec=platform)
+
     data = _get_platform_data(platform)
     if not data:
         raise UnknownPlatform(platform)
-    if json_output:
-        return click.echo(json.dumps(data))
-
-    dep = "{ownername}/{name}".format(**data) if "ownername" in data else data["name"]
-    click.echo(
-        "{dep} ~ {title}".format(dep=click.style(dep, fg="cyan"), title=data["title"])
-    )
-    click.echo("=" * (3 + len(dep + data["title"])))
-    click.echo(data["description"])
-    click.echo()
-    if "version" in data:
-        click.echo("Version: %s" % data["version"])
-    if data["homepage"]:
-        click.echo("Home: %s" % data["homepage"])
-    if data["repository"]:
-        click.echo("Repository: %s" % data["repository"])
-    if data["url"]:
-        click.echo("Vendor: %s" % data["url"])
-    if data["license"]:
-        click.echo("License: %s" % data["license"])
-    if data["frameworks"]:
-        click.echo("Frameworks: %s" % ", ".join(data["frameworks"]))
-
-    if not data["packages"]:
-        return None
-
-    if not isinstance(data["packages"][0], dict):
-        click.echo("Packages: %s" % ", ".join(data["packages"]))
-    else:
-        click.echo()
-        click.secho("Packages", bold=True)
-        click.echo("--------")
-        for item in data["packages"]:
-            click.echo()
-            click.echo("Package %s" % click.style(item["name"], fg="yellow"))
-            click.echo("-" * (8 + len(item["name"])))
-            if item["type"]:
-                click.echo("Type: %s" % item["type"])
-            click.echo("Requirements: %s" % item["requirements"])
-            click.echo(
-                "Installed: %s" % ("Yes" if item.get("version") else "No (optional)")
-            )
-            if "version" in item:
-                click.echo("Version: %s" % item["version"])
-            if "originalVersion" in item:
-                click.echo("Original version: %s" % item["originalVersion"])
-            if "description" in item:
-                click.echo("Description: %s" % item["description"])
-
-    if data["boards"]:
-        click.echo()
-        click.secho("Boards", bold=True)
-        click.echo("------")
-        print_boards(data["boards"])
-
-    return True
+    return click.echo(json.dumps(data))
 
 
 @cli.command("install", short_help="Install new development platform")
@@ -198,7 +158,9 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     is_flag=True,
     help="Reinstall/redownload dev/platform and its packages if exist",
 )
-def platform_install(  # pylint: disable=too-many-arguments,too-many-locals
+@click.pass_context
+def platform_install(  # pylint: disable=too-many-arguments
+    ctx,
     platforms,
     with_package,
     without_package,
@@ -212,76 +174,37 @@ def platform_install(  # pylint: disable=too-many-arguments,too-many-locals
         "the next releases. \nPlease use `pio pkg install` instead.\n",
         fg="yellow",
     )
-
-    def _find_pkg_names(p, candidates):
-        result = []
-        for candidate in candidates:
-            found = False
-            # lookup by package types
-            for _name, _opts in p.packages.items():
-                if _opts.get("type") == candidate:
-                    result.append(_name)
-                    found = True
-            if (
-                p.frameworks
-                and candidate.startswith("framework-")
-                and candidate[10:] in p.frameworks
-            ):
-                result.append(p.frameworks[candidate[10:]]["package"])
-                found = True
-            if not found:
-                result.append(candidate)
-        return result
-
-    pm = PlatformPackageManager()
-    pm.set_log_level(logging.WARN if silent else logging.DEBUG)
-    for platform in platforms:
-        if with_package or without_package or with_all_packages:
-            pkg = pm.install(platform, skip_dependencies=True)
-            p = PlatformFactory.new(pkg)
-            if with_all_packages:
-                with_package = list(p.packages)
-            with_package = set(_find_pkg_names(p, with_package or []))
-            without_package = set(_find_pkg_names(p, without_package or []))
-            upkgs = with_package | without_package
-            ppkgs = set(p.packages)
-            if not upkgs.issubset(ppkgs):
-                raise UnknownPackageError(", ".join(upkgs - ppkgs))
-            for name, options in p.packages.items():
-                if name in without_package:
-                    continue
-                if name in with_package or not (
-                    skip_default_package or options.get("optional", False)
-                ):
-                    p.pm.install(p.get_package_spec(name), force=force)
-        else:
-            pkg = pm.install(platform, skip_dependencies=skip_default_package)
-
-        if pkg and not silent:
-            click.secho(
-                "The platform '%s' has been successfully installed!\n"
-                "The rest of the packages will be installed later "
-                "depending on your build environment." % platform,
-                fg="green",
-            )
+    ctx.invoke(
+        package_install_cmd,
+        **{
+            "global": True,
+            "platforms": platforms,
+            "skip_dependencies": (
+                not with_all_packages
+                and (with_package or without_package or skip_default_package)
+            ),
+            "silent": silent,
+            "force": force,
+        },
+    )
 
 
 @cli.command("uninstall", short_help="Uninstall development platform")
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
-def platform_uninstall(platforms):
+@click.pass_context
+def platform_uninstall(ctx, platforms):
     click.secho(
         "\nWARNING: This command is deprecated and will be removed in "
         "the next releases. \nPlease use `pio pkg uninstall` instead.\n",
         fg="yellow",
     )
-    pm = PlatformPackageManager()
-    pm.set_log_level(logging.DEBUG)
-    for platform in platforms:
-        if pm.uninstall(platform):
-            click.secho(
-                "The platform '%s' has been successfully removed!" % platform,
-                fg="green",
-            )
+    ctx.invoke(
+        package_uninstall_cmd,
+        **{
+            "global": True,
+            "platforms": platforms,
+        },
+    )
 
 
 @cli.command("update", short_help="Update installed development platforms")
@@ -300,9 +223,12 @@ def platform_uninstall(platforms):
 )
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option("--json-output", is_flag=True)
+@click.pass_context
 def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
-    platforms, only_check, dry_run, silent, json_output, **_
+    ctx, platforms, only_check, dry_run, silent, json_output, **_
 ):
+    only_check = dry_run or only_check
+
     if only_check and not json_output:
         raise UserSideException(
             "This command is deprecated, please use `pio pkg outdated` instead"
@@ -314,86 +240,48 @@ def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
             "the next releases. \nPlease use `pio pkg update` instead.\n",
             fg="yellow",
         )
+        return ctx.invoke(
+            package_update_cmd,
+            **{
+                "global": True,
+                "platforms": platforms,
+                "silent": silent,
+            },
+        )
 
     pm = PlatformPackageManager()
     pm.set_log_level(logging.WARN if silent else logging.DEBUG)
     platforms = platforms or pm.get_installed()
-    only_check = dry_run or only_check
-
-    if only_check and json_output:
-        result = []
-        for platform in platforms:
-            spec = None
-            pkg = None
-            if isinstance(platform, PackageItem):
-                pkg = platform
-            else:
-                spec = PackageSpec(platform)
-                pkg = pm.get_package(spec)
-            if not pkg:
-                continue
-            outdated = pm.outdated(pkg, spec)
-            if (
-                not outdated.is_outdated(allow_incompatible=True)
-                and not PlatformFactory.new(pkg).are_outdated_packages()
-            ):
-                continue
-            data = _get_installed_platform_data(
-                pkg, with_boards=False, expose_packages=False
-            )
-            if outdated.is_outdated(allow_incompatible=True):
-                data["versionLatest"] = (
-                    str(outdated.latest) if outdated.latest else None
-                )
-            result.append(data)
-        return click.echo(json.dumps(result))
-
+    result = []
     for platform in platforms:
-        click.echo(
-            "Platform %s"
-            % click.style(
-                platform.metadata.name
-                if isinstance(platform, PackageItem)
-                else platform,
-                fg="cyan",
-            )
+        spec = None
+        pkg = None
+        if isinstance(platform, PackageItem):
+            pkg = platform
+        else:
+            spec = PackageSpec(platform)
+            pkg = pm.get_package(spec)
+        if not pkg:
+            continue
+        outdated = pm.outdated(pkg, spec)
+        if (
+            not outdated.is_outdated(allow_incompatible=True)
+            and not PlatformFactory.new(pkg).are_outdated_packages()
+        ):
+            continue
+        data = _get_installed_platform_data(
+            pkg, with_boards=False, expose_packages=False
         )
-        click.echo("--------")
-        pm.update(platform)
-        click.echo()
-
+        if outdated.is_outdated(allow_incompatible=True):
+            data["versionLatest"] = str(outdated.latest) if outdated.latest else None
+        result.append(data)
+    click.echo(json.dumps(result))
     return True
 
 
 #
 # Helpers
 #
-
-
-def _print_platforms(platforms):
-    for platform in platforms:
-        click.echo(
-            "{name} ~ {title}".format(
-                name=click.style(platform["name"], fg="cyan"), title=platform["title"]
-            )
-        )
-        click.echo("=" * (3 + len(platform["name"] + platform["title"])))
-        click.echo(platform["description"])
-        click.echo()
-        if "homepage" in platform:
-            click.echo("Home: %s" % platform["homepage"])
-        if "frameworks" in platform and platform["frameworks"]:
-            click.echo("Frameworks: %s" % ", ".join(platform["frameworks"]))
-        if "packages" in platform:
-            click.echo("Packages: %s" % ", ".join(platform["packages"]))
-        if "version" in platform:
-            if "__src_url" in platform:
-                click.echo(
-                    "Version: %s (%s)" % (platform["version"], platform["__src_url"])
-                )
-            else:
-                click.echo("Version: " + platform["version"])
-        click.echo()
 
 
 def _get_registry_platforms():

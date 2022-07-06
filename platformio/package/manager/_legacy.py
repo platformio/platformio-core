@@ -18,7 +18,7 @@ from platformio import fs
 from platformio.package.meta import PackageItem, PackageSpec
 
 
-class PackageManagerLegacyMixin(object):
+class PackageManagerLegacyMixin:
     def build_legacy_spec(self, pkg_dir):
         # find src manifest
         src_manifest_name = ".piopkgmanager.json"

@@ -28,7 +28,7 @@ from platformio import exception, proc
 from platformio.compat import IS_WINDOWS
 
 
-class cd(object):
+class cd:
     def __init__(self, new_path):
         self.new_path = new_path
         self.prev_path = os.getcwd()
@@ -54,8 +54,8 @@ def load_json(file_path):
     try:
         with open(file_path, mode="r", encoding="utf8") as f:
             return json.load(f)
-    except ValueError:
-        raise exception.InvalidJSONFile(file_path)
+    except ValueError as exc:
+        raise exception.InvalidJSONFile(file_path) from exc
 
 
 def humanize_file_size(filesize):
@@ -97,6 +97,12 @@ def calculate_folder_size(path):
     return result
 
 
+def get_platformio_udev_rules_path():
+    return os.path.abspath(
+        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
+    )
+
+
 def ensure_udev_rules():
     from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 
@@ -119,9 +125,7 @@ def ensure_udev_rules():
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
-    origin_path = os.path.abspath(
-        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
-    )
+    origin_path = get_platformio_udev_rules_path()
     if not os.path.isfile(origin_path):
         return None
 
@@ -227,9 +231,9 @@ def rmtree(path):
             if st_mode & stat.S_IREAD:
                 os.chmod(path, st_mode | stat.S_IWRITE)
             func(path)
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as exc:  # pylint: disable=broad-except
             click.secho(
-                "%s \nPlease manually remove the file `%s`" % (str(e), path),
+                "%s \nPlease manually remove the file `%s`" % (str(exc), path),
                 fg="red",
                 err=True,
             )

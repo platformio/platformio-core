@@ -33,6 +33,7 @@ jobs:
           pip install tox
 
       - name: Python Lint
+        if: ${{ matrix.python-version != '3.6' }}
         run: |
           tox -e lint
 

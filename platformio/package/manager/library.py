@@ -15,19 +15,21 @@
 import json
 import os
 
-from platformio.commands.lib.helpers import is_builtin_lib
+from platformio import util
 from platformio.package.exception import MissingPackageManifestError
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.meta import PackageSpec, PackageType
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
 class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-ancestors
-    def __init__(self, package_dir=None):
+    def __init__(self, package_dir=None, **kwargs):
         super().__init__(
             PackageType.LIBRARY,
             package_dir
             or ProjectConfig.get_instance().get("platformio", "globallib_dir"),
+            **kwargs
         )
 
     @property
@@ -84,7 +86,39 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         # skip built-in dependencies
         not_builtin_conds = [spec.external, spec.owner]
         if not any(not_builtin_conds):
-            not_builtin_conds.append(not is_builtin_lib(spec.name))
+            not_builtin_conds.append(not self.is_builtin_lib(spec.name))
         if any(not_builtin_conds):
             return super().install_dependency(dependency)
         return None
+
+    @staticmethod
+    @util.memoized(expire="60s")
+    def get_builtin_libs(storage_names=None):
+        # pylint: disable=import-outside-toplevel
+        from platformio.package.manager.platform import PlatformPackageManager
+
+        items = []
+        storage_names = storage_names or []
+        pm = PlatformPackageManager()
+        for pkg in pm.get_installed():
+            p = PlatformFactory.new(pkg)
+            for storage in p.get_lib_storages():
+                if storage_names and storage["name"] not in storage_names:
+                    continue
+                lm = LibraryPackageManager(storage["path"])
+                items.append(
+                    {
+                        "name": storage["name"],
+                        "path": storage["path"],
+                        "items": lm.legacy_get_installed(),
+                    }
+                )
+        return items
+
+    @classmethod
+    def is_builtin_lib(cls, name):
+        for storage in cls.get_builtin_libs():
+            for lib in storage["items"]:
+                if lib.get("name") == name:
+                    return True
+        return False

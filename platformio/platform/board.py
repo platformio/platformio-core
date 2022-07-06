@@ -21,15 +21,15 @@ from platformio.exception import UserSideException
 from platformio.platform.exception import InvalidBoardManifest
 
 
-class PlatformBoardConfig(object):
+class PlatformBoardConfig:
     def __init__(self, manifest_path):
         self._id = os.path.basename(manifest_path)[:-5]
         assert os.path.isfile(manifest_path)
         self.manifest_path = manifest_path
         try:
             self._manifest = fs.load_json(manifest_path)
-        except ValueError:
-            raise InvalidBoardManifest(manifest_path)
+        except ValueError as exc:
+            raise InvalidBoardManifest(manifest_path) from exc
         if not set(["name", "url", "vendor"]) <= set(self._manifest):
             raise UserSideException(
                 "Please specify name, url and vendor fields for " + manifest_path

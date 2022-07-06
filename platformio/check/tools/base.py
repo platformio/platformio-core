@@ -25,7 +25,7 @@ from platformio.package.meta import PackageSpec
 from platformio.project.helpers import load_build_metadata
 
 
-class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
+class CheckToolBase:  # pylint: disable=too-many-instance-attributes
     def __init__(self, project_dir, config, envname, options):
         self.config = config
         self.envname = envname

@@ -71,9 +71,9 @@ def cli(dev):
             click.secho(
                 "Warning! Please restart IDE to affect PIO Home changes", fg="yellow"
             )
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception as exc:
         if not r:
-            raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
+            raise exception.UpgradeError("\n".join([str(cmd), str(exc)])) from exc
         permission_errors = ("permission denied", "not permitted")
         if any(m in r["err"].lower() for m in permission_errors) and not IS_WINDOWS:
             click.secho(
@@ -127,8 +127,8 @@ def get_latest_version():
             except:  # pylint: disable=bare-except
                 pass
         return get_pypi_latest_version()
-    except:
-        raise exception.GetLatestVersionError()
+    except Exception as exc:
+        raise exception.GetLatestVersionError() from exc
 
 
 def get_develop_latest_version():

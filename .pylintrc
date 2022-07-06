@@ -3,21 +3,9 @@ output-format=colorized
 
 [MESSAGES CONTROL]
 disable=
-    bad-continuation,
-    bad-whitespace,
     missing-docstring,
-    ungrouped-imports,
-    invalid-name,
-    cyclic-import,
     duplicate-code,
-    superfluous-parens,
+    invalid-name,
     too-few-public-methods,
-    useless-object-inheritance,
-    useless-import-alias,
-    bad-option-value,
-    consider-using-dict-items,
     consider-using-f-string,
-
-    ; PY2 Compat
-    super-with-arguments,
-    raise-missing-from
+    cyclic-import

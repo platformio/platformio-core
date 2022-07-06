@@ -19,6 +19,7 @@ from pathlib import Path
 
 import click
 
+from platformio.package.manager.library import LibraryPackageManager
 from platformio.test.exception import UnitTestSuiteError
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
@@ -184,6 +185,24 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         ),
     )
 
+    def __init__(self, *args, **kwargs):
+        """Delete when Unity > 2.5.2 is released"""
+        super().__init__(*args, **kwargs)
+        self._tmp_pre_upgrade()
+
+    def _tmp_pre_upgrade(self):
+        """Delete when Unity > 2.5.2 is released"""
+        lm = LibraryPackageManager(
+            os.path.join(
+                self.project_config.get("platformio", "libdeps_dir"),
+                self.test_suite.env_name,
+            ),
+        )
+        pkg = lm.get_package(self.EXTRA_LIB_DEPS[0])
+        if not pkg or os.path.isfile(os.path.join(pkg.path, "platformio-build.py")):
+            return
+        lm.uninstall(pkg)
+
     def get_unity_framework_config(self):
         if not self.platform.is_embedded():
             return self.UNITY_FRAMEWORK_CONFIG["native"]
@@ -265,8 +284,10 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             return
 
         test_case = self.parse_test_case(line)
-        if test_case and not self.options.verbose:
-            click.echo(test_case.humanize())
+        if test_case:
+            self.test_suite.add_case(test_case)
+            if not self.options.verbose:
+                click.echo(test_case.humanize())
 
         if all(s in line for s in ("Tests", "Failures", "Ignored")):
             self.test_suite.on_finish()
@@ -286,12 +307,10 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             source = TestCaseSource(
                 filename=data["source_file"], line=int(data.get("source_line"))
             )
-        test_case = TestCase(
+        return TestCase(
             name=data.get("name").strip(),
             status=TestStatus.from_string(data.get("status")),
             message=(data.get("message") or "").strip() or None,
             stdout=line,
             source=source,
         )
-        self.test_suite.add_case(test_case)
-        return test_case

@@ -59,9 +59,10 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 ):
     _MEMORY_CACHE = {}
 
-    def __init__(self, pkg_type, package_dir):
+    def __init__(self, pkg_type, package_dir, compatibility=None):
         self.pkg_type = pkg_type
         self.package_dir = package_dir
+        self.compatibility = compatibility
         self.log = self._setup_logger()
 
         self._MEMORY_CACHE = {}
@@ -187,9 +188,9 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
                 result = ManifestParserFactory.new_from_file(item).as_dict()
                 self.memcache_set(cache_key, result)
                 return result
-            except ManifestException as e:
+            except ManifestException as exc:
                 if not PlatformioCLI.in_silence():
-                    self.log.warning(click.style(str(e), fg="yellow"))
+                    self.log.warning(click.style(str(exc), fg="yellow"))
         raise MissingPackageManifestError(", ".join(self.manifest_names))
 
     @staticmethod

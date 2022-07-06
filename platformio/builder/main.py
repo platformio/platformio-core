@@ -28,7 +28,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import compat, fs
+from platformio import app, compat, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
@@ -53,19 +53,20 @@ DEFAULT_ENV_OPTIONS = dict(
         "cc",
         "c++",
         "link",
+        "piohooks",
         "pioasm",
         "platformio",
         "pioproject",
         "pioplatform",
         "piotest",
         "piotarget",
-        "piomaxlen",
         "piolib",
         "pioupload",
         "piosize",
         "pioino",
         "piomisc",
         "piointegration",
+        "piomaxlen",
     ],
     toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
@@ -78,7 +79,8 @@ DEFAULT_ENV_OPTIONS = dict(
     COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
-    PROG_PATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
     IDE_EXTRA_DATA={},
 )
@@ -110,6 +112,8 @@ env.Replace(
 
 # Setup project optional directories
 config = env.GetProjectConfig()
+app.set_session_var("custom_project_conf", config.path)
+
 env.Replace(
     PROJECT_DIR=get_project_dir(),
     PROJECT_CORE_DIR=config.get("platformio", "core_dir"),
@@ -197,7 +201,7 @@ for item in env.GetExtraScripts("post"):
 if env.get("SIZETOOL") and not (
     set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
 ):
-    env.Depends(["upload", "program"], "checkprogsize")
+    env.Depends("upload", "checkprogsize")
     # Replace platform's "size" target with our
     _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
     Default(None)
@@ -209,7 +213,7 @@ if "compiledb" in COMMAND_LINE_TARGETS:
 
 # Print configured protocols
 env.AddPreAction(
-    ["upload", "program"],
+    "upload",
     env.VerboseAction(
         lambda source, target, env: env.PrintUploadInfo(),
         "Configuring upload protocol...",
@@ -218,6 +222,8 @@ env.AddPreAction(
 
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
+
+env.ProcessDelayedActions()
 
 ##############################################################################
 

@@ -15,6 +15,7 @@
 import codecs
 import os
 import sys
+from pathlib import Path
 
 import bottle
 
@@ -23,7 +24,7 @@ from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
 
 
-class ProjectGenerator(object):
+class ProjectGenerator:
     def __init__(self, config, env_name, ide, board_ids=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
@@ -51,12 +52,11 @@ class ProjectGenerator(object):
 
     @staticmethod
     def get_supported_ides():
-        tpls_dir = os.path.join(fs.get_source_dir(), "project", "tpls")
         return sorted(
             [
-                d
-                for d in os.listdir(tpls_dir)
-                if os.path.isdir(os.path.join(tpls_dir, d))
+                item.name
+                for item in (Path(__file__).parent / "tpls").iterdir()
+                if item.is_dir()
             ]
         )
 
@@ -132,7 +132,7 @@ class ProjectGenerator(object):
 
     def get_tpls(self):
         tpls = []
-        tpls_dir = os.path.join(fs.get_source_dir(), "project", "tpls", self.ide)
+        tpls_dir = str(Path(__file__).parent / "tpls" / self.ide)
         for root, _, files in os.walk(tpls_dir):
             for f in files:
                 if not f.endswith(".tpl"):

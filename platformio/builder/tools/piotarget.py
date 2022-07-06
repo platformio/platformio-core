@@ -43,26 +43,18 @@ def PioClean(env, clean_all=False):
 
     def _clean_dir(path):
         clean_rel_path = _relpath(path)
-        for root, _, files in os.walk(path):
-            for f in files:
-                dst = os.path.join(root, f)
-                os.remove(dst)
-                print(
-                    "Removed %s"
-                    % (dst if not clean_rel_path.startswith(".") else _relpath(dst))
-                )
+        print(f"Removing {clean_rel_path}")
+        fs.rmtree(path)
 
     build_dir = env.subst("$BUILD_DIR")
     libdeps_dir = env.subst("$PROJECT_LIBDEPS_DIR")
     if os.path.isdir(build_dir):
         _clean_dir(build_dir)
-        fs.rmtree(build_dir)
     else:
         print("Build environment is clean")
 
     if clean_all and os.path.isdir(libdeps_dir):
         _clean_dir(libdeps_dir)
-        fs.rmtree(libdeps_dir)
 
     print("Done cleaning")
 
@@ -104,19 +96,6 @@ def DumpTargets(env):
         t["group"] == "Platform" for t in targets.values()
     ):
         targets["upload"] = dict(name="upload", group="Platform", title="Upload")
-    targets["compiledb"] = dict(
-        name="compiledb",
-        title="Compilation Database",
-        description="Generate compilation database `compile_commands.json`",
-        group="Advanced",
-    )
-    targets["clean"] = dict(name="clean", title="Clean", group="General")
-    targets["cleanall"] = dict(
-        name="cleanall",
-        title="Clean All",
-        group="General",
-        description="Clean a build environment and installed library dependencies",
-    )
     return list(targets.values())
 
 

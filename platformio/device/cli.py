@@ -14,8 +14,8 @@
 
 import click
 
-from platformio.device.commands.list import device_list_cmd
-from platformio.device.commands.monitor import device_monitor_cmd
+from platformio.device.list.command import device_list_cmd
+from platformio.device.monitor.command import device_monitor_cmd
 
 
 @click.group(

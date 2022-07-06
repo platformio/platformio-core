@@ -45,8 +45,8 @@ class SerialTestOutputReader:
             ser.rts = self.test_runner.options.monitor_rts
             ser.dtr = self.test_runner.options.monitor_dtr
             ser.open()
-        except serial.SerialException as e:
-            click.secho(str(e), fg="red", err=True)
+        except serial.SerialException as exc:
+            click.secho(str(exc), fg="red", err=True)
             return None
 
         if not self.test_runner.options.no_reset:
@@ -66,23 +66,16 @@ class SerialTestOutputReader:
         project_options = self.test_runner.project_config.items(
             env=self.test_runner.test_suite.env_name, as_dict=True
         )
-        scan_options = dict(
+        port = find_serial_port(
             initial_port=self.test_runner.get_test_port(),
             board_config=self.test_runner.platform.board_config(
                 project_options["board"]
             ),
-            upload_protocol=project_options.get("upload_port"),
+            upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
         )
-
-        elapsed = 0
-        while elapsed < 5:
-            port = find_serial_port(**scan_options)
-            if port:
-                return port
-            sleep(0.25)
-            elapsed += 0.25
-
+        if port:
+            return port
         raise UserSideException(
             "Please specify `test_port` for environment or use "
             "global `--test-port` option."

@@ -34,7 +34,7 @@ from platformio.proc import is_ci, is_container
 from platformio.project.helpers import is_platformio_project
 
 
-class TelemetryBase(object):
+class TelemetryBase:
     def __init__(self):
         self._params = {}
 
@@ -198,7 +198,7 @@ class MeasurementProtocol(TelemetryBase):
 
 
 @util.singleton
-class MPDataPusher(object):
+class MPDataPusher:
 
     MAX_WORKERS = 5
 
@@ -274,11 +274,11 @@ class MPDataPusher(object):
             )
             r.raise_for_status()
             return True
-        except requests.exceptions.HTTPError as e:
+        except requests.exceptions.HTTPError as exc:
             # skip Bad Request
-            if 400 >= e.response.status_code < 500:
+            if 400 >= exc.response.status_code < 500:
                 return True
-        except:  # pylint: disable=W0702
+        except:  # pylint: disable=bare-except
             pass
         self._http_offline = True
         return False

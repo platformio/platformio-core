@@ -16,7 +16,7 @@ import json
 
 import click
 
-from platformio.device.list import (
+from platformio.device.list.util import (
     list_logical_devices,
     list_mdns_services,
     list_serial_ports,

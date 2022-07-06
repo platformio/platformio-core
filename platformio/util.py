@@ -27,14 +27,18 @@ import click
 from platformio import __version__
 
 # pylint: disable=unused-import
-from platformio.device.list import list_serial_ports as get_serial_ports
+from platformio.device.list.util import list_serial_ports as get_serial_ports
 from platformio.fs import cd, load_json
 from platformio.proc import exec_command
 
 # pylint: enable=unused-import
 
+# also export list_serial_ports as get_serialports to be
+# backward compatibility with arduinosam versions 3.9.0 to 3.5.0 (and possibly others)
+get_serialports = get_serial_ports
 
-class memoized(object):
+
+class memoized:
     def __init__(self, expire=0):
         expire = str(expire)
         if expire.isdigit():
@@ -61,7 +65,7 @@ class memoized(object):
         self.cache.clear()
 
 
-class throttle(object):
+class throttle:
     def __init__(self, threshhold):
         self.threshhold = threshhold  # milliseconds
         self.last = 0
@@ -76,6 +80,50 @@ class throttle(object):
             return func(*args, **kwargs)
 
         return wrapper
+
+
+# Retry: Begin
+
+
+class RetryException(Exception):
+    pass
+
+
+class RetryNextException(RetryException):
+    pass
+
+
+class RetryStopException(RetryException):
+    pass
+
+
+class retry:
+
+    RetryNextException = RetryNextException
+    RetryStopException = RetryStopException
+
+    def __init__(self, timeout=0, step=0.25):
+        self.timeout = timeout
+        self.step = step
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = 0
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except self.RetryNextException:
+                    pass
+                if elapsed >= self.timeout:
+                    raise self.RetryStopException()
+                elapsed += self.step
+                time.sleep(self.step)
+
+        return wrapper
+
+
+# Retry: End
 
 
 def singleton(cls):

@@ -18,7 +18,7 @@ from twisted.logger import LogLevel  # pylint: disable=import-error
 from twisted.spread import pb  # pylint: disable=import-error
 
 from platformio import proc
-from platformio.device.list import list_serial_ports
+from platformio.device.list.util import list_serial_ports
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.remote.ac.process import ProcessAsyncCmd
@@ -164,8 +164,8 @@ class RemoteAgentService(RemoteClientBase):
                 origin_pio_ini,
                 (os.path.getatime(back_pio_ini), os.path.getmtime(back_pio_ini)),
             )
-        except NotPlatformIOProjectError as e:
-            raise pb.Error(str(e))
+        except NotPlatformIOProjectError as exc:
+            raise pb.Error(str(exc)) from exc
 
         cmd_args = ["platformio", "--force", command, "-d", project_dir]
         for env in options.get("environment", []):

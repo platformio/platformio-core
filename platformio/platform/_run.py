@@ -27,7 +27,7 @@ from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
 
 
-class PlatformRunMixin(object):
+class PlatformRunMixin:
 
     LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 

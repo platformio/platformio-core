@@ -23,7 +23,7 @@ from platformio.test.result import TestSuite
 from platformio.test.runners.base import TestRunnerBase, TestRunnerOptions
 
 
-class TestRunnerFactory(object):
+class TestRunnerFactory:
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_\-]+", "", name, flags=re.I)
@@ -56,11 +56,11 @@ class TestRunnerFactory(object):
 
             try:
                 mod = load_python_module(module_name, custom_runner_path)
-            except (FileNotFoundError, ImportError):
+            except (FileNotFoundError, ImportError) as exc:
                 raise UserSideException(
                     "Could not find custom test runner "
                     f"by this path -> {custom_runner_path}"
-                )
+                ) from exc
         else:
             mod = importlib.import_module(module_name)
         runner_cls = getattr(mod, cls.get_clsname(test_framework))

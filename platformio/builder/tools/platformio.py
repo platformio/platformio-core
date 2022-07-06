@@ -23,7 +23,6 @@ from SCons.Node import FS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
-from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
 from platformio import __version__, fs
@@ -76,10 +75,7 @@ def BuildProgram(env):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
-    program = env.Program(
-        os.path.join("$BUILD_DIR", env.subst("$PROGNAME$PROGSUFFIX")),
-        env["PIOBUILDFILES"],
-    )
+    program = env.Program(env.subst("$PROGPATH"), env["PIOBUILDFILES"])
     env.Replace(PIOMAINPROG=program)
 
     AlwaysBuild(
@@ -127,8 +123,6 @@ def ProcessProgramDeps(env):
 
     if "debug" in env.GetBuildType():
         env.ConfigureDebugTarget()
-    if "test" in env.GetBuildType():
-        env.ConfigureTestTarget()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
@@ -142,23 +136,22 @@ def ProcessProgramDeps(env):
 
 
 def ProcessProjectDeps(env):
-    project_lib_builder = env.ConfigureProjectLibBuilder()
-    projenv = project_lib_builder.env
+    plb = env.ConfigureProjectLibBuilder()
 
     # prepend project libs to the beginning of list
-    env.Prepend(LIBS=project_lib_builder.build())
+    env.Prepend(LIBS=plb.build())
     # prepend extra linker related options from libs
     env.PrependUnique(
         **{
-            key: project_lib_builder.env.get(key)
+            key: plb.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
-            if project_lib_builder.env.get(key)
+            if plb.env.get(key)
         }
     )
 
     if "test" in env.GetBuildType():
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
         if len(env.get("PIOBUILDFILES", [])) - build_files_before_nums < 1:
@@ -169,7 +162,7 @@ def ProcessProjectDeps(env):
             env.Exit(1)
 
     if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
-        projenv.BuildSources(
+        plb.env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
 
@@ -179,8 +172,6 @@ def ProcessProjectDeps(env):
             "to the '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
         )
         env.Exit(1)
-
-    Export("projenv")
 
 
 def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
@@ -246,33 +237,30 @@ def ProcessUnFlags(env, flags):
     if not flags:
         return
     parsed = env.ParseFlagsExtended(flags)
-
-    # get all flags and copy them to each "*FLAGS" variable
-    all_flags = []
-    for key, unflags in parsed.items():
-        if key.endswith("FLAGS"):
-            all_flags.extend(unflags)
-    for key, unflags in parsed.items():
-        if key.endswith("FLAGS"):
-            parsed[key].extend(all_flags)
-
-    for key, unflags in parsed.items():
-        for unflag in unflags:
-            for current in env.get(key, []):
-                conditions = [
-                    unflag == current,
-                    isinstance(current, (tuple, list)) and unflag[0] == current[0],
-                ]
-                if any(conditions):
-                    env[key].remove(current)
+    unflag_scopes = tuple(set(["ASPPFLAGS"] + list(parsed.keys())))
+    for scope in unflag_scopes:
+        for unflags in parsed.values():
+            for unflag in unflags:
+                for current in env.get(scope, []):
+                    conditions = [
+                        unflag == current,
+                        not isinstance(unflag, (tuple, list))
+                        and isinstance(current, (tuple, list))
+                        and unflag == current[0],
+                    ]
+                    if any(conditions):
+                        env[scope].remove(current)
 
 
-def MatchSourceFiles(env, src_dir, src_filter=None):
+def StringifyMacro(env, value):  # pylint: disable=unused-argument
+    return '\\"%s\\"' % value.replace('"', '\\\\\\"')
+
+
+def MatchSourceFiles(env, src_dir, src_filter=None, src_exts=None):
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    return fs.match_src_files(
-        env.subst(src_dir), src_filter, SRC_BUILD_EXT + SRC_HEADER_EXT
-    )
+    src_exts = src_exts or (SRC_BUILD_EXT + SRC_HEADER_EXT)
+    return fs.match_src_files(env.subst(src_dir), src_filter, src_exts)
 
 
 def CollectBuildFiles(
@@ -285,7 +273,7 @@ def CollectBuildFiles(
     if src_dir.endswith(os.sep):
         src_dir = src_dir[:-1]
 
-    for item in env.MatchSourceFiles(src_dir, src_filter):
+    for item in env.MatchSourceFiles(src_dir, src_filter, SRC_BUILD_EXT):
         _reldir = os.path.dirname(item)
         _src_dir = os.path.join(src_dir, _reldir) if _reldir else src_dir
         _var_dir = os.path.join(variant_dir, _reldir) if _reldir else variant_dir
@@ -294,8 +282,7 @@ def CollectBuildFiles(
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
-        if fs.path_endswith_ext(item, SRC_BUILD_EXT):
-            sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
+        sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
     middlewares = env.get("__PIO_BUILD_MIDDLEWARES")
     if not middlewares:
@@ -371,6 +358,7 @@ def generate(env):
     env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
+    env.AddMethod(StringifyMacro)
     env.AddMethod(MatchSourceFiles)
     env.AddMethod(CollectBuildFiles)
     env.AddMethod(AddBuildMiddleware)

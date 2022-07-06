@@ -12,26 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
+import os.path
 from datetime import datetime
 
-from platformio.device.filters.base import DeviceMonitorFilterBase
+from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
-class Timestamp(DeviceMonitorFilterBase):
-    NAME = "time"
+class LogToFile(DeviceMonitorFilterBase):
+    NAME = "log2file"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._line_started = False
+        self._log_fp = None
+
+    def __call__(self):
+        log_file_name = "platformio-device-monitor-%s.log" % datetime.now().strftime(
+            "%y%m%d-%H%M%S"
+        )
+        print("--- Logging an output to %s" % os.path.abspath(log_file_name))
+        # pylint: disable=consider-using-with
+        self._log_fp = io.open(log_file_name, "w", encoding="utf-8")
+        return self
+
+    def __del__(self):
+        if self._log_fp:
+            self._log_fp.close()
 
     def rx(self, text):
-        if self._line_started and "\n" not in text:
-            return text
-        timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        if not self._line_started:
-            self._line_started = True
-            text = "%s > %s" % (timestamp, text)
-        if text.endswith("\n"):
-            self._line_started = False
-            return text[:-1].replace("\n", "\n%s > " % timestamp) + "\n"
-        return text.replace("\n", "\n%s > " % timestamp)
+        self._log_fp.write(text)
+        self._log_fp.flush()
+        return text

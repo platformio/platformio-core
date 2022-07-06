@@ -22,7 +22,7 @@ from twisted.spread import pb  # pylint: disable=import-error
 from platformio.remote.client.base import RemoteClientBase
 
 
-class SMBridgeProtocol(protocol.Protocol):  # pylint: disable=no-init
+class SMBridgeProtocol(protocol.Protocol):
     def connectionMade(self):
         self.factory.add_client(self)
 

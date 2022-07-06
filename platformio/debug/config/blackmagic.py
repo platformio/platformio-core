@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from platformio.debug.config.base import DebugConfigBase
+from platformio.debug.exception import DebugInvalidOptionsError
+from platformio.device.finder import find_serial_port, is_pattern_port
 
 
 class BlackmagicDebugConfig(DebugConfigBase):
@@ -47,3 +49,25 @@ while ($busy)
 end
 set language auto
 """
+
+    @property
+    def port(self):
+        # pylint: disable=assignment-from-no-return
+        initial_port = DebugConfigBase.port.fget(self)
+        if initial_port and not is_pattern_port(initial_port):
+            return initial_port
+        port = find_serial_port(
+            initial_port,
+            board_config=self.board_config,
+            upload_protocol=self.tool_name,
+            prefer_gdb_port=True,
+        )
+        if port:
+            return port
+        raise DebugInvalidOptionsError(
+            "Please specify `debug_port` for the working environment"
+        )
+
+    @port.setter
+    def port(self, value):
+        self._port = value

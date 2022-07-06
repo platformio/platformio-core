@@ -27,7 +27,7 @@ from platformio.package.exception import ManifestParserError, UnknownManifestErr
 from platformio.project.helpers import is_platformio_project
 
 
-class ManifestFileType(object):
+class ManifestFileType:
     PLATFORM_JSON = "platform.json"
     LIBRARY_JSON = "library.json"
     LIBRARY_PROPERTIES = "library.properties"
@@ -53,7 +53,7 @@ class ManifestFileType(object):
         return None
 
 
-class ManifestParserFactory(object):
+class ManifestParserFactory:
     @staticmethod
     def read_manifest_contents(path):
         last_err = None
@@ -61,9 +61,9 @@ class ManifestParserFactory(object):
             try:
                 with io.open(path, encoding=encoding) as fp:
                     return fp.read()
-            except UnicodeDecodeError as e:
-                last_err = e
-        raise last_err  # pylint: disable=raising-bad-type
+            except UnicodeDecodeError as exc:
+                last_err = exc
+        raise last_err
 
     @classmethod
     def new_from_file(cls, path, remote_url=False):
@@ -139,14 +139,14 @@ class ManifestParserFactory(object):
         raise UnknownManifestError("Unknown manifest file type %s" % type)
 
 
-class BaseManifestParser(object):
+class BaseManifestParser:
     def __init__(self, contents, remote_url=None, package_dir=None):
         self.remote_url = remote_url
         self.package_dir = package_dir
         try:
             self._data = self.parse(contents)
-        except Exception as e:
-            raise ManifestParserError("Could not parse manifest -> %s" % e)
+        except Exception as exc:
+            raise ManifestParserError("Could not parse manifest -> %s" % exc) from exc
 
         self._data = self.normalize_repository(self._data)
         self._data = self.parse_examples(self._data)

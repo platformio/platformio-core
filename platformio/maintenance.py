@@ -79,7 +79,7 @@ def set_caller(caller=None):
     return app.set_session_var("caller_id", caller)
 
 
-class Upgrader(object):
+class Upgrader:
     def __init__(self, from_version, to_version):
         self.from_version = pepver_to_semver(from_version)
         self.to_version = pepver_to_semver(to_version)

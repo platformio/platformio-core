@@ -145,7 +145,9 @@ def test_global_packages(
     assert isinstance(result.exception, UnknownPackageError)
 
 
-def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
+def test_project(
+    clirunner, validate_cliresult, isolated_pio_core, get_pkg_latest_version, tmp_path
+):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_OUTDATED_CONFIG_TPL)
@@ -161,7 +163,9 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.8.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec(
+                "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
+            ),
         ]
         assert pkgs_to_specs(PlatformPackageManager().get_installed()) == [
             PackageSpec("atmelavr@2.2.0")
@@ -187,8 +191,13 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         assert pkgs[0].metadata.name == "atmelavr"
         assert pkgs[0].metadata.version.major == 3
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.9.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec(
+                "DallasTemperature@%s"
+                % get_pkg_latest_version("milesburton/DallasTemperature")
+            ),
+            PackageSpec(
+                "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
+            ),
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
@@ -211,7 +220,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
 
 
 def test_custom_project_libraries(
-    clirunner, validate_cliresult, isolated_pio_core, tmp_path
+    clirunner, validate_cliresult, isolated_pio_core, get_pkg_latest_version, tmp_path
 ):
     project_dir = tmp_path / "project"
     project_dir.mkdir()
@@ -230,7 +239,9 @@ def test_custom_project_libraries(
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("DallasTemperature@3.8.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec(
+                "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
+            ),
         ]
         # update package
         result = clirunner.invoke(
@@ -260,8 +271,13 @@ def test_custom_project_libraries(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.9.1"),
-            PackageSpec("OneWire@2.3.6"),
+            PackageSpec(
+                "DallasTemperature@%s"
+                % get_pkg_latest_version("milesburton/DallasTemperature")
+            ),
+            PackageSpec(
+                "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
+            ),
         ]
         assert config.get("env:devkit", "lib_deps") == [
             "milesburton/DallasTemperature@^3.8.0"

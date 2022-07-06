@@ -11,27 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from platformio.debug.config.base import DebugConfigBase
-
-
-class MspdebugDebugConfig(DebugConfigBase):
-
-    GDB_INIT_SCRIPT = """
-define pio_reset_halt_target
-end
-
-define pio_reset_run_target
-end
-
-target remote $DEBUG_PORT
-monitor erase
-$LOAD_CMDS
-pio_reset_halt_target
-$INIT_BREAK
-"""
-
-    def __init__(self, *args, **kwargs):
-        if "port" not in kwargs:
-            kwargs["port"] = ":2000"
-        super().__init__(*args, **kwargs)

@@ -24,12 +24,15 @@ from platformio import __version__, exception, proc
 from platformio.compat import IS_MACOS, IS_WINDOWS
 
 
-def list_serial_ports(filter_hwid=False):
+def list_serial_ports(filter_hwid=False, as_objects=False):
     try:
         # pylint: disable=import-outside-toplevel
         from serial.tools.list_ports import comports
-    except ImportError:
-        raise exception.GetSerialPortsError(os.name)
+    except ImportError as exc:
+        raise exception.GetSerialPortsError(os.name) from exc
+
+    if as_objects:
+        return comports()
 
     result = []
     for p, d, h in comports():
@@ -81,7 +84,7 @@ def list_logical_devices():
 
 
 def list_mdns_services():
-    class mDNSListener(object):
+    class mDNSListener:
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
             self._found_types = []

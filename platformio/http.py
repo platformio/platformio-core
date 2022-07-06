@@ -57,7 +57,7 @@ class EndpointSession(requests.Session):
         return super().request(method, urljoin(self.base_url, url), *args, **kwargs)
 
 
-class EndpointSessionIterator(object):
+class EndpointSessionIterator:
     def __init__(self, endpoints):
         if not isinstance(endpoints, list):
             endpoints = [endpoints]
@@ -82,7 +82,7 @@ class EndpointSessionIterator(object):
         return session
 
 
-class HTTPClient(object):
+class HTTPClient:
     def __init__(self, endpoints):
         self._session_iter = EndpointSessionIterator(endpoints)
         self._session = None
@@ -132,11 +132,11 @@ class HTTPClient(object):
             except (
                 requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout,
-            ) as e:
+            ) as exc:
                 try:
                     self._next_session()
-                except:  # pylint: disable=bare-except
-                    raise HTTPClientError(str(e))
+                except Exception as exc2:
+                    raise HTTPClientError(str(exc2)) from exc
 
     def fetch_json_data(self, method, path, **kwargs):
         if method not in ("get", "head", "options"):

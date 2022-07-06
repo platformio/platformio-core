@@ -25,7 +25,7 @@ from platformio.package.download import FileDownloader
 from platformio.package.lockfile import LockFile
 
 
-class PackageManagerDownloadMixin(object):
+class PackageManagerDownloadMixin:
 
     DOWNLOAD_CACHE_EXPIRE = 86400 * 30  # keep package in a local cache for 1 month
 
@@ -70,7 +70,7 @@ class PackageManagerDownloadMixin(object):
                     fd = FileDownloader(url)
                     fd.set_destination(tmp_path)
                     fd.start(with_progress=with_progress, silent=silent)
-                except IOError as e:
+                except IOError as exc:
                     raise_error = not with_progress
                     if with_progress:
                         try:
@@ -86,7 +86,7 @@ class PackageManagerDownloadMixin(object):
                                 fg="red",
                             )
                         )
-                        raise e
+                        raise exc
             if checksum:
                 fd.verify(checksum)
             os.close(tmp_fd)

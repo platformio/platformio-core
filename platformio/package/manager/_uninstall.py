@@ -22,7 +22,7 @@ from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageItem, PackageSpec
 
 
-class PackageManagerUninstallMixin(object):
+class PackageManagerUninstallMixin:
     def uninstall(self, spec, skip_dependencies=False):
         try:
             self.lock()

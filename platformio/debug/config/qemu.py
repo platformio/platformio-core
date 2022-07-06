@@ -33,5 +33,6 @@ $INIT_BREAK
 """
 
     def __init__(self, *args, **kwargs):
+        if "port" not in kwargs:
+            kwargs["port"] = ":1234"
         super().__init__(*args, **kwargs)
-        self.port = ":1234"

@@ -23,7 +23,7 @@ from platformio.registry.client import RegistryClient
 from platformio.registry.mirror import RegistryFileMirrorIterator
 
 
-class PackageManagerRegistryMixin(object):
+class PackageManagerRegistryMixin:
     def install_from_registry(self, spec, search_qualifiers=None):
         if spec.owner and spec.name and not search_qualifiers:
             package = self.fetch_registry_package(spec)
@@ -56,9 +56,9 @@ class PackageManagerRegistryMixin(object):
                     ),
                     checksum or pkgfile["checksum"]["sha256"],
                 )
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as exc:  # pylint: disable=broad-except
                 self.log.warning(
-                    click.style("Warning! Package Mirror: %s" % e, fg="yellow")
+                    click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
                 )
                 self.log.warning(
                     click.style("Looking for another mirror...", fg="yellow")

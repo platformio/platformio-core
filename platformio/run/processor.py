@@ -20,7 +20,7 @@ from platformio.test.runners.base import CTX_META_TEST_RUNNING_NAME
 # pylint: disable=too-many-instance-attributes
 
 
-class EnvironmentProcessor(object):
+class EnvironmentProcessor:
     def __init__(  # pylint: disable=too-many-arguments
         self,
         cmd_ctx,

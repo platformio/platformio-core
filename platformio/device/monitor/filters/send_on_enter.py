@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.device.filters.base import DeviceMonitorFilterBase
+from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class SendOnEnter(DeviceMonitorFilterBase):

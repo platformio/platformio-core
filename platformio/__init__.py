@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (6, 0, 2)
+VERSION = (6, 1, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -47,7 +47,7 @@ __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 __default_requests_timeout__ = (10, None)  # (connect, read)
 
 __core_packages__ = {
-    "contrib-piohome": "~3.4.1",
+    "contrib-piohome": "~3.4.2",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-scons": "~4.40300.0",
     "tool-cppcheck": "~1.270.0",

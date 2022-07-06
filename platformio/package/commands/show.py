@@ -59,14 +59,6 @@ def package_show_cmd(spec, pkg_type):
         )
     )
 
-    click.echo()
-    type_plural = "libraries" if data["type"] == "library" else (data["type"] + "s")
-    click.secho(
-        "https://registry.platformio.org/%s/%s/%s"
-        % (type_plural, data["owner"]["username"], quote(data["name"])),
-        fg="blue",
-    )
-
     #  Description
     click.echo()
     click.echo(data["description"])
@@ -87,7 +79,17 @@ def package_show_cmd(spec, pkg_type):
         ("frameworks", "Compatible Frameworks"),
         ("keywords", "Keywords"),
     ]
-    extra = []
+    type_plural = "libraries" if data["type"] == "library" else (data["type"] + "s")
+    extra = [
+        (
+            "Registry",
+            click.style(
+                "https://registry.platformio.org/%s/%s/%s"
+                % (type_plural, data["owner"]["username"], quote(data["name"])),
+                fg="blue",
+            ),
+        )
+    ]
     for key, title in fields:
         if "." in key:
             k1, k2 = key.split(".")
@@ -127,7 +129,11 @@ def fetch_package_data(spec, pkg_type=None):
         return client.get_package(
             pkg_type, spec.owner, spec.name, version=spec.requirements
         )
-    qualifiers = dict(names=spec.name.lower())
+    qualifiers = {}
+    if spec.id:
+        qualifiers["ids"] = str(spec.id)
+    if spec.name:
+        qualifiers["names"] = spec.name.lower()
     if pkg_type:
         qualifiers["types"] = pkg_type
     if spec.owner:

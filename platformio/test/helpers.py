@@ -42,10 +42,10 @@ def list_test_suites(project_config, environments, filters, ignores):
 
             # filter and ignore patterns
             patterns = dict(filter=list(filters), ignore=list(ignores))
-            for key in patterns:
-                if patterns[key]:  # overriden from CLI
+            for key, value in patterns.items():
+                if value:  # overridden from CLI
                     continue
-                patterns[key].extend(
+                patterns[key].extend(  # pylint: disable=unnecessary-dict-index-lookup
                     project_config.get(f"env:{env_name}", f"test_{key}", [])
                 )
 

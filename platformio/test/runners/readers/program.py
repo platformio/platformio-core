@@ -18,14 +18,22 @@ import signal
 import subprocess
 import time
 
-from platformio.compat import IS_WINDOWS, get_filesystem_encoding, get_locale_encoding
+from platformio.compat import (
+    IS_WINDOWS,
+    aio_get_running_loop,
+    get_filesystem_encoding,
+    get_locale_encoding,
+)
 from platformio.test.exception import UnitTestError
+
+EXITING_TIMEOUT = 5  # seconds
 
 
 class ProgramProcessProtocol(asyncio.SubprocessProtocol):
     def __init__(self, test_runner, exit_future):
         self.test_runner = test_runner
         self.exit_future = exit_future
+        self._exit_timer = None
 
     def pipe_data_received(self, _, data):
         try:
@@ -34,7 +42,9 @@ class ProgramProcessProtocol(asyncio.SubprocessProtocol):
             data = data.decode("latin-1")
         self.test_runner.on_testing_data_output(data)
         if self.test_runner.test_suite.is_finished():
-            self._stop_testing()
+            self._exit_timer = aio_get_running_loop().call_later(
+                EXITING_TIMEOUT, self._stop_testing
+            )
 
     def process_exited(self):
         self._stop_testing()
@@ -42,12 +52,11 @@ class ProgramProcessProtocol(asyncio.SubprocessProtocol):
     def _stop_testing(self):
         if not self.exit_future.done():
             self.exit_future.set_result(True)
+        if self._exit_timer:
+            self._exit_timer.cancel()
 
 
 class ProgramTestOutputReader:
-
-    KILLING_TIMEOUT = 5  # seconds
-
     def __init__(self, test_runner):
         self.test_runner = test_runner
         self.aio_loop = (
@@ -89,7 +98,7 @@ class ProgramTestOutputReader:
         # wait until subprocess will be killed
         start = time.time()
         while (
-            start > (time.time() - self.KILLING_TIMEOUT)
+            start > (time.time() - EXITING_TIMEOUT)
             and transport.get_returncode() is None
         ):
             await asyncio.sleep(0.5)
@@ -108,8 +117,8 @@ class ProgramTestOutputReader:
             raise UnitTestError(
                 f"Program received signal {sig.name} ({signal_description})"
             )
-        except ValueError:
-            raise UnitTestError("Program errored with %d code" % return_code)
+        except ValueError as exc:
+            raise UnitTestError("Program errored with %d code" % return_code) from exc
 
     def begin(self):
         try:

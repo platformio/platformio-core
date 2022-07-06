@@ -13,6 +13,6 @@
 # limitations under the License.
 
 # pylint: disable=unused-import
-from platformio.device.filters.base import (
+from platformio.device.monitor.filters.base import (
     DeviceMonitorFilterBase as DeviceMonitorFilter,
 )

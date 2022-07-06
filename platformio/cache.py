@@ -23,7 +23,7 @@ from platformio.package.lockfile import LockFile
 from platformio.project.helpers import get_project_cache_dir
 
 
-class ContentCache(object):
+class ContentCache:
     def __init__(self, namespace=None):
         self.cache_dir = os.path.join(get_project_cache_dir(), namespace or "content")
         self._db_path = os.path.join(self.cache_dir, "db.data")

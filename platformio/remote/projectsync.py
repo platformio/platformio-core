@@ -31,7 +31,7 @@ class PROJECT_SYNC_STAGE(constants.Flags):
     COMPLETED = constants.FlagConstant()
 
 
-class ProjectSync(object):
+class ProjectSync:
     def __init__(self, path):
         self.path = path
         if not isdir(self.path):

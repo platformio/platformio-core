@@ -29,7 +29,7 @@ from platformio.compat import get_locale_encoding, is_bytes
 from platformio.home import helpers
 
 
-class MultiThreadingStdStream(object):
+class MultiThreadingStdStream:
     def __init__(self, parent_stream):
         self._buffers = {threading.get_ident(): parent_stream}
 
@@ -94,10 +94,10 @@ class PIOCoreRPC:
                 # fall-back to subprocess method
                 result = await PIOCoreRPC._call_subprocess(args, options)
                 return PIOCoreRPC._process_result(result, to_json)
-        except Exception as e:  # pylint: disable=bare-except
+        except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
-                code=4003, message="PIO Core Call Error", data=str(e)
-            )
+                code=4003, message="PIO Core Call Error", data=str(exc)
+            ) from exc
 
     @staticmethod
     async def _call_subprocess(args, options):
@@ -139,8 +139,8 @@ class PIOCoreRPC:
             return text
         try:
             return json.loads(out)
-        except ValueError as e:
-            click.secho("%s => `%s`" % (e, out), fg="red", err=True)
+        except ValueError as exc:
+            click.secho("%s => `%s`" % (exc, out), fg="red", err=True)
             # if PIO Core prints unhandled warnings
             for line in out.split("\n"):
                 line = line.strip()
@@ -150,4 +150,4 @@ class PIOCoreRPC:
                     return json.loads(line)
                 except ValueError:
                     pass
-            raise e
+            raise exc

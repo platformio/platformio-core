@@ -18,14 +18,13 @@ import os
 from platformio import fs, proc, util
 from platformio.compat import string_types
 from platformio.debug.exception import DebugInvalidOptionsError
-from platformio.debug.helpers import reveal_debug_port
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import load_build_metadata
 from platformio.project.options import ProjectOptions
 
 
 class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
-    def __init__(self, platform, project_config, env_name):
+    def __init__(self, platform, project_config, env_name, port=None):
         self.platform = platform
         self.project_config = project_config
         self.env_name = env_name
@@ -49,6 +48,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         self._load_cmds = None
         self._port = None
 
+        self.port = port
         self.server = self._configure_server()
 
         try:
@@ -119,11 +119,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def port(self):
-        return reveal_debug_port(
+        return (
             self.env_options.get("debug_port", self.tool_settings.get("port"))
-            or self._port,
-            self.tool_name,
-            self.tool_settings,
+            or self._port
         )
 
     @port.setter
@@ -205,8 +203,8 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
     def get_init_script(self, debugger):
         try:
             return getattr(self, "%s_INIT_SCRIPT" % debugger.upper())
-        except AttributeError:
-            raise NotImplementedError
+        except AttributeError as exc:
+            raise NotImplementedError from exc
 
     def reveal_patterns(self, source, recursive=True):
         program_path = self.program_path or ""

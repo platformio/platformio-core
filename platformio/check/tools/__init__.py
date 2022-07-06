@@ -18,7 +18,7 @@ from platformio.check.tools.cppcheck import CppcheckCheckTool
 from platformio.check.tools.pvsstudio import PvsStudioCheckTool
 
 
-class CheckToolFactory(object):
+class CheckToolFactory:
     @staticmethod
     def new(tool, project_dir, config, envname, options):
         cls = None

@@ -21,12 +21,12 @@ import click
 
 from platformio import app, compat, fs, util
 from platformio.package.exception import PackageException, UnknownPackageError
-from platformio.package.meta import PackageItem
+from platformio.package.meta import PackageCompatibility, PackageItem
 from platformio.package.unpack import FileUnpacker
 from platformio.package.vcsclient import VCSClientFactory
 
 
-class PackageManagerInstallMixin(object):
+class PackageManagerInstallMixin:
 
     _INSTALL_HISTORY = None  # avoid circle dependencies
 
@@ -36,9 +36,9 @@ class PackageManagerInstallMixin(object):
         try:
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=with_progress)
-        except IOError as e:
+        except IOError as exc:
             if not with_progress:
-                raise e
+                raise exc
             with FileUnpacker(src) as fu:
                 return fu.unpack(dst, with_progress=False)
 
@@ -55,9 +55,9 @@ class PackageManagerInstallMixin(object):
     def _install(
         self,
         spec,
-        search_qualifiers=None,
         skip_dependencies=False,
         force=False,
+        compatibility: PackageCompatibility = None,
     ):
         spec = self.ensure_spec(spec)
 
@@ -97,7 +97,12 @@ class PackageManagerInstallMixin(object):
         if spec.external:
             pkg = self.install_from_uri(spec.uri, spec)
         else:
-            pkg = self.install_from_registry(spec, search_qualifiers)
+            pkg = self.install_from_registry(
+                spec,
+                search_qualifiers=compatibility.to_search_qualifiers()
+                if compatibility
+                else None,
+            )
 
         if not pkg or not pkg.metadata:
             raise PackageException(
@@ -137,20 +142,29 @@ class PackageManagerInstallMixin(object):
                 if dependency.get("owner"):
                     self.log.warning(
                         click.style(
-                            "Warning! Could not install dependency %s for package '%s'"
-                            % (dependency, pkg.metadata.name),
+                            "Warning! Could not install `%s` dependency "
+                            "for the`%s` package" % (dependency, pkg.metadata.name),
                             fg="yellow",
                         )
                     )
 
     def install_dependency(self, dependency):
-        spec = self.dependency_to_spec(dependency)
-        search_qualifiers = {
-            key: value
-            for key, value in dependency.items()
-            if key in ("authors", "platforms", "frameworks")
-        }
-        return self._install(spec, search_qualifiers=search_qualifiers or None)
+        dependency_compatibility = PackageCompatibility.from_dependency(dependency)
+        if self.compatibility and not dependency_compatibility.is_compatible(
+            self.compatibility
+        ):
+            self.log.debug(
+                click.style(
+                    "Skip incompatible `%s` dependency with `%s`"
+                    % (dependency, self.compatibility),
+                    fg="yellow",
+                )
+            )
+            return None
+        return self._install(
+            spec=self.dependency_to_spec(dependency),
+            compatibility=dependency_compatibility,
+        )
 
     def install_from_uri(self, uri, spec, checksum=None):
         spec = self.ensure_spec(spec)

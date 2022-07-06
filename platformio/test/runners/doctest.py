@@ -102,26 +102,21 @@ class DoctestTestCaseParser:
 
 class DoctestTestRunner(TestRunnerBase):
 
-    EXTRA_LIB_DEPS = ["doctest/doctest@^2.4.8"]
+    EXTRA_LIB_DEPS = ["doctest/doctest@^2.4.9"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._tc_parser = DoctestTestCaseParser()
-
-    def configure_build_env(self, env):
-        env.Append(CPPDEFINES=["DOCTEST_CONFIG_COLORS_NONE"])
-        if self.platform.is_embedded():
-            return
-        env.Append(CXXFLAGS=["-std=c++11"])
 
     def on_testing_line_output(self, line):
         if self.options.verbose:
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
-        if test_case and not self.options.verbose:
-            click.echo(test_case.humanize())
+        if test_case:
             self.test_suite.add_case(test_case)
+            if not self.options.verbose:
+                click.echo(test_case.humanize())
 
         if "[doctest] Status:" in line:
             self.test_suite.on_finish()

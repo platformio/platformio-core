@@ -67,7 +67,7 @@ def package_exec_cmd(obj, package, call, args):
         if force_click_stream:
             click.echo(result.stdout.decode().strip(), err=result.returncode != 0)
     except Exception as exc:
-        raise UserSideException(exc)
+        raise UserSideException(exc) from exc
 
     if result and result.returncode != 0:
         raise ReturnErrorCode(result.returncode)

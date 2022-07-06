@@ -46,8 +46,8 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     def get_refresh_token():
         try:
             return app.get_state_item("account").get("auth").get("refresh_token")
-        except:  # pylint:disable=bare-except
-            raise AccountNotAuthorized()
+        except Exception as exc:
+            raise AccountNotAuthorized() from exc
 
     @staticmethod
     def delete_local_session():

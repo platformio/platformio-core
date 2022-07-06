@@ -17,7 +17,6 @@ import os
 
 from serial.tools import miniterm
 
-from platformio import fs
 from platformio.compat import get_object_members, load_python_module
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.project.config import ProjectConfig
@@ -70,10 +69,7 @@ def register_filters(platform=None, options=None):
             os.path.join(pkg.path, "monitor"), prefix="filter_", options=options
         )
     # default filters
-    load_monitor_filters(
-        os.path.join(fs.get_source_dir(), "device", "filters"),
-        options=options,
-    )
+    load_monitor_filters(os.path.dirname(__file__), options=options)
 
 
 def load_monitor_filters(monitor_dir, prefix=None, options=None):
@@ -91,7 +87,7 @@ def load_monitor_filters(monitor_dir, prefix=None, options=None):
 def load_monitor_filter(path, options=None):
     name = os.path.basename(path)
     name = name[: name.find(".")]
-    module = load_python_module("platformio.device.filters.%s" % name, path)
+    module = load_python_module("platformio.device.monitor.filters.%s" % name, path)
     for cls in get_object_members(module).values():
         if (
             not inspect.isclass(cls)

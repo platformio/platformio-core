@@ -14,7 +14,7 @@
 
 import serial
 
-from platformio.device.filters.base import DeviceMonitorFilterBase
+from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class Hexlify(DeviceMonitorFilterBase):

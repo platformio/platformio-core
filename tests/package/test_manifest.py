@@ -531,9 +531,9 @@ includes=MozziGuts.h
     errors = None
     try:
         ManifestSchema().load_manifest(raw_data)
-    except ManifestValidationError as e:
-        data = e.valid_data
-        errors = e.messages
+    except ManifestValidationError as exc:
+        data = exc.valid_data
+        errors = exc.messages
 
     assert errors["authors"]
 
