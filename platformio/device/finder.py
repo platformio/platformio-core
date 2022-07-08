@@ -88,6 +88,7 @@ def find_serial_port(  # pylint: disable=too-many-arguments
     ensure_ready=False,
     prefer_gdb_port=False,
     timeout=2,
+    verbose=False,
 ):
     if initial_port:
         if not is_pattern_port(initial_port):
@@ -97,8 +98,8 @@ def find_serial_port(  # pylint: disable=too-many-arguments
     if upload_protocol and upload_protocol.startswith("blackmagic"):
         return find_blackmagic_serial_port(prefer_gdb_port, timeout)
     if board_config and board_config.get("build.hwids", []):
-        return find_board_serial_port(board_config, timeout)
-    port = find_known_uart_port(ensure_ready, timeout)
+        return find_board_serial_port(board_config, timeout, verbose)
+    port = find_known_uart_port(ensure_ready, timeout, verbose)
     if port:
         return port
 
@@ -158,7 +159,7 @@ def find_blackmagic_serial_port(prefer_gdb_port=False, timeout=0):
     return None
 
 
-def find_board_serial_port(board_config, timeout=0):
+def find_board_serial_port(board_config, timeout=0, verbose=False):
     hwids = board_config.get("build.hwids", [])
     try:
 
@@ -175,18 +176,19 @@ def find_board_serial_port(board_config, timeout=0):
     except retry.RetryStopException:
         pass
 
-    click.secho(
-        "TimeoutError: Could not automatically find serial port "
-        "for the `%s` board based on the declared HWIDs=%s"
-        % (board_config.get("name", "unknown"), hwids),
-        fg="yellow",
-        err=True,
-    )
+    if verbose:
+        click.secho(
+            "TimeoutError: Could not automatically find serial port "
+            "for the `%s` board based on the declared HWIDs=%s"
+            % (board_config.get("name", "unknown"), hwids),
+            fg="yellow",
+            err=True,
+        )
 
     return None
 
 
-def find_known_uart_port(ensure_ready=False, timeout=0):
+def find_known_uart_port(ensure_ready=False, timeout=0, verbose=False):
     known_hwids = list(BLACK_MAGIC_HWIDS)
 
     # load from UDEV rules
@@ -222,12 +224,13 @@ def find_known_uart_port(ensure_ready=False, timeout=0):
     except retry.RetryStopException:
         pass
 
-    click.secho(
-        "TimeoutError: Could not automatically find serial port "
-        "based on the known UART bridges",
-        fg="yellow",
-        err=True,
-    )
+    if verbose:
+        click.secho(
+            "TimeoutError: Could not automatically find serial port "
+            "based on the known UART bridges",
+            fg="yellow",
+            err=True,
+        )
 
     return None
 
