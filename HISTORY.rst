@@ -16,7 +16,7 @@ PlatformIO Core 6
 6.1.1 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Show "TimeoutError" only in the verbose mode when finding a serial port
+* Show "TimeoutError" only in the verbose mode when can not find a serial port
 
 6.1.0 (2022-07-06)
 ~~~~~~~~~~~~~~~~~~
