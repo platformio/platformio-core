@@ -97,9 +97,11 @@ def find_serial_port(  # pylint: disable=too-many-arguments
 
     if upload_protocol and upload_protocol.startswith("blackmagic"):
         return find_blackmagic_serial_port(prefer_gdb_port, timeout)
+    port = None
     if board_config and board_config.get("build.hwids", []):
-        return find_board_serial_port(board_config, timeout, verbose)
-    port = find_known_uart_port(ensure_ready, timeout, verbose)
+        port = find_board_serial_port(board_config, timeout, verbose)
+    if not port:
+        port = find_known_uart_port(ensure_ready, timeout, verbose)
     if port:
         return port
 

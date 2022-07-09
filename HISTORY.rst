@@ -17,6 +17,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Show "TimeoutError" only in the verbose mode when can not find a serial port
+* Fixed an issue when a serial port was not automatically detected if the board has predefined HWIDs
 
 6.1.0 (2022-07-06)
 ~~~~~~~~~~~~~~~~~~
