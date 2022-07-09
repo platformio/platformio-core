@@ -16,6 +16,7 @@ PlatformIO Core 6
 6.1.1 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Allowed specifying project environments for `pio ci <https://docs.platformio.org/en/latest/core/userguide/cmd_ci.html>`__ command (`issue #4347 <https://github.com/platformio/platformio-core/issues/4347>`_)
 * Show "TimeoutError" only in the verbose mode when can not find a serial port
 * Fixed an issue when a serial port was not automatically detected if the board has predefined HWIDs
 * Fixed an issue with endless scanning of project dependencies (`issue #4349 <https://github.com/platformio/platformio-core/issues/4349>`_)

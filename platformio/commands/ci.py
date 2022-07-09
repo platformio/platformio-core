@@ -62,6 +62,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     ),
 )
 @click.option("-O", "--project-option", multiple=True)
+@click.option("-e", "--environment", "environments", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(  # pylint: disable=too-many-arguments, too-many-branches
@@ -74,9 +75,9 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
     keep_build_dir,
     project_conf,
     project_option,
+    environments,
     verbose,
 ):
-
     if not src and os.getenv("PLATFORMIO_CI_SRC"):
         src = validate_path(ctx, None, os.getenv("PLATFORMIO_CI_SRC").split(":"))
     if not src:
@@ -115,7 +116,9 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         )
 
         # process project
-        ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
+        ctx.invoke(
+            cmd_run, project_dir=build_dir, environment=environments, verbose=verbose
+        )
     finally:
         if not keep_build_dir:
             fs.rmtree(build_dir)
