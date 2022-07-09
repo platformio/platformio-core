@@ -331,7 +331,7 @@ class LibBuilderBase:
             )
         ]
 
-    def _get_found_includes(  # pylint: disable=too-many-branches
+    def get_implicit_includes(  # pylint: disable=too-many-branches
         self, search_files=None
     ):
         # all include directories
@@ -352,15 +352,17 @@ class LibBuilderBase:
         include_dirs.extend(LibBuilderBase._INCLUDE_DIRS_CACHE)
 
         result = []
-        for path in search_files or []:
-            if path in self._processed_files:
+        search_files = search_files or []
+        while search_files:
+            node = self.env.File(search_files.pop(0))
+            if node.get_abspath() in self._processed_search_files:
                 continue
-            self._processed_files.append(path)
+            self._processed_search_files.append(node.get_abspath())
 
             try:
                 assert "+" in self.lib_ldf_mode
                 candidates = LibBuilderBase.CCONDITIONAL_SCANNER(
-                    self.env.File(path),
+                    node,
                     self.env,
                     tuple(include_dirs),
                     depth=self.CCONDITIONAL_SCANNER_DEPTH,
@@ -370,39 +372,35 @@ class LibBuilderBase:
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
-                        "advanced has failed with `%s`\n" % (path, exc)
+                        "advanced has failed with `%s`\n" % (node.get_abspath(), exc)
                     )
-                candidates = self.env.File(path).get_implicit_deps(
-                    self.env,
-                    LibBuilderBase.CLASSIC_SCANNER,
-                    lambda _: tuple(include_dirs),
+                candidates = LibBuilderBase.CLASSIC_SCANNER(
+                    node, self.env, tuple(include_dirs)
                 )
 
-            # mark candidates already processed
-            self._processed_files.extend(
-                [
-                    c.get_abspath()
-                    for c in candidates
-                    if c.get_abspath() not in self._processed_files
-                ]
-            )
-
-            # print(path, [c.get_abspath() for c in candidates])
+            # print(node.get_abspath(), [c.get_abspath() for c in candidates])
             for item in candidates:
+                item_path = item.get_abspath()
+                # process internal files recursively
+                if (
+                    item_path not in self._processed_search_files
+                    and item_path not in search_files
+                    and item_path in self
+                ):
+                    search_files.append(item_path)
                 if item not in result:
                     result.append(item)
                 if not self.PARSE_SRC_BY_H_NAME:
                     continue
-                _h_path = item.get_abspath()
-                if not fs.path_endswith_ext(_h_path, piotool.SRC_HEADER_EXT):
+                if not fs.path_endswith_ext(item_path, piotool.SRC_HEADER_EXT):
                     continue
-                _f_part = _h_path[: _h_path.rindex(".")]
+                item_fname = item_path[: item_path.rindex(".")]
                 for ext in piotool.SRC_C_EXT + piotool.SRC_CXX_EXT:
-                    if not os.path.isfile("%s.%s" % (_f_part, ext)):
+                    if not os.path.isfile("%s.%s" % (item_fname, ext)):
                         continue
-                    _c_path = self.env.File("%s.%s" % (_f_part, ext))
-                    if _c_path not in result:
-                        result.append(_c_path)
+                    item_c_node = self.env.File("%s.%s" % (item_fname, ext))
+                    if item_c_node not in result:
+                        result.append(item_c_node)
 
         return result
 
@@ -417,7 +415,7 @@ class LibBuilderBase:
             search_files = self.get_search_files()
 
         lib_inc_map = {}
-        for inc in self._get_found_includes(search_files):
+        for inc in self.get_implicit_includes(search_files):
             inc_path = inc.get_abspath()
             for lb in self.env.GetLibBuilders():
                 if inc_path in lb:
