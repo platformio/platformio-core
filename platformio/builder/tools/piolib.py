@@ -143,7 +143,7 @@ class LibBuilderBase:
 
         self._deps_are_processed = False
         self._circular_deps = []
-        self._processed_files = []
+        self._processed_search_files = []
 
         # reset source filter, could be overridden with extra script
         self.env["SRC_FILTER"] = ""
@@ -154,20 +154,27 @@ class LibBuilderBase:
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.path)
 
-    def __contains__(self, path):
-        p1 = self.path
-        p2 = path
+    def __contains__(self, child_path):
+        return self.is_common_builder(self.path, child_path)
+
+    def is_common_builder(self, root_path, child_path):
         if IS_WINDOWS:
-            p1 = p1.lower()
-            p2 = p2.lower()
-        if p1 == p2:
+            root_path = root_path.lower()
+            child_path = child_path.lower()
+        if root_path == child_path:
             return True
-        if os.path.commonprefix([p1 + os.path.sep, p2]) == p1 + os.path.sep:
+        if (
+            os.path.commonprefix([root_path + os.path.sep, child_path])
+            == root_path + os.path.sep
+        ):
             return True
         # try to resolve paths
-        p1 = os.path.os.path.realpath(p1)
-        p2 = os.path.os.path.realpath(p2)
-        return os.path.commonprefix([p1 + os.path.sep, p2]) == p1 + os.path.sep
+        root_path = os.path.realpath(root_path)
+        child_path = os.path.realpath(child_path)
+        return (
+            os.path.commonprefix([root_path + os.path.sep, child_path])
+            == root_path + os.path.sep
+        )
 
     @property
     def name(self):
@@ -879,6 +886,12 @@ class ProjectAsLibBuilder(LibBuilderBase):
         if export_projenv:
             env.Export(dict(projenv=self.env))
 
+    def __contains__(self, child_path):
+        for root_path in (self.include_dir, self.src_dir, self.test_dir):
+            if root_path and self.is_common_builder(root_path, child_path):
+                return True
+        return False
+
     @property
     def include_dir(self):
         include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
@@ -887,6 +900,10 @@ class ProjectAsLibBuilder(LibBuilderBase):
     @property
     def src_dir(self):
         return self.env.subst("$PROJECT_SRC_DIR")
+
+    @property
+    def test_dir(self):
+        return self.env.subst("$PROJECT_TEST_DIR")
 
     def get_search_files(self):
         items = []
