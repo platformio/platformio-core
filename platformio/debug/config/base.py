@@ -16,7 +16,7 @@ import json
 import os
 
 from platformio import fs, proc, util
-from platformio.compat import string_types
+from platformio.compat import MISSING, string_types
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import load_build_metadata
@@ -96,9 +96,8 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def init_break(self):
-        missed = object()
-        result = self.env_options.get("debug_init_break", missed)
-        if result != missed:
+        result = self.env_options.get("debug_init_break", MISSING)
+        if result != MISSING:
             return result
         result = None
         if not result:
