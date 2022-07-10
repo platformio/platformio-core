@@ -73,7 +73,7 @@ class SerialTestOutputReader:
             ),
             upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
-            verbose=self.test_runner.verbose,
+            verbose=self.test_runner.options.verbose,
         )
         if port:
             return port
