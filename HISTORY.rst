@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.1 (2022-??-??)
+6.1.1 (2022-07-11)
 ~~~~~~~~~~~~~~~~~~
 
 * Added new ``monitor_encoding`` project configuration option to configure `Device Monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ (`issue #4350 <https://github.com/platformio/platformio-core/issues/4350>`_)
