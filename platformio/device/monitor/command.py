@@ -56,9 +56,11 @@ from platformio.project.options import ProjectOptions
 @click.option("--echo", is_flag=True, help="Enable local echo")
 @click.option(
     "--encoding",
-    default="UTF-8",
-    show_default=True,
-    help="Set the encoding for the serial port (e.g. hexlify, Latin1, UTF-8)",
+    help=(
+        "Set the encoding for the serial port "
+        "(e.g. hexlify, Latin1, UTF-8) [default=%s]"
+        % ProjectOptions["env.monitor_encoding"].default
+    ),
 )
 @click.option(
     "-f",
