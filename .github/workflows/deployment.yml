@@ -3,6 +3,7 @@ name: Deployment
 on:
   push:
     branches:
+      - "master"
       - "release/**"
 
 jobs:
