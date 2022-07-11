@@ -567,6 +567,12 @@ ProjectOptions = OrderedDict(
                 type=click.BOOL,
                 default=False,
             ),
+            ConfigEnvOption(
+                group="monitor",
+                name="monitor_encoding",
+                description="Custom encoding (e.g. hexlify, Latin1, UTF-8)",
+                default="UTF-8",
+            ),
             # Library
             ConfigEnvOption(
                 group="library",

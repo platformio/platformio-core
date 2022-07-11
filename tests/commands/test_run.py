@@ -335,3 +335,73 @@ projenv.Append(CPPDEFINES=[
     assert 'MACRO_2=<Text is "Quoted">' in result.output
     assert 'MACRO_3=<Hello "World"! Isn\'t true?>' in result.output
     assert "MACRO_4=<Special chars: ',(,),[,],:>" in result.output
+
+
+def test_ldf(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+
+    # libs
+    lib_dir = project_dir / "lib"
+    a_lib_dir = lib_dir / "a"
+    a_lib_dir.mkdir(parents=True)
+    (a_lib_dir / "a.h").write_text(
+        """
+#include <some_from_b.h>
+"""
+    )
+    # b
+    b_lib_dir = lib_dir / "b"
+    b_lib_dir.mkdir(parents=True)
+    (b_lib_dir / "some_from_b.h").write_text("")
+    # c
+    c_lib_dir = lib_dir / "c"
+    c_lib_dir.mkdir(parents=True)
+    (c_lib_dir / "parse_c_by_name.h").write_text(
+        """
+void some_func();
+    """
+    )
+    (c_lib_dir / "parse_c_by_name.c").write_text(
+        """
+#include <d.h>
+#include <parse_c_by_name.h>
+
+void some_func() {
+}
+    """
+    )
+    (c_lib_dir / "some.c").write_text(
+        """
+#include <d.h>
+    """
+    )
+    # d
+    d_lib_dir = lib_dir / "d"
+    d_lib_dir.mkdir(parents=True)
+    (d_lib_dir / "d.h").write_text("")
+
+    # project
+    src_dir = project_dir / "src"
+    src_dir.mkdir(parents=True)
+    (src_dir / "main.h").write_text(
+        """
+#include <a.h>
+#include <parse_c_by_name.h>
+"""
+    )
+    (src_dir / "main.c").write_text(
+        """
+#include <main.h>
+
+int main() {
+}
+"""
+    )
+    (project_dir / "platformio.ini").write_text(
+        """
+[env:native]
+platform = native
+    """
+    )
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
+    validate_cliresult(result)

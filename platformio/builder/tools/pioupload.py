@@ -117,6 +117,7 @@ def AutodetectUploadPort(*args, **kwargs):
                 board_config=env.BoardConfig() if "BOARD" in env else None,
                 upload_protocol=upload_protocol,
                 prefer_gdb_port="blackmagic" in upload_protocol,
+                verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)),
             )
         )
 

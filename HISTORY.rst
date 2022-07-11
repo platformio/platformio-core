@@ -13,6 +13,16 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.1 (2022-07-11)
+~~~~~~~~~~~~~~~~~~
+
+* Added new ``monitor_encoding`` project configuration option to configure `Device Monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ (`issue #4350 <https://github.com/platformio/platformio-core/issues/4350>`_)
+* Allowed specifying project environments for `pio ci <https://docs.platformio.org/en/latest/core/userguide/cmd_ci.html>`__ command (`issue #4347 <https://github.com/platformio/platformio-core/issues/4347>`_)
+* Show "TimeoutError" only in the verbose mode when can not find a serial port
+* Fixed an issue when a serial port was not automatically detected if the board has predefined HWIDs
+* Fixed an issue with endless scanning of project dependencies (`issue #4349 <https://github.com/platformio/platformio-core/issues/4349>`_)
+* Fixed an issue with |LDF| when incompatible libraries were used for the working project environment with the missed framework (`pull #4346 <https://github.com/platformio/platformio-core/pull/4346>`_)
+
 6.1.0 (2022-07-06)
 ~~~~~~~~~~~~~~~~~~
 
