@@ -13,6 +13,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.2 (2022-07-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a regression bug when `libArchive <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/libarchive.html>`__ option declared in the `library.json <https://docs.platformio.org/en/latest/manifests/library-json/index.html>`__ manifest was ignored (`issue #4351 <https://github.com/platformio/platformio-core/issues/4351>`_)
+
 6.1.1 (2022-07-11)
 ~~~~~~~~~~~~~~~~~~
 
