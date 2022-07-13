@@ -64,8 +64,8 @@ class EndpointSessionIterator:
         self.endpoints_iter = iter(endpoints)
         # https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html
         self.retry = Retry(
-            total=3,
-            backoff_factor=1,  # [0, 2  4] secs
+            total=5,
+            backoff_factor=1,  # [0, 2, 4, 8, 16] secs
             # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
             status_forcelist=[413, 429, 500, 502, 503, 504],
         )
