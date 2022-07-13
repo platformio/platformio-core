@@ -139,11 +139,14 @@ def singleton(cls):
 
 
 def get_systype():
-    type_ = platform.system().lower()
+    system = platform.system().lower()
     arch = platform.machine().lower()
-    if type_ == "windows" and "x86" in arch:
-        arch = "amd64" if "64" in arch else "x86"
-    return "%s_%s" % (type_, arch) if arch else type_
+    if system == "windows":
+        if not arch:  # issue #4353
+            arch = "x86_" + platform.architecture()[0]
+        if "x86" in arch:
+            arch = "amd64" if "64" in arch else "x86"
+    return "%s_%s" % (system, arch) if arch else system
 
 
 def pioversion_to_intstr():
