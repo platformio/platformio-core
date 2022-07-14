@@ -145,6 +145,10 @@ class LibBuilderBase:
         self._circular_deps = []
         self._processed_search_files = []
 
+        # pass a macro to the projenv + libs
+        if "test" in env.GetBuildType():
+            self.env.Append(CPPDEFINES=["PIO_UNIT_TESTING"])
+
         # reset source filter, could be overridden with extra script
         self.env["SRC_FILTER"] = ""
 
