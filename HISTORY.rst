@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.3 (2022-07-??)
+6.1.3 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed a regression bug when opening device monitor without any filters (`issue #4363 <https://github.com/platformio/platformio-core/issues/4363>`_)
