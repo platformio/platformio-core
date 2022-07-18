@@ -23,7 +23,7 @@ from platformio.test.runners.factory import TestRunnerFactory
 
 def ConfigureTestTarget(env):
     env.Append(
-        CPPDEFINES=["UNIT_TEST", "PIO_UNIT_TESTING"],
+        CPPDEFINES=["UNIT_TEST"],  # deprecated, use PIO_UNIT_TESTING
         PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piotool.SRC_BUILD_EXT],
     )
     env.Prepend(CPPPATH=["$PROJECT_TEST_DIR"])

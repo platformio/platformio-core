@@ -20,7 +20,7 @@ import click
 from platformio import exception, fs
 from platformio.device.finder import find_serial_port
 from platformio.device.monitor.filters.base import register_filters
-from platformio.device.monitor.terminal import start_terminal
+from platformio.device.monitor.terminal import get_available_filters, start_terminal
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
@@ -136,6 +136,17 @@ def device_monitor_cmd(**options):
     if options["menu_char"] == options["exit_char"]:
         raise exception.UserSideException(
             "--exit-char can not be the same as --menu-char"
+        )
+
+    # check for unknown filters
+    known_filters = set(get_available_filters())
+    unknown_filters = set(options["filters"]) - known_filters
+    if unknown_filters:
+        options["filters"] = list(known_filters & set(options["filters"]))
+        click.secho(
+            ("Warning! Skipping unknown filters `%s`. Known filters are `%s`")
+            % (", ".join(unknown_filters), ", ".join(sorted(known_filters))),
+            fg="yellow",
         )
 
     start_terminal(options)

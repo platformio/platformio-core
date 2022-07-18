@@ -30,7 +30,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs
 from platformio.builder.tools import platformio as piotool
-from platformio.compat import IS_WINDOWS, MISSING, hashlib_encode_data, string_types
+from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import (
     MissingPackageManifestError,
@@ -144,6 +144,10 @@ class LibBuilderBase:
         self._deps_are_processed = False
         self._circular_deps = []
         self._processed_search_files = []
+
+        # pass a macro to the projenv + libs
+        if "test" in env.GetBuildType():
+            self.env.Append(CPPDEFINES=["PIO_UNIT_TESTING"])
 
         # reset source filter, could be overridden with extra script
         self.env["SRC_FILTER"] = ""
@@ -576,10 +580,11 @@ class ArduinoLibBuilder(LibBuilderBase):
         # pylint: disable=no-member
         if not self._manifest.get("dependencies"):
             return LibBuilderBase.lib_ldf_mode.fget(self)
+        missing = object()
         global_value = self.env.GetProjectConfig().getraw(
-            "env:" + self.env["PIOENV"], "lib_ldf_mode", MISSING
+            "env:" + self.env["PIOENV"], "lib_ldf_mode", missing
         )
-        if global_value != MISSING:
+        if global_value != missing:
             return LibBuilderBase.lib_ldf_mode.fget(self)
         # automatically enable C++ Preprocessing in runtime
         # (Arduino IDE has this behavior)
@@ -831,10 +836,11 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_archive(self):
+        missing = object()
         global_value = self.env.GetProjectConfig().getraw(
-            "env:" + self.env["PIOENV"], "lib_archive", MISSING
+            "env:" + self.env["PIOENV"], "lib_archive", missing
         )
-        if global_value != MISSING:
+        if global_value != missing:
             return self.env.GetProjectConfig().get(
                 "env:" + self.env["PIOENV"], "lib_archive"
             )

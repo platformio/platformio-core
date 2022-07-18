@@ -41,6 +41,15 @@ def is_bytes(x):
     return isinstance(x, (bytes, memoryview, bytearray))
 
 
+def isascii(text):
+    if sys.version_info >= (3, 7):
+        return text.isascii()
+    for c in text or "":
+        if ord(c) > 127:
+            return False
+    return True
+
+
 def ci_strings_are_equal(a, b):
     if a == b:
         return True

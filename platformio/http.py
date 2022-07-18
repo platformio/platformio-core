@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import json
-import math
 import os
 import socket
 from urllib.parse import urljoin
@@ -63,9 +62,10 @@ class EndpointSessionIterator:
             endpoints = [endpoints]
         self.endpoints = endpoints
         self.endpoints_iter = iter(endpoints)
+        # https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html
         self.retry = Retry(
-            total=math.ceil(6 / len(self.endpoints)),
-            backoff_factor=1,
+            total=5,
+            backoff_factor=1,  # [0, 2, 4, 8, 16] secs
             # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
             status_forcelist=[413, 429, 500, 502, 503, 504],
         )
@@ -129,10 +129,7 @@ class HTTPClient:
         while True:
             try:
                 return getattr(self._session, method)(path, **kwargs)
-            except (
-                requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout,
-            ) as exc:
+            except requests.exceptions.RequestException as exc:
                 try:
                     self._next_session()
                 except Exception as exc2:

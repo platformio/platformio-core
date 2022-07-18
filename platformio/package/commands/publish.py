@@ -22,6 +22,7 @@ from tabulate import tabulate
 
 from platformio import fs
 from platformio.account.client import AccountClient
+from platformio.compat import isascii
 from platformio.exception import UserSideException
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
@@ -155,7 +156,7 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
 def check_archive_file_names(archive_path):
     with tarfile.open(archive_path, mode="r:gz") as tf:
         for name in tf.getnames():
-            if not name.isascii():
+            if not isascii(name) or not name.isprintable():
                 click.secho(
                     f"Warning! The `{name}` file contains non-ASCII chars and can "
                     "lead to the unpacking issues on a user machine",
