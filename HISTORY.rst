@@ -18,6 +18,7 @@ PlatformIO Core 6
 
 * Export a ``PIO_UNIT_TESTING`` macro to the project source files and dependent libraries in the |UNITTESTING| mode
 * Improved detection of Windows architecture (`issue #4353 <https://github.com/platformio/platformio-core/issues/4353>`_)
+* Warn about unknown `device monitor filters <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #4362 <https://github.com/platformio/platformio-core/issues/4362>`_)
 * Fixed a regression bug when `libArchive <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/libarchive.html>`__ option declared in the `library.json <https://docs.platformio.org/en/latest/manifests/library-json/index.html>`__ manifest was ignored (`issue #4351 <https://github.com/platformio/platformio-core/issues/4351>`_)
 * Fixed an issue when the `pio pkg publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command didn't work with Python 3.6 (`issue #4352 <https://github.com/platformio/platformio-core/issues/4352>`_)
 

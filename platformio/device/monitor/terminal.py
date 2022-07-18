@@ -41,6 +41,10 @@ class Terminal(miniterm.Miniterm):
             self.pio_unexpected_exception = exc
 
 
+def get_available_filters():
+    return sorted(miniterm.TRANSFORMATIONS.keys())
+
+
 def start_terminal(options):
     retries = 0
     is_port_valid = False
@@ -116,7 +120,7 @@ def print_terminal_settings(terminal):
     )
     click.echo(
         "--- Available filters and text transformations: %s"
-        % ", ".join(sorted(miniterm.TRANSFORMATIONS.keys()))
+        % ", ".join(get_available_filters())
     )
     click.echo("--- More details at https://bit.ly/pio-monitor-filters")
     click.echo(
