@@ -32,7 +32,7 @@ def validate_username(value, field="username"):
 
 def validate_email(value):
     value = str(value).strip()
-    if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
+    if not re.match(r"^[a-z\d_\.\+\-]+@[a-z\d\-]+\.[a-z\d\-\.]+$", value, flags=re.I):
         raise click.BadParameter("Invalid email address")
     return value
 
