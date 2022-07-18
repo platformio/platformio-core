@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.2 (2022-07-??)
+6.1.2 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
 
 * Export a ``PIO_UNIT_TESTING`` macro to the project source files and dependent libraries in the |UNITTESTING| mode
