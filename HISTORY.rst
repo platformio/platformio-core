@@ -13,6 +13,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.4 (2022-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
+
 6.1.3 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
 

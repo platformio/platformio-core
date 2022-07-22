@@ -79,27 +79,32 @@ def project_init_cmd(
     elif board:
         update_board_envs(project_dir, board, project_option, env_prefix)
 
-    # resolve project dependencies
-    if not no_install_dependencies and (environment or board):
-        install_project_dependencies(
-            options=dict(
-                project_dir=project_dir,
-                environments=[environment] if environment else [],
-                silent=silent,
-            )
-        )
-
-    if ide:
-        if not silent:
-            click.echo(
-                "Updating metadata for the %s IDE..." % click.style(ide, fg="cyan")
-            )
-        with fs.cd(project_dir):
-            config = ProjectConfig.get_instance(
-                os.path.join(project_dir, "platformio.ini")
-            )
+    with fs.cd(project_dir):
+        generator = None
+        config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
+        if ide:
             config.validate()
-            ProjectGenerator(config, environment, ide, board).generate()
+            # init generator and pick the best env if user didn't specify
+            generator = ProjectGenerator(config, environment, ide, board)
+            if not environment:
+                environment = generator.env_name
+
+        # resolve project dependencies
+        if not no_install_dependencies and (environment or board):
+            install_project_dependencies(
+                options=dict(
+                    project_dir=project_dir,
+                    environments=[environment] if environment else [],
+                    silent=silent,
+                )
+            )
+
+        if generator:
+            if not silent:
+                click.echo(
+                    "Updating metadata for the %s IDE..." % click.style(ide, fg="cyan")
+                )
+            generator.generate()
 
     if is_new_project:
         init_cvs_ignore(project_dir)
