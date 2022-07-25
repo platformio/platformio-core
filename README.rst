@@ -1,7 +1,3 @@
-.. image:: https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg
-    :target: https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md
-    :alt:  SWUbanner
-
 PlatformIO Core
 ===============
 
@@ -99,3 +95,7 @@ Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 
 The PlatformIO is licensed under the permissive Apache 2.0 license,
 so you can use it in both commercial and personal projects with confidence.
+
+.. image:: https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg
+    :target: https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md
+    :alt:  SWUbanner
