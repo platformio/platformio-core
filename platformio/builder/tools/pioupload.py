@@ -26,7 +26,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, fs
-from platformio.device.finder import find_mbed_disk, find_serial_port, is_pattern_port
+from platformio.device.finder import SerialPortFinder, find_mbed_disk, is_pattern_port
 from platformio.device.list.util import list_serial_ports
 from platformio.proc import exec_command
 
@@ -112,13 +112,12 @@ def AutodetectUploadPort(*args, **kwargs):
         except exception.InvalidUdevRules as exc:
             sys.stderr.write("\n%s\n\n" % exc)
         env.Replace(
-            UPLOAD_PORT=find_serial_port(
-                initial_port=initial_port,
+            UPLOAD_PORT=SerialPortFinder(
                 board_config=env.BoardConfig() if "BOARD" in env else None,
                 upload_protocol=upload_protocol,
                 prefer_gdb_port="blackmagic" in upload_protocol,
                 verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)),
-            )
+            ).find(initial_port)
         )
 
     if env.subst("$UPLOAD_PORT"):

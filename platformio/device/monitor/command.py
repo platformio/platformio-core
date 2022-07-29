@@ -18,7 +18,7 @@ import sys
 import click
 
 from platformio import exception, fs
-from platformio.device.finder import find_serial_port
+from platformio.device.finder import SerialPortFinder
 from platformio.device.monitor.filters.base import register_filters
 from platformio.device.monitor.terminal import get_available_filters, start_terminal
 from platformio.platform.factory import PlatformFactory
@@ -124,14 +124,13 @@ def device_monitor_cmd(**options):
 
         options = apply_project_monitor_options(options, project_options)
         register_filters(platform=platform, options=options)
-        options["port"] = find_serial_port(
-            initial_port=options["port"],
+        options["port"] = SerialPortFinder(
             board_config=platform.board_config(project_options.get("board"))
             if platform and project_options.get("board")
             else None,
             upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
-        )
+        ).find(initial_port=options["port"])
 
     if options["menu_char"] == options["exit_char"]:
         raise exception.UserSideException(
