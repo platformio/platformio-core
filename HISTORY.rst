@@ -18,6 +18,7 @@ PlatformIO Core 6
 
 * Improved device port finder when using dual channel UART converter (`issue #4367 <https://github.com/platformio/platformio-core/issues/4367>`_)
 * Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
+* Do not resolve project dependencies on for the ``cleanall`` target (`issue #4344 <https://github.com/platformio/platformio-core/issues/4344>`_)
 * Fixed an issue when escaping macros/defines for IDE integration (`issue #4360 <https://github.com/platformio/platformio-core/issues/4360>`_)
 
 6.1.3 (2022-07-18)
