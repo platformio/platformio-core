@@ -94,7 +94,7 @@ def dump_defines(env):
     for item in SCons.Defaults.processDefines(env.get("CPPDEFINES", [])):
         item = item.strip()
         if item:
-            defines.append(env.subst(item).replace("\\", ""))
+            defines.append(env.subst(item).replace('\\"', '"'))
 
     # special symbol for Atmel AVR MCU
     if env["PIOPLATFORM"] == "atmelavr":

@@ -17,6 +17,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
+* Fixed an issue when escaping macros/defines for IDE integration (`issue #4360 <https://github.com/platformio/platformio-core/issues/4360>`_)
 
 6.1.3 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
