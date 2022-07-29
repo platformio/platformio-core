@@ -145,51 +145,40 @@ def _subst_cmd(env, cmd):
     return " ".join([SCons.Subst.quote_spaces(arg) for arg in args])
 
 
-def DumpIntegrationData(env, globalenv):
-    """env here is `projenv`"""
-
+def DumpIntegrationData(*args):
+    projenv, globalenv = args[0:2]  # pylint: disable=unbalanced-tuple-unpacking
     data = {
-        "env_name": env["PIOENV"],
-        "libsource_dirs": [env.subst(item) for item in env.GetLibSourceDirs()],
-        "defines": dump_defines(env),
-        "includes": env.DumpIntegrationIncludes(),
-        "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
-        "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
-        "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
-        "prog_path": env.subst("$PROG_PATH"),
-        "svd_path": dump_svd_path(env),
-        "compiler_type": env.GetCompilerType(),
+        "env_name": globalenv["PIOENV"],
+        "libsource_dirs": [
+            globalenv.subst(item) for item in globalenv.GetLibSourceDirs()
+        ],
+        "defines": dump_defines(projenv),
+        "includes": projenv.DumpIntegrationIncludes(),
+        "cc_flags": _subst_cmd(projenv, "$CFLAGS $CCFLAGS $CPPFLAGS"),
+        "cxx_flags": _subst_cmd(projenv, "$CXXFLAGS $CCFLAGS $CPPFLAGS"),
+        "cc_path": where_is_program(
+            globalenv.subst("$CC"), globalenv.subst("${ENV['PATH']}")
+        ),
+        "cxx_path": where_is_program(
+            globalenv.subst("$CXX"), globalenv.subst("${ENV['PATH']}")
+        ),
+        "gdb_path": where_is_program(
+            globalenv.subst("$GDB"), globalenv.subst("${ENV['PATH']}")
+        ),
+        "prog_path": globalenv.subst("$PROG_PATH"),
+        "svd_path": dump_svd_path(globalenv),
+        "compiler_type": globalenv.GetCompilerType(),
         "targets": globalenv.DumpTargets(),
         "extra": dict(
             flash_images=[
-                {"offset": item[0], "path": env.subst(item[1])}
-                for item in env.get("FLASH_EXTRA_IMAGES", [])
+                {"offset": item[0], "path": globalenv.subst(item[1])}
+                for item in globalenv.get("FLASH_EXTRA_IMAGES", [])
             ]
         ),
     }
     data["extra"].update(
-        env.get("INTEGRATION_EXTRA_DATA", env.get("IDE_EXTRA_DATA", {}))
+        globalenv.get("INTEGRATION_EXTRA_DATA", globalenv.get("IDE_EXTRA_DATA", {}))
     )
-
-    env_ = env.Clone()
-    # https://github.com/platformio/platformio-atom-ide/issues/34
-    _new_defines = []
-    for item in SCons.Defaults.processDefines(env_.get("CPPDEFINES", [])):
-        item = item.replace('\\"', '"')
-        if " " in item:
-            _new_defines.append(item.replace(" ", "\\\\ "))
-        else:
-            _new_defines.append(item)
-    env_.Replace(CPPDEFINES=_new_defines)
-
-    # export C/C++ build flags
-    data.update(
-        {
-            "cc_flags": _subst_cmd(env_, "$CFLAGS $CCFLAGS $CPPFLAGS"),
-            "cxx_flags": _subst_cmd(env_, "$CXXFLAGS $CCFLAGS $CPPFLAGS"),
-        }
-    )
-
     return data
 
 
