@@ -146,7 +146,7 @@ class LibBuilderBase:
         self._processed_search_files = []
 
         # pass a macro to the projenv + libs
-        if "test" in env.GetBuildType():
+        if "test" in env["BUILD_TYPE"]:
             self.env.Append(CPPDEFINES=["PIO_UNIT_TESTING"])
 
         # reset source filter, could be overridden with extra script
@@ -911,7 +911,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def get_search_files(self):
         items = []
-        build_type = self.env.GetBuildType()
+        build_type = self.env["BUILD_TYPE"]
         # project files
         if "test" not in build_type or self.env.GetProjectOption("test_build_src"):
             items.extend(super().get_search_files())
@@ -1164,7 +1164,7 @@ def ConfigureProjectLibBuilder(env):
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
 
-    if "test" in env.GetBuildType():
+    if "test" in env["BUILD_TYPE"]:
         project.env.ConfigureTestTarget()
 
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member

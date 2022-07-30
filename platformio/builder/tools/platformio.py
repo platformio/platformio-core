@@ -86,7 +86,7 @@ def BuildProgram(env):
         )
     )
 
-    print("Building in %s mode" % env.GetBuildType())
+    print("Building in %s mode" % env["BUILD_TYPE"])
 
     return program
 
@@ -121,7 +121,7 @@ def ProcessProgramDeps(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    if "debug" in env.GetBuildType():
+    if "debug" in env["BUILD_TYPE"]:
         env.ConfigureDebugTarget()
 
     # remove specified flags
@@ -149,7 +149,7 @@ def ProcessProjectDeps(env):
         }
     )
 
-    if "test" in env.GetBuildType():
+    if "test" in env["BUILD_TYPE"]:
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
         plb.env.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
@@ -161,7 +161,7 @@ def ProcessProjectDeps(env):
             )
             env.Exit(1)
 
-    if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
+    if "test" not in env["BUILD_TYPE"] or env.GetProjectOption("test_build_src"):
         plb.env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )

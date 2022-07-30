@@ -127,6 +127,7 @@ env.Replace(
     PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
     PROJECTDATA_DIR="$PROJECT_DATA_DIR",  # legacy for dev/platform
     PROJECT_BUILD_DIR=config.get("platformio", "build_dir"),
+    BUILD_TYPE=env.GetBuildType(),
     BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
     LIBSOURCE_DIRS=[
         config.get("platformio", "lib_dir"),
