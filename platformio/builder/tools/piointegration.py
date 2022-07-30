@@ -165,7 +165,7 @@ def DumpIntegrationData(*args):
         "gdb_path": where_is_program(
             globalenv.subst("$GDB"), globalenv.subst("${ENV['PATH']}")
         ),
-        "prog_path": globalenv.subst("$PROG_PATH"),
+        "prog_path": globalenv.subst("$PROGPATH"),
         "svd_path": dump_svd_path(globalenv),
         "compiler_type": globalenv.GetCompilerType(),
         "targets": globalenv.DumpTargets(),
