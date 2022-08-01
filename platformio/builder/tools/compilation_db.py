@@ -23,8 +23,6 @@
 # pylint: disable=unused-argument, protected-access, unused-variable, import-error
 # Original: https://github.com/mongodb/mongo/blob/master/site_scons/site_tools/compilation_db.py
 
-from __future__ import absolute_import
-
 import itertools
 import json
 import os

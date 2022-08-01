@@ -15,8 +15,6 @@
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 # pylint: disable=assignment-from-no-return, unused-argument, too-many-lines
 
-from __future__ import absolute_import
-
 import hashlib
 import io
 import os
