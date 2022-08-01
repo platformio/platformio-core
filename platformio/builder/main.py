@@ -82,7 +82,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
-    IDE_EXTRA_DATA={},
 )
 
 # Declare command verbose messages

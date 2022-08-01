@@ -175,9 +175,8 @@ def DumpIntegrationData(*args):
             ]
         ),
     }
-    data["extra"].update(
-        globalenv.get("INTEGRATION_EXTRA_DATA", globalenv.get("IDE_EXTRA_DATA", {}))
-    )
+    for key in ("IDE_EXTRA_DATA", "INTEGRATION_EXTRA_DATA"):
+        data["extra"].update(globalenv.get(key, {}))
     return data
 
 
@@ -186,6 +185,7 @@ def exists(_):
 
 
 def generate(env):
+    env["INTEGRATION_EXTRA_DATA"] = {}
     env.AddMethod(IsIntegrationDump)
     env.AddMethod(DumpIntegrationIncludes)
     env.AddMethod(DumpIntegrationData)
