@@ -39,6 +39,8 @@ RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio
     limitations under the License.
 """
 
+SKIP_DEBUG_TOOLS = ["esp-bridge", "esp-builtin"]
+
 DOCS_ROOT_DIR = os.path.realpath(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "docs")
 )
@@ -904,10 +906,12 @@ You can switch between debugging :ref:`debugging_tools` using
         )
         for (tool_name, tool_data) in sorted(board["debug"]["tools"].items()):
             lines.append(
-                """  * - :ref:`debugging_tool_{name}`
+                """  * - {tool}
     - {onboard}
     - {default}""".format(
-                    name=tool_name,
+                    tool=f"``{tool_name}``"
+                    if tool_name in SKIP_DEBUG_TOOLS
+                    else f":ref:`debugging_tool_{tool_name}`",
                     onboard="Yes" if tool_data.get("onboard") else "",
                     default="Yes" if tool_name == default_debug_tool else "",
                 )
@@ -984,7 +988,10 @@ Boards
     for tool, platforms in tool_to_platforms.items():
         tool_path = os.path.join(DOCS_ROOT_DIR, "plus", "debug-tools", "%s.rst" % tool)
         if not os.path.isfile(tool_path):
-            click.secho("Unknown debug tool `%s`" % tool, fg="red")
+            if tool in SKIP_DEBUG_TOOLS:
+                click.secho("Skipped debug tool `%s`" % tool, fg="yellow")
+            else:
+                click.secho("Unknown debug tool `%s`" % tool, fg="red")
             continue
         platforms = sorted(set(platforms))
 
