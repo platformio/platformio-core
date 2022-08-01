@@ -29,7 +29,7 @@ import os
 
 import SCons
 
-from platformio.builder.tools.platformio import SRC_ASM_EXT, SRC_C_EXT, SRC_CXX_EXT
+from platformio.builder.tools.piobuild import SRC_ASM_EXT, SRC_C_EXT, SRC_CXX_EXT
 from platformio.proc import where_is_program
 
 # Implements the ability for SCons to emit a compilation database for the MongoDB project. See

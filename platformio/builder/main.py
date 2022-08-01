@@ -55,7 +55,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "link",
         "piohooks",
         "pioasm",
-        "platformio",
+        "piobuild",
         "pioproject",
         "pioplatform",
         "piotest",
