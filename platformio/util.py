@@ -205,4 +205,5 @@ def humanize_duration_time(duration):
 
 
 def strip_ansi_codes(text):
-    return re.sub(r"\x1B\[\d+(;\d+){0,2}m", "", text)
+    # pylint: disable=protected-access
+    return click._compat.strip_ansi(text)
