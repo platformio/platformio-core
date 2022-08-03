@@ -32,9 +32,8 @@ from platformio.package.version import pepver_to_semver
 from platformio.system.prune import calculate_unnecessary_system_data
 
 
-def on_platformio_start(ctx, force, caller):
+def on_platformio_start(ctx, caller):
     app.set_session_var("command_ctx", ctx)
-    app.set_session_var("force_option", force)
     set_caller(caller)
     telemetry.on_command()
 

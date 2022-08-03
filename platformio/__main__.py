@@ -31,7 +31,7 @@ from platformio.compat import IS_CYGWIN, ensure_python3
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
 @click.pass_context
-def cli(ctx, force, caller, no_ansi):
+def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
     try:
         if (
             no_ansi
@@ -53,7 +53,7 @@ def cli(ctx, force, caller, no_ansi):
     except:  # pylint: disable=bare-except
         pass
 
-    maintenance.on_platformio_start(ctx, force, caller)
+    maintenance.on_platformio_start(ctx, caller)
 
 
 @cli.result_callback()

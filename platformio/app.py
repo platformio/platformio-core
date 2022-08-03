@@ -62,7 +62,6 @@ DEFAULT_SETTINGS = {
 
 SESSION_VARS = {
     "command_ctx": None,
-    "force_option": False,
     "caller_id": None,
     "custom_project_conf": None,
 }
@@ -229,7 +228,6 @@ def set_session_var(name, value):
 def is_disabled_progressbar():
     return any(
         [
-            get_session_var("force_option"),
             proc.is_ci(),
             os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
         ]
