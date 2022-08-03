@@ -125,7 +125,7 @@ class Upgrader:
 
 
 def after_upgrade(ctx):
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     last_version = app.get_state_item("last_version", "0.0.0")
     if last_version == __version__:
         return
@@ -221,7 +221,7 @@ def check_platformio_upgrade():
     if pepver_to_semver(latest_version) <= pepver_to_semver(__version__):
         return
 
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
 
     click.echo("")
     click.echo("*" * terminal_width)
@@ -266,7 +266,7 @@ def check_prune_system():
     if (unnecessary_size / 1024) < threshold_mb:
         return
 
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     click.echo()
     click.echo("*" * terminal_width)
     click.secho(

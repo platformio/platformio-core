@@ -186,7 +186,7 @@ def merge_dicts(d1, d2, path=None):
 
 
 def print_labeled_bar(label, is_error=False, fg=None, sep="="):
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     width = len(click.unstyle(label))
     half_line = sep * int((terminal_width - width - 2) / 2)
     click.secho("%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)
