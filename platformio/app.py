@@ -226,12 +226,7 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return any(
-        [
-            proc.is_ci(),
-            os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
-        ]
-    )
+    return os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
 
 
 def get_cid():

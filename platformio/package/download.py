@@ -13,8 +13,7 @@
 # limitations under the License.
 
 import io
-import math
-from email.utils import parsedate_tz
+from email.utils import parsedate
 from os.path import getsize, join
 from time import mktime
 
@@ -72,22 +71,27 @@ class FileDownloader:
 
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
+        file_size = self.get_size()
         itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
-        fp = open(self._destination, "wb")  # pylint: disable=consider-using-with
         try:
-            if not with_progress or self.get_size() == -1:
-                if not silent:
-                    click.echo("%s..." % label)
-                for chunk in itercontent:
-                    if chunk:
+            with open(self._destination, "wb") as fp:
+                if not with_progress or file_size == -1:
+                    if not silent:
+                        click.echo("%s..." % label)
+                    for chunk in itercontent:
                         fp.write(chunk)
-            else:
-                chunks = int(math.ceil(self.get_size() / float(io.DEFAULT_BUFFER_SIZE)))
-                with click.progressbar(length=chunks, label=label) as pb:
-                    for _ in pb:
-                        fp.write(next(itercontent))
+                else:
+                    pb = click.progressbar(
+                        length=file_size,
+                        iterable=itercontent,
+                        label=label,
+                    )
+                    pb.update_min_steps = file_size / (5 if pb.is_hidden else 100)
+                    with pb:
+                        for chunk in pb:
+                            pb.update(len(chunk))
+                            fp.write(chunk)
         finally:
-            fp.close()
             self._request.close()
 
         if self.get_lmtime():
@@ -132,8 +136,7 @@ class FileDownloader:
         return True
 
     def _preserve_filemtime(self, lmdate):
-        timedata = parsedate_tz(lmdate)
-        lmtime = mktime(timedata[:9])
+        lmtime = mktime(parsedate(lmdate))
         fs.change_filemtime(self._destination, lmtime)
 
     def __del__(self):
