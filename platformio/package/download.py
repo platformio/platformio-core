@@ -21,6 +21,7 @@ import click
 import requests
 
 from platformio import __default_requests_timeout__, app, fs
+from platformio.compat import is_terminal
 from platformio.package.exception import PackageException
 
 
@@ -75,19 +76,36 @@ class FileDownloader:
         itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
         try:
             with open(self._destination, "wb") as fp:
-                if not with_progress or file_size == -1:
+                if file_size == -1 or not with_progress or silent:
                     if not silent:
-                        click.echo("%s..." % label)
+                        click.echo(f"{label}...")
                     for chunk in itercontent:
                         fp.write(chunk)
+
+                elif not is_terminal():
+                    click.echo(f"{label} 0%", nl=False)
+                    print_percent_step = 10
+                    printed_percents = 0
+                    downloaded_size = 0
+                    for chunk in itercontent:
+                        fp.write(chunk)
+                        downloaded_size += len(chunk)
+                        if (downloaded_size / file_size * 100) >= (
+                            printed_percents + print_percent_step
+                        ):
+                            printed_percents += print_percent_step
+                            click.echo(f" {printed_percents}%", nl=False)
+                    click.echo("")
+
                 else:
-                    pb = click.progressbar(
+                    with click.progressbar(
                         length=file_size,
                         iterable=itercontent,
                         label=label,
-                    )
-                    pb.update_min_steps = file_size / (5 if pb.is_hidden else 100)
-                    with pb:
+                        update_min_steps=min(
+                            256 * 1024, file_size / 100
+                        ),  # every 256Kb or less,
+                    ) as pb:
                         for chunk in pb:
                             pb.update(len(chunk))
                             fp.write(chunk)

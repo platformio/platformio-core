@@ -50,6 +50,13 @@ def isascii(text):
     return True
 
 
+def is_terminal():
+    try:
+        return sys.stdout.isatty()
+    except Exception:  # pylint: disable=broad-except
+        return False
+
+
 def ci_strings_are_equal(a, b):
     if a == b:
         return True
