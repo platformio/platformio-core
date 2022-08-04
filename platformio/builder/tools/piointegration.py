@@ -185,6 +185,7 @@ def exists(_):
 
 
 def generate(env):
+    env["IDE_EXTRA_DATA"] = {}  # legacy support
     env["INTEGRATION_EXTRA_DATA"] = {}
     env.AddMethod(IsIntegrationDump)
     env.AddMethod(DumpIntegrationIncludes)
