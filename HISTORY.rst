@@ -21,6 +21,7 @@ PlatformIO Core 6
 * Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
 * Upgraded build engine to the SCons 4.4.0 (`release notes <https://github.com/SCons/scons/releases/tag/4.4.0>`__)
 * Do not resolve project dependencies on for the ``cleanall`` target (`issue #4344 <https://github.com/platformio/platformio-core/issues/4344>`_)
+* Warn about calling "env.BuildSources" in a POST-type script (`issue #4385 <https://github.com/platformio/platformio-core/issues/4385>`_)
 * Fixed an issue when escaping macros/defines for IDE integration (`issue #4360 <https://github.com/platformio/platformio-core/issues/4360>`_)
 
 6.1.3 (2022-07-18)

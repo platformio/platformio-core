@@ -341,6 +341,14 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None, nodes=None):
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
+    if env.get("PIOMAINPROG"):
+        sys.stderr.write(
+            "Error: The main program is already constructed and the inline "
+            "source files are not allowed. Please use `env.BuildLibrary(...)` "
+            "or PRE-type script instead."
+            )
+        env.Exit(1)
+
     nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
     DefaultEnvironment().Append(
         PIOBUILDFILES=[
