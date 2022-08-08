@@ -292,7 +292,10 @@ def CollectBuildFiles(
         for callback, pattern in middlewares:
             if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
                 continue
-            new_node = callback(new_node)
+            if callback.__code__.co_argcount == 2:
+                new_node = callback(env, new_node)
+            else:
+                new_node = callback(new_node)
         if new_node:
             new_sources.append(new_node)
 
