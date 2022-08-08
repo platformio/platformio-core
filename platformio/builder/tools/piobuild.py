@@ -296,6 +296,8 @@ def CollectBuildFiles(
                 new_node = callback(env, new_node)
             else:
                 new_node = callback(new_node)
+            if not new_node:
+                break
         if new_node:
             new_sources.append(new_node)
 

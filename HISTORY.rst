@@ -16,6 +16,7 @@ PlatformIO Core 6
 6.1.4 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for accepting the original FileNode environment in a "callback" function when using `Build Middlewares <https://docs.platformio.org/en/latest/scripting/middlewares.html>`__ (`pull #4380 <https://github.com/platformio/platformio-core/pull/4380>`_)
 * Improved device port finder when using dual channel UART converter (`issue #4367 <https://github.com/platformio/platformio-core/issues/4367>`_)
 * Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
 * Upgraded build engine to the SCons 4.4.0 (`release notes <https://github.com/SCons/scons/releases/tag/4.4.0>`__)
