@@ -24,6 +24,7 @@ PlatformIO Core 6
 * Do not resolve project dependencies for the ``cleanall`` target (`issue #4344 <https://github.com/platformio/platformio-core/issues/4344>`_)
 * Warn about calling "env.BuildSources" in a POST-type script (`issue #4385 <https://github.com/platformio/platformio-core/issues/4385>`_)
 * Fixed an issue when escaping macros/defines for IDE integration (`issue #4360 <https://github.com/platformio/platformio-core/issues/4360>`_)
+* Fixed an issue when the "cleanall" target removes dependencies from all working environments (`issue #4386 <https://github.com/platformio/platformio-core/issues/4386>`_)
 
 6.1.3 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
