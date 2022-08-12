@@ -13,7 +13,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.4 (2022-??-??)
+6.1.4 (2022-08-12)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for accepting the original FileNode environment in a "callback" function when using `Build Middlewares <https://docs.platformio.org/en/latest/scripting/middlewares.html>`__ (`pull #4380 <https://github.com/platformio/platformio-core/pull/4380>`_)
