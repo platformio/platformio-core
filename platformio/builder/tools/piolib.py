@@ -15,8 +15,6 @@
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 # pylint: disable=assignment-from-no-return, unused-argument, too-many-lines
 
-from __future__ import absolute_import
-
 import hashlib
 import io
 import os
@@ -29,7 +27,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs
-from platformio.builder.tools import platformio as piotool
+from platformio.builder.tools import piobuild
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
 from platformio.http import HTTPClientError, InternetIsOffline
 from platformio.package.exception import (
@@ -94,7 +92,7 @@ class LibBuilderFactory:
                 return ["mbed"]
             for fname in files:
                 if not fs.path_endswith_ext(
-                    fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
+                    fname, piobuild.SRC_BUILD_EXT + piobuild.SRC_HEADER_EXT
                 ):
                     continue
                 with io.open(
@@ -146,7 +144,7 @@ class LibBuilderBase:
         self._processed_search_files = []
 
         # pass a macro to the projenv + libs
-        if "test" in env.GetBuildType():
+        if "test" in env["BUILD_TYPE"]:
             self.env.Append(CPPDEFINES=["PIO_UNIT_TESTING"])
 
         # reset source filter, could be overridden with extra script
@@ -199,7 +197,7 @@ class LibBuilderBase:
 
     @property
     def src_filter(self):
-        return piotool.SRC_FILTER_DEFAULT + [
+        return piobuild.SRC_FILTER_DEFAULT + [
             "-<example%s>" % os.sep,
             "-<examples%s>" % os.sep,
             "-<test%s>" % os.sep,
@@ -331,7 +329,7 @@ class LibBuilderBase:
         return [
             os.path.join(self.src_dir, item)
             for item in self.env.MatchSourceFiles(
-                self.src_dir, self.src_filter, piotool.SRC_BUILD_EXT
+                self.src_dir, self.src_filter, piobuild.SRC_BUILD_EXT
             )
         ]
 
@@ -396,10 +394,10 @@ class LibBuilderBase:
                     result.append(item)
                 if not self.PARSE_SRC_BY_H_NAME:
                     continue
-                if not fs.path_endswith_ext(item_path, piotool.SRC_HEADER_EXT):
+                if not fs.path_endswith_ext(item_path, piobuild.SRC_HEADER_EXT):
                     continue
                 item_fname = item_path[: item_path.rindex(".")]
-                for ext in piotool.SRC_C_EXT + piotool.SRC_CXX_EXT:
+                for ext in piobuild.SRC_C_EXT + piobuild.SRC_CXX_EXT:
                     if not os.path.isfile("%s.%s" % (item_fname, ext)):
                         continue
                     item_c_node = self.env.File("%s.%s" % (item_fname, ext))
@@ -560,7 +558,7 @@ class ArduinoLibBuilder(LibBuilderBase):
 
         src_filter = []
         is_utility = os.path.isdir(os.path.join(self.path, "utility"))
-        for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT:
+        for ext in piobuild.SRC_BUILD_EXT + piobuild.SRC_HEADER_EXT:
             # arduino ide ignores files with .asm or .ASM extensions
             if ext.lower() == "asm":
                 continue
@@ -911,7 +909,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def get_search_files(self):
         items = []
-        build_type = self.env.GetBuildType()
+        build_type = self.env["BUILD_TYPE"]
         # project files
         if "test" not in build_type or self.env.GetProjectOption("test_build_src"):
             items.extend(super().get_search_files())
@@ -1164,7 +1162,7 @@ def ConfigureProjectLibBuilder(env):
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
 
-    if "test" in env.GetBuildType():
+    if "test" in env["BUILD_TYPE"]:
         project.env.ConfigureTestTarget()
 
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member

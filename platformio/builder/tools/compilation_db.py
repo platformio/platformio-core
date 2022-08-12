@@ -23,15 +23,13 @@
 # pylint: disable=unused-argument, protected-access, unused-variable, import-error
 # Original: https://github.com/mongodb/mongo/blob/master/site_scons/site_tools/compilation_db.py
 
-from __future__ import absolute_import
-
 import itertools
 import json
 import os
 
 import SCons
 
-from platformio.builder.tools.platformio import SRC_ASM_EXT, SRC_C_EXT, SRC_CXX_EXT
+from platformio.builder.tools.piobuild import SRC_ASM_EXT, SRC_C_EXT, SRC_CXX_EXT
 from platformio.proc import where_is_program
 
 # Implements the ability for SCons to emit a compilation database for the MongoDB project. See

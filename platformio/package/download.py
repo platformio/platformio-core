@@ -13,8 +13,7 @@
 # limitations under the License.
 
 import io
-import math
-from email.utils import parsedate_tz
+from email.utils import parsedate
 from os.path import getsize, join
 from time import mktime
 
@@ -22,6 +21,7 @@ import click
 import requests
 
 from platformio import __default_requests_timeout__, app, fs
+from platformio.compat import is_terminal
 from platformio.package.exception import PackageException
 
 
@@ -72,22 +72,44 @@ class FileDownloader:
 
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
+        file_size = self.get_size()
         itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
-        fp = open(self._destination, "wb")  # pylint: disable=consider-using-with
         try:
-            if not with_progress or self.get_size() == -1:
-                if not silent:
-                    click.echo("%s..." % label)
-                for chunk in itercontent:
-                    if chunk:
+            with open(self._destination, "wb") as fp:
+                if file_size == -1 or not with_progress or silent:
+                    if not silent:
+                        click.echo(f"{label}...")
+                    for chunk in itercontent:
                         fp.write(chunk)
-            else:
-                chunks = int(math.ceil(self.get_size() / float(io.DEFAULT_BUFFER_SIZE)))
-                with click.progressbar(length=chunks, label=label) as pb:
-                    for _ in pb:
-                        fp.write(next(itercontent))
+
+                elif not is_terminal():
+                    click.echo(f"{label} 0%", nl=False)
+                    print_percent_step = 10
+                    printed_percents = 0
+                    downloaded_size = 0
+                    for chunk in itercontent:
+                        fp.write(chunk)
+                        downloaded_size += len(chunk)
+                        if (downloaded_size / file_size * 100) >= (
+                            printed_percents + print_percent_step
+                        ):
+                            printed_percents += print_percent_step
+                            click.echo(f" {printed_percents}%", nl=False)
+                    click.echo("")
+
+                else:
+                    with click.progressbar(
+                        length=file_size,
+                        iterable=itercontent,
+                        label=label,
+                        update_min_steps=min(
+                            256 * 1024, file_size / 100
+                        ),  # every 256Kb or less,
+                    ) as pb:
+                        for chunk in pb:
+                            pb.update(len(chunk))
+                            fp.write(chunk)
         finally:
-            fp.close()
             self._request.close()
 
         if self.get_lmtime():
@@ -132,8 +154,7 @@ class FileDownloader:
         return True
 
     def _preserve_filemtime(self, lmdate):
-        timedata = parsedate_tz(lmdate)
-        lmtime = mktime(timedata[:9])
+        lmtime = mktime(parsedate(lmdate))
         fs.change_filemtime(self._destination, lmtime)
 
     def __del__(self):

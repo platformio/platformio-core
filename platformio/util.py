@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import functools
 import math
 import platform
@@ -188,7 +186,7 @@ def merge_dicts(d1, d2, path=None):
 
 
 def print_labeled_bar(label, is_error=False, fg=None, sep="="):
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     width = len(click.unstyle(label))
     half_line = sep * int((terminal_width - width - 2) / 2)
     click.secho("%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)
@@ -207,4 +205,5 @@ def humanize_duration_time(duration):
 
 
 def strip_ansi_codes(text):
-    return re.sub(r"\x1B\[\d+(;\d+){0,2}m", "", text)
+    # pylint: disable=protected-access
+    return click._compat.strip_ansi(text)

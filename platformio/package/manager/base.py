@@ -116,10 +116,10 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
         self._MEMORY_CACHE.clear()
 
     @staticmethod
-    def is_system_compatible(value):
+    def is_system_compatible(value, custom_system=None):
         if not value or "*" in value:
             return True
-        return util.items_in_list(value, util.get_systype())
+        return util.items_in_list(value, custom_system or util.get_systype())
 
     @staticmethod
     def ensure_dir_exists(path):

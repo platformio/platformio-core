@@ -12,11 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import os
 
-from platformio.builder.tools import platformio as piotool
+from platformio.builder.tools import piobuild
 from platformio.test.result import TestSuite
 from platformio.test.runners.factory import TestRunnerFactory
 
@@ -24,7 +22,7 @@ from platformio.test.runners.factory import TestRunnerFactory
 def ConfigureTestTarget(env):
     env.Append(
         CPPDEFINES=["UNIT_TEST"],  # deprecated, use PIO_UNIT_TESTING
-        PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piotool.SRC_BUILD_EXT],
+        PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piobuild.SRC_BUILD_EXT],
     )
     env.Prepend(CPPPATH=["$PROJECT_TEST_DIR"])
 
@@ -38,7 +36,7 @@ def ConfigureTestTarget(env):
             env.Prepend(
                 PIOTEST_SRC_FILTER=[
                     f"+<{test_name}{os.path.sep}*.{ext}>"
-                    for ext in piotool.SRC_BUILD_EXT
+                    for ext in piobuild.SRC_BUILD_EXT
                 ],
                 CPPPATH=[os.path.join("$PROJECT_TEST_DIR", test_name)],
             )

@@ -198,7 +198,7 @@ def print_processing_header(tool, envname, envdump):
         "Checking %s > %s (%s)"
         % (click.style(envname, fg="cyan", bold=True), tool, "; ".join(envdump))
     )
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     click.secho("-" * terminal_width, bold=True)
 
 

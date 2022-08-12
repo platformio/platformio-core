@@ -19,7 +19,7 @@ import tempfile
 
 import click
 
-from platformio import app, fs
+from platformio import fs
 from platformio.exception import CIBuildEnvsEmpty
 from platformio.project.commands.init import project_init_cmd, validate_boards
 from platformio.project.config import ProjectConfig
@@ -84,8 +84,6 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         raise click.BadParameter("Missing argument 'src'")
 
     try:
-        app.set_session_var("force_option", True)
-
         if not keep_build_dir and os.path.isdir(build_dir):
             fs.rmtree(build_dir)
         if not os.path.isdir(build_dir):

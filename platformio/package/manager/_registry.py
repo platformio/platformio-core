@@ -41,7 +41,7 @@ class PackageManagerRegistryMixin:
         if not package or not version:
             raise UnknownPackageError(spec.humanize())
 
-        pkgfile = self._pick_compatible_pkg_file(version["files"]) if version else None
+        pkgfile = self.pick_compatible_pkg_file(version["files"]) if version else None
         if not pkgfile:
             raise UnknownPackageError(spec.humanize())
 
@@ -162,7 +162,7 @@ class PackageManagerRegistryMixin:
             time.sleep(1)
         return (None, None)
 
-    def filter_incompatible_registry_versions(self, versions, spec=None):
+    def get_compatible_registry_versions(self, versions, spec=None, custom_system=None):
         assert not spec or isinstance(spec, PackageSpec)
         result = []
         for version in versions:
@@ -170,22 +170,27 @@ class PackageManagerRegistryMixin:
             if spec and spec.requirements and semver not in spec.requirements:
                 continue
             if not any(
-                self.is_system_compatible(f.get("system")) for f in version["files"]
+                self.is_system_compatible(f.get("system"), custom_system=custom_system)
+                for f in version["files"]
             ):
                 continue
             result.append(version)
         return result
 
-    def pick_best_registry_version(self, versions, spec=None):
+    def pick_best_registry_version(self, versions, spec=None, custom_system=None):
         best = None
-        for version in self.filter_incompatible_registry_versions(versions, spec):
+        for version in self.get_compatible_registry_versions(
+            versions, spec, custom_system
+        ):
             semver = cast_version_to_semver(version["name"])
             if not best or (semver > cast_version_to_semver(best["name"])):
                 best = version
         return best
 
-    def _pick_compatible_pkg_file(self, version_files):
+    def pick_compatible_pkg_file(self, version_files, custom_system=None):
         for item in version_files:
-            if self.is_system_compatible(item.get("system")):
+            if self.is_system_compatible(
+                item.get("system"), custom_system=custom_system
+            ):
                 return item
         return None

@@ -79,7 +79,7 @@ class EnvironmentProcessor:
         if "monitor" in build_targets:
             build_targets.remove("monitor")
 
-        if "clean" not in build_targets:
+        if not set(["clean", "cleanall"]) & set(build_targets):
             install_project_env_dependencies(
                 self.name,
                 {

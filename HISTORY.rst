@@ -13,6 +13,19 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.4 (2022-08-12)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for accepting the original FileNode environment in a "callback" function when using `Build Middlewares <https://docs.platformio.org/en/latest/scripting/middlewares.html>`__ (`pull #4380 <https://github.com/platformio/platformio-core/pull/4380>`_)
+* Improved device port finder when using dual channel UART converter (`issue #4367 <https://github.com/platformio/platformio-core/issues/4367>`_)
+* Improved project dependency resolving when using the `pio project init --ide <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command
+* Upgraded build engine to the SCons 4.4.0 (`release notes <https://github.com/SCons/scons/releases/tag/4.4.0>`__)
+* Keep custom "unwantedRecommendations" when generating projects for VSCode (`issue #4383 <https://github.com/platformio/platformio-core/issues/4383>`_)
+* Do not resolve project dependencies for the ``cleanall`` target (`issue #4344 <https://github.com/platformio/platformio-core/issues/4344>`_)
+* Warn about calling "env.BuildSources" in a POST-type script (`issue #4385 <https://github.com/platformio/platformio-core/issues/4385>`_)
+* Fixed an issue when escaping macros/defines for IDE integration (`issue #4360 <https://github.com/platformio/platformio-core/issues/4360>`_)
+* Fixed an issue when the "cleanall" target removes dependencies from all working environments (`issue #4386 <https://github.com/platformio/platformio-core/issues/4386>`_)
+
 6.1.3 (2022-07-18)
 ~~~~~~~~~~~~~~~~~~
 

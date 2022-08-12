@@ -276,7 +276,7 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.17"
+        version = "3.18"
         spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data/"
             "v%s/json/licenses.json" % version

@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import fnmatch
 import os
 import sys
@@ -86,7 +84,7 @@ def BuildProgram(env):
         )
     )
 
-    print("Building in %s mode" % env.GetBuildType())
+    print("Building in %s mode" % env["BUILD_TYPE"])
 
     return program
 
@@ -121,7 +119,7 @@ def ProcessProgramDeps(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    if "debug" in env.GetBuildType():
+    if "debug" in env["BUILD_TYPE"]:
         env.ConfigureDebugTarget()
 
     # remove specified flags
@@ -149,7 +147,7 @@ def ProcessProjectDeps(env):
         }
     )
 
-    if "test" in env.GetBuildType():
+    if "test" in env["BUILD_TYPE"]:
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
         plb.env.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
@@ -161,7 +159,7 @@ def ProcessProjectDeps(env):
             )
             env.Exit(1)
 
-    if "test" not in env.GetBuildType() or env.GetProjectOption("test_build_src"):
+    if "test" not in env["BUILD_TYPE"] or env.GetProjectOption("test_build_src"):
         plb.env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
@@ -294,7 +292,12 @@ def CollectBuildFiles(
         for callback, pattern in middlewares:
             if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
                 continue
-            new_node = callback(new_node)
+            if callback.__code__.co_argcount == 2:
+                new_node = callback(env, new_node)
+            else:
+                new_node = callback(new_node)
+            if not new_node:
+                break
         if new_node:
             new_sources.append(new_node)
 
@@ -338,6 +341,14 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None, nodes=None):
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
+    if env.get("PIOMAINPROG"):
+        sys.stderr.write(
+            "Error: The main program is already constructed and the inline "
+            "source files are not allowed. Please use `env.BuildLibrary(...)` "
+            "or PRE-type script instead."
+        )
+        env.Exit(1)
+
     nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
     DefaultEnvironment().Append(
         PIOBUILDFILES=[

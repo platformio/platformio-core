@@ -183,7 +183,7 @@ def print_suite_header(test_suite):
             click.style(test_suite.env_name, fg="cyan", bold=True),
         )
     )
-    terminal_width, _ = shutil.get_terminal_size()
+    terminal_width = shutil.get_terminal_size().columns
     click.secho("-" * terminal_width, bold=True)
 
 

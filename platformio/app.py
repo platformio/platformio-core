@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import getpass
 import hashlib
 import json
@@ -64,7 +62,6 @@ DEFAULT_SETTINGS = {
 
 SESSION_VARS = {
     "command_ctx": None,
-    "force_option": False,
     "caller_id": None,
     "custom_project_conf": None,
 }
@@ -229,13 +226,7 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return any(
-        [
-            get_session_var("force_option"),
-            proc.is_ci(),
-            os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true",
-        ]
-    )
+    return os.getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
 
 
 def get_cid():

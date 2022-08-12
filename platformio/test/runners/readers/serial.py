@@ -17,7 +17,7 @@ from time import sleep
 import click
 import serial
 
-from platformio.device.finder import find_serial_port
+from platformio.device.finder import SerialPortFinder
 from platformio.exception import UserSideException
 
 
@@ -66,15 +66,14 @@ class SerialTestOutputReader:
         project_options = self.test_runner.project_config.items(
             env=self.test_runner.test_suite.env_name, as_dict=True
         )
-        port = find_serial_port(
-            initial_port=self.test_runner.get_test_port(),
+        port = SerialPortFinder(
             board_config=self.test_runner.platform.board_config(
                 project_options["board"]
             ),
             upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
             verbose=self.test_runner.options.verbose,
-        )
+        ).find(initial_port=self.test_runner.get_test_port())
         if port:
             return port
         raise UserSideException(

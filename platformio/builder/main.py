@@ -55,7 +55,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "link",
         "piohooks",
         "pioasm",
-        "platformio",
+        "piobuild",
         "pioproject",
         "pioplatform",
         "piotest",
@@ -82,7 +82,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
-    IDE_EXTRA_DATA={},
 )
 
 # Declare command verbose messages
@@ -127,6 +126,7 @@ env.Replace(
     PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
     PROJECTDATA_DIR="$PROJECT_DATA_DIR",  # legacy for dev/platform
     PROJECT_BUILD_DIR=config.get("platformio", "build_dir"),
+    BUILD_TYPE=env.GetBuildType(),
     BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
     LIBSOURCE_DIRS=[
         config.get("platformio", "lib_dir"),
