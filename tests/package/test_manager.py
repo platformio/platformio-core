@@ -18,6 +18,7 @@ import logging
 import os
 import time
 from pathlib import Path
+from random import random
 
 import pytest
 import semantic_version
@@ -41,11 +42,11 @@ def test_download(isolated_pio_core):
     lm.set_log_level(logging.ERROR)
     archive_path = lm.download(url, checksum)
     assert fs.calculate_file_hashsum("sha256", archive_path) == checksum
-    lm.cleanup_expired_downloads(time.time())
+    lm.cleanup_expired_downloads(random())
     assert os.path.isfile(archive_path)
     # test outdated downloads
-    lm.set_download_utime(archive_path, time.time() - lm.DOWNLOAD_CACHE_EXPIRE - 60)
-    lm.cleanup_expired_downloads(time.time())
+    lm.set_download_utime(archive_path, time.time() - lm.DOWNLOAD_CACHE_EXPIRE - 1)
+    lm.cleanup_expired_downloads(random())
     assert not os.path.isfile(archive_path)
     # check that key is deleted from DB
     with open(lm.get_download_usagedb_path(), encoding="utf8") as fp:
