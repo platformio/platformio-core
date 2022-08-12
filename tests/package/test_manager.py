@@ -44,7 +44,7 @@ def test_download(isolated_pio_core):
     lm.cleanup_expired_downloads(time.time())
     assert os.path.isfile(archive_path)
     # test outdated downloads
-    lm.set_download_utime(archive_path, time.time() - lm.DOWNLOAD_CACHE_EXPIRE - 1)
+    lm.set_download_utime(archive_path, time.time() - lm.DOWNLOAD_CACHE_EXPIRE - 60)
     lm.cleanup_expired_downloads(time.time())
     assert not os.path.isfile(archive_path)
     # check that key is deleted from DB
