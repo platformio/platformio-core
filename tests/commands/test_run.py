@@ -150,7 +150,7 @@ env.Append(CPPDEFINES=[("TMP_MACRO_4", 4)])
 env.Append(CCFLAGS=["-Os"])
 env.Append(LIBS=["unknownLib"])
     """
-        % str(tmpdir)
+        % str(tmpdir).replace("\\", "\\\\")
     )
 
     tmpdir.mkdir("src").join("main.c").write(
