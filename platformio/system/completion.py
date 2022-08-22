@@ -30,7 +30,7 @@ class ShellType(Enum):
 
 def get_bash_version():
     result = subprocess.run(["bash", "--version"], capture_output=True, check=True)
-    match = re.search(r"version\s+(\d+)\.(\d+)", result.stdout.decode())
+    match = re.search(r"version\s+(\d+)\.(\d+)", result.stdout.decode(), re.IGNORECASE)
     if match:
         return (int(match.group(1)), int(match.group(2)))
     return (0, 0)
