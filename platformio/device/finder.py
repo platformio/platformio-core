@@ -222,13 +222,12 @@ class SerialPortFinder:
         def _fetch_hwids_from_platforms():
             """load from installed dev-platforms"""
             result = []
-            print(result)
             for platform in PlatformPackageManager().get_installed():
                 p = PlatformFactory.new(platform)
                 for board_config in p.get_boards().values():
                     for board_hwid in board_config.get("build.hwids", []):
                         board_hwid = self.normalize_board_hwid(board_hwid)
-                        if board_hwid not in hwids:
+                        if board_hwid not in result:
                             result.append(board_hwid)
             return result
 
