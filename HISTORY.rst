@@ -13,6 +13,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.5 (2022-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Improved caching of build metadata in debug mode
+
 6.1.4 (2022-08-12)
 ~~~~~~~~~~~~~~~~~~
 
