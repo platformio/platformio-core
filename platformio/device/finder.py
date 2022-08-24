@@ -14,6 +14,7 @@
 
 import os
 from fnmatch import fnmatch
+from functools import lru_cache
 
 import click
 import serial
@@ -119,6 +120,8 @@ class SerialPortFinder:
 
     @staticmethod
     def match_device_hwid(patterns):
+        if not patterns:
+            return None
         for item in list_serial_ports(as_objects=True):
             if not item.vid or not item.pid:
                 continue
@@ -215,20 +218,27 @@ class SerialPortFinder:
         if os.path.isfile(udev_rules_path):
             hwids.extend(parse_udev_rules_hwids(udev_rules_path))
 
-        # load from installed dev-platforms
-        for platform in PlatformPackageManager().get_installed():
-            p = PlatformFactory.new(platform)
-            for board_config in p.get_boards().values():
-                for board_hwid in board_config.get("build.hwids", []):
-                    board_hwid = self.normalize_board_hwid(board_hwid)
-                    if board_hwid not in hwids:
-                        hwids.append(board_hwid)
+        @lru_cache(maxsize=1)
+        def _fetch_hwids_from_platforms():
+            """load from installed dev-platforms"""
+            result = []
+            print(result)
+            for platform in PlatformPackageManager().get_installed():
+                p = PlatformFactory.new(platform)
+                for board_config in p.get_boards().values():
+                    for board_hwid in board_config.get("build.hwids", []):
+                        board_hwid = self.normalize_board_hwid(board_hwid)
+                        if board_hwid not in hwids:
+                            result.append(board_hwid)
+            return result
 
         try:
 
             @retry(timeout=self.timeout)
             def wrapper():
                 device = self.match_device_hwid(hwids)
+                if not device:
+                    device = self.match_device_hwid(_fetch_hwids_from_platforms())
                 if device:
                     return device
                 raise retry.RetryNextException()

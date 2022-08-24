@@ -16,6 +16,7 @@ PlatformIO Core 6
 6.1.5 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Speeded up device port finder by avoiding loading board HWIDs from development platforms
 * Improved caching of build metadata in debug mode
 
 6.1.4 (2022-08-12)
