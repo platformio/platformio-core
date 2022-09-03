@@ -19,7 +19,6 @@ from pathlib import Path
 
 import click
 
-from platformio.package.manager.library import LibraryPackageManager
 from platformio.test.exception import UnitTestSuiteError
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
@@ -188,20 +187,6 @@ void unityOutputComplete(void) { unittest_uart_end(); }
     def __init__(self, *args, **kwargs):
         """Delete when Unity > 2.5.2 is released"""
         super().__init__(*args, **kwargs)
-        self._tmp_pre_upgrade()
-
-    def _tmp_pre_upgrade(self):
-        """Delete when Unity > 2.5.2 is released"""
-        lm = LibraryPackageManager(
-            os.path.join(
-                self.project_config.get("platformio", "libdeps_dir"),
-                self.test_suite.env_name,
-            ),
-        )
-        pkg = lm.get_package(self.EXTRA_LIB_DEPS[0])
-        if not pkg or os.path.isfile(os.path.join(pkg.path, "platformio-build.py")):
-            return
-        lm.uninstall(pkg)
 
     def get_unity_framework_config(self):
         if not self.platform.is_embedded():
