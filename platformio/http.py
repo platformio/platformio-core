@@ -208,6 +208,6 @@ def fetch_remote_content(*args, **kwargs):
     if "timeout" not in kwargs:
         kwargs["timeout"] = __default_requests_timeout__
 
-    r = requests.get(*args, **kwargs)
+    r = requests.get(*args, **kwargs)  # pylint: disable=missing-timeout
     r.raise_for_status()
     return r.text
