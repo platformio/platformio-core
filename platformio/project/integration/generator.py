@@ -22,6 +22,7 @@ import bottle
 from platformio import fs, util
 from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
+from platformio.test.helpers import list_test_suites
 
 
 class ProjectGenerator:
@@ -99,12 +100,14 @@ class ProjectGenerator:
             tpl_vars.update(
                 {
                     "src_files": self.get_src_files(),
+                    "project_dir": self.project_dir,
                     "project_src_dir": self.config.get("platformio", "src_dir"),
                     "project_lib_dir": self.config.get("platformio", "lib_dir"),
                     "project_test_dir": self.config.get("platformio", "test_dir"),
                     "project_libdeps_dir": os.path.join(
                         self.config.get("platformio", "libdeps_dir"), self.env_name
                     ),
+                    "tests": self._get_tests(),
                 }
             )
 
@@ -119,6 +122,13 @@ class ProjectGenerator:
         tpl_vars["to_unix_path"] = fs.to_unix_path
         tpl_vars["filter_includes"] = self.filter_includes
         return tpl_vars
+
+    def _get_tests(self):
+        test_suites = list_test_suites(
+            self.config, environments=self.env_name, filters=(), ignores=()
+        )
+        test_names = sorted(set(s.test_name for s in test_suites))
+        return test_names
 
     def get_src_files(self):
         result = []

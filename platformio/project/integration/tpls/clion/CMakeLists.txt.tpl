@@ -30,4 +30,9 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+enable_testing()
+% for test in tests:
+add_test(NAME "{{test}}" COMMAND platformio test -v -f "{{test}}" WORKING_DIRECTORY {{project_dir}})
+% end
+
 add_executable(Z_DUMMY_TARGET ${SRC_LIST})
