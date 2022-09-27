@@ -146,7 +146,7 @@ class SerialPortFinder:
         if not device:
             device = self._find_known_device()
         if device:
-            port = self._reveal_device_port(device)
+            return self._reveal_device_port(device)
 
         # pick the best PID:VID USB device
         port = best_port = None
