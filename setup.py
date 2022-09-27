@@ -41,9 +41,9 @@ minimal_requirements = [
 ]
 
 home_requirements = [
-    "aiofiles==0.8.*",
+    "aiofiles==%s" % ("22.1.*" if sys.version_info >= (3, 7) else "0.8.0"),
     "ajsonrpc==1.*",
-    "starlette==%s" % ("0.20.*" if sys.version_info >= (3, 7) else "0.19.1"),
+    "starlette==%s" % ("0.21.*" if sys.version_info >= (3, 7) else "0.19.1"),
     "uvicorn==%s" % ("0.18.*" if sys.version_info >= (3, 7) else "0.16.0"),
     "wsproto==%s" % ("1.2.*" if sys.version_info >= (3, 7) else "1.0.0"),
 ]
