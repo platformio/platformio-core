@@ -18,6 +18,7 @@ PlatformIO Core 6
 
 * Speeded up device port finder by avoiding loading board HWIDs from development platforms
 * Improved caching of build metadata in debug mode
+* Fixed an issue when `pio pkg install --storage-dir <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`__ command requires PlatformIO project (`issue #4410 <https://github.com/platformio/platformio-core/issues/4410>`_)
 
 6.1.4 (2022-08-12)
 ~~~~~~~~~~~~~~~~~~
