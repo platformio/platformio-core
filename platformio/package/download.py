@@ -32,6 +32,7 @@ class FileDownloader:
         self._request = requests.get(
             url,
             stream=True,
+            verify=False,
             headers={"User-Agent": app.get_user_agent()},
             timeout=__default_requests_timeout__,
         )
