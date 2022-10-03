@@ -81,6 +81,7 @@ class EndpointSessionIterator:
         session.mount(base_url, adapter)
         return session
 
+proxy = {"http":os.getenv('HTTP_PROXY'), "https":os.getenv('HTTPS_PROXY')}
 
 class HTTPClient:
     def __init__(self, endpoints):
@@ -128,7 +129,7 @@ class HTTPClient:
 
         while True:
             try:
-                return getattr(self._session, method)(path, **kwargs)
+                return getattr(self._session, method)(path, proxies=proxy, verify=False, **kwargs)
             except requests.exceptions.RequestException as exc:
                 try:
                     self._next_session()
