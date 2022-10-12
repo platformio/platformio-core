@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import io
+import os
 from email.utils import parsedate
 from os.path import getsize, join
 from time import mktime
@@ -24,6 +25,7 @@ from platformio import __default_requests_timeout__, app, fs
 from platformio.compat import is_terminal
 from platformio.package.exception import PackageException
 
+proxy = {"http":os.getenv('HTTP_PROXY'), "https":os.getenv('HTTPS_PROXY')}
 
 class FileDownloader:
     def __init__(self, url, dest_dir=None):
@@ -32,6 +34,7 @@ class FileDownloader:
         self._request = requests.get(
             url,
             stream=True,
+            proxies=proxy,
             verify=False,
             headers={"User-Agent": app.get_user_agent()},
             timeout=__default_requests_timeout__,
