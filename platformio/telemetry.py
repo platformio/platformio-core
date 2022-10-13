@@ -146,6 +146,7 @@ class MeasurementProtocol(TelemetryBase):
             "device",
             "org",
             "package",
+            "pkg",
             "platform",
             "project",
             "settings",
