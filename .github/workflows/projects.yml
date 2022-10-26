@@ -21,7 +21,7 @@ jobs:
           - smartknob:
             repository: "scottbez1/smartknob"
             folder: "smartknob"
-            config_dir: "smartknob/firmware"
+            config_dir: "smartknob"
             env_name: "view"
           - espurna:
             repository: "xoseperez/espurna"
