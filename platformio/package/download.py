@@ -18,31 +18,30 @@ from os.path import getsize, join
 from time import mktime
 
 import click
-import requests
 
-from platformio import __default_requests_timeout__, app, fs
+from platformio import fs
 from platformio.compat import is_terminal
+from platformio.http import HTTPSession
 from platformio.package.exception import PackageException
 
 
 class FileDownloader:
     def __init__(self, url, dest_dir=None):
-        self._request = None
+        self._http_session = HTTPSession()
+        self._http_response = None
         # make connection
-        self._request = requests.get(
+        self._http_response = self._http_session.get(
             url,
             stream=True,
-            headers={"User-Agent": app.get_user_agent()},
-            timeout=__default_requests_timeout__,
         )
-        if self._request.status_code != 200:
+        if self._http_response.status_code != 200:
             raise PackageException(
                 "Got the unrecognized status code '{0}' when downloaded {1}".format(
-                    self._request.status_code, url
+                    self._http_response.status_code, url
                 )
             )
 
-        disposition = self._request.headers.get("content-disposition")
+        disposition = self._http_response.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
             self._fname = (
                 disposition[disposition.index("filename=") + 9 :]
@@ -63,17 +62,17 @@ class FileDownloader:
         return self._destination
 
     def get_lmtime(self):
-        return self._request.headers.get("last-modified")
+        return self._http_response.headers.get("last-modified")
 
     def get_size(self):
-        if "content-length" not in self._request.headers:
+        if "content-length" not in self._http_response.headers:
             return -1
-        return int(self._request.headers["content-length"])
+        return int(self._http_response.headers["content-length"])
 
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
         file_size = self.get_size()
-        itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
+        itercontent = self._http_response.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
         try:
             with open(self._destination, "wb") as fp:
                 if file_size == -1 or not with_progress or silent:
@@ -110,7 +109,8 @@ class FileDownloader:
                             pb.update(len(chunk))
                             fp.write(chunk)
         finally:
-            self._request.close()
+            self._http_response.close()
+            self._http_session.close()
 
         if self.get_lmtime():
             self._preserve_filemtime(self.get_lmtime())
@@ -158,5 +158,6 @@ class FileDownloader:
         fs.change_filemtime(self._destination, lmtime)
 
     def __del__(self):
-        if self._request:
-            self._request.close()
+        self._http_session.close()
+        if self._http_response:
+            self._http_response.close()

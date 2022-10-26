@@ -58,6 +58,10 @@ DEFAULT_SETTINGS = {
         "value": get_default_projects_dir(),
         "validator": projects_dir_validate,
     },
+    "enable_proxy_strict_ssl": {
+        "description": "Verify the proxy server certificate against the list of supplied CAs",
+        "value": True,
+    },
 }
 
 SESSION_VARS = {

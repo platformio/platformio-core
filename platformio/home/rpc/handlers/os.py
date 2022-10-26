@@ -20,7 +20,7 @@ from functools import cmp_to_key
 
 import click
 
-from platformio import __default_requests_timeout__, fs
+from platformio import fs
 from platformio.cache import ContentCache
 from platformio.device.list.util import list_logical_devices
 from platformio.home import helpers
@@ -50,13 +50,9 @@ class OSRPC:
 
         session = helpers.requests_session()
         if data:
-            r = await session.post(
-                uri, data=data, headers=headers, timeout=__default_requests_timeout__
-            )
+            r = await session.post(uri, data=data, headers=headers)
         else:
-            r = await session.get(
-                uri, headers=headers, timeout=__default_requests_timeout__
-            )
+            r = await session.get(uri, headers=headers)
 
         r.raise_for_status()
         result = r.text

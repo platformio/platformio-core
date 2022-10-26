@@ -44,8 +44,6 @@ __registry_mirror_hosts__ = [
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
-__default_requests_timeout__ = (10, None)  # (connect, read)
-
 __core_packages__ = {
     "contrib-piohome": "~3.4.2",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),

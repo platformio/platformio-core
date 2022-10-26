@@ -30,6 +30,7 @@ import requests
 from platformio import __version__, app, exception, util
 from platformio.cli import PlatformioCLI
 from platformio.compat import hashlib_encode_data, string_types
+from platformio.http import HTTPSession
 from platformio.proc import is_ci, is_container
 from platformio.project.helpers import is_platformio_project
 
@@ -206,7 +207,7 @@ class MPDataPusher:
     def __init__(self):
         self._queue = queue.LifoQueue()
         self._failedque = deque()
-        self._http_session = requests.Session()
+        self._http_session = HTTPSession()
         self._http_offline = False
         self._workers = []
 
@@ -270,7 +271,6 @@ class MPDataPusher:
             r = self._http_session.post(
                 "https://ssl.google-analytics.com/collect",
                 data=data,
-                headers={"User-Agent": app.get_user_agent()},
                 timeout=1,
             )
             r.raise_for_status()

@@ -16,6 +16,8 @@ PlatformIO Core 6
 6.1.5 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added a new ``enable_proxy_strict_ssl`` setting to disable the proxy server certificate verification (`issue #4432 <https://github.com/platformio/platformio-core/issues/4432>`_)
+* Documented `PlatformIO Core Proxy Configuration <https://docs.platformio.org/en/latest/core/installation/proxy-configuration.html>`__
 * Speeded up device port finder by avoiding loading board HWIDs from development platforms
 * Improved caching of build metadata in debug mode
 * Fixed an issue when `pio pkg install --storage-dir <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`__ command requires PlatformIO project (`issue #4410 <https://github.com/platformio/platformio-core/issues/4410>`_)
