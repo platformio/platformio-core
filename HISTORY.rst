@@ -13,6 +13,15 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.5 (2022-11-01)
+~~~~~~~~~~~~~~~~~~
+
+* Added a new `enable_proxy_strict_ssl <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html>`__ setting to disable the proxy server certificate verification (`issue #4432 <https://github.com/platformio/platformio-core/issues/4432>`_)
+* Documented `PlatformIO Core Proxy Configuration <https://docs.platformio.org/en/latest/core/installation/proxy-configuration.html>`__
+* Speeded up device port finder by avoiding loading board HWIDs from development platforms
+* Improved caching of build metadata in debug mode
+* Fixed an issue when `pio pkg install --storage-dir <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`__ command requires PlatformIO project (`issue #4410 <https://github.com/platformio/platformio-core/issues/4410>`_)
+
 6.1.4 (2022-08-12)
 ~~~~~~~~~~~~~~~~~~
 

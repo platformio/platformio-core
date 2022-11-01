@@ -24,7 +24,7 @@ from platformio.proc import exec_command, where_is_program
 
 
 def IsIntegrationDump(_):
-    return set(["_idedata", "idedata"]) & set(COMMAND_LINE_TARGETS)
+    return set(["__idedata", "idedata"]) & set(COMMAND_LINE_TARGETS)
 
 
 def DumpIntegrationIncludes(env):
@@ -147,6 +147,7 @@ def _subst_cmd(env, cmd):
 def DumpIntegrationData(*args):
     projenv, globalenv = args[0:2]  # pylint: disable=unbalanced-tuple-unpacking
     data = {
+        "build_type": globalenv.GetBuildType(),
         "env_name": globalenv["PIOENV"],
         "libsource_dirs": [
             globalenv.subst(item) for item in globalenv.GetLibSourceDirs()

@@ -61,7 +61,7 @@ from platformio.test.runners.factory import TestRunnerFactory
 @click.option("-f", "--force", is_flag=True, help="Reinstall package if it exists")
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 def package_install_cmd(**options):
-    if options.get("global"):
+    if options.get("global") or options.get("storage_dir"):
         install_global_dependencies(options)
     else:
         install_project_dependencies(options)

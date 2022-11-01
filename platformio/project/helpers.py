@@ -121,7 +121,7 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_build_metadata(project_dir, env_or_envs, cache=False):
+def load_build_metadata(project_dir, env_or_envs, cache=False, debug=False):
     assert env_or_envs
     env_names = env_or_envs
     if not isinstance(env_names, list):
@@ -129,9 +129,19 @@ def load_build_metadata(project_dir, env_or_envs, cache=False):
 
     with fs.cd(project_dir):
         result = _get_cached_build_metadata(project_dir, env_names) if cache else {}
+        # incompatible build-type data
+        for name in list(result.keys()):
+            build_type = result[name].get("build_type", "")
+            outdated_conds = [
+                not build_type,
+                debug and "debug" not in build_type,
+                not debug and "debug" in build_type,
+            ]
+            if any(outdated_conds):
+                del result[name]
         missed_env_names = set(env_names) - set(result.keys())
         if missed_env_names:
-            result.update(_load_build_metadata(project_dir, missed_env_names))
+            result.update(_load_build_metadata(project_dir, missed_env_names, debug))
 
     if not isinstance(env_or_envs, list) and env_or_envs in result:
         return result[env_or_envs]
@@ -142,11 +152,13 @@ def load_build_metadata(project_dir, env_or_envs, cache=False):
 load_project_ide_data = load_build_metadata
 
 
-def _load_build_metadata(project_dir, env_names):
+def _load_build_metadata(project_dir, env_names, debug=False):
     # pylint: disable=import-outside-toplevel
     from platformio.run.cli import cli as cmd_run
 
-    args = ["--project-dir", project_dir, "--target", "_idedata"]
+    args = ["--project-dir", project_dir, "--target", "__idedata"]
+    if debug:
+        args.extend(["--target", "__debug"])
     for name in env_names:
         args.extend(["-e", name])
     result = CliRunner().invoke(cmd_run, args)

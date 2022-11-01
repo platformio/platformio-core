@@ -14,6 +14,7 @@
 
 import os
 from fnmatch import fnmatch
+from functools import lru_cache
 
 import click
 import serial
@@ -119,6 +120,8 @@ class SerialPortFinder:
 
     @staticmethod
     def match_device_hwid(patterns):
+        if not patterns:
+            return None
         for item in list_serial_ports(as_objects=True):
             if not item.vid or not item.pid:
                 continue
@@ -143,10 +146,10 @@ class SerialPortFinder:
         if not device:
             device = self._find_known_device()
         if device:
-            port = self._reveal_device_port(device)
+            return self._reveal_device_port(device)
 
         # pick the best PID:VID USB device
-        best_port = None
+        port = best_port = None
         for item in list_serial_ports():
             if self.ensure_ready and not is_serial_port_ready(item["port"]):
                 continue
@@ -215,20 +218,26 @@ class SerialPortFinder:
         if os.path.isfile(udev_rules_path):
             hwids.extend(parse_udev_rules_hwids(udev_rules_path))
 
-        # load from installed dev-platforms
-        for platform in PlatformPackageManager().get_installed():
-            p = PlatformFactory.new(platform)
-            for board_config in p.get_boards().values():
-                for board_hwid in board_config.get("build.hwids", []):
-                    board_hwid = self.normalize_board_hwid(board_hwid)
-                    if board_hwid not in hwids:
-                        hwids.append(board_hwid)
+        @lru_cache(maxsize=1)
+        def _fetch_hwids_from_platforms():
+            """load from installed dev-platforms"""
+            result = []
+            for platform in PlatformPackageManager().get_installed():
+                p = PlatformFactory.new(platform)
+                for board_config in p.get_boards().values():
+                    for board_hwid in board_config.get("build.hwids", []):
+                        board_hwid = self.normalize_board_hwid(board_hwid)
+                        if board_hwid not in result:
+                            result.append(board_hwid)
+            return result
 
         try:
 
             @retry(timeout=self.timeout)
             def wrapper():
                 device = self.match_device_hwid(hwids)
+                if not device:
+                    device = self.match_device_hwid(_fetch_hwids_from_platforms())
                 if device:
                     return device
                 raise retry.RetryNextException()

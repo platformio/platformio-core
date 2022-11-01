@@ -14,15 +14,15 @@
 
 import socket
 
-import requests
 from starlette.concurrency import run_in_threadpool
 
 from platformio import util
 from platformio.compat import IS_WINDOWS
+from platformio.http import HTTPSession
 from platformio.proc import where_is_program
 
 
-class AsyncSession(requests.Session):
+class AsyncSession(HTTPSession):
     async def request(  # pylint: disable=signature-differs,invalid-overridden-method
         self, *args, **kwargs
     ):

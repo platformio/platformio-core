@@ -20,9 +20,11 @@ from urllib.parse import urljoin
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
-from platformio import __check_internet_hosts__, __default_requests_timeout__, app, util
+from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
+
+__default_requests_timeout__ = (10, None)  # (connect, read)
 
 
 class HTTPClientError(PlatformioException):
@@ -44,19 +46,30 @@ class InternetIsOffline(UserSideException):
     )
 
 
-class EndpointSession(requests.Session):
-    def __init__(self, base_url, *args, **kwargs):
+class HTTPSession(requests.Session):
+    def __init__(self, *args, **kwargs):
+        self._x_base_url = kwargs.pop("x_base_url") if "x_base_url" in kwargs else None
         super().__init__(*args, **kwargs)
-        self.base_url = base_url
+        self.headers.update({"User-Agent": app.get_user_agent()})
+        self.verify = app.get_setting("enable_proxy_strict_ssl")
 
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
     ):
-        # print(self.base_url, method, url, args, kwargs)
-        return super().request(method, urljoin(self.base_url, url), *args, **kwargs)
+        # print("HTTPSession::request", self._x_base_url, method, url, args, kwargs)
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = __default_requests_timeout__
+        return super().request(
+            method,
+            url
+            if url.startswith("http") or not self._x_base_url
+            else urljoin(self._x_base_url, url),
+            *args,
+            **kwargs
+        )
 
 
-class EndpointSessionIterator:
+class HTTPSessionIterator:
     def __init__(self, endpoints):
         if not isinstance(endpoints, list):
             endpoints = [endpoints]
@@ -75,8 +88,7 @@ class EndpointSessionIterator:
 
     def __next__(self):
         base_url = next(self.endpoints_iter)
-        session = EndpointSession(base_url)
-        session.headers.update({"User-Agent": app.get_user_agent()})
+        session = HTTPSession(x_base_url=base_url)
         adapter = requests.adapters.HTTPAdapter(max_retries=self.retry)
         session.mount(base_url, adapter)
         return session
@@ -84,7 +96,7 @@ class EndpointSessionIterator:
 
 class HTTPClient:
     def __init__(self, endpoints):
-        self._session_iter = EndpointSessionIterator(endpoints)
+        self._session_iter = HTTPSessionIterator(endpoints)
         self._session = None
         self._next_session()
 
@@ -121,10 +133,6 @@ class HTTPClient:
                 "Bearer %s" % AccountClient().fetch_authentication_token()
             )
         kwargs["headers"] = headers
-
-        # set default timeout
-        if "timeout" not in kwargs:
-            kwargs["timeout"] = __default_requests_timeout__
 
         while True:
             try:
@@ -201,13 +209,8 @@ def ensure_internet_on(raise_exception=False):
 
 
 def fetch_remote_content(*args, **kwargs):
-    kwargs["headers"] = kwargs.get("headers", {})
-    if "User-Agent" not in kwargs["headers"]:
-        kwargs["headers"]["User-Agent"] = app.get_user_agent()
-
-    if "timeout" not in kwargs:
-        kwargs["timeout"] = __default_requests_timeout__
-
-    r = requests.get(*args, **kwargs)
-    r.raise_for_status()
-    return r.text
+    with HTTPSession() as s:
+        r = s.get(*args, **kwargs)
+        r.raise_for_status()
+        r.close()
+        return r.text

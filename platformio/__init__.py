@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (6, 1, 4)
+VERSION = (6, 1, 5)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -43,8 +43,6 @@ __registry_mirror_hosts__ = [
     "registry.nm1.platformio.org",
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
-
-__default_requests_timeout__ = (10, None)  # (connect, read)
 
 __core_packages__ = {
     "contrib-piohome": "~3.4.2",

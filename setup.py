@@ -25,27 +25,29 @@ from platformio import (
     __version__,
 )
 
+PY36 = sys.version_info < (3, 7)
+
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click%s" % (">=8.0.4,<9" if sys.version_info >= (3, 7) else "==8.0.4"),
+    "click%s" % ("==8.0.4" if PY36 else ">=8.0.4,<9"),
     "colorama",
-    "marshmallow==%s" % ("3.*" if sys.version_info >= (3, 7) else "3.14.1"),
+    "marshmallow==%s" % ("3.14.1" if PY36 else "3.*"),
     "pyelftools>=0.27,<1",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
-    "requests==%s" % ("2.*" if sys.version_info >= (3, 7) else "2.27.1"),
+    "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
-    "tabulate==0.8.*",
+    "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
     "zeroconf<1",
 ]
 
 home_requirements = [
-    "aiofiles==0.8.*",
+    "aiofiles==%s" % ("0.8.0" if PY36 else "22.1.*"),
     "ajsonrpc==1.*",
-    "starlette==%s" % ("0.20.*" if sys.version_info >= (3, 7) else "0.19.1"),
-    "uvicorn==%s" % ("0.18.*" if sys.version_info >= (3, 7) else "0.16.0"),
-    "wsproto==%s" % ("1.1.*" if sys.version_info >= (3, 7) else "1.0.0"),
+    "starlette==%s" % ("0.19.1" if PY36 else "0.21.*"),
+    "uvicorn==%s" % ("0.16.0" if PY36 else "0.19.*"),
+    "wsproto==%s" % ("1.0.0" if PY36 else "1.2.*"),
 ]
 
 setup(
