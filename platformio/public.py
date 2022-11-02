@@ -14,7 +14,7 @@
 
 # pylint: disable=unused-import
 
-from platformio.device.list.util import list_serial_ports
+from platformio.device.list.util import list_serial_ports, list_logical_devices
 from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 from platformio.fs import to_unix_path
 from platformio.platform.base import PlatformBase
