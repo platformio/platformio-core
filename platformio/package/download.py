@@ -72,7 +72,9 @@ class FileDownloader:
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
         file_size = self.get_size()
-        itercontent = self._http_response.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
+        itercontent = self._http_response.iter_content(
+            chunk_size=io.DEFAULT_BUFFER_SIZE
+        )
         try:
             with open(self._destination, "wb") as fp:
                 if file_size == -1 or not with_progress or silent:
