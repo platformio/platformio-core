@@ -82,7 +82,7 @@ def list_logical_devices():
 
 
 def list_mdns_services():
-    import zeroconf
+    import zeroconf  # pylint: disable=import-outside-toplevel
 
     class mDNSListener:
         def __init__(self):
