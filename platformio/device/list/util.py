@@ -18,8 +18,6 @@ import re
 import time
 from glob import glob
 
-import zeroconf
-
 from platformio import __version__, exception, proc
 from platformio.compat import IS_MACOS, IS_WINDOWS
 
@@ -84,6 +82,8 @@ def list_logical_devices():
 
 
 def list_mdns_services():
+    import zeroconf
+
     class mDNSListener:
         def __init__(self):
             self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
