@@ -157,11 +157,6 @@ if env.subst("$BUILD_CACHE_DIR"):
         os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
 
-is_clean_all = "cleanall" in COMMAND_LINE_TARGETS
-if env.GetOption("clean") or is_clean_all:
-    env.PioClean(is_clean_all)
-    env.Exit(0)
-
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
@@ -184,6 +179,10 @@ env.SConsignFile(
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
+
+if env.IsCleanTarget():
+    env.CleanProject("cleanall" in COMMAND_LINE_TARGETS)
+    env.Exit(0)
 
 env.SConscript("$BUILD_SCRIPT")
 

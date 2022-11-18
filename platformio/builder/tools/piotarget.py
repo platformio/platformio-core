@@ -16,6 +16,7 @@ import os
 
 from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 
 from platformio import compat, fs
@@ -27,7 +28,11 @@ def VerboseAction(_, act, actstr):
     return Action(act, actstr)
 
 
-def PioClean(env, clean_all=False):
+def IsCleanTarget(env):
+    return env.GetOption("clean") or ("cleanall" in COMMAND_LINE_TARGETS)
+
+
+def CleanProject(env, clean_all=False):
     def _relpath(path):
         if compat.IS_WINDOWS:
             prefix = os.getcwd()[:2].lower()
@@ -103,7 +108,8 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(VerboseAction)
-    env.AddMethod(PioClean)
+    env.AddMethod(IsCleanTarget)
+    env.AddMethod(CleanProject)
     env.AddMethod(AddTarget)
     env.AddMethod(AddPlatformTarget)
     env.AddMethod(AddCustomTarget)
