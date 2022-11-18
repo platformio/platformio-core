@@ -8,12 +8,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.6", "3.9", "3.11"]
         exclude:
           - os: macos-latest
             python-version: "3.6"
           - os: windows-latest
-            python-version: "3.10"
+            python-version: "3.11"
 
     runs-on: ${{ matrix.os }}
 
@@ -23,7 +23,7 @@ jobs:
           submodules: "recursive"
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 

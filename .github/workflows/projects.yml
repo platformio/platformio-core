@@ -32,7 +32,7 @@ jobs:
             repository: "1technophile/OpenMQTTGateway"
             folder: "OpenMQTTGateway"
             config_dir: "OpenMQTTGateway"
-            env_name: "esp32-m5atom"
+            env_name: "esp32-m5atom-lite"
         os: [ubuntu-latest, windows-latest, macos-latest]
         exclude:
         - os: windows-latest
