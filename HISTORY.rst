@@ -16,6 +16,7 @@ PlatformIO Core 6
 6.1.6 (2022-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for Python 3.11
 * Import the "zeroconf" module only when a user lists mDNS devices (issue with zeroconf's LGPL license)
 
 6.1.5 (2022-11-01)
