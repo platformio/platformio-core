@@ -61,15 +61,14 @@ setup(
     license=__license__,
     install_requires=minimal_requirements + home_requirements,
     python_requires=">=3.6",
-    packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
+    packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={
         "platformio": [
-            "project/integration/tpls/*/.*.tpl",
-            "project/integration/tpls/*/*.tpl",
-            "project/integration/tpls/*/*/*.tpl",
-            "project/integration/tpls/*/.*/*.tpl",
-        ],
-        "scripts": ["99-platformio-udev.rules"],
+            "assets/**/*.rules",
+            "assets/**/*.tpl",
+            "assets/**/.*.tpl",  # include hidden files
+            "assets/**/.*/*.tpl",  # include hidden folders
+        ]
     },
     entry_points={
         "console_scripts": [
