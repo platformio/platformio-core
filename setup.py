@@ -64,10 +64,10 @@ setup(
     packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={
         "platformio": [
-            "assets/**/*.rules",
-            "assets/**/*.tpl",
-            "assets/**/.*.tpl",  # include hidden files
-            "assets/**/.*/*.tpl",  # include hidden folders
+            "assets/system/99-platformio-udev.rules",
+            "assets/templates/ide-projects/*/*.tpl",
+            "assets/templates/ide-projects/*/.*.tpl",  # include hidden files
+            "assets/templates/ide-projects/*/.*/*.tpl",  # include hidden folders
         ]
     },
     entry_points={
