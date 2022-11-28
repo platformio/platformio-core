@@ -110,7 +110,7 @@ class UpgradeError(PlatformioException):
 
 * Upgrade using `pip install -U platformio`
 * Try different installation/upgrading steps:
-  https://docs.platformio.org/page/installation.html
+  https://docs.platformio.org/en/latest/core/installation/index.html
 """
 
 

@@ -185,7 +185,7 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
             msg = (
                 "Could not find active agents. Please start it before on "
                 "a remote machine using `pio remote agent start` command.\n"
-                "See http://docs.platformio.org/page/plus/pio-remote.html"
+                "See https://docs.platformio.org/en/latest/plus/pio-remote.html"
             )
         else:
             maintenance.on_platformio_exception(Exception(err.type))

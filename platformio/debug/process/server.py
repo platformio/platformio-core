@@ -57,7 +57,7 @@ class DebugServerProcess(DebugBaseProcess):
             raise DebugInvalidOptionsError(
                 "Could not launch Debug Server '%s'. Please check that it "
                 "is installed and is included in a system PATH\n"
-                "See https://docs.platformio.org/page/plus/debugging.html"
+                "See https://docs.platformio.org/en/latest/plus/debugging.html"
                 % server_executable
             )
 

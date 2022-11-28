@@ -120,7 +120,7 @@ An unexpected error occurred. Further steps:
   `pip install -U platformio` command
 
 * Try to find answer in FAQ Troubleshooting section
-  https://docs.platformio.org/page/faq/index.html
+  https://docs.platformio.org/en/latest/faq/index.html
 
 * Report this problem to the developers
   https://github.com/platformio/platformio-core/issues

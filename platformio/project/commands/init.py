@@ -240,7 +240,7 @@ For example, see a structure of the following two libraries `Foo` and `Bar`:
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
-|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
+|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/en/latest/manifests/library-json/index.html
 |  |
 |  |--Foo
 |  |  |- Foo.c
@@ -268,7 +268,7 @@ PlatformIO Library Dependency Finder will find automatically dependent
 libraries scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
-- https://docs.platformio.org/page/librarymanager/ldf.html
+- https://docs.platformio.org/en/latest/librarymanager/ldf.html
 """,
         )
 

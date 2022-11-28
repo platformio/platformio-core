@@ -25,7 +25,7 @@ class DebugSupportError(DebugError, UserSideException):
         "Currently, PlatformIO does not support debugging for `{0}`.\n"
         "Please request support at https://github.com/platformio/"
         "platformio-core/issues \nor visit -> https://docs.platformio.org"
-        "/page/plus/debugging.html"
+        "/en/latest/plus/debugging.html"
     )
 
 

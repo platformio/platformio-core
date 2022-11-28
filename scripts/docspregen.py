@@ -1038,7 +1038,7 @@ def update_project_examples():
 {description}
 
 * [Home](https://platformio.org/platforms/{name}) (home page in PlatformIO Registry)
-* [Documentation](https://docs.platformio.org/page/platforms/{name}.html) (advanced usage, packages, boards, frameworks, etc.)
+* [Documentation](https://docs.platformio.org/en/latest/platforms/{name}.html) (advanced usage, packages, boards, frameworks, etc.)
 
 # Examples
 
@@ -1050,7 +1050,7 @@ def update_project_examples():
 {description}
 
 * [Home](https://platformio.org/frameworks/{name}) (home page in PlatformIO Registry)
-* [Documentation](https://docs.platformio.org/page/frameworks/{name}.html)
+* [Documentation](https://docs.platformio.org/en/latest/frameworks/{name}.html)
 
 # Examples
 
