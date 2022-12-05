@@ -19,6 +19,7 @@ PlatformIO Core 6
 * Added support for Python 3.11
 * Made assets (templates, ``99-platformio-udev.rules``) part of Python's module (`issue #4458 <https://github.com/platformio/platformio-core/issues/4458>`_)
 * Import the "zeroconf" module only when a user lists mDNS devices (issue with zeroconf's LGPL license)
+* Updated `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ check tool to v15.0.5 with new diagnostics and bugfixes
 
 6.1.5 (2022-11-01)
 ~~~~~~~~~~~~~~~~~~
