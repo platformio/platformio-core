@@ -59,6 +59,7 @@ class JsonTestReport(TestReportBase):
         result = dict(
             env_name=test_suite.env_name,
             test_name=test_suite.test_name,
+            test_dir=test_suite.test_dir,
             status=test_suite.status.name,
             duration=test_suite.duration,
             timestamp=datetime.datetime.fromtimestamp(test_suite.timestamp).strftime(

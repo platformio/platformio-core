@@ -93,9 +93,10 @@ class TestCase:
 
 
 class TestSuite:
-    def __init__(self, env_name, test_name, finished=False):
+    def __init__(self, env_name, test_name, finished=False, test_dir=None):
         self.env_name = env_name
         self.test_name = test_name
+        self.test_dir = test_dir
         self.timestamp = 0
         self.duration = 0
         self._cases = []
