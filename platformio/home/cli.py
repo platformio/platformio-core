@@ -18,6 +18,7 @@ import click
 
 from platformio.home.helpers import is_port_used
 from platformio.home.run import run_server
+from platformio.package.manager.core import get_core_package_dir
 
 
 @click.command("home", short_help="GUI to manage PlatformIO")
@@ -48,14 +49,16 @@ from platformio.home.run import run_server
     ),
 )
 def cli(port, host, no_open, shutdown_timeout, session_id):
+    # hook for `platformio-node-helpers`
+    if host == "__do_not_start__":
+        # download all dependent packages
+        get_core_package_dir("contrib-piohome")
+        return
+
     # Ensure PIO Home mimetypes are known
     mimetypes.add_type("text/html", ".html")
     mimetypes.add_type("text/css", ".css")
     mimetypes.add_type("application/javascript", ".js")
-
-    # hook for `platformio-node-helpers`
-    if host == "__do_not_start__":
-        return
 
     home_url = "http://%s:%d%s" % (
         host,
