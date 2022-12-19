@@ -24,6 +24,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, fs
+from platformio.util import get_systype
 from platformio.device.finder import SerialPortFinder, find_mbed_disk, is_pattern_port
 from platformio.device.list.util import list_serial_ports
 from platformio.proc import exec_command
@@ -120,6 +121,11 @@ def AutodetectUploadPort(*args, **kwargs):
 
     if env.subst("$UPLOAD_PORT"):
         print(env.subst("Auto-detected: $UPLOAD_PORT"))
+    elif "darwin" in get_systype():
+        print(
+            "Info: Couldn't find a useable upload port "
+            "firmware upload will not be possible.\n"
+        )
     else:
         sys.stderr.write(
             "Error: Please specify `upload_port` for environment or use "
