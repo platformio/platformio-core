@@ -157,6 +157,11 @@ ProjectOptions = OrderedDict(
                 ),
                 multiple=True,
             ),
+            ConfigPlatformioOption(
+                group="generic",
+                name="project_name",
+                description="Configure project name manually",
+            ),
             # Dirs
             ConfigPlatformioOption(
                 group="directory",

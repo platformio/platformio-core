@@ -94,6 +94,10 @@ class ProjectGenerator:
             "env_pathsep": os.pathsep,
         }
 
+        # rewrite project_name from configuration
+        platformio_config_vars = self.config.items(section="platformio", as_dict=True)
+        if "project_name" in platformio_config_vars:
+            tpl_vars["project_name"] = platformio_config_vars["project_name"]
         # default env configuration
         tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
         # build data
