@@ -39,7 +39,6 @@ minimal_requirements = [
     "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
     "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
-    "zeroconf<1",
 ]
 
 home_requirements = [
