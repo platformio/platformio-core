@@ -24,6 +24,7 @@ from tabulate import tabulate
 from platformio import app, exception, fs, util
 from platformio.device.monitor.command import device_monitor_cmd
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import ProjectError
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
 from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.run.processor import EnvironmentProcessor
@@ -115,6 +116,8 @@ def cli(
             build_dir = config.get("platformio", "build_dir")
             try:
                 clean_build_dir(build_dir, config)
+            except ProjectError as exc:
+                raise exc
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "

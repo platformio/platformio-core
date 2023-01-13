@@ -319,7 +319,13 @@ class ProjectConfigBase:
         if section == "this":
             section = parent_section
             if option == "__env__":
-                assert parent_section.startswith("env:")
+                if not parent_section.startswith("env:"):
+                    raise exception.ProjectOptionValueError(
+                        f"`${{this.__env__}}` is called from the `{parent_section}` "
+                        "section that is not valid PlatformIO environment, see",
+                        option,
+                        section,
+                    )
                 return parent_section[4:]
         # handle nested calls
         try:
