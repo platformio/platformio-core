@@ -1,484 +1,487 @@
 {
-    "$id": "https://example.com/library.json",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "library.json schema",
-    "type": "object",
-    "properties": {
-        "name": {
+  "$id": "https://example.com/library.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "library.json schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "A name of a library.\nMust be unique in the PlatformIO Registry\nShould be slug style for simplicity, consistency, and compatibility. Example: HelloWorld\nCan contain a-z, digits, and dashes (but not start/end with them)\nConsecutive dashes and [:;/,@<>] chars are not allowed.",
+      "required": true
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "A version of a current library source code. Can contain a-z, digits, dots or dash and should be Semantic Versioning compatible.",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "The field helps users to identify and search for your library with a brief description. Describe the hardware devices (sensors, boards and etc.) which are suitable with it.",
+      "required": true
+    },
+    "keywords": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "array",
+          "items": {
             "type": "string",
-            "maxLength": 50,
-            "description": "A name of a library.\nMust be unique in the PlatformIO Registry\nShould be slug style for simplicity, consistency, and compatibility. Example: HelloWorld\nCan contain a-z, digits, and dashes (but not start/end with them)\nConsecutive dashes and [:;/,@<>] chars are not allowed.",
-            "required": true
-        },
-        "version": {
-            "type": "string",
-            "maxLength": 20,
-            "description": "A version of a current library source code. Can contain a-z, digits, dots or dash and should be Semantic Versioning compatible.",
-            "required": true
-        },
-        "description": {
-            "type": "string",
-            "maxLength": 255,
-            "description": "The field helps users to identify and search for your library with a brief description. Describe the hardware devices (sensors, boards and etc.) which are suitable with it.",
-            "required": true
-        },
-        "keywords": {
-            "anyOf": [
-                {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "maxLength": 255
-                    }
-                }
-            ],
-            "description": "Used for search by keyword. Helps to make your library easier to discover without people needing to know its name.\nThe keyword should be lowercased, can contain a-z, digits and dash (but not start/end with them). A list from the keywords can be specified with separator , or declared as Array.",
-            "required": true
-        },
-        "homepage": {
-            "type": "string",
-            "maxLength": 255,
-            "description": "Home page of a library (if is different from repository url).",
-            "required": false
-        },
-        "repository": {
-            "type": "object",
-            "properties": {
-                "type": {
-                    "enum": [
-                        "git",
-                        "hg",
-                        "svn"
-                    ],
-                    "description": "only “git”, “hg” or “svn” are supported"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "branch": {
-                    "type": "string",
-                    "description": "if is not specified, default branch will be used. This field will be ignored if tag/release exists with the value of version."
-                }
-            },
-            "description": "The repository in which the source code can be found.",
-            "required": false
-        },
-        "authors": {
-            "anyOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "required": true,
-                            "description": "Full name"
-                        },
-                        "email": {
-                            "type": "string"
-                        },
-                        "url": {
-                            "type": "string",
-                            "description": "An author’s contact page"
-                        },
-                        "maintainer": {
-                            "type": "boolean",
-                            "description": "Specify “maintainer” status"
-                        }
-                    }
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "required": true,
-                                "description": "Full name"
-                            },
-                            "email": {
-                                "type": "string"
-                            },
-                            "url": {
-                                "type": "string",
-                                "description": "An author’s contact page"
-                            },
-                            "maintainer": {
-                                "type": "boolean",
-                                "description": "Specify “maintainer” status"
-                            }
-                        }
-                    }
-                }
-            ],
-            "description": "An author contact information\nIf authors field is not defined, PlatformIO will try to fetch data from VCS provider (Github, Gitlab, etc) if repository is declared.",
-            "required": false
-        },
-        "license": {
-            "type": "string",
-            "description": "A SPDX license ID or SPDX Expression. You can check the full list of SPDX license IDs (see “Identifier” column).",
-            "required": false
-        },
-        "frameworks": {
-            "anyOf": [
-                {
-                    "type": "string",
-                    "description": "espidf, freertos, *, etc'"
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "description": "espidf, freertos, *, etc'"
-                    }
-                }
-            ],
-            "description": "A list with compatible frameworks. The available framework names are defined in the Frameworks section.\nIf the library is compatible with the all frameworks, then do not declare this field or you use *",
-            "required": false
-        },
-        "platforms": {
-            "anyOf": [
-                {
-                    "type": "string",
-                    "description": "atmelavr, espressif8266, *, etc'"
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "description": "atmelavr, espressif8266, *, etc'"
-                    }
-                }
-            ],
-            "description": "A list with compatible development platforms. The available platform name are defined in Development Platforms section.\nIf the library is compatible with the all platforms, then do not declare this field or use *.\nPlatformIO does not check platforms for compatibility in default mode. See Compatibility Mode for details. If you need a strict checking for compatible platforms for a library, please set libCompatMode to strict.",
-            "required": false
-        },
-        "headers": {
-            "anyOf": [
-                {
-                    "type": "string",
-                    "description": "MyLibrary.h"
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "description": "FooCore.h, FooFeature.h"
-                    }
-                }
-            ],
-            "description": "A list of header files that can be included in a project source files using #include <...> directive.",
-            "required": false
-        },
-        "examples": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "base": {
-                    "type": "string"
-                },
-                "files": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            },
-            "description": "A list of example patterns.",
-            "required": "false"
-        },
-        "dependencies": {
-            "anyOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "owner": {
-                            "type": "string",
-                            "description": "an owner name (username) from the PlatformIO Registry"
-                        },
-                        "name": {
-                            "type": "string",
-                            "description": "library name"
-                        },
-                        "version": {
-                            "type": "string",
-                            "description": "Version Requirements or Package Specifications"
-                        },
-                        "frameworks": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            ],
-                            "description": "project compatible Frameworks"
-                        },
-                        "platforms": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            ],
-                            "description": " project compatible Development Platforms"
-                        }
-                    }
-                },
-                {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "owner": {
-                                "type": "string",
-                                "description": "an owner name (username) from the PlatformIO Registry"
-                            },
-                            "name": {
-                                "type": "string",
-                                "description": "library name"
-                            },
-                            "version": {
-                                "type": "string",
-                                "description": "Version Requirements or Package Specifications"
-                            },
-                            "frameworks": {
-                                "anyOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                ],
-                                "description": "project compatible Frameworks"
-                            },
-                            "platforms": {
-                                "anyOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                ],
-                                "description": " project compatible Development Platforms"
-                            }
-                        }
-                    }
-                }
-            ],
-            "description": "A list of dependent libraries that will be automatically installed.",
-            "required": false
-        },
-        "export": {
-            "type": "object",
-            "properties": {
-                "include": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Export only files that matched declared patterns.\n* - matches everything\n? - matches any single character\n[seq] - matches any character in seq\n[!seq] - matches any character not in seq"
-                },
-                "exclude": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Exclude the directories and files which match with exclude patterns."
-                }
-            },
-            "description": "This option is useful if you need to exclude extra data (test code, docs, images, PDFs, etc). It allows one to reduce the size of the final archive.\nTo check which files will be included in the final packages, please use pio pkg pack command.",
-            "required": false
-        },
-        "scripts": {
-            "type": "object",
-            "properties": {
-                "postinstall": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ],
-                    "description": "runs a script AFTER the package has been installed.\nRun a custom Python script located in the package “scripts” folder AFTER the package is installed. Please note that you don’t need to specify a Python interpreter for Python scripts"
-                },
-                "preuninstall": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ],
-                    "description": "runs a script BEFORE the package is removed.\nRun a custom Bash script BEFORE the package is uninstalled. The script is declared as a list of command arguments and is located at the root of a package"
-                }
-            },
-            "description": "Execute custom scripts during the special Package Management CLI life cycle events",
-            "required": false
-        },
-        "build": {
-            "type": "object",
-            "properties": {
-                "flags": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ],
-                    "description": "Extra flags to control preprocessing, compilation, assembly, and linking processes. More details build_flags.\nKeep in mind when operating with the -I flag (directories to be searched for header files). The path should be relative to the root directory where the library.json manifest is located."
-                },
-                "unflags": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ],
-                    "description": "Remove base/initial flags which were set by development platform. More details build_unflags."
-                },
-                "includeDir": {
-                    "type": "string",
-                    "description": "Custom directory to be searched for header files. A default value is include and means that folder is located at the root of a library.\nThe Library Dependency Finder (LDF) will pick a library automatically only when a project or other dependent libraries include any header file located in includeDir or srcDir.",
-                    "required": false
-                },
-                "srcDir": {
-                    "type": "string",
-                    "description": "Custom location of library source code. A default value is src and means that folder is located in the root of a library.",
-                    "required": "false"
-                },
-                "srcFilter": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ],
-                    "description": "Specify which source files should be included/excluded from build process. The path in filter should be relative to the srcDir option of a library.\nSee syntax for build_src_filter.\nPlease note that you can generate source filter “on-the-fly” using extraScript",
-                    "required": false
-                },
-                "extraScript": {
-                    "type": "string",
-                    "description": "Launch extra script before a build process.",
-                    "required": "false"
-                },
-                "libArchive": {
-                    "type": "boolean",
-                    "description": "Create an archive (*.a, static library) from the object files and link it into a firmware (program). This is default behavior of PlatformIO Build System (\"libArchive\": true).\nSetting \"libArchive\": false will instruct PlatformIO Build System to link object files directly (in-line). This could be useful if you need to override weak symbols defined in framework or other libraries.\nYou can disable library archiving globally using lib_archive option in “platformio.ini” (Project Configuration File).",
-                    "required": "false"
-                },
-                "libLDFMode": {
-                    "anyOf": [
-                        {
-                            "enum": [
-                                "off"
-                            ],
-                            "description": "“Manual mode”, does not process source files of a project and dependencies. Builds only the libraries that are specified in manifests (library.json, module.json) or using lib_deps option."
-                        },
-                        {
-                            "enum": [
-                                "chain"
-                            ],
-                            "description": "[DEFAULT] Parses ALL C/C++ source files of the project and follows only by nested includes (#include ..., chain...) from the libraries. It also parses C, CC, CPP files from libraries which have the same name as included header file. Does not evaluate C/C++ Preprocessor conditional syntax."
-                        },
-                        {
-                            "enum": [
-                                "deep"
-                            ],
-                            "description": "Parses ALL C/C++ source files of the project and parses ALL C/C++ source files of the each found dependency (recursively). Does not evaluate C/C++ Preprocessor conditional syntax."
-                        },
-                        {
-                            "enum": [
-                                "chain+"
-                            ],
-                            "description": "The same behavior as for the chain but evaluates C/C++ Preprocessor conditional syntax."
-                        },
-                        {
-                            "enum": [
-                                "deep+"
-                            ],
-                            "description": "The same behavior as for the deep but evaluates C/C++ Preprocessor conditional syntax."
-                        }
-                    ],
-                    "description": "Specify Library Dependency Finder Mode. See Dependency Finder Mode for details.",
-                    "required": false
-                },
-                "libCompatMode": {
-                    "type": "string",
-                    "description": "Specify Library Compatibility Mode. See Compatibility Mode for details.",
-                    "required": false
-                },
-                "builder": {
-                    "anyOf": [
-                        {
-                            "enum": [
-                                "PlatformIOLibBuilder"
-                            ],
-                            "description": "Default Builder"
-                        },
-                        {
-                            "enum": [
-                                "ArduinoLibBuilder"
-                            ]
-                        },
-                        {
-                            "enum": [
-                                "MbedLibBuilder"
-                            ]
-                        }
-                    ],
-                    "description": "Override default PlatformIOLibBuilder with another builder.",
-                    "required": false
-                }
-            },
-            "required": false
+            "maxLength": 255
+          }
         }
+      ],
+      "description": "Used for search by keyword. Helps to make your library easier to discover without people needing to know its name.\nThe keyword should be lowercased, can contain a-z, digits and dash (but not start/end with them). A list from the keywords can be specified with separator , or declared as Array.",
+      "required": true
+    },
+    "homepage": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Home page of a library (if is different from repository url).",
+      "required": false
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "git",
+            "hg",
+            "svn"
+          ],
+          "description": "only “git”, “hg” or “svn” are supported"
+        },
+        "url": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string",
+          "description": "if is not specified, default branch will be used. This field will be ignored if tag/release exists with the value of version."
+        }
+      },
+      "description": "The repository in which the source code can be found.",
+      "required": false
+    },
+    "authors": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "required": true,
+              "description": "Full name"
+            },
+            "email": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "description": "An author’s contact page"
+            },
+            "maintainer": {
+              "type": "boolean",
+              "description": "Specify “maintainer” status"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "required": true,
+                "description": "Full name"
+              },
+              "email": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "description": "An author’s contact page"
+              },
+              "maintainer": {
+                "type": "boolean",
+                "description": "Specify “maintainer” status"
+              }
+            }
+          }
+        }
+      ],
+      "description": "An author contact information\nIf authors field is not defined, PlatformIO will try to fetch data from VCS provider (Github, Gitlab, etc) if repository is declared.",
+      "required": false
+    },
+    "license": {
+      "type": "string",
+      "description": "A SPDX license ID or SPDX Expression. You can check the full list of SPDX license IDs (see “Identifier” column).",
+      "required": false
+    },
+    "frameworks": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "espidf, freertos, *, etc'"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "espidf, freertos, *, etc'"
+          }
+        }
+      ],
+      "description": "A list with compatible frameworks. The available framework names are defined in the Frameworks section.\nIf the library is compatible with the all frameworks, then do not declare this field or you use *",
+      "required": false
+    },
+    "platforms": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "atmelavr, espressif8266, *, etc'"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "atmelavr, espressif8266, *, etc'"
+          }
+        }
+      ],
+      "description": "A list with compatible development platforms. The available platform name are defined in Development Platforms section.\nIf the library is compatible with the all platforms, then do not declare this field or use *.\nPlatformIO does not check platforms for compatibility in default mode. See Compatibility Mode for details. If you need a strict checking for compatible platforms for a library, please set libCompatMode to strict.",
+      "required": false
+    },
+    "headers": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "MyLibrary.h"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "FooCore.h, FooFeature.h"
+          }
+        }
+      ],
+      "description": "A list of header files that can be included in a project source files using #include <...> directive.",
+      "required": false
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "base": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "A list of example patterns.",
+      "required": "false"
+    },
+    "dependencies": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "string",
+              "description": "an owner name (username) from the PlatformIO Registry"
+            },
+            "name": {
+              "type": "string",
+              "description": "library name"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version Requirements or Package Specifications"
+            },
+            "frameworks": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": "project compatible Frameworks"
+            },
+            "platforms": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": " project compatible Development Platforms"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "owner": {
+                "type": "string",
+                "description": "an owner name (username) from the PlatformIO Registry"
+              },
+              "name": {
+                "type": "string",
+                "description": "library name"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version Requirements or Package Specifications"
+              },
+              "frameworks": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "description": "project compatible Frameworks"
+              },
+              "platforms": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "description": " project compatible Development Platforms"
+              }
+            }
+          }
+        }
+      ],
+      "description": "A list of dependent libraries that will be automatically installed.",
+      "required": false
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Export only files that matched declared patterns.\n* - matches everything\n? - matches any single character\n[seq] - matches any character in seq\n[!seq] - matches any character not in seq"
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exclude the directories and files which match with exclude patterns."
+        }
+      },
+      "description": "This option is useful if you need to exclude extra data (test code, docs, images, PDFs, etc). It allows one to reduce the size of the final archive.\nTo check which files will be included in the final packages, please use pio pkg pack command.",
+      "required": false
+    },
+    "scripts": {
+      "type": "object",
+      "properties": {
+        "postinstall": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "runs a script AFTER the package has been installed.\nRun a custom Python script located in the package “scripts” folder AFTER the package is installed. Please note that you don’t need to specify a Python interpreter for Python scripts"
+        },
+        "preuninstall": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "runs a script BEFORE the package is removed.\nRun a custom Bash script BEFORE the package is uninstalled. The script is declared as a list of command arguments and is located at the root of a package"
+        }
+      },
+      "description": "Execute custom scripts during the special Package Management CLI life cycle events",
+      "required": false
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "flags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Extra flags to control preprocessing, compilation, assembly, and linking processes. More details build_flags.\nKeep in mind when operating with the -I flag (directories to be searched for header files). The path should be relative to the root directory where the library.json manifest is located."
+        },
+        "unflags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Remove base/initial flags which were set by development platform. More details build_unflags."
+        },
+        "includeDir": {
+          "type": "string",
+          "description": "Custom directory to be searched for header files. A default value is include and means that folder is located at the root of a library.\nThe Library Dependency Finder (LDF) will pick a library automatically only when a project or other dependent libraries include any header file located in includeDir or srcDir.",
+          "required": false
+        },
+        "srcDir": {
+          "type": "string",
+          "description": "Custom location of library source code. A default value is src and means that folder is located in the root of a library.",
+          "required": "false"
+        },
+        "srcFilter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Specify which source files should be included/excluded from build process. The path in filter should be relative to the srcDir option of a library.\nSee syntax for build_src_filter.\nPlease note that you can generate source filter “on-the-fly” using extraScript",
+          "required": false
+        },
+        "extraScript": {
+          "type": "string",
+          "description": "Launch extra script before a build process.",
+          "required": "false"
+        },
+        "libArchive": {
+          "type": "boolean",
+          "description": "Create an archive (*.a, static library) from the object files and link it into a firmware (program). This is default behavior of PlatformIO Build System (\"libArchive\": true).\nSetting \"libArchive\": false will instruct PlatformIO Build System to link object files directly (in-line). This could be useful if you need to override weak symbols defined in framework or other libraries.\nYou can disable library archiving globally using lib_archive option in “platformio.ini” (Project Configuration File).",
+          "required": "false"
+        },
+        "libLDFMode": {
+          "anyOf": [
+            {
+              "enum": [
+                "off"
+              ],
+              "description": "“Manual mode”, does not process source files of a project and dependencies. Builds only the libraries that are specified in manifests (library.json, module.json) or using lib_deps option."
+            },
+            {
+              "enum": [
+                "chain"
+              ],
+              "description": "[DEFAULT] Parses ALL C/C++ source files of the project and follows only by nested includes (#include ..., chain...) from the libraries. It also parses C, CC, CPP files from libraries which have the same name as included header file. Does not evaluate C/C++ Preprocessor conditional syntax."
+            },
+            {
+              "enum": [
+                "deep"
+              ],
+              "description": "Parses ALL C/C++ source files of the project and parses ALL C/C++ source files of the each found dependency (recursively). Does not evaluate C/C++ Preprocessor conditional syntax."
+            },
+            {
+              "enum": [
+                "chain+"
+              ],
+              "description": "The same behavior as for the chain but evaluates C/C++ Preprocessor conditional syntax."
+            },
+            {
+              "enum": [
+                "deep+"
+              ],
+              "description": "The same behavior as for the deep but evaluates C/C++ Preprocessor conditional syntax."
+            }
+          ],
+          "description": "Specify Library Dependency Finder Mode. See Dependency Finder Mode for details.",
+          "required": false
+        },
+        "libCompatMode": {
+          "type": "string",
+          "description": "Specify Library Compatibility Mode. See Compatibility Mode for details.",
+          "required": false
+        },
+        "builder": {
+          "anyOf": [
+            {
+              "enum": [
+                "PlatformIOLibBuilder"
+              ],
+              "description": "Default Builder"
+            },
+            {
+              "enum": [
+                "ArduinoLibBuilder"
+              ]
+            },
+            {
+              "enum": [
+                "MbedLibBuilder"
+              ]
+            }
+          ],
+          "description": "Override default PlatformIOLibBuilder with another builder.",
+          "required": false
+        }
+      },
+      "required": false
     }
+  }
 }
