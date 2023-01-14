@@ -168,7 +168,7 @@ class ProjectConfigBase:
                 yield (section, option)
             if self._parser.has_option(section, "extends"):
                 extends_queue.extend(
-                    self.parse_multi_values(self._parser.get(section, "extends"))[::-1]
+                    self.parse_multi_values(self._parser.get(section, "extends"))
                 )
 
     def options(self, section=None, env=None):
@@ -249,7 +249,9 @@ class ProjectConfigBase:
         return None
 
     def _traverse_for_value(self, section, option, option_meta=None):
+        # print("_traverse_for_value", section, option)
         for _section, _option in self.walk_options(section):
+            # print(13, _section, _option)
             if _option == option or (
                 option_meta
                 and (

@@ -23,6 +23,7 @@ PlatformIO Core 6
 * Removed dependency on the "zeroconf" package and install it only when a user lists mDNS devices (issue with zeroconf's LGPL license)
 * Show the real error message instead of "Can not remove temporary directory" when |PIOCONF| is broken (`issue #4480 <https://github.com/platformio/platformio-core/issues/4480>`_)
 * Fixed an issue with an incorrect test summary when a testcase name includes a colon (`issue #4508 <https://github.com/platformio/platformio-core/issues/4508>`_)
+* Fixed an issue when `extends <https://docs.platformio.org/en/latest/projectconf/sections/env/options/advanced/extends.html>`__ does not override options in the right order (`issue #4462 <https://github.com/platformio/platformio-core/issues/4462>`_)
 
 6.1.5 (2022-11-01)
 ~~~~~~~~~~~~~~~~~~
