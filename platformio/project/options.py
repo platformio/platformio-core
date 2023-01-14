@@ -135,6 +135,11 @@ ProjectOptions = OrderedDict(
             #
             ConfigPlatformioOption(
                 group="generic",
+                name="name",
+                description="A project name",
+            ),
+            ConfigPlatformioOption(
+                group="generic",
                 name="description",
                 description="Describe a project with a short information",
             ),

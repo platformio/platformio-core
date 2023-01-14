@@ -82,7 +82,9 @@ class ProjectGenerator:
         tpl_vars = {
             "config": self.config,
             "systype": util.get_systype(),
-            "project_name": os.path.basename(self.project_dir),
+            "project_name": self.config.get(
+                "platformio", "name", os.path.basename(self.project_dir)
+            ),
             "project_dir": self.project_dir,
             "original_env_name": self.original_env_name,
             "env_name": self.env_name,

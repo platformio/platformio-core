@@ -17,10 +17,11 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for Python 3.11
+* Added a new `name <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/generic/description.html>`__ configuration option to customize a project name (`pull #4498 <https://github.com/platformio/platformio-core/pull/4498>`_)
 * Made assets (templates, ``99-platformio-udev.rules``) part of Python's module (`issue #4458 <https://github.com/platformio/platformio-core/issues/4458>`_)
 * Updated `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ check tool to v15.0.5 with new diagnostics and bugfixes
 * Removed dependency on the "zeroconf" package and install it only when a user lists mDNS devices (issue with zeroconf's LGPL license)
-* Show the real error message instead of "Can not remove temporary directory" when "platform.ini" is broken (`issue #4480 <https://github.com/platformio/platformio-core/issues/4480>`_)
+* Show the real error message instead of "Can not remove temporary directory" when |PIOCONF| is broken (`issue #4480 <https://github.com/platformio/platformio-core/issues/4480>`_)
 
 6.1.5 (2022-11-01)
 ~~~~~~~~~~~~~~~~~~
