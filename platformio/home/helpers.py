@@ -14,25 +14,9 @@
 
 import socket
 
-from starlette.concurrency import run_in_threadpool
-
 from platformio import util
 from platformio.compat import IS_WINDOWS
-from platformio.http import HTTPSession
 from platformio.proc import where_is_program
-
-
-class AsyncSession(HTTPSession):
-    async def request(  # pylint: disable=signature-differs,invalid-overridden-method
-        self, *args, **kwargs
-    ):
-        func = super().request
-        return await run_in_threadpool(func, *args, **kwargs)
-
-
-@util.memoized(expire="60s")
-def requests_session():
-    return AsyncSession()
 
 
 @util.memoized(expire="60s")
