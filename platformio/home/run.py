@@ -33,6 +33,7 @@ from platformio.home.rpc.handlers.misc import MiscRPC
 from platformio.home.rpc.handlers.os import OSRPC
 from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.home.rpc.handlers.project import ProjectRPC
+from platformio.home.rpc.handlers.registry import RegistryRPC
 from platformio.home.rpc.server import WebSocketJSONRPCServerFactory
 from platformio.package.manager.core import get_core_package_dir
 from platformio.proc import force_exit
@@ -72,6 +73,7 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
     ws_rpc_factory.add_object_handler(OSRPC(), namespace="os")
     ws_rpc_factory.add_object_handler(PIOCoreRPC(), namespace="core")
     ws_rpc_factory.add_object_handler(ProjectRPC(), namespace="project")
+    ws_rpc_factory.add_object_handler(RegistryRPC(), namespace="registry")
 
     path = urlparse(home_url).path
     routes = [
