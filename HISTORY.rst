@@ -14,7 +14,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.6 (2022-??-??)
+6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for Python 3.11
