@@ -32,7 +32,7 @@ jobs:
             repository: "1technophile/OpenMQTTGateway"
             folder: "OpenMQTTGateway"
             config_dir: "OpenMQTTGateway"
-            env_name: "esp32-m5atom"
+            env_name: "esp32-m5atom-lite"
         os: [ubuntu-latest, windows-latest, macos-latest]
         exclude:
         - os: windows-latest
@@ -45,7 +45,7 @@ jobs:
           submodules: "recursive"
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -53,7 +53,7 @@ jobs:
         run: pip install -U .
 
       - name: Check out ${{ matrix.project.repository }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: "recursive"
           repository: ${{ matrix.project.repository }}

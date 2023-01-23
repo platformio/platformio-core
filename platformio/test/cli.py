@@ -156,9 +156,6 @@ def cli(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
             runner.start(ctx)
             print_suite_footer(test_suite)
 
-    # Reset custom project config
-    app.set_session_var("custom_project_conf", None)
-
     stdout_report = TestReportFactory.new("stdout", test_result)
     stdout_report.generate(verbose=verbose or list_tests)
 
@@ -170,6 +167,9 @@ def cli(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
             continue
         custom_report = TestReportFactory.new(output_format, test_result)
         custom_report.generate(output_path=output_path, verbose=True)
+
+    # Reset custom project config
+    app.set_session_var("custom_project_conf", None)
 
     if test_result.is_errored or test_result.get_status_nums(TestStatus.FAILED):
         raise exception.ReturnErrorCode(1)

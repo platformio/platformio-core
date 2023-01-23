@@ -19,17 +19,25 @@ import shutil
 from functools import cmp_to_key
 
 import click
+from starlette.concurrency import run_in_threadpool
 
 from platformio import fs
 from platformio.cache import ContentCache
 from platformio.device.list.util import list_logical_devices
-from platformio.home import helpers
-from platformio.http import ensure_internet_on
+from platformio.http import HTTPSession, ensure_internet_on
+
+
+class HTTPAsyncSession(HTTPSession):
+    async def request(  # pylint: disable=signature-differs,invalid-overridden-method
+        self, *args, **kwargs
+    ):
+        func = super().request
+        return await run_in_threadpool(func, *args, **kwargs)
 
 
 class OSRPC:
     @staticmethod
-    async def fetch_content(uri, data=None, headers=None, cache_valid=None):
+    async def fetch_content(url, data=None, headers=None, cache_valid=None):
         if not headers:
             headers = {
                 "User-Agent": (
@@ -38,7 +46,7 @@ class OSRPC:
                     "Safari/603.3.8"
                 )
             }
-        cache_key = ContentCache.key_from_args(uri, data) if cache_valid else None
+        cache_key = ContentCache.key_from_args(url, data) if cache_valid else None
         with ContentCache() as cc:
             if cache_key:
                 result = cc.get(cache_key)
@@ -48,11 +56,11 @@ class OSRPC:
         # check internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
-        session = helpers.requests_session()
+        session = HTTPAsyncSession()
         if data:
-            r = await session.post(uri, data=data, headers=headers)
+            r = await session.post(url, data=data, headers=headers)
         else:
-            r = await session.get(uri, headers=headers)
+            r = await session.get(url, headers=headers)
 
         r.raise_for_status()
         result = r.text

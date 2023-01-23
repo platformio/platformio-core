@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (6, 1, 5)
+VERSION = (6, 1, 6)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -49,7 +49,7 @@ __core_packages__ = {
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-scons": "~4.40400.0",
     "tool-cppcheck": "~1.270.0",
-    "tool-clangtidy": "~1.120001.0",
+    "tool-clangtidy": "~1.150005.0",
     "tool-pvs-studio": "~7.18.0",
 }
 

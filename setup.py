@@ -39,14 +39,13 @@ minimal_requirements = [
     "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
     "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
-    "zeroconf<1",
 ]
 
 home_requirements = [
     "aiofiles==%s" % ("0.8.0" if PY36 else "22.1.*"),
     "ajsonrpc==1.*",
-    "starlette==%s" % ("0.19.1" if PY36 else "0.21.*"),
-    "uvicorn==%s" % ("0.16.0" if PY36 else "0.19.*"),
+    "starlette==%s" % ("0.19.1" if PY36 else "0.23.*"),
+    "uvicorn==%s" % ("0.16.0" if PY36 else "0.20.*"),
     "wsproto==%s" % ("1.0.0" if PY36 else "1.2.*"),
 ]
 
@@ -61,15 +60,14 @@ setup(
     license=__license__,
     install_requires=minimal_requirements + home_requirements,
     python_requires=">=3.6",
-    packages=find_packages(exclude=["tests.*", "tests"]) + ["scripts"],
+    packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={
         "platformio": [
-            "project/integration/tpls/*/.*.tpl",
-            "project/integration/tpls/*/*.tpl",
-            "project/integration/tpls/*/*/*.tpl",
-            "project/integration/tpls/*/.*/*.tpl",
-        ],
-        "scripts": ["99-platformio-udev.rules"],
+            "assets/system/99-platformio-udev.rules",
+            "assets/templates/ide-projects/*/*.tpl",
+            "assets/templates/ide-projects/*/.*.tpl",  # include hidden files
+            "assets/templates/ide-projects/*/.*/*.tpl",  # include hidden folders
+        ]
     },
     entry_points={
         "console_scripts": [

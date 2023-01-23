@@ -14,12 +14,13 @@
 
 # pylint: disable=unused-import
 
-from platformio.device.list.util import list_serial_ports
+from platformio.device.list.util import list_logical_devices, list_serial_ports
 from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 from platformio.fs import to_unix_path
 from platformio.platform.base import PlatformBase
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_watch_lib_dirs, load_build_metadata
+from platformio.project.options import get_config_options_schema
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
 from platformio.test.runners.doctest import DoctestTestCaseParser

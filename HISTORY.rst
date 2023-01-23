@@ -2,6 +2,7 @@ Release Notes
 =============
 
 .. |PIOCONF| replace:: `"platformio.ini" <https://docs.platformio.org/en/latest/projectconf.html>`__ configuration file
+.. |LIBRARYJSON| replace:: `library.json <https://docs.platformio.org/en/latest/manifests/library-json/index.html>`__
 .. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
 .. |INTERPOLATION| replace:: `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__
 .. |UNITTESTING| replace:: `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`__
@@ -12,6 +13,19 @@ PlatformIO Core 6
 -----------------
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
+
+6.1.6 (2023-01-23)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for Python 3.11
+* Added a new `name <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/generic/description.html>`__ configuration option to customize a project name (`pull #4498 <https://github.com/platformio/platformio-core/pull/4498>`_)
+* Made assets (templates, ``99-platformio-udev.rules``) part of Python's module (`issue #4458 <https://github.com/platformio/platformio-core/issues/4458>`_)
+* Updated `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ check tool to v15.0.5 with new diagnostics and bugfixes
+* Removed dependency on the "zeroconf" package and install it only when a user lists mDNS devices (issue with zeroconf's LGPL license)
+* Show the real error message instead of "Can not remove temporary directory" when |PIOCONF| is broken (`issue #4480 <https://github.com/platformio/platformio-core/issues/4480>`_)
+* Fixed an issue with an incorrect test summary when a testcase name includes a colon (`issue #4508 <https://github.com/platformio/platformio-core/issues/4508>`_)
+* Fixed an issue when `extends <https://docs.platformio.org/en/latest/projectconf/sections/env/options/advanced/extends.html>`__ did not override options in the right order (`issue #4462 <https://github.com/platformio/platformio-core/issues/4462>`_)
+* Fixed an issue when `pio pkg list <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_list.html>`__ and `pio pkg uninstall <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_uninstall.html>`__ commands fail if there are circular dependencies in the |LIBRARYJSON| manifests (`issue #4475 <https://github.com/platformio/platformio-core/issues/4475>`_)
 
 6.1.5 (2022-11-01)
 ~~~~~~~~~~~~~~~~~~
@@ -46,7 +60,7 @@ PlatformIO Core 6
 * Export a ``PIO_UNIT_TESTING`` macro to the project source files and dependent libraries in the |UNITTESTING| mode
 * Improved detection of Windows architecture (`issue #4353 <https://github.com/platformio/platformio-core/issues/4353>`_)
 * Warn about unknown `device monitor filters <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ (`issue #4362 <https://github.com/platformio/platformio-core/issues/4362>`_)
-* Fixed a regression bug when `libArchive <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/libarchive.html>`__ option declared in the `library.json <https://docs.platformio.org/en/latest/manifests/library-json/index.html>`__ manifest was ignored (`issue #4351 <https://github.com/platformio/platformio-core/issues/4351>`_)
+* Fixed a regression bug when `libArchive <https://docs.platformio.org/en/latest/manifests/library-json/fields/build/libarchive.html>`__ option declared in the |LIBRARYJSON| manifest was ignored (`issue #4351 <https://github.com/platformio/platformio-core/issues/4351>`_)
 * Fixed an issue when the `pio pkg publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command didn't work with Python 3.6 (`issue #4352 <https://github.com/platformio/platformio-core/issues/4352>`_)
 
 6.1.1 (2022-07-11)

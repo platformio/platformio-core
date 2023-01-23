@@ -476,13 +476,11 @@ Stable
     ; Latest stable version
     [env:latest_stable]
     platform = {name}
-    board = ...
-
+    {board}
     ; Custom stable version
     [env:custom_stable]
     platform = {name}@x.y.z
-    board = ...
-
+    {board}
 Upstream
 ~~~~~~~~
 
@@ -490,9 +488,11 @@ Upstream
 
     [env:upstream_develop]
     platform = {github_url}.git
-    board = ...
-""".format(
-            name=p.name, title=p.title, github_url=github_url
+    {board}""".format(
+            name=p.name,
+            title=p.title,
+            github_url=github_url,
+            board="board = ...\n" if p.is_embedded() else "",
         )
     )
 

@@ -15,7 +15,6 @@
 import codecs
 import os
 import sys
-from pathlib import Path
 
 import bottle
 
@@ -51,12 +50,17 @@ class ProjectGenerator:
         return envname
 
     @staticmethod
-    def get_supported_ides():
+    def get_ide_tpls_dir():
+        return os.path.join(fs.get_assets_dir(), "templates", "ide-projects")
+
+    @classmethod
+    def get_supported_ides(cls):
+        tpls_dir = cls.get_ide_tpls_dir()
         return sorted(
             [
-                item.name
-                for item in (Path(__file__).parent / "tpls").iterdir()
-                if item.is_dir()
+                name
+                for name in os.listdir(tpls_dir)
+                if os.path.isdir(os.path.join(tpls_dir, name))
             ]
         )
 
@@ -78,7 +82,9 @@ class ProjectGenerator:
         tpl_vars = {
             "config": self.config,
             "systype": util.get_systype(),
-            "project_name": os.path.basename(self.project_dir),
+            "project_name": self.config.get(
+                "platformio", "name", os.path.basename(self.project_dir)
+            ),
             "project_dir": self.project_dir,
             "original_env_name": self.original_env_name,
             "env_name": self.env_name,
@@ -132,12 +138,12 @@ class ProjectGenerator:
 
     def get_tpls(self):
         tpls = []
-        tpls_dir = str(Path(__file__).parent / "tpls" / self.ide)
-        for root, _, files in os.walk(tpls_dir):
+        ide_tpls_dir = os.path.join(self.get_ide_tpls_dir(), self.ide)
+        for root, _, files in os.walk(ide_tpls_dir):
             for f in files:
                 if not f.endswith(".tpl"):
                     continue
-                _relpath = root.replace(tpls_dir, "")
+                _relpath = root.replace(ide_tpls_dir, "")
                 if _relpath.startswith(os.sep):
                     _relpath = _relpath[1:]
                 tpls.append((_relpath, os.path.join(root, f)))

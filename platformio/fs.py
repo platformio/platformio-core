@@ -50,6 +50,10 @@ def get_source_dir():
     return os.path.dirname(curpath)
 
 
+def get_assets_dir():
+    return os.path.join(get_source_dir(), "assets")
+
+
 def load_json(file_path):
     try:
         with open(file_path, mode="r", encoding="utf8") as f:
@@ -99,7 +103,7 @@ def calculate_folder_size(path):
 
 def get_platformio_udev_rules_path():
     return os.path.abspath(
-        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
+        os.path.join(get_assets_dir(), "system", "99-platformio-udev.rules")
     )
 
 

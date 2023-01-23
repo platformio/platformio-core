@@ -35,6 +35,7 @@ def list_test_names(project_config):
 
 def list_test_suites(project_config, environments, filters, ignores):
     result = []
+    test_dir = project_config.get("platformio", "test_dir")
     default_envs = project_config.default_envs()
     test_names = list_test_names(project_config)
     for env_name in project_config.envs():
@@ -58,5 +59,16 @@ def list_test_suites(project_config, environments, filters, ignores):
                 test_name != "*"
                 and any(fnmatch(test_name, p) for p in patterns["ignore"]),
             ]
-            result.append(TestSuite(env_name, test_name, finished=any(skip_conditions)))
+            result.append(
+                TestSuite(
+                    env_name,
+                    test_name,
+                    finished=any(skip_conditions),
+                    test_dir=os.path.abspath(
+                        test_dir
+                        if test_name == "*"
+                        else os.path.join(test_dir, test_name)
+                    ),
+                )
+            )
     return result

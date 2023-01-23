@@ -205,9 +205,9 @@ def test_options(config):
     assert config.options(env="test_extends") == [
         "extends",
         "build_flags",
+        "monitor_speed",
         "lib_ldf_mode",
         "lib_compat_mode",
-        "monitor_speed",
         "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
@@ -245,9 +245,9 @@ def test_sysenv_options(config):
     assert config.options(env="test_extends") == [
         "extends",
         "build_flags",
+        "monitor_speed",
         "lib_ldf_mode",
         "lib_compat_mode",
-        "monitor_speed",
         "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
@@ -427,9 +427,9 @@ def test_items(config):
     assert config.items(env="test_extends") == [
         ("extends", ["strict_settings"]),
         ("build_flags", ["-D RELEASE"]),
+        ("monitor_speed", 115200),
         ("lib_ldf_mode", "chain+"),
         ("lib_compat_mode", "strict"),
-        ("monitor_speed", 115200),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
@@ -647,3 +647,24 @@ test_testing_command =
     config = ProjectConfig(str(project_conf))
     testing_command = config.get("env:myenv", "test_testing_command")
     assert "$" not in " ".join(testing_command)
+
+
+def test_extends_order(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[a]
+board = test
+
+[b]
+upload_tool = two
+
+[c]
+upload_tool = three
+
+[env:native]
+extends = a, b, c
+    """
+    )
+    config = ProjectConfig(str(project_conf))
+    assert config.get("env:native", "upload_tool") == "three"

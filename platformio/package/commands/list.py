@@ -84,10 +84,16 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
     if not candidates:
         return
     candidates = sorted(candidates.values(), key=lambda item: item[0].metadata.name)
+
     for index, (pkg, spec) in enumerate(candidates):
         if filtered_pkgs and not _pkg_tree_contains(pm, pkg, filtered_pkgs):
             continue
-        dependencies = pm.get_pkg_dependencies(pkg)
+        printed_pkgs = pm.memcache_get("__printed_pkgs", [])
+        if printed_pkgs and pkg.path in printed_pkgs:
+            continue
+        printed_pkgs.append(pkg.path)
+        pm.memcache_set("__printed_pkgs", printed_pkgs)
+
         click.echo(
             "%s%s %s"
             % (
@@ -100,6 +106,8 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
                 ),
             )
         )
+
+        dependencies = pm.get_pkg_dependencies(pkg)
         if dependencies:
             print_dependency_tree(
                 pm,

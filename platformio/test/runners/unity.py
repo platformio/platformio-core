@@ -29,10 +29,11 @@ class UnityTestRunner(TestRunnerBase):
 
     EXTRA_LIB_DEPS = ["throwtheswitch/Unity@^2.5.2"]
 
-    # Example:
+    # Examples:
     # test/test_foo.cpp:44:test_function_foo:FAIL: Expected 32 Was 33
+    # test/group/test_foo/test_main.cpp:5:test::dummy:FAIL: Expression Evaluated To FALSE
     TESTCASE_PARSE_RE = re.compile(
-        r"(?P<source_file>[^:]+):(?P<source_line>\d+):(?P<name>[^:]+):"
+        r"(?P<source_file>[^:]+):(?P<source_line>\d+):(?P<name>[^\s]+):"
         r"(?P<status>PASS|IGNORE|FAIL)(:\s*(?P<message>.+)$)?"
     )
 

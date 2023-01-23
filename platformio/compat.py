@@ -85,10 +85,7 @@ def get_filesystem_encoding():
 
 
 def get_locale_encoding():
-    try:
-        return locale.getdefaultlocale()[1]
-    except ValueError:
-        return None
+    return locale.getpreferredencoding()
 
 
 def get_object_members(obj, ignore_private=True):
