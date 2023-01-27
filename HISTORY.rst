@@ -14,6 +14,11 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.7 (2023-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Prevented shell injection when converting INO file to CPP (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
+
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
 
