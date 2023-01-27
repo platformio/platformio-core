@@ -29,7 +29,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs
 from platformio.builder.tools import piobuild
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
-from platformio.http import HTTPClientError, InternetIsOffline
+from platformio.http import HTTPClientError, InternetConnectionError
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -982,7 +982,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
             try:
                 lm.install(spec)
                 did_install = True
-            except (HTTPClientError, UnknownPackageError, InternetIsOffline) as exc:
+            except (
+                HTTPClientError,
+                UnknownPackageError,
+                InternetConnectionError,
+            ) as exc:
                 click.secho("Warning! %s" % exc, fg="yellow")
 
         # reset cache
