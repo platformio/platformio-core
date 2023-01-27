@@ -24,7 +24,7 @@ from platformio.cache import cleanup_content_cache
 from platformio.cli import PlatformioCLI
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.http import HTTPClientError, InternetIsOffline, ensure_internet_on
+from platformio.http import HTTPClientError, InternetConnectionError, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
@@ -51,7 +51,7 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         check_prune_system()
     except (
         HTTPClientError,
-        InternetIsOffline,
+        InternetConnectionError,
         exception.GetLatestVersionError,
     ):
         click.secho(
