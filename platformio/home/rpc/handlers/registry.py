@@ -25,5 +25,5 @@ class RegistryRPC:
             return getattr(client, method)(*args, **kwargs)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
-                code=4003, message="Registry Call Error", data=str(exc)
+                code=5000, message="Registry Call Error", data=str(exc)
             ) from exc

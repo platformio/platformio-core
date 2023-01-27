@@ -94,7 +94,7 @@ class PIOCoreRPC:
                 return PIOCoreRPC._process_result(result, to_json)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
-                code=4003, message="PIO Core Call Error", data=str(exc)
+                code=5000, message="PIO Core Call Error", data=str(exc)
             ) from exc
 
     @staticmethod
