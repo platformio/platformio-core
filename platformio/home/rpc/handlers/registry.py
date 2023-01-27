@@ -13,16 +13,17 @@
 # limitations under the License.
 
 from ajsonrpc.core import JSONRPC20DispatchException
+from starlette.concurrency import run_in_threadpool
 
 from platformio.registry.client import RegistryClient
 
 
 class RegistryRPC:
     @staticmethod
-    def call_client(method, *args, **kwargs):
+    async def call_client(method, *args, **kwargs):
         try:
             client = RegistryClient()
-            return getattr(client, method)(*args, **kwargs)
+            return await run_in_threadpool(getattr(client, method), *args, **kwargs)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
                 code=5000, message="Registry Call Error", data=str(exc)
