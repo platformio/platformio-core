@@ -13,11 +13,13 @@
 # limitations under the License.
 
 import click
+from ajsonrpc.core import JSONRPC20Error
 from ajsonrpc.dispatcher import Dispatcher
-from ajsonrpc.manager import AsyncJSONRPCResponseManager
+from ajsonrpc.manager import AsyncJSONRPCResponseManager, JSONRPC20Response
 from starlette.endpoints import WebSocketEndpoint
 
 from platformio.compat import aio_create_task, aio_get_running_loop
+from platformio.http import InternetConnectionError
 from platformio.proc import force_exit
 
 
@@ -94,4 +96,13 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         response = await self.factory.manager.get_response_for_payload(data)
         if response.error and response.error.data:
             click.secho("Error: %s" % response.error.data, fg="red", err=True)
+            if InternetConnectionError.MESSAGE in response.error.data:
+                response = JSONRPC20Response(
+                    id=response.id,
+                    error=JSONRPC20Error(
+                        code=4008,
+                        message="No Internet Connection",
+                        data=response.error.data,
+                    ),
+                )
         await websocket.send_text(self.factory.manager.serialize(response.body))
