@@ -17,6 +17,7 @@ PlatformIO Core 6
 6.1.7 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Show detailed library dependency tree only in the `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__ (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
 * Prevented shell injection when converting INO file to CPP (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
 
 6.1.6 (2023-01-23)

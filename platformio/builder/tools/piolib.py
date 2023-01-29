@@ -1161,7 +1161,7 @@ def ConfigureProjectLibBuilder(env):
                 click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")
-            if lb.depbuilders:
+            if lb.verbose and lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
