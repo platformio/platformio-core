@@ -103,7 +103,7 @@ class InoToCPPConverter:
         return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
 
     def process(self, contents):
-        out_file = re.sub(r"[\"\'\;]+", "", self._main_ino, flags=re.I) + ".cpp"
+        out_file = re.sub(r"[\"\'\;]+", "", self._main_ino) + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
         contents = self.read_safe_contents(out_file)
         contents = self._join_multiline_strings(contents)
