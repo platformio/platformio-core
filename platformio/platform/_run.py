@@ -102,7 +102,6 @@ class PlatformRunMixin:
         for key, value in variables.items():
             args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
-        proc.copy_pythonpath_to_osenv()
         # force SCons output to Unicode
         os.environ["PYTHONIOENCODING"] = "utf-8"
 
