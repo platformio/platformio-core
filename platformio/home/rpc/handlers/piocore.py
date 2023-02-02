@@ -25,6 +25,7 @@ from starlette.concurrency import run_in_threadpool
 from platformio import __main__, __version__, fs, proc
 from platformio.compat import get_locale_encoding, is_bytes
 from platformio.home import helpers
+from platformio.exception import PlatformioException
 
 
 class MultiThreadingStdStream:
@@ -132,7 +133,7 @@ class PIOCoreRPC:
             err = err.decode(get_locale_encoding())
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
-            raise Exception(text)
+            raise PlatformioException(text)
         if not to_json:
             return text
         try:

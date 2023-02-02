@@ -8,4 +8,5 @@ disable=
     invalid-name,
     too-few-public-methods,
     consider-using-f-string,
-    cyclic-import
+    cyclic-import,
+    use-dict-literal
