@@ -67,6 +67,8 @@ setup(
             "assets/templates/ide-projects/*/*.tpl",
             "assets/templates/ide-projects/*/.*.tpl",  # include hidden files
             "assets/templates/ide-projects/*/.*/*.tpl",  # include hidden folders
+            "assets/templates/ide-projects/*/*/*.tpl",  # NetBeans
+            "assets/templates/ide-projects/*/*/*/*.tpl", # NetBeans
         ]
     },
     entry_points={
