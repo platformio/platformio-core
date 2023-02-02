@@ -54,7 +54,6 @@ class TelemetryBase:
 
 
 class MeasurementProtocol(TelemetryBase):
-
     TID = "UA-1768265-9"
     PARAMS_MAP = {
         "screen_name": "cd",
@@ -201,7 +200,6 @@ class MeasurementProtocol(TelemetryBase):
 
 @util.singleton
 class MPDataPusher:
-
     MAX_WORKERS = 5
 
     def __init__(self):

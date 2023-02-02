@@ -96,7 +96,6 @@ class RetryStopException(RetryException):
 
 
 class retry:
-
     RetryNextException = RetryNextException
     RetryStopException = RetryStopException
 

@@ -65,7 +65,6 @@ class PackageType:
 
 
 class PackageCompatibility:
-
     KNOWN_QUALIFIERS = ("platforms", "frameworks", "authors")
 
     @classmethod
@@ -468,7 +467,6 @@ class PackageMetaData:
 
 
 class PackageItem:
-
     METAFILE_NAME = ".piopm"
 
     def __init__(self, path, metadata=None):

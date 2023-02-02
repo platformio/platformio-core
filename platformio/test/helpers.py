@@ -40,7 +40,6 @@ def list_test_suites(project_config, environments, filters, ignores):
     test_names = list_test_names(project_config)
     for env_name in project_config.envs():
         for test_name in test_names:
-
             # filter and ignore patterns
             patterns = dict(filter=list(filters), ignore=list(ignores))
             for key, value in patterns.items():

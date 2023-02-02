@@ -28,7 +28,6 @@ from platformio.platform.exception import BuildScriptNotFound
 
 
 class PlatformRunMixin:
-
     LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 
     @staticmethod

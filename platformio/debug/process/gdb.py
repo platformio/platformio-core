@@ -24,7 +24,6 @@ from platformio.debug.process.client import DebugClientProcess
 
 
 class GDBClientProcess(DebugClientProcess):
-
     PIO_SRC_NAME = ".pioinit"
     INIT_COMPLETED_BANNER = "PlatformIO: Initialization completed"
 

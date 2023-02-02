@@ -58,7 +58,6 @@ class VCSClientFactory:
 
 
 class VCSClientBase:
-
     command = None
 
     def __init__(self, src_dir, remote_url=None, tag=None, silent=False):
@@ -128,7 +127,6 @@ class VCSClientBase:
 
 
 class GitClient(VCSClientBase):
-
     command = "git"
     _configured = False
 
@@ -232,7 +230,6 @@ class GitClient(VCSClientBase):
 
 
 class HgClient(VCSClientBase):
-
     command = "hg"
 
     def export(self):
@@ -256,7 +253,6 @@ class HgClient(VCSClientBase):
 
 
 class SvnClient(VCSClientBase):
-
     command = "svn"
 
     def export(self):

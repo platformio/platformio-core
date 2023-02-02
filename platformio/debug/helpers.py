@@ -31,7 +31,6 @@ from platformio.test.runners.factory import TestRunnerFactory
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
-
     STDOUT = sys.stdout
 
     def write(self, text):

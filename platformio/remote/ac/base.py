@@ -17,7 +17,6 @@ from twisted.spread import pb  # pylint: disable=import-error
 
 
 class AsyncCommandBase:
-
     MAX_BUFFER_SIZE = 1024 * 1024  # 1Mb
 
     def __init__(self, options=None, on_end_callback=None):

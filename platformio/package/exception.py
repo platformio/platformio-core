@@ -48,12 +48,10 @@ class ManifestValidationError(ManifestException):
 
 
 class MissingPackageManifestError(ManifestException):
-
     MESSAGE = "Could not find one of '{0}' manifest files in the package"
 
 
 class UnknownPackageError(UserSideException):
-
     MESSAGE = (
         "Could not find the package with '{0}' requirements for your system '%s'"
         % util.get_systype()
@@ -61,7 +59,6 @@ class UnknownPackageError(UserSideException):
 
 
 class NotGlobalLibDir(UserSideException):
-
     MESSAGE = (
         "The `{0}` is not a PlatformIO project.\n\n"
         "To manage libraries in global storage `{1}`,\n"

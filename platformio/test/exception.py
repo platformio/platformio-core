@@ -20,7 +20,6 @@ class UnitTestError(PlatformioException):
 
 
 class TestDirNotExistsError(UnitTestError, UserSideException):
-
     MESSAGE = (
         "A test folder '{0}' does not exist.\nPlease create 'test' "
         "directory in the project root and put a test suite.\n"

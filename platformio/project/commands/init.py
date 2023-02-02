@@ -166,7 +166,7 @@ def init_base_project(project_dir):
             (config.get("platformio", "lib_dir"), init_lib_readme),
             (config.get("platformio", "test_dir"), init_test_readme),
         ]
-        for (path, cb) in dir_to_readme:
+        for path, cb in dir_to_readme:
             if os.path.isdir(path):
                 continue
             os.makedirs(path)

@@ -21,7 +21,6 @@ from platformio.compat import aio_get_running_loop
 
 
 class IDERPC:
-
     COMMAND_TIMEOUT = 1.5  # in seconds
 
     def __init__(self):

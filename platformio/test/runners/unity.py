@@ -26,7 +26,6 @@ from platformio.util import strip_ansi_codes
 
 
 class UnityTestRunner(TestRunnerBase):
-
     EXTRA_LIB_DEPS = ["throwtheswitch/Unity@^2.5.2"]
 
     # Examples:

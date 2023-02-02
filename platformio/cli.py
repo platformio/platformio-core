@@ -19,7 +19,6 @@ import click
 
 
 class PlatformioCLI(click.MultiCommand):
-
     leftover_args = []
 
     def __init__(self, *args, **kwargs):

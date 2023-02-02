@@ -21,7 +21,6 @@ from platformio.project.helpers import is_platformio_project
 
 
 class AppRPC:
-
     IGNORE_STORAGE_KEYS = [
         "cid",
         "coreVersion",

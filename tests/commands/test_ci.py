@@ -112,7 +112,6 @@ def test_ci_keep_build_dir_single_src_dir(
 def test_ci_keep_build_dir_nested_src_dirs(
     clirunner, tmpdir_factory, validate_cliresult
 ):
-
     build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
 
     # Split default Arduino project in two parts

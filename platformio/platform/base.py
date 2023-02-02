@@ -29,7 +29,6 @@ from platformio.project.config import ProjectConfig
 class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     PlatformPackagesMixin, PlatformRunMixin
 ):
-
     CORE_SEMVER = pepver_to_semver(__version__)
     _BOARDS_CACHE = {}
 

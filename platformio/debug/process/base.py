@@ -53,7 +53,6 @@ class DebugSubprocessProtocol(asyncio.SubprocessProtocol):
 
 
 class DebugBaseProcess:
-
     STDOUT_CHUNK_SIZE = 2048
     LOG_FILE = None
 

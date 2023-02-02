@@ -137,7 +137,7 @@ def list_global_packages(options):
     only_packages = any(
         options.get(type_) or options.get(f"only_{type_}") for (type_, _) in data
     )
-    for (type_, pm) in data:
+    for type_, pm in data:
         skip_conds = [
             only_packages
             and not options.get(type_)

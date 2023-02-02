@@ -118,7 +118,6 @@ def remote_run(
     silent,
     verbose,
 ):
-
     from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(
@@ -211,7 +210,6 @@ def remote_test(  # pylint: disable=redefined-builtin
     without_uploading,
     verbose,
 ):
-
     from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(

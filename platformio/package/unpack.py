@@ -24,7 +24,6 @@ from platformio.package.exception import PackageException
 
 
 class ExtractArchiveItemError(PackageException):
-
     MESSAGE = (
         "Could not extract `{0}` to `{1}`. Try to disable antivirus "
         "tool or check this solution -> https://bit.ly/faq-package-manager"

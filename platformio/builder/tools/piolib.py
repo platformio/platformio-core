@@ -109,7 +109,6 @@ class LibBuilderFactory:
 
 
 class LibBuilderBase:
-
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
     # Max depth of nested includes:

@@ -24,7 +24,6 @@ from platformio.project.helpers import get_project_dir
 
 
 class DefectItem:
-
     SEVERITY_HIGH = 1
     SEVERITY_MEDIUM = 2
     SEVERITY_LOW = 4

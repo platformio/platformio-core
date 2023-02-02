@@ -18,7 +18,6 @@ from platformio.device.finder import SerialPortFinder, is_pattern_port
 
 
 class BlackmagicDebugConfig(DebugConfigBase):
-
     GDB_INIT_SCRIPT = """
 define pio_reset_halt_target
     set language c

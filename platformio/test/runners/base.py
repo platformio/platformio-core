@@ -54,7 +54,6 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
 
 
 class TestRunnerBase:
-
     NAME = None
     EXTRA_LIB_DEPS = None
     TESTCASE_PARSE_RE = None

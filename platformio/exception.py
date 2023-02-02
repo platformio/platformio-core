@@ -14,7 +14,6 @@
 
 
 class PlatformioException(Exception):
-
     MESSAGE = None
 
     def __str__(self):  # pragma: no cover
@@ -26,7 +25,6 @@ class PlatformioException(Exception):
 
 
 class ReturnErrorCode(PlatformioException):
-
     MESSAGE = "{0}"
 
 
@@ -35,7 +33,6 @@ class UserSideException(PlatformioException):
 
 
 class AbortedByUser(UserSideException):
-
     MESSAGE = "Aborted by user"
 
 
@@ -49,7 +46,6 @@ class InvalidUdevRules(UserSideException):
 
 
 class MissedUdevRules(InvalidUdevRules):
-
     MESSAGE = (
         "Warning! Please install `99-platformio-udev.rules`. \nMore details: "
         "https://docs.platformio.org/en/latest/core/installation/udev-rules.html"
@@ -57,7 +53,6 @@ class MissedUdevRules(InvalidUdevRules):
 
 
 class OutdatedUdevRules(InvalidUdevRules):
-
     MESSAGE = (
         "Warning! Your `{0}` are outdated. Please update or reinstall them."
         "\nMore details: "
@@ -71,32 +66,26 @@ class OutdatedUdevRules(InvalidUdevRules):
 
 
 class GetSerialPortsError(PlatformioException):
-
     MESSAGE = "No implementation for your platform ('{0}') available"
 
 
 class GetLatestVersionError(PlatformioException):
-
     MESSAGE = "Can not retrieve the latest PlatformIO version"
 
 
 class InvalidSettingName(UserSideException):
-
     MESSAGE = "Invalid setting with the name '{0}'"
 
 
 class InvalidSettingValue(UserSideException):
-
     MESSAGE = "Invalid value '{0}' for the setting '{1}'"
 
 
 class InvalidJSONFile(PlatformioException):
-
     MESSAGE = "Could not load broken JSON: {0}"
 
 
 class CIBuildEnvsEmpty(UserSideException):
-
     MESSAGE = (
         "Can't find PlatformIO build environments.\n"
         "Please specify `--board` or path to `platformio.ini` with "
@@ -105,7 +94,6 @@ class CIBuildEnvsEmpty(UserSideException):
 
 
 class UpgradeError(PlatformioException):
-
     MESSAGE = """{0}
 
 * Upgrade using `pip install -U platformio`
@@ -115,7 +103,6 @@ class UpgradeError(PlatformioException):
 
 
 class HomeDirPermissionsError(UserSideException):
-
     MESSAGE = (
         "The directory `{0}` or its parent directory is not owned by the "
         "current user and PlatformIO can not store configuration data.\n"
@@ -126,7 +113,6 @@ class HomeDirPermissionsError(UserSideException):
 
 
 class CygwinEnvDetected(PlatformioException):
-
     MESSAGE = (
         "PlatformIO does not work within Cygwin environment. "
         "Use native Terminal instead."

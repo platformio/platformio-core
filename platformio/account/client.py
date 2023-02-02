@@ -21,22 +21,18 @@ from platformio.http import HTTPClient, HTTPClientError
 
 
 class AccountError(PlatformioException):
-
     MESSAGE = "{0}"
 
 
 class AccountNotAuthorized(AccountError):
-
     MESSAGE = "You are not authorized! Please log in to PlatformIO Account."
 
 
 class AccountAlreadyAuthorized(AccountError):
-
     MESSAGE = "You are already authorized with {0} account."
 
 
 class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
-
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
     def __init__(self):

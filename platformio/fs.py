@@ -181,7 +181,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     result = set()
     # correct fs directory separator
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
-    for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
+    for action, pattern in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
         candidates = _find_candidates(pattern)
         if action == "+":
             result |= candidates

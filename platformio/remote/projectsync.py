@@ -47,13 +47,13 @@ class ProjectSync:
 
     def rebuild_dbindex(self):
         self._db = {}
-        for (path, relpath, cb_filter) in self.items:
+        for path, relpath, cb_filter in self.items:
             if cb_filter and not cb_filter(path):
                 continue
             self._insert_to_db(path, relpath)
             if not isdir(path):
                 continue
-            for (root, _, files) in os.walk(path, followlinks=True):
+            for root, _, files in os.walk(path, followlinks=True):
                 for name in files:
                     self._insert_to_db(
                         join(root, name), join(relpath, root[len(path) + 1 :], name)

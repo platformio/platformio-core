@@ -26,7 +26,6 @@ from platformio.package.lockfile import LockFile
 
 
 class PackageManagerDownloadMixin:
-
     DOWNLOAD_CACHE_EXPIRE = 86400 * 30  # keep package in a local cache for 1 month
 
     def compute_download_path(self, *args):

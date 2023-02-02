@@ -24,7 +24,6 @@ from platformio.proc import force_exit
 
 
 class JSONRPCServerFactoryBase:
-
     connection_nums = 0
     shutdown_timer = None
 

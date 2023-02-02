@@ -38,7 +38,6 @@ class HTTPClientError(PlatformioException):
 
 
 class InternetConnectionError(UserSideException):
-
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "PlatformIO needs the Internet connection to"

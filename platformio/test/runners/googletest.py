@@ -22,7 +22,6 @@ from platformio.test.runners.base import TestRunnerBase
 
 
 class GoogletestTestCaseParser:
-
     # Examples:
     # [ RUN      ] FooTest.Bar
     # ...
@@ -89,7 +88,6 @@ class GoogletestTestCaseParser:
 
 
 class GoogletestTestRunner(TestRunnerBase):
-
     EXTRA_LIB_DEPS = ["google/googletest@^1.12.1"]
 
     def __init__(self, *args, **kwargs):

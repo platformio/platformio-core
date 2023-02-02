@@ -42,7 +42,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
         grpboards[board["platform"]].append(board)
 
     terminal_width = shutil.get_terminal_size().columns
-    for (platform, boards) in sorted(grpboards.items()):
+    for platform, boards in sorted(grpboards.items()):
         click.echo("")
         click.echo("Platform: ", nl=False)
         click.secho(platform, bold=True)

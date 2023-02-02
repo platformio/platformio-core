@@ -39,7 +39,6 @@ CONFIG_HEADER = """
 
 
 class ProjectConfigBase:
-
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}\()]+)\.([^\}]+)\}")
 
@@ -412,7 +411,6 @@ class ProjectConfigDirsMixin:
 
 
 class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
-
     _instances = {}
 
     @staticmethod
