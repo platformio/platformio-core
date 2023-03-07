@@ -294,7 +294,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s/owners" % orgname,
-            data={"username": username},
+            params={"username": username},
             x_with_authorization=True,
         )
 
@@ -347,6 +347,6 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
         return self.fetch_json_data(
             "delete",
             "/v1/orgs/%s/teams/%s/members" % (orgname, teamname),
-            data={"username": username},
+            params={"username": username},
             x_with_authorization=True,
         )
