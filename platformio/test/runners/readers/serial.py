@@ -46,7 +46,7 @@ class SerialTestOutputReader:
             ser.open()
         except serial.SerialException as exc:
             click.secho(str(exc), fg="red", err=True)
-            return None
+            return
 
         if not self.test_runner.options.no_reset:
             ser.flushInput()
