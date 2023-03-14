@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import glob
 import os
 import tempfile
 
@@ -30,6 +29,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         self.config = config
         self.envname = envname
         self.options = options
+        self.project_dir = project_dir
         self.cc_flags = []
         self.cxx_flags = []
         self.cpp_includes = []
@@ -41,7 +41,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         self._defects = []
         self._on_defect_callback = None
         self._bad_input = False
-        self._load_cpp_data(project_dir)
+        self._load_cpp_data()
 
         # detect all defects by default
         if not self.options.get("severity"):
@@ -56,8 +56,8 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
             for s in self.options["severity"]
         ]
 
-    def _load_cpp_data(self, project_dir):
-        data = load_build_metadata(project_dir, self.envname)
+    def _load_cpp_data(self):
+        data = load_build_metadata(self.project_dir, self.envname)
         if not data:
             return
         self.cc_flags = click.parser.split_arg_string(data.get("cc_flags", ""))
@@ -99,6 +99,13 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
                 includes_file,
             )
             result = proc.exec_command(cmd, shell=True)
+
+            if result["returncode"] != 0:
+                click.echo("Warning: Failed to extract toolchain defines!")
+                if self.options.get("verbose"):
+                    click.echo(result["out"])
+                    click.echo(result["err"])
+
             for line in result["out"].split("\n"):
                 tokens = line.strip().split(" ", 2)
                 if not tokens or tokens[0] != "#define":
@@ -201,7 +208,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         return result
 
     @staticmethod
-    def get_project_target_files(patterns):
+    def get_project_target_files(project_dir, src_filter):
         c_extension = (".c",)
         cpp_extensions = (".cc", ".cpp", ".cxx", ".ino")
         header_extensions = (".h", ".hh", ".hpp", ".hxx")
@@ -216,13 +223,9 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
             elif path.endswith(cpp_extensions):
                 result["c++"].append(os.path.abspath(path))
 
-        for pattern in patterns:
-            for item in glob.glob(pattern, recursive=True):
-                if not os.path.isdir(item):
-                    _add_file(item)
-                for root, _, files in os.walk(item, followlinks=True):
-                    for f in files:
-                        _add_file(os.path.join(root, f))
+        src_filter = normalize_src_filter(src_filter)
+        for f in fs.match_src_files(project_dir, src_filter):
+            _add_file(f)
 
         return result
 
@@ -243,3 +246,20 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         self.clean_up()
 
         return self._bad_input
+
+
+#
+# Helpers
+#
+
+
+def normalize_src_filter(src_filter):
+    def _normalize(src_filter):
+        return (
+            src_filter if src_filter.startswith(("+<", "-<")) else "+<%s>" % src_filter
+        )
+
+    if isinstance(src_filter, (list, tuple)):
+        return " ".join([_normalize(f) for f in src_filter])
+
+    return _normalize(src_filter)

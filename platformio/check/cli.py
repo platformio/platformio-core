@@ -49,7 +49,8 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
         exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
     ),
 )
-@click.option("--pattern", multiple=True)
+@click.option("--pattern", multiple=True, hidden=True)
+@click.option("--src-filter", multiple=True)
 @click.option("--flags", multiple=True)
 @click.option(
     "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())
@@ -67,6 +68,7 @@ def cli(
     environment,
     project_dir,
     project_conf,
+    src_filter,
     pattern,
     flags,
     severity,
@@ -105,14 +107,21 @@ def cli(
                     "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v)
                 )
 
-            default_patterns = [
-                config.get("platformio", "src_dir"),
-                config.get("platformio", "include_dir"),
+            default_src_filter = [
+                "+<%s>" % os.path.basename(config.get("platformio", "src_dir")),
+                "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
             ]
+
+            src_filter = (
+                src_filter
+                or pattern
+                or env_options.get("check_src_filter", default_src_filter)
+            )
+
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                patterns=pattern or env_options.get("check_patterns", default_patterns),
+                src_filter=src_filter,
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent
@@ -265,7 +274,7 @@ def print_defects_stats(results):
     tabular_data.append(total)
 
     headers = ["Component"]
-    headers.extend([l.upper() for l in severity_labels])
+    headers.extend([label.upper() for label in severity_labels])
     headers = [click.style(h, bold=True) for h in headers]
     click.echo(tabulate(tabular_data, headers=headers, numalign="center"))
     click.echo()
