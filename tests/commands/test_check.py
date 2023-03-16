@@ -758,3 +758,4 @@ check_patterns =
     errors, warnings, style = count_defects(result.output)
 
     assert errors + warnings + style == EXPECTED_DEFECTS * 2
+    assert "main.cpp" not in result.output

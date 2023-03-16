@@ -115,7 +115,10 @@ def cli(
             src_filter = (
                 src_filter
                 or pattern
-                or env_options.get("check_src_filter", default_src_filter)
+                or env_options.get(
+                    "check_src_filter",
+                    env_options.get("check_patterns", default_src_filter),
+                )
             )
 
             tool_options = dict(
