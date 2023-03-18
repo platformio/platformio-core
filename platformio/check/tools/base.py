@@ -208,7 +208,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         return result
 
     @staticmethod
-    def get_project_target_files(project_dir, src_filter):
+    def get_project_target_files(project_dir, src_filters):
         c_extension = (".c",)
         cpp_extensions = (".cc", ".cpp", ".cxx", ".ino")
         header_extensions = (".h", ".hh", ".hpp", ".hxx")
@@ -223,8 +223,8 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
             elif path.endswith(cpp_extensions):
                 result["c++"].append(os.path.abspath(path))
 
-        src_filter = normalize_src_filter(src_filter)
-        for f in fs.match_src_files(project_dir, src_filter):
+        src_filters = normalize_src_filters(src_filters)
+        for f in fs.match_src_files(project_dir, src_filters):
             _add_file(f)
 
         return result
@@ -253,13 +253,13 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
 #
 
 
-def normalize_src_filter(src_filter):
-    def _normalize(src_filter):
+def normalize_src_filters(src_filters):
+    def _normalize(src_filters):
         return (
-            src_filter if src_filter.startswith(("+<", "-<")) else "+<%s>" % src_filter
+            src_filters if src_filters.startswith(("+<", "-<")) else "+<%s>" % src_filters
         )
 
-    if isinstance(src_filter, (list, tuple)):
-        return " ".join([_normalize(f) for f in src_filter])
+    if isinstance(src_filters, (list, tuple)):
+        return " ".join([_normalize(f) for f in src_filters])
 
-    return _normalize(src_filter)
+    return _normalize(src_filters)

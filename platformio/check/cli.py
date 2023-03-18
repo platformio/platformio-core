@@ -50,7 +50,11 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
     ),
 )
 @click.option("--pattern", multiple=True, hidden=True)
-@click.option("--src-filter", multiple=True)
+@click.option(
+    "-f",
+    "--src-filters",
+    multiple=True
+)
 @click.option("--flags", multiple=True)
 @click.option(
     "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())
@@ -68,7 +72,7 @@ def cli(
     environment,
     project_dir,
     project_conf,
-    src_filter,
+    src_filters,
     pattern,
     flags,
     severity,
@@ -107,24 +111,24 @@ def cli(
                     "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v)
                 )
 
-            default_src_filter = [
+            default_src_filters = [
                 "+<%s>" % os.path.basename(config.get("platformio", "src_dir")),
                 "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
             ]
 
-            src_filter = (
-                src_filter
+            src_filters = (
+                src_filters
                 or pattern
                 or env_options.get(
                     "check_src_filters",
-                    env_options.get("check_patterns", default_src_filter),
+                    env_options.get("check_patterns", default_src_filters),
                 )
             )
 
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                src_filter=src_filter,
+                src_filters=src_filters,
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent

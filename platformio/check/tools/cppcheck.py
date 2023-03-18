@@ -215,7 +215,7 @@ class CppcheckCheckTool(CheckToolBase):
             return
 
         for files in self.get_project_target_files(
-            self.project_dir, self.options["src_filter"]
+            self.project_dir, self.options["src_filters"]
         ).values():
             for f in files:
                 dump_file = f + ".dump"
@@ -246,7 +246,7 @@ class CppcheckCheckTool(CheckToolBase):
         self._on_defect_callback = on_defect_callback
 
         project_files = self.get_project_target_files(
-            self.project_dir, self.options["src_filter"]
+            self.project_dir, self.options["src_filters"]
         )
         src_files_scope = ("c", "c++")
         if not any(project_files[t] for t in src_files_scope):

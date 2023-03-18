@@ -651,7 +651,7 @@ def test_check_src_filter(
     tmpdir.mkdir("tests").join("test.cpp").write(TEST_CODE)
 
     cmd_args = ["--project-dir", str(tmpdir)] + [
-        "--src-filter=%s" % f for f in src_filter
+        "--src-filters=%s" % f for f in src_filter
     ]
 
     result = clirunner.invoke(cmd_check, cmd_args)

@@ -65,7 +65,7 @@ class ClangtidyCheckTool(CheckToolBase):
             cmd.append("--checks=*")
 
         project_files = self.get_project_target_files(
-            self.project_dir, self.options["src_filter"]
+            self.project_dir, self.options["src_filters"]
         )
 
         src_files = []
