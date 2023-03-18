@@ -239,7 +239,7 @@ def ProcessUnFlags(env, flags):
     for scope in unflag_scopes:
         for unflags in parsed.values():
             for unflag in unflags:
-                for current in env.get(scope, []):
+                for current in list(env.get(scope, [])):
                     conditions = [
                         unflag == current,
                         not isinstance(unflag, (tuple, list))
