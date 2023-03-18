@@ -227,7 +227,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
         for scope, files in self.get_project_target_files(
-            self.options["patterns"]
+            self.project_dir, self.options["src_filters"]
         ).items():
             if scope not in ("c", "c++"):
                 continue
