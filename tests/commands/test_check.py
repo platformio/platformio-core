@@ -668,7 +668,7 @@ def test_check_src_filter_from_config(clirunner, validate_cliresult, tmpdir_fact
     config = (
         DEFAULT_CONFIG
         + """
-check_src_filter =
+check_src_filters =
     +<src/spi/*.c*>
     +<tests/test.cpp>
     """
@@ -686,6 +686,7 @@ check_src_filter =
     errors, warnings, style = count_defects(result.output)
 
     assert errors + warnings + style == EXPECTED_DEFECTS * 2
+    assert "main.cpp" not in result.output
 
 
 def test_check_custom_pattern_absolute_path_legacy(

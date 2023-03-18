@@ -116,7 +116,7 @@ def cli(
                 src_filter
                 or pattern
                 or env_options.get(
-                    "check_src_filter",
+                    "check_src_filters",
                     env_options.get("check_patterns", default_src_filter),
                 )
             )

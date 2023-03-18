@@ -649,7 +649,7 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="check",
-                name="check_src_filter",
+                name="check_src_filters",
                 oldnames=["check_patterns"],
                 description=(
                     "Configure a list of target files or directories for checking "
