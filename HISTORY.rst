@@ -17,10 +17,11 @@ PlatformIO Core 6
 6.1.7 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Show detailed library dependency tree only in the `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__ (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
-* Prevented shell injection when converting INO file to CPP (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
-* Restored project generator for `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__
-* Improved source file filtering functionality for `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature
+* Improved source file filtering functionality for the `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature, making it easier to analyze only the code you need to
+* Added the ability to show a detailed library dependency tree only in `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__, which can help you understand the relationship between libraries and troubleshoot issues more effectively (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
+* Added the ability to run only the `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ when using the `pio run -t monitor <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, saving you time and resources by skipping the build process
+* Implemented a fix for shell injection vulnerabilities when converting INO files to CPP, ensuring your code is safe and secure (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
+* Restored the project generator for the `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__, providing you with more flexibility and options for your development workflow
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
