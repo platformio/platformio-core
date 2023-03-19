@@ -178,6 +178,7 @@ def cli(
     if "monitor" in target and "nobuild" not in target:
         ctx.invoke(
             device_monitor_cmd,
+            project_dir=project_dir,
             port=monitor_port,
             environment=environment[0] if environment else None,
         )

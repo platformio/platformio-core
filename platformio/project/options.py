@@ -652,8 +652,7 @@ ProjectOptions = OrderedDict(
                 name="check_src_filters",
                 oldnames=["check_patterns"],
                 description=(
-                    "Configure a list of target files or directories for checking "
-                    "(Unix shell-style wildcards)"
+                    "Configure a list of target files or directories for checking"
                 ),
                 multiple=True,
             ),
