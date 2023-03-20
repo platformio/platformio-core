@@ -43,5 +43,12 @@ class UnknownEnvNamesError(ProjectError, UserSideException):
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 
 
+class InvalidEnvNameError(ProjectError, UserSideException):
+    MESSAGE = (
+        "Invalid environment name '{0}'. The name can contain "
+        "alphanumeric, underscore, and hyphen characters (a-z, 0-9, -, _)"
+    )
+
+
 class ProjectOptionValueError(ProjectError, UserSideException):
     MESSAGE = "{0} for option `{1}` in section [{2}]"
