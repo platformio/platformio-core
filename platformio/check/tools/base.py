@@ -256,7 +256,9 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
 def normalize_src_filters(src_filters):
     def _normalize(src_filters):
         return (
-            src_filters if src_filters.startswith(("+<", "-<")) else "+<%s>" % src_filters
+            src_filters
+            if src_filters.startswith(("+<", "-<"))
+            else "+<%s>" % src_filters
         )
 
     if isinstance(src_filters, (list, tuple)):

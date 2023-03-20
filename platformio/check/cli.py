@@ -50,11 +50,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
     ),
 )
 @click.option("--pattern", multiple=True, hidden=True)
-@click.option(
-    "-f",
-    "--src-filters",
-    multiple=True
-)
+@click.option("-f", "--src-filters", multiple=True)
 @click.option("--flags", multiple=True)
 @click.option(
     "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())
