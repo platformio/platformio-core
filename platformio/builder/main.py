@@ -173,7 +173,8 @@ env.LoadPioPlatform()
 env.SConscriptChdir(0)
 env.SConsignFile(
     os.path.join(
-        "$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1])
+        "$BUILD_CACHE_DIR" if env.subst("$BUILD_CACHE_DIR") else "$BUILD_DIR",
+        ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]),
     )
 )
 
