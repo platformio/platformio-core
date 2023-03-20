@@ -103,7 +103,6 @@ def cli(
 
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
 
-    results = []
     only_monitor = "monitor" in target and len(target) == 1
     command_failed = False
     with fs.cd(project_dir):
@@ -131,6 +130,7 @@ def cli(
             handle_legacy_libdeps(project_dir, config)
 
             default_envs = config.default_envs()
+            results = []
             for env in config.envs():
                 skipenv = any(
                     [
@@ -160,7 +160,6 @@ def cli(
                         verbose,
                     )
                 )
-
             command_failed = any(r.get("succeeded") is False for r in results)
             if (
                 not is_test_running
