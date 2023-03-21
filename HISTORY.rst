@@ -23,7 +23,7 @@ PlatformIO Core 6
 * Added validation for `project working environment names <https://docs.platformio.org/en/latest/projectconf/sections/env/index.html#working-env-name>`__ to ensure that they only contain lowercase letters ``a-z``, numbers ``0-9``, and special characters ``_`` (underscore) and ``-`` (hyphen)
 * Implemented a fix for shell injection vulnerabilities when converting INO files to CPP, ensuring your code is safe and secure (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
 * Restored the project generator for the `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__, providing you with more flexibility and options for your development workflow
-* Fixed an issue when "build_cache_dir" was not honored across different environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
+* Resolved an issue where the `build_cache_dir <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html>`__ setting was not being recognized consistently across multiple environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~

@@ -69,6 +69,8 @@ def test_run(pioproject_dir):
             fs.rmtree(build_dir)
 
         env_names = config.envs()
+        # temporary fix for unreleased dev-platforms with broken env name
+        env_names = [name for name in env_names if " " not in name]
         result = proc.exec_command(
             ["platformio", "run", "-e", random.choice(env_names)]
         )
