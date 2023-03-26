@@ -30,7 +30,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import app, compat, fs
 from platformio.platform.base import PlatformBase
-from platformio.proc import get_pythonexe_path
+from platformio.proc import get_pythonexe_path, where_is_program
 from platformio.project.helpers import get_project_dir
 
 AllowSubstExceptions(NameError)
@@ -209,6 +209,13 @@ if env.get("SIZETOOL") and not (
     Default("checkprogsize")
 
 if "compiledb" in COMMAND_LINE_TARGETS:
+    # Resolve absolute path of toolchain
+    for cmd in ("CC", "CXX", "AS"):
+        if cmd not in env:
+            continue
+        if os.path.isabs(env[cmd]):
+            continue
+        env[cmd] = where_is_program(env.subst("$%s" % cmd), env.subst("${ENV['PATH']}"))
     env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
