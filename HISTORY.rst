@@ -25,6 +25,7 @@ PlatformIO Core 6
 * Implemented a fix for shell injection vulnerabilities when converting INO files to CPP, ensuring your code is safe and secure (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
 * Restored the project generator for the `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__, providing you with more flexibility and options for your development workflow
 * Resolved an issue where the `build_cache_dir <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html>`__ setting was not being recognized consistently across multiple environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
+* Fixed an issue where organization details could not be updated using the `pio org update <https://docs.platformio.org/en/latest/core/userguide/org/cmd_update.html>`__ command, ensuring that your organization's information remains up-to-date and accurate
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~

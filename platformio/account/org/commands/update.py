@@ -22,29 +22,27 @@ from platformio.account.validate import validate_email, validate_orgname
 @click.argument("cur_orgname")
 @click.option(
     "--orgname",
-    callback=lambda _, __, value: validate_orgname(value),
+    callback=lambda _, __, value: validate_orgname(value) if value else value,
     help="A new orgname",
 )
-@click.option("--email")
+@click.option(
+    "--email",
+    callback=lambda _, __, value: validate_email(value) if value else value,
+)
 @click.option("--displayname")
 def org_update_cmd(cur_orgname, **kwargs):
     client = AccountClient()
     org = client.get_org(cur_orgname)
-    del org["owners"]
-    new_org = org.copy()
+    new_org = {
+        key: value if value is not None else org[key] for key, value in kwargs.items()
+    }
     if not any(kwargs.values()):
-        for field in org:
-            new_org[field] = click.prompt(
-                field.replace("_", " ").capitalize(), default=org[field]
-            )
-            if field == "email":
-                validate_email(new_org[field])
-            if field == "orgname":
-                validate_orgname(new_org[field])
-    else:
-        new_org.update(
-            {key.replace("new_", ""): value for key, value in kwargs.items() if value}
-        )
+        for key in kwargs:
+            new_org[key] = click.prompt(key.capitalize(), default=org[key])
+            if key == "email":
+                validate_email(new_org[key])
+            if key == "orgname":
+                validate_orgname(new_org[key])
     client.update_org(cur_orgname, new_org)
     return click.secho(
         "The organization `%s` has been successfully updated." % cur_orgname,

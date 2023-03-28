@@ -22,6 +22,7 @@ from platformio import fs, proc
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import ProjectError
 
 
 def pytest_generate_tests(metafunc):
@@ -64,13 +65,18 @@ def pytest_generate_tests(metafunc):
 def test_run(pioproject_dir):
     with fs.cd(pioproject_dir):
         config = ProjectConfig()
+
+        # temporary fix for unreleased dev-platforms with broken env name
+        try:
+            config.validate()
+        except ProjectError as exc:
+            pytest.skip(str(exc))
+
         build_dir = config.get("platformio", "build_dir")
         if os.path.isdir(build_dir):
             fs.rmtree(build_dir)
 
         env_names = config.envs()
-        # temporary fix for unreleased dev-platforms with broken env name
-        env_names = [name for name in env_names if " " not in name]
         result = proc.exec_command(
             ["platformio", "run", "-e", random.choice(env_names)]
         )
