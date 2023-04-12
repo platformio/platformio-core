@@ -132,24 +132,24 @@ def device_monitor_cmd(**options):
             ensure_ready=True,
         ).find(initial_port=options["port"])
 
-    if options["menu_char"] == options["exit_char"]:
-        raise exception.UserSideException(
-            "--exit-char can not be the same as --menu-char"
-        )
-
-    # check for unknown filters
-    if options["filters"]:
-        known_filters = set(get_available_filters())
-        unknown_filters = set(options["filters"]) - known_filters
-        if unknown_filters:
-            options["filters"] = list(known_filters & set(options["filters"]))
-            click.secho(
-                ("Warning! Skipping unknown filters `%s`. Known filters are `%s`")
-                % (", ".join(unknown_filters), ", ".join(sorted(known_filters))),
-                fg="yellow",
+        if options["menu_char"] == options["exit_char"]:
+            raise exception.UserSideException(
+                "--exit-char can not be the same as --menu-char"
             )
 
-    start_terminal(options)
+        # check for unknown filters
+        if options["filters"]:
+            known_filters = set(get_available_filters())
+            unknown_filters = set(options["filters"]) - known_filters
+            if unknown_filters:
+                options["filters"] = list(known_filters & set(options["filters"]))
+                click.secho(
+                    ("Warning! Skipping unknown filters `%s`. Known filters are `%s`")
+                    % (", ".join(unknown_filters), ", ".join(sorted(known_filters))),
+                    fg="yellow",
+                )
+
+        start_terminal(options)
 
 
 def get_project_options(environment=None):
