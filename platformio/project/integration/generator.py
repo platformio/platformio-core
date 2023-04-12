@@ -19,6 +19,7 @@ import sys
 import bottle
 
 from platformio import fs, util
+from platformio.debug.helpers import get_default_debug_env
 from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
 
@@ -27,7 +28,7 @@ class ProjectGenerator:
     def __init__(self, config, env_name, ide, board_ids=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
-        self.original_env_name = env_name
+        self.forced_env_name = env_name
         self.env_name = str(env_name or self.get_best_envname(board_ids))
         self.ide = str(ide)
 
@@ -86,7 +87,8 @@ class ProjectGenerator:
                 "platformio", "name", os.path.basename(self.project_dir)
             ),
             "project_dir": self.project_dir,
-            "original_env_name": self.original_env_name,
+            "forced_env_name": self.forced_env_name,
+            "default_debug_env_name": get_default_debug_env(self.config),
             "env_name": self.env_name,
             "user_home_dir": os.path.abspath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
