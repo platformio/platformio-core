@@ -30,7 +30,7 @@ class InoToCPPConverter:
         (?:template\<.*\>\s*)?      # template
         ([a-z_\d\&]+\*?\s+){1,2}    # return type
         ([a-z_\d]+\s*)              # name of prototype
-        \([a-z_:,\.\*\&\[\]\s\d]*\) # arguments
+        \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*(\{|;)                  # must end with `{` or `;`
         """,
         re.X | re.M | re.I,
