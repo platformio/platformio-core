@@ -43,6 +43,7 @@ def pepver_to_semver(pepver):
 
 
 def get_original_version(version):
+    version = version.split("+")[0]
     if version.count(".") != 2:
         return None
     _, raw = version.split(".")[:2]
