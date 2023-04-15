@@ -6,6 +6,7 @@ Release Notes
 .. |LDF| replace:: `LDF <https://docs.platformio.org/en/latest/librarymanager/ldf.html>`__
 .. |INTERPOLATION| replace:: `Interpolation of Values <https://docs.platformio.org/en/latest/projectconf/interpolation.html>`__
 .. |UNITTESTING| replace:: `Unit Testing <https://docs.platformio.org/en/latest/advanced/unit-testing/index.html>`__
+.. |DEBUGGING| replace:: `Debugging <https://docs.platformio.org/en/latest/plus/debugging.html>`__
 
 .. _release_notes_6:
 
@@ -26,9 +27,10 @@ PlatformIO Core 6
 * Implemented a fix for shell injection vulnerabilities when converting INO files to CPP, ensuring your code is safe and secure (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
 * Restored the project generator for the `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__, providing you with more flexibility and options for your development workflow
 * Resolved an issue where the `build_cache_dir <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html>`__ setting was not being recognized consistently across multiple environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
-* Fixed an issue where organization details could not be updated using the `pio org update <https://docs.platformio.org/en/latest/core/userguide/org/cmd_update.html>`__ command
+* Resolved an issue where organization details could not be updated using the `pio org update <https://docs.platformio.org/en/latest/core/userguide/org/cmd_update.html>`__ command
 * Resolved an issue where the incorrect debugging environment was generated for VSCode in "Auto" mode (`issue #4597 <https://github.com/platformio/platformio-core/issues/4597>`_)
 * Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
+* Resolved an issue where the PlatformIO |DEBUGGING| solution was not escaping the tool installation process into MI2 correctly (`issue #4565 <https://github.com/platformio/platformio-core/issues/4565>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
