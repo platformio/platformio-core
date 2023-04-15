@@ -18,7 +18,7 @@ from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
 from platformio.test.exception import UnitTestSuiteError
 from platformio.test.result import TestCase, TestStatus
-from platformio.test.runners.readers.program import ProgramTestOutputReader
+from platformio.test.runners.readers.native import NativeTestOutputReader
 from platformio.test.runners.readers.serial import SerialTestOutputReader
 
 CTX_META_TEST_IS_RUNNING = __name__ + ".test_running"
@@ -160,7 +160,7 @@ class TestRunnerBase:
             return None
         click.secho("Testing...", bold=True)
         test_port = self.get_test_port()
-        program_conds = [
+        native_conds = [
             not self.platform.is_embedded()
             and (not test_port or "://" not in test_port),
             self.project_config.get(
@@ -168,8 +168,8 @@ class TestRunnerBase:
             ),
         ]
         reader = (
-            ProgramTestOutputReader(self)
-            if any(program_conds)
+            NativeTestOutputReader(self)
+            if any(native_conds)
             else SerialTestOutputReader(self)
         )
         return reader.begin()

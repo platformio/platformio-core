@@ -24,6 +24,7 @@ from platformio.compat import (
     get_filesystem_encoding,
     get_locale_encoding,
 )
+from platformio.project.helpers import load_build_metadata
 from platformio.test.exception import UnitTestError
 
 EXITING_TIMEOUT = 5  # seconds
@@ -56,7 +57,7 @@ class ProgramProcessProtocol(asyncio.SubprocessProtocol):
             self._exit_timer.cancel()
 
 
-class ProgramTestOutputReader:
+class NativeTestOutputReader:
     def __init__(self, test_runner):
         self.test_runner = test_runner
         self.aio_loop = (
@@ -78,6 +79,13 @@ class ProgramTestOutputReader:
                 "program.exe" if IS_WINDOWS else "program",
             )
         ]
+        # if user changed PROGNAME
+        if not os.path.exists(cmd[0]):
+            build_data = load_build_metadata(
+                os.getcwd(), self.test_runner.test_suite.env_name, cache=True
+            )
+            if build_data:
+                cmd[0] = build_data["prog_path"]
         if self.test_runner.options.program_args:
             cmd.extend(self.test_runner.options.program_args)
         return cmd

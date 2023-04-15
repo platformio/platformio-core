@@ -28,6 +28,7 @@ PlatformIO Core 6
 * Resolved an issue where the `build_cache_dir <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html>`__ setting was not being recognized consistently across multiple environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
 * Fixed an issue where organization details could not be updated using the `pio org update <https://docs.platformio.org/en/latest/core/userguide/org/cmd_update.html>`__ command
 * Resolved an issue where the incorrect debugging environment was generated for VSCode in "Auto" mode (`issue #4597 <https://github.com/platformio/platformio-core/issues/4597>`_)
+* Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
