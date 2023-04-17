@@ -90,7 +90,7 @@ def predebug_project(
             TestSuite(env_name, debug_testname),
             project_config,
             TestRunnerOptions(
-                verbose=verbose,
+                verbose=3 if verbose else 0,
                 without_building=False,
                 without_debugging=False,
                 without_uploading=not preload,
