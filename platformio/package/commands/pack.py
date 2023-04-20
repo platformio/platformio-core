@@ -26,7 +26,7 @@ from platformio.package.pack import PackagePacker
     "package",
     default=os.getcwd,
     metavar="<source directory, tar.gz or zip>",
-    type=click.Path(exists=True, file_okay=True, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True),
 )
 @click.option(
     "-o", "--output", help="A destination path (folder or a full path to file)"

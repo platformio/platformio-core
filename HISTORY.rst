@@ -19,6 +19,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Implemented a new feature to store device monitor logs in the project's "logs" folder, making it easier to access and review device monitor logs for your projects (`issue #4596 <https://github.com/platformio/platformio-core/issues/4596>`_)
+* Improved support for projects located on Windows network drives, including Network Shared Folder, Dropbox, OneDrive, Google Drive, and other similar services (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Improved source file filtering functionality for the `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature, making it easier to analyze only the code you need to
 * Added the ability to show a detailed library dependency tree only in `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__, which can help you understand the relationship between libraries and troubleshoot issues more effectively (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
 * Added the ability to run only the `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ when using the `pio run -t monitor <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, saving you time and resources by skipping the build process

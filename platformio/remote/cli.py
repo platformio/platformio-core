@@ -56,7 +56,7 @@ def remote_agent():
     "-d",
     "--working-dir",
     envvar="PLATFORMIO_REMOTE_AGENT_DIR",
-    type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
+    type=click.Path(file_okay=False, dir_okay=True, writable=True),
 )
 def remote_agent_start(name, share, working_dir):
     from platformio.remote.client.agent_service import RemoteAgentService
@@ -96,9 +96,7 @@ def remote_update(agents, only_check, dry_run):
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, writable=True),
 )
 @click.option("--disable-auto-clean", is_flag=True)
 @click.option("-r", "--force-remote", is_flag=True)
@@ -186,9 +184,7 @@ def remote_run(
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option("-r", "--force-remote", is_flag=True)
 @click.option("--without-building", is_flag=True)
@@ -334,7 +330,7 @@ def device_list(agents, json_output):
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option(
     "-e",
@@ -343,9 +339,7 @@ def device_list(agents, json_output):
 )
 @click.option(
     "--sock",
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.pass_obj
 @click.pass_context

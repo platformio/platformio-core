@@ -47,9 +47,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     "--project-dir",
     "-d",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))

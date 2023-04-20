@@ -44,16 +44,12 @@ from platformio.project.options import ProjectOptions
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option(
     "-c",
     "--project-conf",
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
 )
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--load-mode", type=ProjectOptions["env.debug_load_mode"].type)

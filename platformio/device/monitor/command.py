@@ -104,7 +104,7 @@ from platformio.project.options import ProjectOptions
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option(
     "-e",

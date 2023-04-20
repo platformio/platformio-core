@@ -642,7 +642,7 @@ def test_googletest_framework(clirunner, tmp_path: Path):
         pio_test_cmd,
         [
             "-d",
-            project_dir,
+            str(project_dir),
             "-e",
             "native",
             "--json-output-path",

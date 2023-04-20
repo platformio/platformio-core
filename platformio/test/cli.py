@@ -48,16 +48,12 @@ from platformio.test.runners.factory import TestRunnerFactory
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option(
     "-c",
     "--project-conf",
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
 )
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
@@ -83,8 +79,8 @@ from platformio.test.runners.factory import TestRunnerFactory
     help="A program argument (multiple are allowed)",
 )
 @click.option("--list-tests", is_flag=True)
-@click.option("--json-output-path", type=click.Path(resolve_path=True))
-@click.option("--junit-output-path", type=click.Path(resolve_path=True))
+@click.option("--json-output-path", type=click.Path())
+@click.option("--junit-output-path", type=click.Path())
 @click.option(
     "--verbose",
     "-v",

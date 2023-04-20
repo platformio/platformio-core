@@ -114,7 +114,7 @@ def validate_dir(path):
         path = fs.expanduser(path)
     if "$" in path:
         path = expand_dir_templates(path)
-    return fs.normalize_path(path)
+    return os.path.abspath(path)
 
 
 def get_default_core_dir():

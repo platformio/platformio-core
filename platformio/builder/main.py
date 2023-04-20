@@ -28,7 +28,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import app, compat, fs
+from platformio import app, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path, where_is_program
 from platformio.project.helpers import get_project_dir
@@ -138,19 +138,6 @@ env.Replace(
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
-
-if compat.IS_WINDOWS and sys.version_info >= (3, 8) and os.getcwd().startswith("\\\\"):
-    click.secho("!!! WARNING !!!\t\t" * 3, fg="red")
-    click.secho(
-        "Your project is located on a mapped network drive but the "
-        "current command-line shell does not support the UNC paths.",
-        fg="yellow",
-    )
-    click.secho(
-        "Please move your project to a physical drive or check this workaround: "
-        "https://bit.ly/3kuU5mP\n",
-        fg="yellow",
-    )
 
 if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):

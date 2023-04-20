@@ -24,7 +24,7 @@ from platformio.project.config import ProjectConfig
 
 
 def get_project_dir():
-    return fs.normalize_path(os.getcwd())
+    return os.getcwd()
 
 
 def is_platformio_project(project_dir=None):

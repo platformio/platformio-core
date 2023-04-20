@@ -65,9 +65,7 @@ def invoke_command(ctx, cmd, **kwargs):
     "--storage-dir",
     multiple=True,
     default=None,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
     help="Manage custom library storage",
 )
 @click.option(
