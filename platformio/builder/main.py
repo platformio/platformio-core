@@ -99,6 +99,7 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
         DEFAULT_ENV_OPTIONS["%sSTR" % name] = "%s $TARGET" % (value)
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
+env.SConscriptChdir(False)
 
 # Load variables from CLI
 env.Replace(
@@ -157,7 +158,6 @@ if not os.path.isdir(env.subst("$BUILD_DIR")):
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
-env.SConscriptChdir(0)
 env.SConsignFile(
     os.path.join(
         "$BUILD_CACHE_DIR" if env.subst("$BUILD_CACHE_DIR") else "$BUILD_DIR",
@@ -165,8 +165,7 @@ env.SConsignFile(
     )
 )
 
-for item in env.GetExtraScripts("pre"):
-    env.SConscript(item, exports="env")
+env.SConscript(env.GetExtraScripts("pre"), exports="env")
 
 if env.IsCleanTarget():
     env.CleanProject("cleanall" in COMMAND_LINE_TARGETS)
@@ -179,8 +178,7 @@ if "UPLOAD_FLAGS" in env:
 if env.GetProjectOption("upload_command"):
     env.Replace(UPLOADCMD=env.GetProjectOption("upload_command"))
 
-for item in env.GetExtraScripts("post"):
-    env.SConscript(item, exports="env")
+env.SConscript(env.GetExtraScripts("post"), exports="env")
 
 ##############################################################################
 

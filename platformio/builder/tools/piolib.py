@@ -297,11 +297,12 @@ class LibBuilderBase:
         with fs.cd(self.path):
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
-                self.env.SConscriptChdir(1)
+                self.env.SConscriptChdir(True)
                 self.env.SConscript(
                     os.path.abspath(self.extra_script),
                     exports={"env": self.env, "pio_lib_builder": self},
                 )
+                self.env.SConscriptChdir(False)
             self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
