@@ -105,7 +105,7 @@ class FileDownloader:
                         label=label,
                         update_min_steps=min(
                             256 * 1024, file_size / 100
-                        ),  # every 256Kb or less,
+                        ),  # every 256Kb or less
                     ) as pb:
                         for chunk in pb:
                             pb.update(len(chunk))

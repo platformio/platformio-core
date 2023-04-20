@@ -61,7 +61,7 @@ class PackageManagerDownloadMixin:
             self.set_download_utime(dl_path)
             return dl_path
 
-        with_progress = not silent and not app.is_disabled_progressbar()
+        with_progress = not app.is_disabled_progressbar()
         tmp_fd, tmp_path = tempfile.mkstemp(dir=self.get_download_dir())
         try:
             with LockFile(dl_path):
@@ -70,7 +70,7 @@ class PackageManagerDownloadMixin:
                     fd.set_destination(tmp_path)
                     fd.start(with_progress=with_progress, silent=silent)
                 except IOError as exc:
-                    raise_error = not with_progress
+                    raise_error = not silent
                     if with_progress:
                         try:
                             fd = FileDownloader(url)
