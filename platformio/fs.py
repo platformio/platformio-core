@@ -193,7 +193,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
 def to_unix_path(path):
     if not IS_WINDOWS or not path:
         return path
-    return re.sub(r"[\\]+", "/", path)
+    return path.replace("\\", "/")
 
 
 def expanduser(path):
