@@ -40,7 +40,7 @@ class PackageManagerSymlinkMixin:
         pkg_dir, spec = self.resolve_symlink(path)
         if not pkg_dir:
             return None
-        pkg = PackageItem(os.path.realpath(pkg_dir))
+        pkg = PackageItem(os.path.abspath(pkg_dir))
         if not pkg.metadata:
             pkg.metadata = self.build_metadata(pkg.path, spec)
         return pkg

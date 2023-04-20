@@ -134,7 +134,7 @@ class ProjectGenerator:
             for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
                 for f in files:
                     result.append(
-                        os.path.relpath(os.path.join(os.path.realpath(root), f))
+                        os.path.relpath(os.path.join(os.path.abspath(root), f))
                     )
         return result
 

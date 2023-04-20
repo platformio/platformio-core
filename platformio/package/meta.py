@@ -482,7 +482,7 @@ class PackageItem:
 
     def __eq__(self, other):
         conds = [
-            os.path.realpath(self.path) == os.path.realpath(other.path)
+            os.path.abspath(self.path) == os.path.abspath(other.path)
             if self.path and other.path
             else self.path == other.path,
             self.metadata == other.metadata,
@@ -490,7 +490,7 @@ class PackageItem:
         return all(conds)
 
     def __hash__(self):
-        return hash(os.path.realpath(self.path))
+        return hash(os.path.abspath(self.path))
 
     def exists(self):
         return os.path.isdir(self.path)

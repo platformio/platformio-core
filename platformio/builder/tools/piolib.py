@@ -170,8 +170,8 @@ class LibBuilderBase:
         ):
             return True
         # try to resolve paths
-        root_path = os.path.realpath(root_path)
-        child_path = os.path.realpath(child_path)
+        root_path = os.path.abspath(root_path)
+        child_path = os.path.abspath(child_path)
         return (
             os.path.commonprefix([root_path + os.path.sep, child_path])
             == root_path + os.path.sep
