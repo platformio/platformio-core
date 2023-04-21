@@ -200,7 +200,7 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
         for i, p in enumerate(result.get(k, [])):
-            if not os.path.isabs(p):
+            if os.path.isdir(p):
                 result[k][i] = os.path.abspath(p)
 
     # fix relative path for "-include"
