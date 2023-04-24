@@ -55,6 +55,7 @@ class IDERPC:
             value = [str(Path(p).resolve()) for p in value]
         self._cmd_queue[cmd_id]["future"].set_result(value)
         del self._cmd_queue[cmd_id]
+        return True
 
     def _process_commands(self):
         for cmd_id in list(self._cmd_queue):
