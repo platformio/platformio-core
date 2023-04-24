@@ -50,7 +50,7 @@ class IDERPC:
 
     def on_command_result(self, cmd_id, value):
         if cmd_id not in self._cmd_queue:
-            return
+            return False
         if self._cmd_queue[cmd_id]["method"] == "get_pio_project_dirs":
             value = [str(Path(p).resolve()) for p in value]
         self._cmd_queue[cmd_id]["future"].set_result(value)
