@@ -123,8 +123,6 @@ def cli(
                         fg="yellow",
                     )
 
-            handle_legacy_libdeps(project_dir, config)
-
             default_envs = config.default_envs()
             results = []
             for env in config.envs():
