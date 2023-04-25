@@ -32,6 +32,7 @@ PlatformIO Core 6
 * Resolved an issue where the incorrect debugging environment was generated for VSCode in "Auto" mode (`issue #4597 <https://github.com/platformio/platformio-core/issues/4597>`_)
 * Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
 * Resolved an issue where the PlatformIO |DEBUGGING| solution was not escaping the tool installation process into MI2 correctly (`issue #4565 <https://github.com/platformio/platformio-core/issues/4565>`_)
+* Resolved an issue where multiple targets were not executed sequentially (`issue #4604 <https://github.com/platformio/platformio-core/issues/4604>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~

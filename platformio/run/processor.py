@@ -68,7 +68,7 @@ class EnvironmentProcessor:
 
         build_vars = self.get_build_variables()
         is_clean = set(KNOWN_ALLCLEAN_TARGETS) & set(self.targets)
-        build_targets = list(set(self.targets) - set(KNOWN_ALLCLEAN_TARGETS))
+        build_targets = [t for t in self.targets if t not in KNOWN_ALLCLEAN_TARGETS]
 
         # pre-clean
         if is_clean:

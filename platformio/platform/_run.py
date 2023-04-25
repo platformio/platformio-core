@@ -93,6 +93,9 @@ class PlatformRunMixin:
         args.append("PIOVERBOSE=%d" % int(self.verbose))
         # pylint: disable=protected-access
         args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))
+        # encode and append variables
+        for key, value in variables.items():
+            args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
         if set(KNOWN_CLEAN_TARGETS + KNOWN_FULLCLEAN_TARGETS) & set(targets):
             args.append("--clean")
@@ -102,10 +105,6 @@ class PlatformRunMixin:
             )
         elif targets:
             args.extend(targets)
-
-        # encode and append variables
-        for key, value in variables.items():
-            args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
         # force SCons output to Unicode
         os.environ["PYTHONIOENCODING"] = "utf-8"

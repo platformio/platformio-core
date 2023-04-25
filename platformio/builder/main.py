@@ -250,3 +250,9 @@ if "sizedata" in COMMAND_LINE_TARGETS:
     )
 
     Default("sizedata")
+
+# issue #4604: process targets sequentially
+for index, target in enumerate(
+    [t for t in COMMAND_LINE_TARGETS if not t.startswith("__")][1:]
+):
+    env.Depends(target, COMMAND_LINE_TARGETS[index])
