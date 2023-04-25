@@ -26,7 +26,7 @@ from platformio.device.monitor.command import device_monitor_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
-from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps
+from platformio.run.helpers import clean_build_dir
 from platformio.run.processor import EnvironmentProcessor
 from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
@@ -97,10 +97,12 @@ def cli(
     if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
+    targets = list(target) if target else []
+    del target
+    only_monitor = targets == ["monitor"]
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
-
-    only_monitor = "monitor" in target and len(target) == 1
     command_failed = False
+
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
@@ -108,73 +110,66 @@ def cli(
         if list_targets:
             return print_target_list(list(environment) or config.envs())
 
-        if not only_monitor:
-            # clean obsolete build dir
-            if not disable_auto_clean:
-                build_dir = config.get("platformio", "build_dir")
-                try:
-                    clean_build_dir(build_dir, config)
-                except ProjectError as exc:
-                    raise exc
-                except:  # pylint: disable=bare-except
-                    click.secho(
-                        "Can not remove temporary directory `%s`. Please remove "
-                        "it manually to avoid build issues" % build_dir,
-                        fg="yellow",
-                    )
-
-            default_envs = config.default_envs()
-            results = []
-            for env in config.envs():
-                skipenv = any(
-                    [
-                        environment and env not in environment,
-                        not environment and default_envs and env not in default_envs,
-                    ]
+        # clean obsolete build dir
+        if not only_monitor and not disable_auto_clean:
+            build_dir = config.get("platformio", "build_dir")
+            try:
+                clean_build_dir(build_dir, config)
+            except ProjectError as exc:
+                raise exc
+            except:  # pylint: disable=bare-except
+                click.secho(
+                    "Can not remove temporary directory `%s`. Please remove "
+                    "it manually to avoid build issues" % build_dir,
+                    fg="yellow",
                 )
-                if skipenv:
-                    results.append({"env": env})
-                    continue
 
-                # print empty line between multi environment project
-                if not silent and any(r.get("succeeded") is not None for r in results):
-                    click.echo()
+        default_envs = config.default_envs()
+        results = []
+        for env in config.envs():
+            skipenv = any(
+                [
+                    environment and env not in environment,
+                    not environment and default_envs and env not in default_envs,
+                ]
+            )
+            if skipenv:
+                results.append({"env": env})
+                continue
 
-                results.append(
-                    process_env(
-                        ctx,
-                        env,
-                        config,
-                        target,
-                        upload_port,
-                        jobs,
-                        program_args,
-                        is_test_running,
-                        silent,
-                        verbose,
-                    )
+            # print empty line between multi environment project
+            if not silent and any(r.get("succeeded") is not None for r in results):
+                click.echo()
+
+            results.append(
+                process_env(
+                    ctx,
+                    env,
+                    config,
+                    targets,
+                    upload_port,
+                    monitor_port,
+                    jobs,
+                    program_args,
+                    is_test_running,
+                    silent,
+                    verbose,
                 )
-            command_failed = any(r.get("succeeded") is False for r in results)
-            if (
-                not is_test_running
-                and (command_failed or not silent)
-                and len(results) > 1
-            ):
-                print_processing_summary(results, verbose)
+            )
+        command_failed = any(r.get("succeeded") is False for r in results)
+        if (
+            not is_test_running
+            and not only_monitor
+            and (command_failed or not silent)
+            and len(results) > 1
+        ):
+            print_processing_summary(results, verbose)
 
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
     if command_failed:
         raise exception.ReturnErrorCode(1)
-
-    if "monitor" in target and "nobuild" not in target:
-        ctx.invoke(
-            device_monitor_cmd,
-            project_dir=project_dir,
-            port=monitor_port,
-            environment=environment[0] if environment else None,
-        )
 
     return True
 
@@ -185,6 +180,7 @@ def process_env(
     config,
     targets,
     upload_port,
+    monitor_port,
     jobs,
     program_args,
     is_test_running,
@@ -194,22 +190,38 @@ def process_env(
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
 
-    ep = EnvironmentProcessor(
-        ctx,
-        name,
-        config,
-        targets,
-        upload_port,
-        jobs,
-        program_args,
-        silent,
-        verbose,
-    )
-    result = {"env": name, "duration": time(), "succeeded": ep.process()}
+    targets = targets or config.get(f"env:{name}", "targets", [])
+    only_monitor = targets == ["monitor"]
+    result = {"env": name, "duration": time(), "succeeded": True}
+
+    if not only_monitor:
+        result["succeeded"] = EnvironmentProcessor(
+            ctx,
+            name,
+            config,
+            [t for t in targets if t != "monitor"],
+            upload_port,
+            jobs,
+            program_args,
+            silent,
+            verbose,
+        ).process()
+
+    if "monitor" in targets and "nobuild" not in targets:
+        ctx.invoke(
+            device_monitor_cmd,
+            port=monitor_port,
+            environment=name,
+        )
+
     result["duration"] = time() - result["duration"]
 
     # print footer on error or when is not unit testing
-    if not is_test_running and (not silent or not result["succeeded"]):
+    if (
+        not is_test_running
+        and not only_monitor
+        and (not silent or not result["succeeded"])
+    ):
         print_processing_footer(result)
 
     return result

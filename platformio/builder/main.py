@@ -168,7 +168,7 @@ env.SConsignFile(
 env.SConscript(env.GetExtraScripts("pre"), exports="env")
 
 if env.IsCleanTarget():
-    env.CleanProject("cleanall" in COMMAND_LINE_TARGETS)
+    env.CleanProject(fullclean=int(ARGUMENTS.get("FULLCLEAN", 0)))
     env.Exit(0)
 
 env.SConscript("$BUILD_SCRIPT")

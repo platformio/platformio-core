@@ -15,6 +15,7 @@
 from platformio.package.commands.install import install_project_env_dependencies
 from platformio.platform.factory import PlatformFactory
 from platformio.project.exception import UndefinedEnvPlatformError
+from platformio.run.helpers import KNOWN_ALLCLEAN_TARGETS
 from platformio.test.runners.base import CTX_META_TEST_RUNNING_NAME
 
 # pylint: disable=too-many-instance-attributes
@@ -36,7 +37,7 @@ class EnvironmentProcessor:
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
-        self.targets = [str(t) for t in targets]
+        self.targets = targets
         self.upload_port = upload_port
         self.jobs = jobs
         self.program_args = program_args
@@ -61,33 +62,29 @@ class EnvironmentProcessor:
             variables["upload_port"] = self.upload_port
         return variables
 
-    def get_build_targets(self):
-        return (
-            self.targets
-            if self.targets
-            else self.config.get("env:" + self.name, "targets", [])
-        )
-
     def process(self):
         if "platform" not in self.options:
             raise UndefinedEnvPlatformError(self.name)
 
         build_vars = self.get_build_variables()
-        build_targets = list(self.get_build_targets())
+        is_clean = set(KNOWN_ALLCLEAN_TARGETS) & set(self.targets)
+        build_targets = list(set(self.targets) - set(KNOWN_ALLCLEAN_TARGETS))
 
-        # skip monitor target, we call it above
-        if "monitor" in build_targets:
-            build_targets.remove("monitor")
+        # pre-clean
+        if is_clean:
+            result = PlatformFactory.new(
+                self.options["platform"], autoinstall=True
+            ).run(build_vars, self.targets, self.silent, self.verbose, self.jobs)
+            if not build_targets:
+                return result["returncode"] == 0
 
-        if not set(["clean", "cleanall"]) & set(build_targets):
-            install_project_env_dependencies(
-                self.name,
-                {
-                    "project_targets": build_targets,
-                    "piotest_running_name": build_vars.get("piotest_running_name"),
-                },
-            )
-
+        install_project_env_dependencies(
+            self.name,
+            {
+                "project_targets": self.targets,
+                "piotest_running_name": build_vars.get("piotest_running_name"),
+            },
+        )
         result = PlatformFactory.new(self.options["platform"], autoinstall=True).run(
             build_vars, build_targets, self.silent, self.verbose, self.jobs
         )

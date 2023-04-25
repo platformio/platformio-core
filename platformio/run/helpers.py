@@ -18,6 +18,10 @@ from os.path import isdir, isfile, join
 from platformio import fs
 from platformio.project.helpers import compute_project_checksum, get_project_dir
 
+KNOWN_CLEAN_TARGETS = ("clean",)
+KNOWN_FULLCLEAN_TARGETS = ("cleanall", "fullclean")
+KNOWN_ALLCLEAN_TARGETS = KNOWN_CLEAN_TARGETS + KNOWN_FULLCLEAN_TARGETS
+
 
 def clean_build_dir(build_dir, config):
     # remove legacy ".pioenvs" folder
