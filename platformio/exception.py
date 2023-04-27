@@ -93,15 +93,6 @@ class CIBuildEnvsEmpty(UserSideException):
     )
 
 
-class UpgradeError(PlatformioException):
-    MESSAGE = """{0}
-
-* Upgrade using `pip install -U platformio`
-* Try different installation/upgrading steps:
-  https://docs.platformio.org/page/installation.html
-"""
-
-
 class HomeDirPermissionsError(UserSideException):
     MESSAGE = (
         "The directory `{0}` or its parent directory is not owned by the "

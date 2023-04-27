@@ -166,8 +166,6 @@ def after_upgrade(ctx):
                 action="Upgrade",
                 label="%s > %s" % (last_version, __version__),
             )
-        else:
-            raise exception.UpgradeError("Auto upgrading...")
 
     # PlatformIO banner
     click.echo("*" * terminal_width)

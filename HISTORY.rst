@@ -18,22 +18,23 @@ PlatformIO Core 6
 6.1.7 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented a new feature to store device monitor logs in the project's "logs" folder, making it easier to access and review device monitor logs for your projects (`issue #4596 <https://github.com/platformio/platformio-core/issues/4596>`_)
-* Improved support for projects located on Windows network drives, including Network Shared Folder, Dropbox, OneDrive, Google Drive, and other similar services (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
-* Improved source file filtering functionality for the `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature, making it easier to analyze only the code you need to
+* Implemented a new feature to store device monitor logs in the project's ``logs`` folder, making it easier to access and review device monitor logs for your projects (`issue #4596 <https://github.com/platformio/platformio-core/issues/4596>`_)
 * Added the ability to show a detailed library dependency tree only in `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__, which can help you understand the relationship between libraries and troubleshoot issues more effectively (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
 * Added the ability to run only the `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ when using the `pio run -t monitor <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, saving you time and resources by skipping the build process
 * Added validation for `project working environment names <https://docs.platformio.org/en/latest/projectconf/sections/env/index.html#working-env-name>`__ to ensure that they only contain lowercase letters ``a-z``, numbers ``0-9``, and special characters ``_`` (underscore) and ``-`` (hyphen)
+* Improved support for projects located on Windows network drives, including Network Shared Folder, Dropbox, OneDrive, Google Drive, and other similar services (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+* Improved source file filtering functionality for the `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature, making it easier to analyze only the code you need to
 * Upgraded the build engine to the latest version of SCons (4.5.2) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.5.2>`__)
 * Implemented a fix for shell injection vulnerabilities when converting INO files to CPP, ensuring your code is safe and secure (`issue #4532 <https://github.com/platformio/platformio-core/issues/4532>`_)
 * Restored the project generator for the `NetBeans IDE <https://docs.platformio.org/en/latest/integration/ide/netbeans.html>`__, providing you with more flexibility and options for your development workflow
+* Resolved installation issues with PIO Remote on Raspberry Pi and other small form-factor PCs (`issue #4425 <https://github.com/platformio/platformio-core/issues/4425>`_, `issue #4493 <https://github.com/platformio/platformio-core/issues/4493>`_, `issue #4607 <https://github.com/platformio/platformio-core/issues/4607>`_)
 * Resolved an issue where the `build_cache_dir <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html>`__ setting was not being recognized consistently across multiple environments (`issue #4574 <https://github.com/platformio/platformio-core/issues/4574>`_)
 * Resolved an issue where organization details could not be updated using the `pio org update <https://docs.platformio.org/en/latest/core/userguide/org/cmd_update.html>`__ command
 * Resolved an issue where the incorrect debugging environment was generated for VSCode in "Auto" mode (`issue #4597 <https://github.com/platformio/platformio-core/issues/4597>`_)
 * Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
 * Resolved an issue where the PlatformIO |DEBUGGING| solution was not escaping the tool installation process into MI2 correctly (`issue #4565 <https://github.com/platformio/platformio-core/issues/4565>`_)
 * Resolved an issue where multiple targets were not executed sequentially (`issue #4604 <https://github.com/platformio/platformio-core/issues/4604>`_)
-* Resolved installation issues with PIO Remote on Raspberry Pi and other small form-factor PCs (`issue #4425 <https://github.com/platformio/platformio-core/issues/4425>`_, `issue #4493 <https://github.com/platformio/platformio-core/issues/4493>`_, `issue #4607 <https://github.com/platformio/platformio-core/issues/4607>`_)
+* Resolved an issue where upgrading PlatformIO Core fails on Windows with Python 3.11 (`issue #4540 <https://github.com/platformio/platformio-core/issues/4540>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
