@@ -48,6 +48,8 @@ def pytest_generate_tests(metafunc):
         for root, _, files in os.walk(examples_dir):
             if "platformio.ini" not in files or ".skiptest" in files:
                 continue
+            if "mbed-legacy-examples" in root:
+                continue
             group = os.path.basename(root)
             if "-" in group:
                 group = group.split("-", 1)[0]
