@@ -33,6 +33,7 @@ PlatformIO Core 6
 * Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
 * Resolved an issue where the PlatformIO |DEBUGGING| solution was not escaping the tool installation process into MI2 correctly (`issue #4565 <https://github.com/platformio/platformio-core/issues/4565>`_)
 * Resolved an issue where multiple targets were not executed sequentially (`issue #4604 <https://github.com/platformio/platformio-core/issues/4604>`_)
+* Resolved installation issues with PIO Remote on Raspberry Pi and other small form-factor PCs (`issue #4425 <https://github.com/platformio/platformio-core/issues/4425>`_, `issue #4493 <https://github.com/platformio/platformio-core/issues/4493>`_, `issue #4607 <https://github.com/platformio/platformio-core/issues/4607>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~

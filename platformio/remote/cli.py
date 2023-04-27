@@ -17,7 +17,9 @@
 
 import os
 import subprocess
+import sys
 import threading
+from site import addsitedir
 from tempfile import mkdtemp
 from time import sleep
 
@@ -29,7 +31,7 @@ from platformio.device.monitor.command import (
     device_monitor_cmd,
     get_project_options,
 )
-from platformio.package.manager.core import inject_contrib_pysite
+from platformio.package.manager.core import get_core_package_dir
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.options import ProjectOptions
 from platformio.run.cli import cli as cmd_run
@@ -41,7 +43,11 @@ from platformio.test.cli import cli as test_cmd
 @click.pass_context
 def cli(ctx, agent):
     ctx.obj = agent
-    inject_contrib_pysite()
+    # inject twisted dependencies
+    contrib_dir = get_core_package_dir("contrib-pioremote")
+    if contrib_dir not in sys.path:
+        addsitedir(contrib_dir)
+        sys.path.insert(0, contrib_dir)
 
 
 @cli.group("agent", short_help="Start a new agent or list active")
