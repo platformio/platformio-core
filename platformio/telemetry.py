@@ -105,18 +105,6 @@ class MeasurementProtocol(TelemetryBase):
         self["cd3"] = " ".join(args)
 
     def _prefill_custom_data(self):
-        def _filter_args(items):
-            result = []
-            stop = False
-            for item in items:
-                item = str(item).lower()
-                result.append(item)
-                if stop:
-                    break
-                if item == "account":
-                    stop = True
-            return result
-
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
         self["cd4"] = 1 if (not is_ci() and (caller_id or not is_container())) else 0
