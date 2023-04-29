@@ -22,7 +22,7 @@ sys.path.append("..")
 
 import click  # noqa: E402
 
-from platformio import fs, util  # noqa: E402
+from platformio import fs  # noqa: E402
 from platformio.package.manager.platform import PlatformPackageManager  # noqa: E402
 from platformio.platform.factory import PlatformFactory  # noqa: E402
 
@@ -40,6 +40,25 @@ RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio
 """
 
 SKIP_DEBUG_TOOLS = ["esp-bridge", "esp-builtin"]
+
+STATIC_FRAMEWORK_DATA = {
+    "arduino": {
+        "title": "Arduino",
+        "description": (
+            "Arduino Wiring-based Framework allows writing cross-platform software "
+            "to control devices attached to a wide range of Arduino boards to "
+            "create all kinds of creative coding, interactive objects, spaces "
+            "or physical experiences."
+        ),
+    },
+    "freertos": {
+        "title": "FreeRTOS",
+        "description": (
+            "FreeRTOS is a real-time operating system kernel for embedded devices "
+            "that has been ported to 40 microcontroller platforms."
+        ),
+    },
+}
 
 DOCS_ROOT_DIR = os.path.realpath(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "docs")
@@ -92,16 +111,29 @@ def install_platforms():
 @functools.cache
 def get_frameworks():
     items = {}
-    for pkg in PlatformPackageManager().get_installed():
-        p = PlatformFactory.new(pkg)
+    for platform in PlatformPackageManager().get_installed():
+        p = PlatformFactory.new(platform)
         for name, options in (p.frameworks or {}).items():
-            if name in items or not set(options.keys()).issuperset(
-                set(["title", "description"])
-            ):
+            if name in items:
                 continue
-            items[name] = dict(
-                name=name, title=options["title"], description=options["description"]
-            )
+            if name in STATIC_FRAMEWORK_DATA:
+                items[name] = dict(
+                    name=name,
+                    title=STATIC_FRAMEWORK_DATA[name]["title"],
+                    description=STATIC_FRAMEWORK_DATA[name]["description"],
+                )
+                continue
+            title = options.get("title") or name.title()
+            description = options.get("description")
+            if "package" in options:
+                regdata = REGCLIENT.get_package(
+                    "tool",
+                    p.packages[options["package"]].get("owner", "platformio"),
+                    options["package"],
+                )
+                title = regdata["title"] or title
+                description = regdata["description"]
+            items[name] = dict(name=name, title=title, description=description)
     return sorted(items.values(), key=lambda item: item["name"])
 
 
@@ -129,7 +161,7 @@ def generate_boards_table(boards, skip_columns=None):
     )
 
     # add header
-    for (name, template) in columns:
+    for name, template in columns:
         if skip_columns and name in skip_columns:
             continue
         prefix = "    * - " if name == "Name" else "      - "
@@ -156,7 +188,7 @@ def generate_boards_table(boards, skip_columns=None):
             rom=fs.humanize_file_size(data["rom"]),
         )
 
-        for (name, template) in columns:
+        for name, template in columns:
             if skip_columns and name in skip_columns:
                 continue
             prefix = "    * - " if name == "Name" else "      - "
@@ -905,7 +937,7 @@ You can switch between debugging :ref:`debugging_tools` using
     - On-board
     - Default"""
         )
-        for (tool_name, tool_data) in sorted(board["debug"]["tools"].items()):
+        for tool_name, tool_data in sorted(board["debug"]["tools"].items()):
             lines.append(
                 """  * - {tool}
     - {onboard}
