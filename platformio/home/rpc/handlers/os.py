@@ -156,9 +156,5 @@ class OSRPC:
 
     @staticmethod
     def get_logical_devices():
-        items = []
-        for item in list_logical_devices():
-            if item["name"]:
-                item["name"] = item["name"]
-            items.append(item)
-        return items
+        return list_logical_devices()
+
