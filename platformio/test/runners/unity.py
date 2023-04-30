@@ -114,7 +114,7 @@ $framework_config_code
         native=dict(
             code="""
 #include <stdio.h>
-void unityOutputStart(unsigned long baudrate) { }
+void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
@@ -155,7 +155,7 @@ void unityOutputComplete(void) { }
         espidf=dict(
             code="""
 #include <stdio.h>
-void unityOutputStart(unsigned long baudrate) { }
+void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
@@ -165,7 +165,7 @@ void unityOutputComplete(void) { }
         zephyr=dict(
             code="""
 #include <sys/printk.h>
-void unityOutputStart(unsigned long baudrate) { }
+void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { printk("%c", c); }
 void unityOutputFlush(void) { }
 void unityOutputComplete(void) { }
