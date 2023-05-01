@@ -90,6 +90,14 @@ class OSRPC:
         return click.launch(path)
 
     @staticmethod
+    def call_path_module_func(name, args, **kwargs):
+        return getattr(os.path, name)(*args, **kwargs)
+
+    @staticmethod
+    def get_path_separator():
+        return os.sep
+
+    @staticmethod
     def is_file(path):
         return os.path.isfile(path)
 
@@ -157,4 +165,3 @@ class OSRPC:
     @staticmethod
     def get_logical_devices():
         return list_logical_devices()
-
