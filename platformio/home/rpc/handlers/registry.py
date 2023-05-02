@@ -15,10 +15,11 @@
 from ajsonrpc.core import JSONRPC20DispatchException
 from starlette.concurrency import run_in_threadpool
 
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.registry.client import RegistryClient
 
 
-class RegistryRPC:
+class RegistryRPC(BaseRPCHandler):
     @staticmethod
     async def call_client(method, *args, **kwargs):
         try:

@@ -20,6 +20,7 @@ from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio import exception, fs
 from platformio.home.rpc.handlers.app import AppRPC
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.project.config import ProjectConfig
@@ -29,7 +30,7 @@ from platformio.project.integration.generator import ProjectGenerator
 from platformio.project.options import get_config_options_schema
 
 
-class ProjectRPC:
+class ProjectRPC(BaseRPCHandler):
     @staticmethod
     def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)

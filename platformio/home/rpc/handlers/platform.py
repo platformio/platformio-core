@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 
 
-class PlatformRPC:
+class PlatformRPC(BaseRPCHandler):
     @staticmethod
     def list_installed(options=None):
         result = []

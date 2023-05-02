@@ -17,10 +17,11 @@ import time
 
 from platformio.cache import ContentCache
 from platformio.compat import aio_create_task
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.os import OSRPC
 
 
-class MiscRPC:
+class MiscRPC(BaseRPCHandler):
     async def load_latest_tweets(self, data_url):
         cache_key = ContentCache.key_from_args(data_url, "tweets")
         cache_valid = "180d"

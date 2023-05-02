@@ -24,6 +24,7 @@ from starlette.concurrency import run_in_threadpool
 from platformio import fs
 from platformio.cache import ContentCache
 from platformio.device.list.util import list_logical_devices
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.http import HTTPSession, ensure_internet_on
 
 
@@ -35,7 +36,7 @@ class HTTPAsyncSession(HTTPSession):
         return await run_in_threadpool(func, *args, **kwargs)
 
 
-class OSRPC:
+class OSRPC(BaseRPCHandler):
     @staticmethod
     async def fetch_content(url, data=None, headers=None, cache_valid=None):
         if not headers:

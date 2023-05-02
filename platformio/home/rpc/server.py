@@ -37,6 +37,7 @@ class JSONRPCServerFactoryBase:
         raise NotImplementedError
 
     def add_object_handler(self, handler, namespace):
+        handler.factory = self
         self.manager.dispatcher.add_object(handler, prefix="%s." % namespace)
 
     def on_client_connect(self):

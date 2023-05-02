@@ -18,9 +18,10 @@ from pathlib import Path
 from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio.compat import aio_get_running_loop
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 
-class IDERPC:
+class IDERPC(BaseRPCHandler):
     COMMAND_TIMEOUT = 1.5  # in seconds
 
     def __init__(self):
