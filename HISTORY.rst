@@ -18,10 +18,11 @@ PlatformIO Core 6
 6.1.7 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented a new feature to store device monitor logs in the project's ``logs`` folder, making it easier to access and review device monitor logs for your projects (`issue #4596 <https://github.com/platformio/platformio-core/issues/4596>`_)
+* Introduced a new ``--sample-code`` option to the `pio project init <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command, which allows users to include sample code in the newly created project
+* Added validation for `project working environment names <https://docs.platformio.org/en/latest/projectconf/sections/env/index.html#working-env-name>`__ to ensure that they only contain lowercase letters ``a-z``, numbers ``0-9``, and special characters ``_`` (underscore) and ``-`` (hyphen)
 * Added the ability to show a detailed library dependency tree only in `verbose mode <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-v>`__, which can help you understand the relationship between libraries and troubleshoot issues more effectively (`issue #4517 <https://github.com/platformio/platformio-core/issues/4517>`_)
 * Added the ability to run only the `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ when using the `pio run -t monitor <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, saving you time and resources by skipping the build process
-* Added validation for `project working environment names <https://docs.platformio.org/en/latest/projectconf/sections/env/index.html#working-env-name>`__ to ensure that they only contain lowercase letters ``a-z``, numbers ``0-9``, and special characters ``_`` (underscore) and ``-`` (hyphen)
+* Implemented a new feature to store device monitor logs in the project's ``logs`` folder, making it easier to access and review device monitor logs for your projects (`issue #4596 <https://github.com/platformio/platformio-core/issues/4596>`_)
 * Improved support for projects located on Windows network drives, including Network Shared Folder, Dropbox, OneDrive, Google Drive, and other similar services (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Improved source file filtering functionality for the `Static Code Analysis <https://docs.platformio.org/en/latest/advanced/static-code-analysis/index.html>`__ feature, making it easier to analyze only the code you need to
 * Upgraded the build engine to the latest version of SCons (4.5.2) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.5.2>`__)

@@ -107,8 +107,8 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         ctx.invoke(
             project_init_cmd,
             project_dir=build_dir,
-            board=board,
-            project_option=project_option,
+            boards=board,
+            project_options=project_option,
         )
 
         # process project

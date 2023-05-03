@@ -25,28 +25,28 @@ from platformio.project.helpers import load_build_metadata
 
 
 class ProjectGenerator:
-    def __init__(self, config, env_name, ide, board_ids=None):
+    def __init__(self, config, env_name, ide, boards=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
         self.forced_env_name = env_name
-        self.env_name = str(env_name or self.get_best_envname(board_ids))
+        self.env_name = str(env_name or self.get_best_envname(boards))
         self.ide = str(ide)
 
-    def get_best_envname(self, board_ids=None):
+    def get_best_envname(self, boards=None):
         envname = None
         default_envs = self.config.default_envs()
         if default_envs:
             envname = default_envs[0]
-            if not board_ids:
+            if not boards:
                 return envname
 
         for env in self.config.envs():
-            if not board_ids:
+            if not boards:
                 return env
             if not envname:
                 envname = env
             items = self.config.items(env=env, as_dict=True)
-            if "board" in items and items.get("board") in board_ids:
+            if "board" in items and items.get("board") in boards:
                 return env
         return envname
 

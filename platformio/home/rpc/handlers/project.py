@@ -18,7 +18,7 @@ import time
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
-from platformio import exception, fs
+from platformio import app, exception, fs
 from platformio.home.rpc.handlers.app import AppRPC
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.piocore import PIOCoreRPC
@@ -185,83 +185,17 @@ class ProjectRPC(BaseRPCHandler):
 
     async def init(self, board, framework, project_dir):
         assert project_dir
-        state = AppRPC.load_state()
         if not os.path.isdir(project_dir):
             os.makedirs(project_dir)
-        args = ["init", "--board", board]
+        args = ["init", "--board", board, "--sample-code"]
         if framework:
             args.extend(["--project-option", "framework = %s" % framework])
-        if (
-            state["storage"]["coreCaller"]
-            and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
-        ):
-            args.extend(["--ide", state["storage"]["coreCaller"]])
+        ide = app.get_session_var("caller_id")
+        if ide in ProjectGenerator.get_supported_ides():
+            args.extend(["--ide", ide])
         await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
-        return self._generate_project_main(project_dir, board, framework)
-
-    @staticmethod
-    def _generate_project_main(project_dir, board, framework):
-        main_content = None
-        if framework == "arduino":
-            main_content = "\n".join(
-                [
-                    "#include <Arduino.h>",
-                    "",
-                    "void setup() {",
-                    "  // put your setup code here, to run once:",
-                    "}",
-                    "",
-                    "void loop() {",
-                    "  // put your main code here, to run repeatedly:",
-                    "}",
-                    "",
-                ]
-            )
-        elif framework == "mbed":
-            main_content = "\n".join(
-                [
-                    "#include <mbed.h>",
-                    "",
-                    "int main() {",
-                    "",
-                    "  // put your setup code here, to run once:",
-                    "",
-                    "  while(1) {",
-                    "    // put your main code here, to run repeatedly:",
-                    "  }",
-                    "}",
-                    "",
-                ]
-            )
-        if not main_content:
-            return project_dir
-
-        is_cpp_project = True
-        pm = PlatformPackageManager()
-        try:
-            board = pm.board_config(board)
-            platforms = board.get("platforms", board.get("platform"))
-            if not isinstance(platforms, list):
-                platforms = [platforms]
-            c_based_platforms = ["intel_mcs51", "ststm8"]
-            is_cpp_project = not set(platforms) & set(c_based_platforms)
-        except exception.PlatformioException:
-            pass
-
-        with fs.cd(project_dir):
-            config = ProjectConfig()
-            src_dir = config.get("platformio", "src_dir")
-            main_path = os.path.join(
-                src_dir, "main.%s" % ("cpp" if is_cpp_project else "c")
-            )
-            if os.path.isfile(main_path):
-                return project_dir
-            if not os.path.isdir(src_dir):
-                os.makedirs(src_dir)
-            with open(main_path, mode="w", encoding="utf8") as fp:
-                fp.write(main_content.strip())
         return project_dir
 
     @staticmethod
@@ -297,11 +231,9 @@ class ProjectRPC(BaseRPCHandler):
             args.extend(
                 ["--project-option", "lib_extra_dirs = ~/Documents/Arduino/libraries"]
             )
-        if (
-            state["storage"]["coreCaller"]
-            and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
-        ):
-            args.extend(["--ide", state["storage"]["coreCaller"]])
+        ide = app.get_session_var("caller_id")
+        if ide in ProjectGenerator.get_supported_ides():
+            args.extend(["--ide", ide])
         await PIOCoreRPC.call(
             args, options={"cwd": project_dir, "force_subprocess": True}
         )
@@ -325,13 +257,10 @@ class ProjectRPC(BaseRPCHandler):
         )
         shutil.copytree(project_dir, new_project_dir, symlinks=True)
 
-        state = AppRPC.load_state()
         args = ["init"]
-        if (
-            state["storage"]["coreCaller"]
-            and state["storage"]["coreCaller"] in ProjectGenerator.get_supported_ides()
-        ):
-            args.extend(["--ide", state["storage"]["coreCaller"]])
+        ide = app.get_session_var("caller_id")
+        if ide in ProjectGenerator.get_supported_ides():
+            args.extend(["--ide", ide])
         await PIOCoreRPC.call(
             args, options={"cwd": new_project_dir, "force_subprocess": True}
         )
