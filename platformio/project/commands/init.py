@@ -127,15 +127,6 @@ def project_init_cmd(
 
 
 def print_header(project_dir):
-    if project_dir == os.getcwd():
-        click.secho("\nThe current working directory ", fg="yellow", nl=False)
-        try:
-            click.secho(project_dir, fg="cyan", nl=False)
-        except UnicodeEncodeError:
-            click.secho(json.dumps(project_dir), fg="cyan", nl=False)
-        click.secho(" will be used for the project.", fg="yellow")
-        click.echo("")
-
     click.echo("The next files/directories have been created in ", nl=False)
     try:
         click.secho(project_dir, fg="cyan")
@@ -153,18 +144,9 @@ def print_header(project_dir):
 
 
 def print_footer(is_new_project):
-    if is_new_project:
-        return click.secho(
-            "\nProject has been successfully initialized! Useful commands:\n"
-            "`pio run` - process/build project from the current directory\n"
-            "`pio run --target upload` or `pio run -t upload` "
-            "- upload firmware to a target\n"
-            "`pio run --target clean` - clean project (remove compiled files)"
-            "\n`pio run --help` - additional information",
-            fg="green",
-        )
+    action = "initialized" if is_new_project else "updated"
     return click.secho(
-        "Project has been successfully updated!",
+        f"Project has been successfully {action}!",
         fg="green",
     )
 
