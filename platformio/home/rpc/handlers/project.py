@@ -16,6 +16,7 @@ import os
 import shutil
 import time
 
+import semantic_version
 from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio import app, exception, fs
@@ -265,3 +266,42 @@ class ProjectRPC(BaseRPCHandler):
             args, options={"cwd": new_project_dir, "force_subprocess": True}
         )
         return new_project_dir
+
+    async def create_empty(self, configuration, options=None):
+        project_dir = os.path.join(configuration["location"], configuration["name"])
+        if not os.path.isdir(project_dir):
+            os.makedirs(project_dir)
+
+        project_options = []
+        platform = configuration["platform"]
+        board = configuration.get("board", {}).get("id")
+        env_name = board or platform["name"]
+        if configuration.get("description"):
+            project_options.append(("description", configuration.get("description")))
+        try:
+            v = semantic_version.Version(platform.get("version"))
+            assert not v.prerelease
+            project_options.append(
+                ("platform", "{name} @ ^{version}".format(**platform))
+            )
+        except (AssertionError, ValueError):
+            project_options.append(
+                ("platform", "{name} @ {version}".format(**platform))
+            )
+        if board:
+            project_options.append(("board", board))
+        if configuration.get("framework"):
+            project_options.append(("framework", configuration["framework"]["name"]))
+
+        args = ["project", "init", "-e", env_name, "--sample-code"]
+        ide = app.get_session_var("caller_id")
+        if ide in ProjectGenerator.get_supported_ides():
+            args.extend(["--ide", ide])
+        for name, value in project_options:
+            args.extend(["-O", f"{name}={value}"])
+
+        envclone = os.environ.copy()
+        envclone["PLATFORMIO_FORCE_ANSI"] = "true"
+        options = options or {}
+        options["spawn"] = {"env": envclone, "cwd": project_dir}
+        return await self.factory.manager.dispatcher["core.exec"](args, options=options)
