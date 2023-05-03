@@ -22,7 +22,6 @@ import semantic_version
 from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
 from platformio.cli import PlatformioCLI
-from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.http import HTTPClientError, InternetConnectionError, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
@@ -67,15 +66,15 @@ def on_platformio_exception(e):
 
 def set_caller(caller=None):
     caller = caller or os.getenv("PLATFORMIO_CALLER")
+    if not caller:
+        if os.getenv("CODESPACES"):
+            caller = "codespaces"
+        elif os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
+            caller = "vscode"
+        elif os.getenv("GITPOD_WORKSPACE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
+            caller = "gitpod"
     if caller:
-        return app.set_session_var("caller_id", caller)
-    if os.getenv("CODESPACES"):
-        caller = "codespaces"
-    elif os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
-        caller = "vscode"
-    elif os.getenv("GITPOD_WORKSPACE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
-        caller = "gitpod"
-    return app.set_session_var("caller_id", caller)
+        app.set_session_var("caller_id", caller)
 
 
 class Upgrader:
@@ -84,7 +83,6 @@ class Upgrader:
         self.to_version = pepver_to_semver(to_version)
 
         self._upgraders = [
-            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms),
             (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
         ]
 
@@ -99,11 +97,6 @@ class Upgrader:
             result.append(callback(ctx))
 
         return all(result)
-
-    @staticmethod
-    def _update_dev_platforms(ctx):
-        ctx.invoke(cmd_platform_update)
-        return True
 
     @staticmethod
     def _update_pkg_metadata(_):
