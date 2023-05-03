@@ -45,7 +45,7 @@ class ShutdownMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] == "http" and b"__shutdown__" in scope.get("query_string", {}):
+        if scope["type"] == "http" and b"__shutdown__" in scope.get("query_string", ""):
             await shutdown_server()
         await self.app(scope, receive, send)
 

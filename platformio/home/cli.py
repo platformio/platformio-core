@@ -13,10 +13,11 @@
 # limitations under the License.
 
 import mimetypes
+import socket
 
 import click
 
-from platformio.home.helpers import is_port_used
+from platformio.compat import IS_WINDOWS
 from platformio.home.run import run_server
 from platformio.package.manager.core import get_core_package_dir
 
@@ -95,3 +96,23 @@ def cli(port, host, no_open, shutdown_timeout, session_id):
         shutdown_timeout=shutdown_timeout,
         home_url=home_url,
     )
+
+
+def is_port_used(host, port):
+    socket.setdefaulttimeout(1)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if IS_WINDOWS:
+        try:
+            s.bind((host, port))
+            s.close()
+            return False
+        except (OSError, socket.error):
+            pass
+    else:
+        try:
+            s.connect((host, port))
+            s.close()
+        except socket.error:
+            return False
+
+    return True
