@@ -127,14 +127,14 @@ def project_init_cmd(
 
 
 def print_header(project_dir):
-    click.echo("The next files/directories have been created in ", nl=False)
+    click.echo("The following files/directories have been created in ", nl=False)
     try:
         click.secho(project_dir, fg="cyan")
     except UnicodeEncodeError:
         click.secho(json.dumps(project_dir), fg="cyan")
     click.echo("%s - Put project header files here" % click.style("include", fg="cyan"))
     click.echo(
-        "%s - Put here project specific (private) libraries"
+        "%s - Put project specific (private) libraries here"
         % click.style("lib", fg="cyan")
     )
     click.echo("%s - Put project source files here" % click.style("src", fg="cyan"))
@@ -355,6 +355,8 @@ def update_project_env(environment, extra_project_options=None):
         "platformio.ini", parse_extra=False, expand_interpolations=False
     )
     for section, options in option_to_sections.items():
+        if not options:
+            continue
         if not config.has_section(section):
             config.add_section(section)
         for name, value in options:
