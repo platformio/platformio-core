@@ -36,6 +36,7 @@ minimal_requirements = [
     "pyelftools>=0.27,<1",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
+    "urllib3<2", # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
     "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
     "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
