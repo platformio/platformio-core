@@ -15,7 +15,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.7 (2023-??-??)
+6.1.7 (2023-05-08)
 ~~~~~~~~~~~~~~~~~~
 
 * Introduced a new ``--sample-code`` option to the `pio project init <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command, which allows users to include sample code in the newly created project
