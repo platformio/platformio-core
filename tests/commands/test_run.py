@@ -22,6 +22,7 @@ def test_generic_build(clirunner, validate_cliresult, tmpdir):
         ("-D TEST_INT=13", "-DTEST_INT=13"),
         ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
         ('-DTEST_STR_SPACE="Andrew Smith"', '"-DTEST_STR_SPACE=Andrew Smith"'),
+        ("-Iextra_inc", "-Iextra_inc"),
     ]
 
     tmpdir.join("platformio.ini").write(
@@ -58,8 +59,20 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
     """
     )
 
+    tmpdir.mkdir("extra_inc").join("foo.h").write(
+        """
+#define FOO
+    """
+    )
+
     tmpdir.mkdir("src").join("main.cpp").write(
         """
+#include "foo.h"
+
+#ifndef FOO
+#error "FOO"
+#endif
+
 #ifdef I_AM_ONLY_SRC_FLAG
 #include <component.h>
 #else

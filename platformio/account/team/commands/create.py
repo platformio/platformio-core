@@ -22,9 +22,7 @@ from platformio.account.validate import validate_orgname_teamname
 @click.argument(
     "orgname_teamname",
     metavar="ORGNAME:TEAMNAME",
-    callback=lambda _, __, value: validate_orgname_teamname(
-        value, teamname_validate=True
-    ),
+    callback=lambda _, __, value: validate_orgname_teamname(value),
 )
 @click.option(
     "--description",

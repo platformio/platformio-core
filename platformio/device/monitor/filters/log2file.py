@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import io
-import os.path
+import os
 from datetime import datetime
 
 from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
@@ -27,8 +27,10 @@ class LogToFile(DeviceMonitorFilterBase):
         self._log_fp = None
 
     def __call__(self):
-        log_file_name = "platformio-device-monitor-%s.log" % datetime.now().strftime(
-            "%y%m%d-%H%M%S"
+        if not os.path.isdir("logs"):
+            os.makedirs("logs")
+        log_file_name = os.path.join(
+            "logs", "device-monitor-%s.log" % datetime.now().strftime("%y%m%d-%H%M%S")
         )
         print("--- Logging an output to %s" % os.path.abspath(log_file_name))
         # pylint: disable=consider-using-with

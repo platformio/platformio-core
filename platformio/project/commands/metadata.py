@@ -31,11 +31,11 @@ from platformio.project.helpers import load_build_metadata
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option("-e", "--environment", "environments", multiple=True)
 @click.option("--json-output", is_flag=True)
-@click.option("--json-output-path", type=click.Path(resolve_path=True))
+@click.option("--json-output-path", type=click.Path())
 def project_metadata_cmd(project_dir, environments, json_output, json_output_path):
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance()

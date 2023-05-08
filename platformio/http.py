@@ -37,8 +37,7 @@ class HTTPClientError(PlatformioException):
         return self.message
 
 
-class InternetIsOffline(UserSideException):
-
+class InternetConnectionError(UserSideException):
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "PlatformIO needs the Internet connection to"
@@ -204,7 +203,7 @@ def _internet_on():
 def ensure_internet_on(raise_exception=False):
     result = _internet_on()
     if raise_exception and not result:
-        raise InternetIsOffline()
+        raise InternetConnectionError()
     return result
 
 

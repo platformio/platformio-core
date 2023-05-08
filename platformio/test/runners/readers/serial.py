@@ -22,7 +22,6 @@ from platformio.exception import UserSideException
 
 
 class SerialTestOutputReader:
-
     SERIAL_TIMEOUT = 600
 
     def __init__(self, test_runner):
@@ -47,7 +46,7 @@ class SerialTestOutputReader:
             ser.open()
         except serial.SerialException as exc:
             click.secho(str(exc), fg="red", err=True)
-            return None
+            return
 
         if not self.test_runner.options.no_reset:
             ser.flushInput()

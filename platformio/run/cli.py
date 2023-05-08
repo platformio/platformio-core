@@ -26,7 +26,7 @@ from platformio.device.monitor.command import device_monitor_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
 from platformio.project.helpers import find_project_dir_above, load_build_metadata
-from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps
+from platformio.run.helpers import clean_build_dir
 from platformio.run.processor import EnvironmentProcessor
 from platformio.test.runners.base import CTX_META_TEST_IS_RUNNING
 
@@ -47,16 +47,12 @@ except NotImplementedError:
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, writable=True),
 )
 @click.option(
     "-c",
     "--project-conf",
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
 )
 @click.option(
     "-j",
@@ -101,9 +97,12 @@ def cli(
     if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
+    targets = list(target) if target else []
+    del target
+    only_monitor = targets == ["monitor"]
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
+    command_failed = False
 
-    results = []
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
@@ -112,7 +111,7 @@ def cli(
             return print_target_list(list(environment) or config.envs())
 
         # clean obsolete build dir
-        if not disable_auto_clean:
+        if not only_monitor and not disable_auto_clean:
             build_dir = config.get("platformio", "build_dir")
             try:
                 clean_build_dir(build_dir, config)
@@ -125,9 +124,8 @@ def cli(
                     fg="yellow",
                 )
 
-        handle_legacy_libdeps(project_dir, config)
-
         default_envs = config.default_envs()
+        results = []
         for env in config.envs():
             skipenv = any(
                 [
@@ -148,8 +146,7 @@ def cli(
                     ctx,
                     env,
                     config,
-                    environment,
-                    target,
+                    targets,
                     upload_port,
                     monitor_port,
                     jobs,
@@ -159,17 +156,21 @@ def cli(
                     verbose,
                 )
             )
-
-    command_failed = any(r.get("succeeded") is False for r in results)
-
-    if not is_test_running and (command_failed or not silent) and len(results) > 1:
-        print_processing_summary(results, verbose)
+        command_failed = any(r.get("succeeded") is False for r in results)
+        if (
+            not is_test_running
+            and not only_monitor
+            and (command_failed or not silent)
+            and len(results) > 1
+        ):
+            print_processing_summary(results, verbose)
 
     # Reset custom project config
     app.set_session_var("custom_project_conf", None)
 
     if command_failed:
         raise exception.ReturnErrorCode(1)
+
     return True
 
 
@@ -177,7 +178,6 @@ def process_env(
     ctx,
     name,
     config,
-    environments,
     targets,
     upload_port,
     monitor_port,
@@ -190,34 +190,39 @@ def process_env(
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
 
-    ep = EnvironmentProcessor(
-        ctx,
-        name,
-        config,
-        targets,
-        upload_port,
-        jobs,
-        program_args,
-        silent,
-        verbose,
-    )
-    result = {"env": name, "duration": time(), "succeeded": ep.process()}
-    result["duration"] = time() - result["duration"]
+    targets = targets or config.get(f"env:{name}", "targets", [])
+    only_monitor = targets == ["monitor"]
+    result = {"env": name, "duration": time(), "succeeded": True}
 
-    # print footer on error or when is not unit testing
-    if not is_test_running and (not silent or not result["succeeded"]):
-        print_processing_footer(result)
+    if not only_monitor:
+        result["succeeded"] = EnvironmentProcessor(
+            ctx,
+            name,
+            config,
+            [t for t in targets if t != "monitor"],
+            upload_port,
+            jobs,
+            program_args,
+            silent,
+            verbose,
+        ).process()
 
-    if (
-        result["succeeded"]
-        and "monitor" in ep.get_build_targets()
-        and "nobuild" not in ep.get_build_targets()
-    ):
+    if "monitor" in targets and "nobuild" not in targets:
         ctx.invoke(
             device_monitor_cmd,
             port=monitor_port,
-            environment=environments[0] if environments else None,
+            environment=name,
         )
+
+    result["duration"] = time() - result["duration"]
+
+    # print footer on error or when is not unit testing
+    if (
+        not is_test_running
+        and not only_monitor
+        and (not silent or not result["succeeded"])
+    ):
+        print_processing_footer(result)
 
     return result
 

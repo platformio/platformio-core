@@ -96,7 +96,7 @@ class CppcheckCheckTool(CheckToolBase):
                     )
                     click.echo()
                 self._bad_input = True
-                self._buffer = ""
+            self._buffer = ""
             return None
 
         self._buffer = ""
@@ -214,7 +214,9 @@ class CppcheckCheckTool(CheckToolBase):
         if not self.is_flag_set("--addon", self.get_flags("cppcheck")):
             return
 
-        for files in self.get_project_target_files(self.options["patterns"]).values():
+        for files in self.get_project_target_files(
+            self.project_dir, self.options["src_filters"]
+        ).values():
             for f in files:
                 dump_file = f + ".dump"
                 if os.path.isfile(dump_file):
@@ -243,7 +245,9 @@ class CppcheckCheckTool(CheckToolBase):
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
 
-        project_files = self.get_project_target_files(self.options["patterns"])
+        project_files = self.get_project_target_files(
+            self.project_dir, self.options["src_filters"]
+        )
         src_files_scope = ("c", "c++")
         if not any(project_files[t] for t in src_files_scope):
             click.echo("Error: Nothing to check.")

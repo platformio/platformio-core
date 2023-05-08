@@ -17,7 +17,6 @@ from platformio.debug.config.base import DebugConfigBase
 
 
 class NativeDebugConfig(DebugConfigBase):
-
     GDB_INIT_SCRIPT = """
 define pio_reset_halt_target
 end

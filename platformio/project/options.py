@@ -114,7 +114,7 @@ def validate_dir(path):
         path = fs.expanduser(path)
     if "$" in path:
         path = expand_dir_templates(path)
-    return fs.normalize_path(path)
+    return os.path.abspath(path)
 
 
 def get_default_core_dir():
@@ -649,10 +649,10 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="check",
-                name="check_patterns",
+                name="check_src_filters",
+                oldnames=["check_patterns"],
                 description=(
-                    "Configure a list of target files or directories for checking "
-                    "(Unix shell-style wildcards)"
+                    "Configure a list of target files or directories for checking"
                 ),
                 multiple=True,
             ),

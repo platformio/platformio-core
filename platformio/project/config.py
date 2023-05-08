@@ -39,7 +39,7 @@ CONFIG_HEADER = """
 
 
 class ProjectConfigBase:
-
+    ENVNAME_RE = re.compile(r"^[a-z\d\_\-]+$", flags=re.I)
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}\()]+)\.([^\}]+)\}")
 
@@ -389,16 +389,38 @@ class ProjectConfigBase:
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
             raise exception.NotPlatformIOProjectError(os.path.dirname(self.path))
+
+        known_envs = set(self.envs())
+
         # check envs
-        known = set(self.envs())
-        if not known:
+        if not known_envs:
             raise exception.ProjectEnvsNotAvailableError()
-        unknown = set(list(envs or []) + self.default_envs()) - known
-        if unknown:
-            raise exception.UnknownEnvNamesError(", ".join(unknown), ", ".join(known))
+        unknown_envs = set(list(envs or []) + self.default_envs()) - known_envs
+        if unknown_envs:
+            raise exception.UnknownEnvNamesError(
+                ", ".join(unknown_envs), ", ".join(known_envs)
+            )
+
+        for env in known_envs:
+            # check envs names
+            if not self.ENVNAME_RE.match(env):
+                raise exception.InvalidEnvNameError(env)
+
+            # check simultaneous use of `monitor_raw` and `monitor_filters`
+            if self.get(f"env:{env}", "monitor_raw", False) and self.get(
+                f"env:{env}", "monitor_filters", None
+            ):
+                self.warnings.append(
+                    "The `monitor_raw` and `monitor_filters` options cannot be "
+                    f"used simultaneously for the `{env}` environment in the "
+                    "`platformio.ini` file. The `monitor_filters` option will "
+                    "be disabled to avoid conflicts."
+                )
+
         if not silent:
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")
+
         return True
 
 
@@ -412,7 +434,6 @@ class ProjectConfigDirsMixin:
 
 
 class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
-
     _instances = {}
 
     @staticmethod

@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-
-VERSION = (6, 1, 6)
+VERSION = (6, 1, 7)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -46,8 +44,8 @@ __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
 __core_packages__ = {
     "contrib-piohome": "~3.4.2",
-    "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-    "tool-scons": "~4.40400.0",
+    "contrib-pioremote": "~1.0.0",
+    "tool-scons": "~4.40502.0",
     "tool-cppcheck": "~1.270.0",
     "tool-clangtidy": "~1.150005.0",
     "tool-pvs-studio": "~7.18.0",

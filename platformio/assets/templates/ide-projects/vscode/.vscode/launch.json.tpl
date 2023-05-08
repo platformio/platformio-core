@@ -16,7 +16,7 @@
 %    "request": "launch",
 %    "name": "PIO Debug (skip Pre-Debug)",
 %    "executable": _escape_path(prog_path),
-%    "projectEnvName": env_name,
+%    "projectEnvName": env_name if forced_env_name else default_debug_env_name,
 %    "toolchainBinDir": _escape_path(os.path.dirname(gdb_path)),
 %    "internalConsoleOptions": "openOnSessionStart",
 %  }
@@ -28,7 +28,7 @@
 %  debug["name"] = "PIO Debug"
 %  debug["preLaunchTask"] = {
 %    "type": "PlatformIO",
-%    "task": ("Pre-Debug (%s)" % env_name) if len(config.envs()) > 1 and original_env_name else "Pre-Debug",
+%    "task": ("Pre-Debug (%s)" % env_name) if len(config.envs()) > 1 and forced_env_name else "Pre-Debug",
 %  }
 %  noloading = predebug.copy()
 %  noloading["name"] = "PIO Debug (without uploading)"

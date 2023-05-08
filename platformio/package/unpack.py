@@ -20,11 +20,11 @@ from zipfile import ZipFile
 import click
 
 from platformio import fs
+from platformio.compat import is_terminal
 from platformio.package.exception import PackageException
 
 
 class ExtractArchiveItemError(PackageException):
-
     MESSAGE = (
         "Could not extract `{0}` to `{1}`. Try to disable antivirus "
         "tool or check this solution -> https://bit.ly/faq-package-manager"
@@ -159,18 +159,38 @@ class FileUnpacker:
 
     def unpack(
         self, dest_dir=None, with_progress=True, check_unpacked=True, silent=False
-    ):
+    ):  # pylint: disable=too-many-branches
         assert self._archiver
+        label = "Unpacking"
+        items = self._archiver.get_items()
         if not dest_dir:
             dest_dir = os.getcwd()
+
         if not with_progress or silent:
             if not silent:
-                click.echo("Unpacking...")
-            for item in self._archiver.get_items():
+                click.echo(f"{label}...")
+            for item in items:
                 self._archiver.extract_item(item, dest_dir)
+        elif not is_terminal():
+            click.echo(f"{label} 0%", nl=False)
+            print_percent_step = 10
+            printed_percents = 0
+            unpacked_nums = 0
+            for item in items:
+                self._archiver.extract_item(item, dest_dir)
+                unpacked_nums += 1
+                if (unpacked_nums / len(items) * 100) >= (
+                    printed_percents + print_percent_step
+                ):
+                    printed_percents += print_percent_step
+                    click.echo(f" {printed_percents}%", nl=False)
+            click.echo("")
         else:
-            items = self._archiver.get_items()
-            with click.progressbar(items, label="Unpacking") as pb:
+            with click.progressbar(
+                items,
+                label=label,
+                update_min_steps=min(50, len(items) / 100),  # every 50 files or less
+            ) as pb:
                 for item in pb:
                     self._archiver.extract_item(item, dest_dir)
 

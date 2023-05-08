@@ -28,9 +28,9 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import app, compat, fs
+from platformio import app, fs
 from platformio.platform.base import PlatformBase
-from platformio.proc import get_pythonexe_path
+from platformio.proc import get_pythonexe_path, where_is_program
 from platformio.project.helpers import get_project_dir
 
 AllowSubstExceptions(NameError)
@@ -99,6 +99,7 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
         DEFAULT_ENV_OPTIONS["%sSTR" % name] = "%s $TARGET" % (value)
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
+env.SConscriptChdir(False)
 
 # Load variables from CLI
 env.Replace(
@@ -139,19 +140,6 @@ if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
 
-if compat.IS_WINDOWS and sys.version_info >= (3, 8) and os.getcwd().startswith("\\\\"):
-    click.secho("!!! WARNING !!!\t\t" * 3, fg="red")
-    click.secho(
-        "Your project is located on a mapped network drive but the "
-        "current command-line shell does not support the UNC paths.",
-        fg="yellow",
-    )
-    click.secho(
-        "Please move your project to a physical drive or check this workaround: "
-        "https://bit.ly/3kuU5mP\n",
-        fg="yellow",
-    )
-
 if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
         os.makedirs(env.subst("$BUILD_CACHE_DIR"))
@@ -170,18 +158,17 @@ if not os.path.isdir(env.subst("$BUILD_DIR")):
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
-env.SConscriptChdir(0)
 env.SConsignFile(
     os.path.join(
-        "$BUILD_DIR", ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1])
+        "$BUILD_CACHE_DIR" if env.subst("$BUILD_CACHE_DIR") else "$BUILD_DIR",
+        ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]),
     )
 )
 
-for item in env.GetExtraScripts("pre"):
-    env.SConscript(item, exports="env")
+env.SConscript(env.GetExtraScripts("pre"), exports="env")
 
 if env.IsCleanTarget():
-    env.CleanProject("cleanall" in COMMAND_LINE_TARGETS)
+    env.CleanProject(fullclean=int(ARGUMENTS.get("FULLCLEAN", 0)))
     env.Exit(0)
 
 env.SConscript("$BUILD_SCRIPT")
@@ -191,8 +178,7 @@ if "UPLOAD_FLAGS" in env:
 if env.GetProjectOption("upload_command"):
     env.Replace(UPLOADCMD=env.GetProjectOption("upload_command"))
 
-for item in env.GetExtraScripts("post"):
-    env.SConscript(item, exports="env")
+env.SConscript(env.GetExtraScripts("post"), exports="env")
 
 ##############################################################################
 
@@ -208,6 +194,13 @@ if env.get("SIZETOOL") and not (
     Default("checkprogsize")
 
 if "compiledb" in COMMAND_LINE_TARGETS:
+    # Resolve absolute path of toolchain
+    for cmd in ("CC", "CXX", "AS"):
+        if cmd not in env:
+            continue
+        if os.path.isabs(env[cmd]):
+            continue
+        env[cmd] = where_is_program(env.subst("$%s" % cmd), env.subst("${ENV['PATH']}"))
     env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
@@ -257,3 +250,9 @@ if "sizedata" in COMMAND_LINE_TARGETS:
     )
 
     Default("sizedata")
+
+# issue #4604: process targets sequentially
+for index, target in enumerate(
+    [t for t in COMMAND_LINE_TARGETS if not t.startswith("__")][1:]
+):
+    env.Depends(target, COMMAND_LINE_TARGETS[index])

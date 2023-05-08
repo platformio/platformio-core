@@ -18,10 +18,10 @@ from pathlib import Path
 from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio.compat import aio_get_running_loop
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 
-class IDERPC:
-
+class IDERPC(BaseRPCHandler):
     COMMAND_TIMEOUT = 1.5  # in seconds
 
     def __init__(self):
@@ -51,11 +51,12 @@ class IDERPC:
 
     def on_command_result(self, cmd_id, value):
         if cmd_id not in self._cmd_queue:
-            return
+            return False
         if self._cmd_queue[cmd_id]["method"] == "get_pio_project_dirs":
             value = [str(Path(p).resolve()) for p in value]
         self._cmd_queue[cmd_id]["future"].set_result(value)
         del self._cmd_queue[cmd_id]
+        return True
 
     def _process_commands(self):
         for cmd_id in list(self._cmd_queue):

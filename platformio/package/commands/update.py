@@ -33,7 +33,7 @@ from platformio.project.savedeps import pkg_to_save_spec, save_project_dependenc
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option("-e", "--environment", "environments", multiple=True)
 @click.option("-p", "--platform", "platforms", metavar="SPECIFICATION", multiple=True)
@@ -49,7 +49,7 @@ from platformio.project.savedeps import pkg_to_save_spec, save_project_dependenc
 @click.option(
     "--storage-dir",
     default=None,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
     help="Custom Package Manager storage for global packages",
 )
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")

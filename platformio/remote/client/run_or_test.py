@@ -28,7 +28,6 @@ from platformio.remote.projectsync import PROJECT_SYNC_STAGE, ProjectSync
 
 
 class RunOrTestClient(AsyncClientBase):
-
     MAX_ARCHIVE_SIZE = 50 * 1024 * 1024  # 50Mb
     UPLOAD_CHUNK_SIZE = 256 * 1024  # 256Kb
 
@@ -147,7 +146,7 @@ class RunOrTestClient(AsyncClientBase):
 
     def cb_psync_init_result(self, result):
         self._acs_total = len(result)
-        for (success, value) in result:
+        for success, value in result:
             if not success:
                 raise pb.Error(value)
             agent_id, ac_id = value

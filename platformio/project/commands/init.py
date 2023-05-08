@@ -24,12 +24,14 @@ from platformio import fs
 from platformio.package.commands.install import install_project_dependencies
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.exception import UnknownBoard
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import is_platformio_project
 from platformio.project.integration.generator import ProjectGenerator
+from platformio.project.options import ProjectOptions
 
 
-def validate_boards(ctx, param, value):  # pylint: disable=W0613
+def validate_boards(ctx, param, value):  # pylint: disable=unused-argument
     pm = PlatformPackageManager()
     for id_ in value:
         try:
@@ -47,25 +49,33 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     "--project-dir",
     "-d",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
-@click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option(
+    "-b", "--board", "boards", multiple=True, metavar="ID", callback=validate_boards
+)
 @click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("-e", "--environment", help="Update existing environment")
-@click.option("-O", "--project-option", multiple=True)
-@click.option("--env-prefix", default="")
+@click.option(
+    "-O",
+    "--project-option",
+    "project_options",
+    multiple=True,
+    help="A `name=value` pair",
+)
+@click.option("--sample-code", is_flag=True)
 @click.option("--no-install-dependencies", is_flag=True)
+@click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
 def project_init_cmd(
     project_dir,
-    board,
+    boards,
     ide,
     environment,
-    project_option,
-    env_prefix,
+    project_options,
+    sample_code,
     no_install_dependencies,
+    env_prefix,
     silent,
 ):
     is_new_project = not is_platformio_project(project_dir)
@@ -74,23 +84,23 @@ def project_init_cmd(
             print_header(project_dir)
         init_base_project(project_dir)
 
-    if environment:
-        update_project_env(project_dir, environment, project_option)
-    elif board:
-        update_board_envs(project_dir, board, project_option, env_prefix)
-
     with fs.cd(project_dir):
+        if environment:
+            update_project_env(environment, project_options)
+        elif boards:
+            update_board_envs(project_dir, boards, project_options, env_prefix)
+
         generator = None
         config = ProjectConfig.get_instance(os.path.join(project_dir, "platformio.ini"))
         if ide:
             config.validate()
             # init generator and pick the best env if user didn't specify
-            generator = ProjectGenerator(config, environment, ide, board)
+            generator = ProjectGenerator(config, environment, ide, boards)
             if not environment:
                 environment = generator.env_name
 
         # resolve project dependencies
-        if not no_install_dependencies and (environment or board):
+        if not no_install_dependencies and (environment or boards):
             install_project_dependencies(
                 options=dict(
                     project_dir=project_dir,
@@ -99,6 +109,9 @@ def project_init_cmd(
                 )
             )
 
+        if environment and sample_code:
+            init_sample_code(config, environment)
+
         if generator:
             if not silent:
                 click.echo(
@@ -106,31 +119,22 @@ def project_init_cmd(
                 )
             generator.generate()
 
-    if is_new_project:
-        init_cvs_ignore(project_dir)
+        if is_new_project:
+            init_cvs_ignore()
 
     if not silent:
         print_footer(is_new_project)
 
 
 def print_header(project_dir):
-    if project_dir == os.getcwd():
-        click.secho("\nThe current working directory ", fg="yellow", nl=False)
-        try:
-            click.secho(project_dir, fg="cyan", nl=False)
-        except UnicodeEncodeError:
-            click.secho(json.dumps(project_dir), fg="cyan", nl=False)
-        click.secho(" will be used for the project.", fg="yellow")
-        click.echo("")
-
-    click.echo("The next files/directories have been created in ", nl=False)
+    click.echo("The following files/directories have been created in ", nl=False)
     try:
         click.secho(project_dir, fg="cyan")
     except UnicodeEncodeError:
         click.secho(json.dumps(project_dir), fg="cyan")
     click.echo("%s - Put project header files here" % click.style("include", fg="cyan"))
     click.echo(
-        "%s - Put here project specific (private) libraries"
+        "%s - Put project specific (private) libraries here"
         % click.style("lib", fg="cyan")
     )
     click.echo("%s - Put project source files here" % click.style("src", fg="cyan"))
@@ -140,18 +144,9 @@ def print_header(project_dir):
 
 
 def print_footer(is_new_project):
-    if is_new_project:
-        return click.secho(
-            "\nProject has been successfully initialized! Useful commands:\n"
-            "`pio run` - process/build project from the current directory\n"
-            "`pio run --target upload` or `pio run -t upload` "
-            "- upload firmware to a target\n"
-            "`pio run --target clean` - clean project (remove compiled files)"
-            "\n`pio run --help` - additional information",
-            fg="green",
-        )
+    action = "initialized" if is_new_project else "updated"
     return click.secho(
-        "Project has been successfully updated!",
+        f"Project has been successfully {action}!",
         fg="green",
     )
 
@@ -166,7 +161,7 @@ def init_base_project(project_dir):
             (config.get("platformio", "lib_dir"), init_lib_readme),
             (config.get("platformio", "test_dir"), init_test_readme),
         ]
-        for (path, cb) in dir_to_readme:
+        for path, cb in dir_to_readme:
             if os.path.isdir(path):
                 continue
             os.makedirs(path)
@@ -291,15 +286,15 @@ More information about PlatformIO Unit Testing:
         )
 
 
-def init_cvs_ignore(project_dir):
-    conf_path = os.path.join(project_dir, ".gitignore")
+def init_cvs_ignore():
+    conf_path = ".gitignore"
     if os.path.isfile(conf_path):
         return
     with open(conf_path, mode="w", encoding="utf8") as fp:
         fp.write(".pio\n")
 
 
-def update_board_envs(project_dir, board_ids, project_option, env_prefix):
+def update_board_envs(project_dir, boards, extra_project_options, env_prefix):
     config = ProjectConfig(
         os.path.join(project_dir, "platformio.ini"), parse_extra=False
     )
@@ -311,7 +306,7 @@ def update_board_envs(project_dir, board_ids, project_option, env_prefix):
 
     pm = PlatformPackageManager()
     modified = False
-    for id_ in board_ids:
+    for id_ in boards:
         board_config = pm.board_config(id_)
         if id_ in used_boards:
             continue
@@ -324,7 +319,7 @@ def update_board_envs(project_dir, board_ids, project_option, env_prefix):
         if frameworks:
             envopts["framework"] = frameworks[0]
 
-        for item in project_option:
+        for item in extra_project_options:
             if "=" not in item:
                 continue
             _name, _value = item.split("=", 1)
@@ -340,21 +335,76 @@ def update_board_envs(project_dir, board_ids, project_option, env_prefix):
         config.save()
 
 
-def update_project_env(project_dir, environment, project_option):
-    if not project_option:
+def update_project_env(environment, extra_project_options=None):
+    if not extra_project_options:
         return
+    env_section = "env:%s" % environment
+    option_to_sections = {"platformio": [], env_section: []}
+    for item in extra_project_options:
+        assert "=" in item
+        name, value = item.split("=", 1)
+        name = name.strip()
+        destination = env_section
+        for option in ProjectOptions.values():
+            if option.scope in option_to_sections and option.name == name:
+                destination = option.scope
+                break
+        option_to_sections[destination].append((name, value.strip()))
+
     config = ProjectConfig(
-        os.path.join(project_dir, "platformio.ini"), parse_extra=False
+        "platformio.ini", parse_extra=False, expand_interpolations=False
     )
-
-    section = "env:%s" % environment
-    if not config.has_section(section):
-        config.add_section(section)
-
-    for item in project_option:
-        if "=" not in item:
+    for section, options in option_to_sections.items():
+        if not options:
             continue
-        _name, _value = item.split("=", 1)
-        config.set(section, _name.strip(), _value.strip())
+        if not config.has_section(section):
+            config.add_section(section)
+        for name, value in options:
+            config.set(section, name, value)
 
     config.save()
+
+
+def init_sample_code(config, environment):
+    platform_spec = config.get(f"env:{environment}", "platform", None)
+    if not platform_spec:
+        return None
+    p = PlatformFactory.new(platform_spec)
+    try:
+        return p.generate_sample_code(config, environment)
+    except NotImplementedError:
+        pass
+
+    framework = config.get(f"env:{environment}", "framework", None)
+    if framework != ["arduino"]:
+        return None
+    main_content = """
+#include <Arduino.h>
+
+// put function declarations here:
+int myFunction(int, int);
+
+void setup() {
+  // put your setup code here, to run once:
+  int result = myFunction(2, 3);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+}
+
+// put function definitions here:
+int myFunction(int x, int y) {
+  return x + y;
+}
+"""
+    is_cpp_project = p.name not in ["intel_mcs51", "ststm8"]
+    src_dir = config.get("platformio", "src_dir")
+    main_path = os.path.join(src_dir, "main.%s" % ("cpp" if is_cpp_project else "c"))
+    if os.path.isfile(main_path):
+        return None
+    if not os.path.isdir(src_dir):
+        os.makedirs(src_dir)
+    with open(main_path, mode="w", encoding="utf8") as fp:
+        fp.write(main_content.strip())
+    return True

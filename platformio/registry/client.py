@@ -142,12 +142,15 @@ class RegistryClient(HTTPClient):
             x_with_authorization=self.allowed_private_packages(),
         )
 
-    def get_package(self, type_, owner, name, version=None):
+    def get_package(self, type_, owner, name, version=None, extra_path=None):
         try:
             return self.fetch_json_data(
                 "get",
-                "/v3/packages/{owner}/{type}/{name}".format(
-                    type=type_, owner=owner.lower(), name=name.lower()
+                "/v3/packages/{owner}/{type}/{name}{extra_path}".format(
+                    type=type_,
+                    owner=owner.lower(),
+                    name=name.lower(),
+                    extra_path=extra_path or "",
                 ),
                 params=dict(version=version) if version else None,
                 x_cache_valid="1h",

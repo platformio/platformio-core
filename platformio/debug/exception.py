@@ -20,7 +20,6 @@ class DebugError(PlatformioException):
 
 
 class DebugSupportError(DebugError, UserSideException):
-
     MESSAGE = (
         "Currently, PlatformIO does not support debugging for `{0}`.\n"
         "Please request support at https://github.com/platformio/"

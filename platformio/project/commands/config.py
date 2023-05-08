@@ -28,7 +28,7 @@ from platformio.project.helpers import is_platformio_project
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option("--json-output", is_flag=True)
 def project_config_cmd(project_dir, json_output):

@@ -51,15 +51,13 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 @click.option(
     "--build-dir",
     default=tempfile.mkdtemp,
-    type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
+    type=click.Path(file_okay=False, dir_okay=True, writable=True),
 )
 @click.option("--keep-build-dir", is_flag=True)
 @click.option(
     "-c",
     "--project-conf",
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
 )
 @click.option("-O", "--project-option", multiple=True)
 @click.option("-e", "--environment", "environments", multiple=True)
@@ -109,8 +107,8 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         ctx.invoke(
             project_init_cmd,
             project_dir=build_dir,
-            board=board,
-            project_option=project_option,
+            boards=board,
+            project_options=project_option,
         )
 
         # process project

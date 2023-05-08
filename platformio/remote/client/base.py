@@ -33,7 +33,6 @@ from platformio.remote.factory.ssl import SSLContextFactory
 class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
     pb.Referenceable
 ):
-
     PING_DELAY = 60
     PING_MAX_FAILURES = 3
     DEBUG = False

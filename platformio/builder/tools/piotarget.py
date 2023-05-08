@@ -16,7 +16,6 @@ import os
 
 from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 
 from platformio import compat, fs
@@ -29,10 +28,10 @@ def VerboseAction(_, act, actstr):
 
 
 def IsCleanTarget(env):
-    return env.GetOption("clean") or ("cleanall" in COMMAND_LINE_TARGETS)
+    return env.GetOption("clean")
 
 
-def CleanProject(env, clean_all=False):
+def CleanProject(env, fullclean=False):
     def _relpath(path):
         if compat.IS_WINDOWS:
             prefix = os.getcwd()[:2].lower()
@@ -56,7 +55,7 @@ def CleanProject(env, clean_all=False):
     else:
         print("Build environment is clean")
 
-    if clean_all and os.path.isdir(libdeps_dir):
+    if fullclean and os.path.isdir(libdeps_dir):
         _clean_dir(libdeps_dir)
 
     print("Done cleaning")

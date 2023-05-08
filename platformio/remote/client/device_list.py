@@ -32,7 +32,7 @@ class DeviceListClient(RemoteClientBase):
 
     def _cbResult(self, result):
         data = {}
-        for (success, value) in result:
+        for success, value in result:
             if not success:
                 click.secho(value, fg="red", err=True)
                 continue

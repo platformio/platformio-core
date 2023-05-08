@@ -25,10 +25,10 @@ from platformio import app, fs, proc, telemetry
 from platformio.compat import hashlib_encode_data
 from platformio.package.manager.core import get_core_package_dir
 from platformio.platform.exception import BuildScriptNotFound
+from platformio.run.helpers import KNOWN_CLEAN_TARGETS, KNOWN_FULLCLEAN_TARGETS
 
 
 class PlatformRunMixin:
-
     LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 
     @staticmethod
@@ -56,9 +56,6 @@ class PlatformRunMixin:
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
-
-        if "clean" in targets:
-            targets = ["-c", "."]
 
         variables["platform_manifest"] = self.manifest_path
 
@@ -93,16 +90,22 @@ class PlatformRunMixin:
             "--sconstruct",
             os.path.join(fs.get_source_dir(), "builder", "main.py"),
         ]
-        args.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
+        args.append("PIOVERBOSE=%d" % int(self.verbose))
         # pylint: disable=protected-access
-        args.append("ISATTY=%d" % (1 if click._compat.isatty(sys.stdout) else 0))
-        args += targets
-
+        args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))
         # encode and append variables
         for key, value in variables.items():
             args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
-        proc.copy_pythonpath_to_osenv()
+        if set(KNOWN_CLEAN_TARGETS + KNOWN_FULLCLEAN_TARGETS) & set(targets):
+            args.append("--clean")
+            args.append(
+                "FULLCLEAN=%d"
+                % (1 if set(KNOWN_FULLCLEAN_TARGETS) & set(targets) else 0)
+            )
+        elif targets:
+            args.extend(targets)
+
         # force SCons output to Unicode
         os.environ["PYTHONIOENCODING"] = "utf-8"
 

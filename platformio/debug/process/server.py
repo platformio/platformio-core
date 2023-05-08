@@ -26,7 +26,6 @@ from platformio.proc import where_is_program
 
 
 class DebugServerProcess(DebugBaseProcess):
-
     STD_BUFFER_SIZE = 1024
 
     def __init__(self, debug_config):

@@ -33,7 +33,7 @@ def system_completion_cmd():
 @click.argument("shell", type=click.Choice([t.value for t in ShellType]))
 @click.option(
     "--path",
-    type=click.Path(file_okay=True, dir_okay=False, readable=True, resolve_path=True),
+    type=click.Path(file_okay=True, dir_okay=False, readable=True),
     help="Custom installation path of the code to be evaluated by the shell. "
     "The standard installation path is used by default.",
 )
@@ -54,7 +54,7 @@ def system_completion_install(shell, path):
 @click.argument("shell", type=click.Choice([t.value for t in ShellType]))
 @click.option(
     "--path",
-    type=click.Path(file_okay=True, dir_okay=False, readable=True, resolve_path=True),
+    type=click.Path(file_okay=True, dir_okay=False, readable=True),
     help="Custom installation path of the code to be evaluated by the shell. "
     "The standard installation path is used by default.",
 )

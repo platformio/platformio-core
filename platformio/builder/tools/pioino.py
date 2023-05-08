@@ -25,7 +25,6 @@ from platformio.compat import get_filesystem_encoding, get_locale_encoding
 
 
 class InoToCPPConverter:
-
     PROTOTYPE_RE = re.compile(
         r"""^(
         (?:template\<.*\>\s*)?      # template
@@ -103,7 +102,7 @@ class InoToCPPConverter:
         return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
 
     def process(self, contents):
-        out_file = self._main_ino + ".cpp"
+        out_file = re.sub(r"[\"\'\;]+", "", self._main_ino) + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
         contents = self.read_safe_contents(out_file)
         contents = self._join_multiline_strings(contents)

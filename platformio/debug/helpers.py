@@ -31,7 +31,6 @@ from platformio.test.runners.factory import TestRunnerFactory
 
 
 class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
-
     STDOUT = sys.stdout
 
     def write(self, text):
@@ -91,7 +90,7 @@ def predebug_project(
             TestSuite(env_name, debug_testname),
             project_config,
             TestRunnerOptions(
-                verbose=verbose,
+                verbose=3 if verbose else 0,
                 without_building=False,
                 without_debugging=False,
                 without_uploading=not preload,

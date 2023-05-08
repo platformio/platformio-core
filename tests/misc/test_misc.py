@@ -35,7 +35,7 @@ def test_ping_internet_ips():
 
 def test_api_internet_offline(without_internet, isolated_pio_core):
     regclient = RegistryClient()
-    with pytest.raises(http.InternetIsOffline):
+    with pytest.raises(http.InternetConnectionError):
         regclient.fetch_json_data("get", "/v2/stats")
 
 

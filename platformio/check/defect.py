@@ -16,6 +16,7 @@ import os
 
 import click
 
+from platformio.exception import PlatformioException
 from platformio.project.helpers import get_project_dir
 
 # pylint: disable=too-many-instance-attributes, redefined-builtin
@@ -23,7 +24,6 @@ from platformio.project.helpers import get_project_dir
 
 
 class DefectItem:
-
     SEVERITY_HIGH = 1
     SEVERITY_MEDIUM = 2
     SEVERITY_LOW = 4
@@ -79,7 +79,7 @@ class DefectItem:
         for key, value in DefectItem.SEVERITY_LABELS.items():
             if label == value:
                 return key
-        raise Exception("Unknown severity label -> %s" % label)
+        raise PlatformioException("Unknown severity label -> %s" % label)
 
     def as_dict(self):
         return {

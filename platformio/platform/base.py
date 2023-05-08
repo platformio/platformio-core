@@ -29,7 +29,6 @@ from platformio.project.config import ProjectConfig
 class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     PlatformPackagesMixin, PlatformRunMixin
 ):
-
     CORE_SEMVER = pepver_to_semver(__version__)
     _BOARDS_CACHE = {}
 
@@ -208,6 +207,15 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
     def configure_debug_session(self, debug_config):
         raise NotImplementedError
 
+    def generate_sample_code(self, project_config, environment):
+        raise NotImplementedError
+
+    def on_installed(self):
+        pass
+
+    def on_uninstalled(self):
+        pass
+
     def get_lib_storages(self):
         storages = {}
         for opts in (self.frameworks or {}).values():
@@ -228,9 +236,3 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
                 storages[libcore_dir] = "%s-core-%s" % (opts["package"], item)
 
         return [dict(name=name, path=path) for path, name in storages.items()]
-
-    def on_installed(self):
-        pass
-
-    def on_uninstalled(self):
-        pass

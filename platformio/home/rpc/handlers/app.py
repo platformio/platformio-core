@@ -16,12 +16,12 @@ import os
 from pathlib import Path
 
 from platformio import __version__, app, fs, util
+from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import is_platformio_project
 
 
-class AppRPC:
-
+class AppRPC(BaseRPCHandler):
     IGNORE_STORAGE_KEYS = [
         "cid",
         "coreVersion",

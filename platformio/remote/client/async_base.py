@@ -34,7 +34,7 @@ class AsyncClientBase(RemoteClientBase):
     def cb_async_result(self, result):
         if self._acs_total == 0:
             self._acs_total = len(result)
-        for (success, value) in result:
+        for success, value in result:
             if not success:
                 raise pb.Error(value)
             self.acread_data(*value)

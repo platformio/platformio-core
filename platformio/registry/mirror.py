@@ -22,7 +22,6 @@ from platformio.registry.client import RegistryClient
 
 
 class RegistryFileMirrorIterator:
-
     HTTP_CLIENT_INSTANCES = {}
 
     def __init__(self, download_url):

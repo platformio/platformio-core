@@ -23,7 +23,11 @@ import pytest
 
 from platformio import fs
 from platformio.project.config import ProjectConfig
-from platformio.project.exception import InvalidProjectConfError, UnknownEnvNamesError
+from platformio.project.exception import (
+    InvalidEnvNameError,
+    InvalidProjectConfError,
+    UnknownEnvNamesError,
+)
 
 BASE_CONFIG = """
 [platformio]
@@ -662,9 +666,21 @@ upload_tool = two
 [c]
 upload_tool = three
 
-[env:native]
+[env:na_ti-ve13]
 extends = a, b, c
     """
     )
     config = ProjectConfig(str(project_conf))
-    assert config.get("env:native", "upload_tool") == "three"
+    assert config.get("env:na_ti-ve13", "upload_tool") == "three"
+
+
+def test_invalid_env_names(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[env:app:1]
+    """
+    )
+    config = ProjectConfig(str(project_conf))
+    with pytest.raises(InvalidEnvNameError, match=r".*Invalid environment name 'app:1"):
+        config.validate()

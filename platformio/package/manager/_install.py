@@ -27,7 +27,6 @@ from platformio.package.vcsclient import VCSClientFactory
 
 
 class PackageManagerInstallMixin:
-
     _INSTALL_HISTORY = None  # avoid circle dependencies
 
     @staticmethod

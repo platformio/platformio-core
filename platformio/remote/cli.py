@@ -17,7 +17,9 @@
 
 import os
 import subprocess
+import sys
 import threading
+from site import addsitedir
 from tempfile import mkdtemp
 from time import sleep
 
@@ -29,7 +31,7 @@ from platformio.device.monitor.command import (
     device_monitor_cmd,
     get_project_options,
 )
-from platformio.package.manager.core import inject_contrib_pysite
+from platformio.package.manager.core import get_core_package_dir
 from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.options import ProjectOptions
 from platformio.run.cli import cli as cmd_run
@@ -41,7 +43,11 @@ from platformio.test.cli import cli as test_cmd
 @click.pass_context
 def cli(ctx, agent):
     ctx.obj = agent
-    inject_contrib_pysite()
+    # inject twisted dependencies
+    contrib_dir = get_core_package_dir("contrib-pioremote")
+    if contrib_dir not in sys.path:
+        addsitedir(contrib_dir)
+        sys.path.insert(0, contrib_dir)
 
 
 @cli.group("agent", short_help="Start a new agent or list active")
@@ -56,7 +62,7 @@ def remote_agent():
     "-d",
     "--working-dir",
     envvar="PLATFORMIO_REMOTE_AGENT_DIR",
-    type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
+    type=click.Path(file_okay=False, dir_okay=True, writable=True),
 )
 def remote_agent_start(name, share, working_dir):
     from platformio.remote.client.agent_service import RemoteAgentService
@@ -96,9 +102,7 @@ def remote_update(agents, only_check, dry_run):
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, writable=True),
 )
 @click.option("--disable-auto-clean", is_flag=True)
 @click.option("-r", "--force-remote", is_flag=True)
@@ -118,7 +122,6 @@ def remote_run(
     silent,
     verbose,
 ):
-
     from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(
@@ -187,9 +190,7 @@ def remote_run(
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option("-r", "--force-remote", is_flag=True)
 @click.option("--without-building", is_flag=True)
@@ -211,7 +212,6 @@ def remote_test(  # pylint: disable=redefined-builtin
     without_uploading,
     verbose,
 ):
-
     from platformio.remote.client.run_or_test import RunOrTestClient
 
     cr = RunOrTestClient(
@@ -336,7 +336,7 @@ def device_list(agents, json_output):
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option(
     "-e",
@@ -345,9 +345,7 @@ def device_list(agents, json_output):
 )
 @click.option(
     "--sock",
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.pass_obj
 @click.pass_context

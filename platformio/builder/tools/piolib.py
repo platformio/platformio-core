@@ -29,7 +29,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs
 from platformio.builder.tools import piobuild
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
-from platformio.http import HTTPClientError, InternetIsOffline
+from platformio.http import HTTPClientError, InternetConnectionError
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -109,7 +109,6 @@ class LibBuilderFactory:
 
 
 class LibBuilderBase:
-
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
     # Max depth of nested includes:
@@ -298,11 +297,12 @@ class LibBuilderBase:
         with fs.cd(self.path):
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
-                self.env.SConscriptChdir(1)
+                self.env.SConscriptChdir(True)
                 self.env.SConscript(
                     os.path.abspath(self.extra_script),
                     exports={"env": self.env, "pio_lib_builder": self},
                 )
+                self.env.SConscriptChdir(False)
             self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
@@ -982,7 +982,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
             try:
                 lm.install(spec)
                 did_install = True
-            except (HTTPClientError, UnknownPackageError, InternetIsOffline) as exc:
+            except (
+                HTTPClientError,
+                UnknownPackageError,
+                InternetConnectionError,
+            ) as exc:
                 click.secho("Warning! %s" % exc, fg="yellow")
 
         # reset cache
@@ -1157,7 +1161,7 @@ def ConfigureProjectLibBuilder(env):
                 click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")
-            if lb.depbuilders:
+            if lb.verbose and lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")

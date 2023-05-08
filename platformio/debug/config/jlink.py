@@ -16,7 +16,6 @@ from platformio.debug.config.base import DebugConfigBase
 
 
 class JlinkDebugConfig(DebugConfigBase):
-
     GDB_INIT_SCRIPT = """
 define pio_reset_halt_target
     monitor reset

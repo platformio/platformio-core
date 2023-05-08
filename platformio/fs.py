@@ -24,7 +24,7 @@ import sys
 
 import click
 
-from platformio import exception, proc
+from platformio import exception
 from platformio.compat import IS_WINDOWS
 
 
@@ -181,7 +181,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     result = set()
     # correct fs directory separator
     src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
-    for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
+    for action, pattern in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
         candidates = _find_candidates(pattern)
         if action == "+":
             result |= candidates
@@ -193,26 +193,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
 def to_unix_path(path):
     if not IS_WINDOWS or not path:
         return path
-    return re.sub(r"[\\]+", "/", path)
-
-
-def normalize_path(path):
-    path = os.path.abspath(path)
-    if not IS_WINDOWS or not path.startswith("\\\\"):
-        return path
-    try:
-        result = proc.exec_command(["net", "use"])
-        if result["returncode"] != 0:
-            return path
-        share_re = re.compile(r"\s([A-Z]\:)\s+(\\\\[^\s]+)")
-        for line in result["out"].split("\n"):
-            share = share_re.search(line)
-            if not share:
-                continue
-            path = path.replace(share.group(2), share.group(1))
-    except OSError:
-        pass
-    return path
+    return path.replace("\\", "/")
 
 
 def expanduser(path):

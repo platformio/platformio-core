@@ -144,9 +144,8 @@ def new_serial_instance(options):  # pylint: disable=too-many-branches
             except KeyboardInterrupt as exc:
                 click.echo("", err=True)
                 raise UserSideException("User aborted and port is not given") from exc
-            else:
-                if not port:
-                    raise UserSideException("Port is not given")
+            if not port:
+                raise UserSideException("Port is not given")
         try:
             serial_instance = serial.serial_for_url(
                 port,

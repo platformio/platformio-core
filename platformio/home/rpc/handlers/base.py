@@ -12,22 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.exception import PlatformioException, UserSideException
 
-
-class UnitTestError(PlatformioException):
-    pass
-
-
-class TestDirNotExistsError(UnitTestError, UserSideException):
-    MESSAGE = (
-        "A test folder '{0}' does not exist.\nPlease create 'test' "
-        "directory in the project root and put a test suite.\n"
-        "More details about Unit "
-        "Testing: https://docs.platformio.org/en/latest/advanced/"
-        "unit-testing/index.html"
-    )
-
-
-class UnitTestSuiteError(UnitTestError):
-    pass
+class BaseRPCHandler:
+    factory = None

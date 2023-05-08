@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 import subprocess
 from hashlib import sha1
 
@@ -24,7 +25,7 @@ from platformio.project.config import ProjectConfig
 
 
 def get_project_dir():
-    return fs.normalize_path(os.getcwd())
+    return os.getcwd()
 
 
 def is_platformio_project(project_dir=None):
@@ -94,7 +95,16 @@ def compute_project_checksum(config):
     checksum = sha1(hashlib_encode_data(__version__))
 
     # configuration file state
-    checksum.update(hashlib_encode_data(config.to_json()))
+    config_data = config.to_json()
+    if IS_WINDOWS:
+        # issue #4600: fix drive letter
+        config_data = re.sub(
+            r"([A-Z]):\\",
+            lambda match: "%s:\\" % match.group(1).lower(),
+            config_data,
+            flags=re.I,
+        )
+    checksum.update(hashlib_encode_data(config_data))
 
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")

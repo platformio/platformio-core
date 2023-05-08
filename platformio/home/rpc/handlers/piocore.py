@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
+import functools
 import io
 import json
 import os
@@ -22,9 +24,45 @@ import click
 from ajsonrpc.core import JSONRPC20DispatchException
 from starlette.concurrency import run_in_threadpool
 
-from platformio import __main__, __version__, fs, proc
-from platformio.compat import get_locale_encoding, is_bytes
-from platformio.home import helpers
+from platformio import __main__, __version__, app, fs, proc, util
+from platformio.compat import (
+    IS_WINDOWS,
+    aio_create_task,
+    aio_get_running_loop,
+    get_locale_encoding,
+    is_bytes,
+)
+from platformio.exception import PlatformioException
+from platformio.home.rpc.handlers.base import BaseRPCHandler
+
+
+class PIOCoreProtocol(asyncio.SubprocessProtocol):
+    def __init__(self, exit_future, on_data_callback=None):
+        self.exit_future = exit_future
+        self.on_data_callback = on_data_callback
+        self.stdout = ""
+        self.stderr = ""
+        self._is_exited = False
+        self._encoding = get_locale_encoding()
+
+    def pipe_data_received(self, fd, data):
+        data = data.decode(self._encoding, "replace")
+        pipe = ["stdin", "stdout", "stderr"][fd]
+        if pipe == "stdout":
+            self.stdout += data
+        if pipe == "stderr":
+            self.stderr += data
+        if self.on_data_callback:
+            self.on_data_callback(pipe=pipe, data=data)
+
+    def connection_lost(self, exc):
+        self.process_exited()
+
+    def process_exited(self):
+        if self._is_exited:
+            return
+        self.exit_future.set_result(True)
+        self._is_exited = True
 
 
 class MultiThreadingStdStream:
@@ -58,10 +96,50 @@ class MultiThreadingStdStream:
         return result
 
 
-class PIOCoreRPC:
+@util.memoized(expire="60s")
+def get_core_fullpath():
+    return proc.where_is_program("platformio" + (".exe" if IS_WINDOWS else ""))
+
+
+class PIOCoreRPC(BaseRPCHandler):
     @staticmethod
     def version():
         return __version__
+
+    async def exec(self, args, options=None):
+        loop = aio_get_running_loop()
+        exit_future = loop.create_future()
+        data_callback = functools.partial(
+            self._on_exec_data_received, exec_options=options
+        )
+        if args[0] != "--caller" and app.get_session_var("caller_id"):
+            args = ["--caller", app.get_session_var("caller_id")] + args
+        transport, protocol = await loop.subprocess_exec(
+            lambda: PIOCoreProtocol(exit_future, data_callback),
+            get_core_fullpath(),
+            *args,
+            stdin=None,
+            **options.get("spawn", {}),
+        )
+        await exit_future
+        transport.close()
+        return {
+            "stdout": protocol.stdout,
+            "stderr": protocol.stderr,
+            "returncode": transport.get_returncode(),
+        }
+
+    def _on_exec_data_received(self, exec_options, pipe, data):
+        notification_method = exec_options.get(f"{pipe}NotificationMethod")
+        if not notification_method:
+            return
+        aio_create_task(
+            self.factory.notify_clients(
+                method=notification_method,
+                params=[data],
+                actor="frontend",
+            )
+        )
 
     @staticmethod
     def setup_multithreading_std_streams():
@@ -94,14 +172,14 @@ class PIOCoreRPC:
                 return PIOCoreRPC._process_result(result, to_json)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
-                code=4003, message="PIO Core Call Error", data=str(exc)
+                code=5000, message="PIO Core Call Error", data=str(exc)
             ) from exc
 
     @staticmethod
     async def _call_subprocess(args, options):
         result = await run_in_threadpool(
             proc.exec_command,
-            [helpers.get_core_fullpath()] + args,
+            [get_core_fullpath()] + args,
             cwd=options.get("cwd") or os.getcwd(),
         )
         return (result["out"], result["err"], result["returncode"])
@@ -132,7 +210,7 @@ class PIOCoreRPC:
             err = err.decode(get_locale_encoding())
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
-            raise Exception(text)
+            raise PlatformioException(text)
         if not to_json:
             return text
         try:

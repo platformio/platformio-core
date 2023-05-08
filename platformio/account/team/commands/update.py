@@ -26,7 +26,7 @@ from platformio.account.validate import validate_orgname_teamname, validate_team
 )
 @click.option(
     "--name",
-    callback=lambda _, __, value: validate_teamname(value),
+    callback=lambda _, __, value: validate_teamname(value) if value else value,
     help="A new team name",
 )
 @click.option(
@@ -36,18 +36,14 @@ def team_update_cmd(orgname_teamname, **kwargs):
     orgname, teamname = orgname_teamname.split(":", 1)
     client = AccountClient()
     team = client.get_team(orgname, teamname)
-    del team["id"]
-    del team["members"]
-    new_team = team.copy()
+    new_team = {
+        key: value if value is not None else team[key] for key, value in kwargs.items()
+    }
     if not any(kwargs.values()):
-        for field in team:
-            new_team[field] = click.prompt(
-                field.replace("_", " ").capitalize(), default=team[field]
-            )
-            if field == "name":
-                validate_teamname(new_team[field])
-    else:
-        new_team.update({key: value for key, value in kwargs.items() if value})
+        for key in kwargs:
+            new_team[key] = click.prompt(key.capitalize(), default=team[key])
+            if key == "name":
+                validate_teamname(new_team[key])
     client.update_team(orgname, teamname, new_team)
     return click.secho(
         "The team %s has been successfully updated." % teamname,

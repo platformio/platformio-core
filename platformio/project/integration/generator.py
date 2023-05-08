@@ -19,33 +19,34 @@ import sys
 import bottle
 
 from platformio import fs, util
+from platformio.debug.helpers import get_default_debug_env
 from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
 
 
 class ProjectGenerator:
-    def __init__(self, config, env_name, ide, board_ids=None):
+    def __init__(self, config, env_name, ide, boards=None):
         self.config = config
         self.project_dir = os.path.dirname(config.path)
-        self.original_env_name = env_name
-        self.env_name = str(env_name or self.get_best_envname(board_ids))
+        self.forced_env_name = env_name
+        self.env_name = str(env_name or self.get_best_envname(boards))
         self.ide = str(ide)
 
-    def get_best_envname(self, board_ids=None):
+    def get_best_envname(self, boards=None):
         envname = None
         default_envs = self.config.default_envs()
         if default_envs:
             envname = default_envs[0]
-            if not board_ids:
+            if not boards:
                 return envname
 
         for env in self.config.envs():
-            if not board_ids:
+            if not boards:
                 return env
             if not envname:
                 envname = env
             items = self.config.items(env=env, as_dict=True)
-            if "board" in items and items.get("board") in board_ids:
+            if "board" in items and items.get("board") in boards:
                 return env
         return envname
 
@@ -86,7 +87,8 @@ class ProjectGenerator:
                 "platformio", "name", os.path.basename(self.project_dir)
             ),
             "project_dir": self.project_dir,
-            "original_env_name": self.original_env_name,
+            "forced_env_name": self.forced_env_name,
+            "default_debug_env_name": get_default_debug_env(self.config),
             "env_name": self.env_name,
             "user_home_dir": os.path.abspath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
@@ -132,7 +134,7 @@ class ProjectGenerator:
             for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
                 for f in files:
                     result.append(
-                        os.path.relpath(os.path.join(os.path.realpath(root), f))
+                        os.path.relpath(os.path.join(os.path.abspath(root), f))
                     )
         return result
 

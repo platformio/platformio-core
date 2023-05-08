@@ -36,16 +36,17 @@ minimal_requirements = [
     "pyelftools>=0.27,<1",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
+    "urllib3<2", # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
     "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
     "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
 ]
 
 home_requirements = [
-    "aiofiles==%s" % ("0.8.0" if PY36 else "22.1.*"),
+    "aiofiles==%s" % ("0.8.0" if PY36 else "23.1.*"),
     "ajsonrpc==1.*",
-    "starlette==%s" % ("0.19.1" if PY36 else "0.23.*"),
-    "uvicorn==%s" % ("0.16.0" if PY36 else "0.20.*"),
+    "starlette==%s" % ("0.19.1" if PY36 else "0.26.*"),
+    "uvicorn==%s" % ("0.16.0" if PY36 else "0.22.*"),
     "wsproto==%s" % ("1.0.0" if PY36 else "1.2.*"),
 ]
 
@@ -67,6 +68,8 @@ setup(
             "assets/templates/ide-projects/*/*.tpl",
             "assets/templates/ide-projects/*/.*.tpl",  # include hidden files
             "assets/templates/ide-projects/*/.*/*.tpl",  # include hidden folders
+            "assets/templates/ide-projects/*/*/*.tpl",  # NetBeans
+            "assets/templates/ide-projects/*/*/*/*.tpl", # NetBeans
         ]
     },
     entry_points={

@@ -31,7 +31,7 @@ from platformio.project.config import ProjectConfig
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option("-e", "--environment", "environments", multiple=True)
 @click.option("-p", "--platform", "platforms", metavar="SPECIFICATION", multiple=True)
@@ -41,7 +41,7 @@ from platformio.project.config import ProjectConfig
 @click.option(
     "--storage-dir",
     default=None,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
     help="Custom Package Manager storage for global packages",
 )
 @click.option("--only-platforms", is_flag=True, help="List only platform packages")
@@ -137,7 +137,7 @@ def list_global_packages(options):
     only_packages = any(
         options.get(type_) or options.get(f"only_{type_}") for (type_, _) in data
     )
-    for (type_, pm) in data:
+    for type_, pm in data:
         skip_conds = [
             only_packages
             and not options.get(type_)

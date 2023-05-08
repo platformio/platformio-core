@@ -28,9 +28,9 @@ from platformio.debug import helpers
 from platformio.debug.config.factory import DebugConfigFactory
 from platformio.debug.exception import DebugInvalidOptionsError
 from platformio.debug.process.gdb import GDBClientProcess
+from platformio.exception import ReturnErrorCode
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
-from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project
 from platformio.project.options import ProjectOptions
 
@@ -44,16 +44,12 @@ from platformio.project.options import ProjectOptions
     "-d",
     "--project-dir",
     default=os.getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
 )
 @click.option(
     "-c",
     "--project-conf",
-    type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
-    ),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
 )
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--load-mode", type=ProjectOptions["env.debug_load_mode"].type)
@@ -81,61 +77,57 @@ def cli(
             project_dir = os.getenv(name)
 
     with fs.cd(project_dir):
-        return _debug_in_project_dir(
+        project_config = ProjectConfig.get_instance(project_conf)
+        project_config.validate(envs=[environment] if environment else None)
+        env_name = environment or helpers.get_default_debug_env(project_config)
+
+        if not interface:
+            return helpers.predebug_project(
+                ctx, project_dir, project_config, env_name, False, verbose
+            )
+
+        configure_args = (
             ctx,
-            project_dir,
-            project_conf,
-            environment,
+            project_config,
+            env_name,
             load_mode,
             verbose,
-            interface,
             __unprocessed,
         )
+        if helpers.is_gdbmi_mode():
+            os.environ["PLATFORMIO_DISABLE_PROGRESSBAR"] = "true"
+            stream = helpers.GDBMIConsoleStream()
+            with proc.capture_std_streams(stream):
+                debug_config = _configure(*configure_args)
+            stream.close()
+        else:
+            debug_config = _configure(*configure_args)
+
+        _run(project_dir, debug_config, __unprocessed)
+
+    return None
 
 
-def _debug_in_project_dir(
-    ctx,
-    project_dir,
-    project_conf,
-    environment,
-    load_mode,
-    verbose,
-    interface,
-    __unprocessed,
-):
-    project_config = ProjectConfig.get_instance(project_conf)
-    project_config.validate(envs=[environment] if environment else None)
-    env_name = environment or helpers.get_default_debug_env(project_config)
-
-    if not interface:
-        return helpers.predebug_project(
-            ctx, project_dir, project_config, env_name, False, verbose
-        )
-
-    env_options = project_config.items(env=env_name, as_dict=True)
-    if "platform" not in env_options:
-        raise ProjectEnvsNotAvailableError()
-
+def _configure(ctx, project_config, env_name, load_mode, verbose, __unprocessed):
+    platform = PlatformFactory.new(
+        project_config.get(f"env:{env_name}", "platform"), autoinstall=True
+    )
     debug_config = DebugConfigFactory.new(
-        PlatformFactory.new(env_options["platform"], autoinstall=True),
+        platform,
         project_config,
         env_name,
     )
-
     if "--version" in __unprocessed:
-        return subprocess.run(
-            [debug_config.client_executable_path, "--version"], check=True
+        raise ReturnErrorCode(
+            subprocess.run(
+                [debug_config.client_executable_path, "--version"], check=True
+            ).returncode
         )
 
     try:
         fs.ensure_udev_rules()
     except exception.InvalidUdevRules as exc:
-        click.echo(
-            helpers.escape_gdbmi_stream("~", str(exc) + "\n")
-            if helpers.is_gdbmi_mode()
-            else str(exc) + "\n",
-            nl=False,
-        )
+        click.echo(str(exc))
 
     rebuild_prog = False
     preload = debug_config.load_cmds == ["preload"]
@@ -157,25 +149,10 @@ def _debug_in_project_dir(
         debug_config.load_cmds = []
 
     if rebuild_prog:
-        if helpers.is_gdbmi_mode():
-            click.echo(
-                helpers.escape_gdbmi_stream(
-                    "~", "Preparing firmware for debugging...\n"
-                ),
-                nl=False,
-            )
-            stream = helpers.GDBMIConsoleStream()
-            with proc.capture_std_streams(stream):
-                helpers.predebug_project(
-                    ctx, project_dir, project_config, env_name, preload, verbose
-                )
-            stream.close()
-        else:
-            click.echo("Preparing firmware for debugging...")
-            helpers.predebug_project(
-                ctx, project_dir, project_config, env_name, preload, verbose
-            )
-
+        click.echo("Preparing firmware for debugging...")
+        helpers.predebug_project(
+            ctx, os.getcwd(), project_config, env_name, preload, verbose
+        )
         # save SHA sum of newly created prog
         if load_mode == "modified":
             helpers.is_prog_obsolete(debug_config.program_path)
@@ -183,6 +160,10 @@ def _debug_in_project_dir(
     if not os.path.isfile(debug_config.program_path):
         raise DebugInvalidOptionsError("Program/firmware is missed")
 
+    return debug_config
+
+
+def _run(project_dir, debug_config, __unprocessed):
     loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -199,5 +180,3 @@ def _debug_in_project_dir(
     finally:
         client.close()
         loop.close()
-
-    return True
