@@ -183,7 +183,7 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
         self._parse(self.raw)
 
     def __eq__(self, other):
-        return all(
+        return isinstance(other, PackageSpec) and all(
             [
                 self.owner == other.owner,
                 self.id == other.id,
@@ -418,7 +418,7 @@ class PackageMetaData:
         )
 
     def __eq__(self, other):
-        return all(
+        return isinstance(other, PackageMetaData) and all(
             [
                 self.type == other.type,
                 self.name == other.name,
@@ -481,13 +481,14 @@ class PackageItem:
         )
 
     def __eq__(self, other):
-        conds = [
-            os.path.realpath(self.path) == os.path.realpath(other.path)
-            if self.path and other.path
-            else self.path == other.path,
-            self.metadata == other.metadata,
-        ]
-        return all(conds)
+        return isinstance(other, PackageItem) and all(
+            [
+                os.path.realpath(self.path) == os.path.realpath(other.path)
+                if self.path and other.path
+                else self.path == other.path,
+                self.metadata == other.metadata,
+            ]
+        )
 
     def __hash__(self):
         return hash(os.path.realpath(self.path))

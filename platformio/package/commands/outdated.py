@@ -36,7 +36,7 @@ class OutdatedCandidate:
             self.envs = [self.envs]
 
     def __eq__(self, other):
-        return all(
+        return isinstance(other, OutdatedCandidate) and all(
             [
                 self.pm.package_dir == other.pm.package_dir,
                 self.pkg == other.pkg,
