@@ -18,6 +18,8 @@ PlatformIO Core 6
 6.1.8 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Enhanced the parsing of the |PIOCONF| to provide comprehensive diagnostic information
+
 6.1.7 (2023-05-08)
 ~~~~~~~~~~~~~~~~~~
 

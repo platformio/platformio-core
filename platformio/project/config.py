@@ -98,7 +98,7 @@ class ProjectConfigBase:
         try:
             self._parser.read(path, "utf-8")
         except configparser.Error as exc:
-            raise exception.InvalidProjectConfError(path, str(exc))
+            raise exception.InvalidProjectConfError(path, str(exc)) from exc
 
         if not parse_extra:
             return
