@@ -50,7 +50,10 @@ class HTTPSession(requests.Session):
         self._x_base_url = kwargs.pop("x_base_url") if "x_base_url" in kwargs else None
         super().__init__(*args, **kwargs)
         self.headers.update({"User-Agent": app.get_user_agent()})
-        self.verify = app.get_setting("enable_proxy_strict_ssl")
+        try:
+            self.verify = app.get_setting("enable_proxy_strict_ssl")
+        except PlatformioException:
+            self.verify = True
 
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
