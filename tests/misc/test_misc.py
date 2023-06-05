@@ -36,13 +36,13 @@ def test_ping_internet_ips():
 def test_api_internet_offline(without_internet, isolated_pio_core):
     regclient = RegistryClient()
     with pytest.raises(http.InternetConnectionError):
-        regclient.fetch_json_data("get", "/v2/stats")
+        regclient.fetch_json_data("get", "/v3/search")
 
 
 def test_api_cache(monkeypatch, isolated_pio_core):
     regclient = RegistryClient()
-    api_kwargs = {"method": "get", "path": "/v2/stats", "x_cache_valid": "10s"}
+    api_kwargs = {"method": "get", "path": "/v3/search", "x_cache_valid": "10s"}
     result = regclient.fetch_json_data(**api_kwargs)
-    assert result and "boards" in result
+    assert result and "total" in result
     monkeypatch.setattr(http, "_internet_on", lambda: False)
     assert regclient.fetch_json_data(**api_kwargs) == result
