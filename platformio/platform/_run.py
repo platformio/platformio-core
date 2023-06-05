@@ -52,7 +52,6 @@ class PlatformRunMixin:
 
         self.ensure_engine_compatible()
         self.configure_project_packages(variables["pioenv"], targets)
-        self._report_non_sensitive_data(variables["pioenv"], targets)
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
@@ -64,19 +63,11 @@ class PlatformRunMixin:
         if not os.path.isfile(variables["build_script"]):
             raise BuildScriptNotFound(variables["build_script"])
 
+        telemetry.log_platform_run(self, self.config, variables["pioenv"], targets)
         result = self._run_scons(variables, targets, jobs)
         assert "returncode" in result
 
         return result
-
-    def _report_non_sensitive_data(self, env, targets):
-        options = self.config.items(env=env, as_dict=True)
-        options["platform_packages"] = [
-            dict(name=item["name"], version=item["version"])
-            for item in self.dump_used_packages()
-        ]
-        options["platform"] = {"name": self.name, "version": self.version}
-        telemetry.send_run_environment(options, targets)
 
     def _run_scons(self, variables, targets, jobs):
         scons_dir = get_core_package_dir("tool-scons")

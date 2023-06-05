@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from pathlib import Path
 
 from platformio import __version__, app, fs, util
 from platformio.home.rpc.handlers.base import BaseRPCHandler
-from platformio.project.config import ProjectConfig
 from platformio.project.helpers import is_platformio_project
 
 
@@ -33,15 +31,10 @@ class AppRPC(BaseRPCHandler):
     ]
 
     @staticmethod
-    def get_state_path():
-        core_dir = ProjectConfig.get_instance().get("platformio", "core_dir")
-        if not os.path.isdir(core_dir):
-            os.makedirs(core_dir)
-        return os.path.join(core_dir, "homestate.json")
-
-    @staticmethod
     def load_state():
-        with app.State(AppRPC.get_state_path(), lock=True) as state:
+        with app.State(
+            app.resolve_state_path("core_dir", "homestate.json"), lock=True
+        ) as state:
             storage = state.get("storage", {})
 
             # base data
@@ -81,7 +74,9 @@ class AppRPC(BaseRPCHandler):
 
     @staticmethod
     def save_state(state):
-        with app.State(AppRPC.get_state_path(), lock=True) as s:
+        with app.State(
+            app.resolve_state_path("core_dir", "homestate.json"), lock=True
+        ) as s:
             s.clear()
             s.update(state)
             storage = s.get("storage", {})

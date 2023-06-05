@@ -25,8 +25,6 @@ from platformio.cli import PlatformioCLI
 from platformio.commands.upgrade import get_latest_version
 from platformio.http import HTTPClientError, InternetConnectionError, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
-from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageSpec
 from platformio.package.version import pepver_to_semver
 from platformio.system.prune import calculate_unnecessary_system_data
 
@@ -34,7 +32,8 @@ from platformio.system.prune import calculate_unnecessary_system_data
 def on_platformio_start(ctx, caller):
     app.set_session_var("command_ctx", ctx)
     set_caller(caller)
-    telemetry.on_command()
+    telemetry.log_command(ctx)
+    telemetry.resend_postponed_logs()
 
     if PlatformioCLI.in_silence():
         return
@@ -60,8 +59,8 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         )
 
 
-def on_platformio_exception(e):
-    telemetry.on_exception(e)
+def on_platformio_exception(exc):
+    telemetry.log_exception(exc)
 
 
 def set_caller(caller=None):
@@ -83,7 +82,7 @@ class Upgrader:
         self.to_version = pepver_to_semver(to_version)
 
         self._upgraders = [
-            (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
+            (semantic_version.Version("6.1.8-a.1"), self._appstate_migration),
         ]
 
     def run(self, ctx):
@@ -99,21 +98,22 @@ class Upgrader:
         return all(result)
 
     @staticmethod
-    def _update_pkg_metadata(_):
-        pm = ToolPackageManager()
-        for pkg in pm.get_installed():
-            if not pkg.metadata or pkg.metadata.spec.external or pkg.metadata.spec.id:
-                continue
-            result = pm.search_registry_packages(PackageSpec(name=pkg.metadata.name))
-            if len(result) != 1:
-                continue
-            result = result[0]
-            pkg.metadata.spec = PackageSpec(
-                id=result["id"],
-                owner=result["owner"]["username"],
-                name=result["name"],
+    def _appstate_migration(_):
+        state_path = app.resolve_state_path("core_dir", "appstate.json")
+        if not os.path.isfile(state_path):
+            return True
+        app.delete_state_item("telemetry")
+        created_at = app.get_state_item("created_at", None)
+        if not created_at:
+            state_stat = os.stat(state_path)
+            app.set_state_item(
+                "created_at",
+                int(
+                    state_stat.st_birthtime
+                    if hasattr(state_stat, "st_birthtime")
+                    else state_stat.st_ctime
+                ),
             )
-            pkg.dump_meta()
         return True
 
 
@@ -154,10 +154,13 @@ def after_upgrade(ctx):
                 "PlatformIO has been successfully upgraded to %s!\n" % __version__,
                 fg="green",
             )
-            telemetry.send_event(
-                category="Auto",
-                action="Upgrade",
-                label="%s > %s" % (last_version, __version__),
+            telemetry.log_event(
+                "pio_upgrade_core",
+                {
+                    "label": "%s > %s" % (last_version, __version__),
+                    "from_version": last_version,
+                    "to_version": __version__,
+                },
             )
 
     # PlatformIO banner

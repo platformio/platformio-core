@@ -14,7 +14,7 @@
 
 import os
 
-from platformio import fs, telemetry, util
+from platformio import fs, util
 from platformio.compat import MISSING
 from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
 from platformio.exception import UserSideException
@@ -119,7 +119,6 @@ class PlatformBoardConfig:
         if tool_name == "custom":
             return tool_name
         if not debug_tools:
-            telemetry.send_event("Debug", "Request", self.id)
             raise DebugSupportError(self._manifest["name"])
         if tool_name:
             if tool_name in debug_tools:

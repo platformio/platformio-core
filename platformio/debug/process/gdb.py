@@ -130,11 +130,7 @@ class GDBClientProcess(DebugClientProcess):
         self._handle_error(data)
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
-            telemetry.send_event(
-                "Debug",
-                "Started",
-                telemetry.dump_run_environment(self.debug_config.env_options),
-            )
+            telemetry.log_debug_started(self.debug_config)
             self._auto_exec_continue()
 
     def console_log(self, msg):
@@ -180,13 +176,11 @@ class GDBClientProcess(DebugClientProcess):
         ):
             return
 
-        last_erros = self._errors_buffer.decode()
-        last_erros = " ".join(reversed(last_erros.split("\n")))
-        last_erros = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_erros, flags=re.M)
-
-        err = "%s -> %s" % (
-            telemetry.dump_run_environment(self.debug_config.env_options),
-            last_erros,
+        last_errors = self._errors_buffer.decode()
+        last_errors = " ".join(reversed(last_errors.split("\n")))
+        last_errors = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_errors, flags=re.M)
+        telemetry.log_debug_exception(
+            "DebugInitError: %s" % last_errors, self.debug_config
         )
-        telemetry.send_exception("DebugInitError: %s" % err)
+
         self.transport.close()

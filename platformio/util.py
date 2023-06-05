@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 import functools
 import math
 import platform
@@ -206,3 +207,12 @@ def humanize_duration_time(duration):
 def strip_ansi_codes(text):
     # pylint: disable=protected-access
     return click._compat.strip_ansi(text)
+
+
+def decrypt_message(key, message):
+    result = ""
+    message = bytearray(base64.b64decode(message))
+    for i, c in enumerate(message):
+        key_c = key[i % len(key)]
+        result += chr((256 + c - ord(key_c)) % 256)
+    return result
