@@ -57,11 +57,13 @@ class MeasurementProtocol:
         self._user_properties[name] = {"value": value}
 
     def add_event(self, name, params):
+        params["engagement_time_msec"] = params.get("engagement_time_msec", 1)
         self._events.append({"name": name, "params": params})
 
     def to_payload(self):
         return {
             "client_id": app.get_cid(),
+            "non_personalized_ads": True,
             "user_properties": self._user_properties,
             "events": self._events,
         }
