@@ -186,10 +186,7 @@ def start_session():
             state["start_at"] = state["last_seen_at"] = start_at
         else:
             state["last_seen_at"] = int(time.time())
-
-        session_hash = hashlib.sha1(hashlib_encode_data(app.get_cid()))
-        session_hash.update(hashlib_encode_data(start_at))
-        return session_hash.hexdigest()
+        return start_at
 
 
 def on_platformio_start(cmd_ctx):
