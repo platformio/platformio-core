@@ -19,8 +19,8 @@ import platform as python_platform
 import queue
 import re
 import threading
+import time
 from collections import deque
-from time import sleep, time
 from traceback import format_exc
 
 import requests
@@ -34,10 +34,13 @@ from platformio.proc import is_ci, is_container
 
 KEEP_MAX_REPORTS = 100
 SEND_MAX_EVENTS = 25
+SESSION_TIMEOUT_DURATION = 30 * 60  # secs
 
 
 class MeasurementProtocol:
     def __init__(self):
+        self.client_id = app.get_cid()
+        self.session_id = start_session()
         self._user_properties = {}
         self._events = []
 
@@ -57,12 +60,13 @@ class MeasurementProtocol:
         self._user_properties[name] = {"value": value}
 
     def add_event(self, name, params):
+        params["session_id"] = params.get("session_id", self.session_id)
         params["engagement_time_msec"] = params.get("engagement_time_msec", 1)
         self._events.append({"name": name, "params": params})
 
     def to_payload(self):
         return {
-            "client_id": app.get_cid(),
+            "client_id": self.client_id,
             "non_personalized_ads": True,
             "user_properties": self._user_properties,
             "events": self._events,
@@ -81,7 +85,9 @@ class TelemetryLogger:
         self._workers = []
 
     def log(self, payload):
-        if not app.get_setting("enable_telemetry"):
+        if not app.get_setting("enable_telemetry") or app.get_session_var(
+            "pause_telemetry"
+        ):
             return None
 
         # if network is off-line
@@ -126,13 +132,11 @@ class TelemetryLogger:
             try:
                 item = self._queue.get()
                 _item = item.copy()
-                if "qt" not in _item:
-                    _item["qt"] = time()
                 self._failedque.append(_item)
                 if self._send(item):
                     self._failedque.remove(_item)
                 self._queue.task_done()
-            except:  # pylint: disable=W0702
+            except:  # pylint: disable=bare-except
                 pass
 
     def _send(self, payload):
@@ -162,6 +166,35 @@ class TelemetryLogger:
             pass
         self._http_offline = True
         return False
+
+
+@util.memoized("1m")
+def start_session():
+    with app.State(
+        app.resolve_state_path("cache_dir", "session.json"), lock=True
+    ) as state:
+        state.modified = True
+        start_at = state.get("start_at")
+        last_seen_at = state.get("last_seen_at")
+
+        if (
+            not start_at
+            or not last_seen_at
+            or last_seen_at < (time.time() - SESSION_TIMEOUT_DURATION)
+        ):
+            start_at = last_seen_at = int(time.time())
+            state["start_at"] = state["last_seen_at"] = start_at
+        else:
+            state["last_seen_at"] = int(time.time())
+
+        session_hash = hashlib.sha1(hashlib_encode_data(app.get_cid()))
+        session_hash.update(hashlib_encode_data(start_at))
+        return session_hash.hexdigest()
+
+
+def on_platformio_start(cmd_ctx):
+    log_command(cmd_ctx)
+    resend_postponed_logs()
 
 
 def log_event(name, params):
@@ -255,10 +288,14 @@ def dump_project_env_params(config, env, platform):
     return params
 
 
-def log_platform_run(platform, project_config, project_env, targets=None):
+def log_platform_run(
+    platform, project_config, project_env, targets=None, elapsed_time=None
+):
     params = dump_project_env_params(project_config, project_env, platform)
     if targets:
         params["targets"] = ", ".join(targets)
+    if elapsed_time:
+        params["engagement_time_msec"] = int(elapsed_time * 1000)
     log_event("pio_platform_run", params)
 
 
@@ -302,7 +339,7 @@ def _finalize():
         while elapsed < timeout:
             if not TelemetryLogger().in_wait():
                 break
-            sleep(0.2)
+            time.sleep(0.2)
             elapsed += 200
         postpone_logs(TelemetryLogger().get_unprocessed())
     except KeyboardInterrupt:
@@ -338,7 +375,7 @@ def postpone_logs(payloads):
     if not payloads:
         return None
     postponed_events = load_postponed_events() or []
-    timestamp_micros = int(time() * 1000000)
+    timestamp_micros = int(time.time() * 1000000)
     for payload in payloads:
         for event in payload.get("events", []):
             event["timestamp_micros"] = timestamp_micros

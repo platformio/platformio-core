@@ -32,9 +32,7 @@ from platformio.system.prune import calculate_unnecessary_system_data
 def on_platformio_start(ctx, caller):
     app.set_session_var("command_ctx", ctx)
     set_caller(caller)
-    telemetry.log_command(ctx)
-    telemetry.resend_postponed_logs()
-
+    telemetry.on_platformio_start(ctx)
     if PlatformioCLI.in_silence():
         return
     after_upgrade(ctx)

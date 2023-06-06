@@ -69,6 +69,7 @@ SESSION_VARS = {
     "command_ctx": None,
     "caller_id": None,
     "custom_project_conf": None,
+    "pause_telemetry": False,
 }
 
 
