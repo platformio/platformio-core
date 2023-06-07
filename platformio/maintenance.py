@@ -229,7 +229,7 @@ def check_platformio_upgrade():
     else:
         click.secho("platformio upgrade", fg="cyan", nl=False)
         click.secho("` or `", fg="yellow", nl=False)
-        click.secho("pip install -U platformio", fg="cyan", nl=False)
+        click.secho("python -m pip install -U platformio", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     click.secho("Changes: ", fg="yellow", nl=False)
     click.secho("https://docs.platformio.org/en/latest/history.html", fg="cyan")
