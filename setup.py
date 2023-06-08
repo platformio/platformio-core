@@ -65,11 +65,11 @@ setup(
     package_data={
         "platformio": [
             "assets/system/99-platformio-udev.rules",
-            "assets/templates/ide-projects/*/*.tpl",
-            "assets/templates/ide-projects/*/.*.tpl",  # include hidden files
-            "assets/templates/ide-projects/*/.*/*.tpl",  # include hidden folders
-            "assets/templates/ide-projects/*/*/*.tpl",  # NetBeans
-            "assets/templates/ide-projects/*/*/*/*.tpl", # NetBeans
+            "project/integration/tpls/*/*.tpl",
+            "project/integration/tpls/*/.*.tpl",  # include hidden files
+            "project/integration/tpls/*/.*/*.tpl",  # include hidden folders
+            "project/integration/tpls/*/*/*.tpl",  # NetBeans
+            "project/integration/tpls/*/*/*/*.tpl", # NetBeans
         ]
     },
     entry_points={

@@ -52,7 +52,7 @@ class ProjectGenerator:
 
     @staticmethod
     def get_ide_tpls_dir():
-        return os.path.join(fs.get_assets_dir(), "templates", "ide-projects")
+        return os.path.join(os.path.dirname(__file__), "tpls")
 
     @classmethod
     def get_supported_ides(cls):

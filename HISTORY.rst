@@ -19,6 +19,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Enhanced the parsing of the |PIOCONF| to provide comprehensive diagnostic information
+* Optimized project integration templates to address the issue of long paths on Windows (`issue #4652 <https://github.com/platformio/platformio-core/issues/4652>`_)
 
 6.1.7 (2023-05-08)
 ~~~~~~~~~~~~~~~~~~
