@@ -313,7 +313,7 @@ def test_custom_project_tools(
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_CONFIG_TPL)
-    spec = "platformio/tool-openocd"
+    spec = "platformio/tool-openocd@^2"
     result = clirunner.invoke(
         package_install_cmd,
         ["-d", str(project_dir), "-e", "devkit", "-t", spec],
@@ -329,7 +329,7 @@ def test_custom_project_tools(
         assert not os.path.exists(config.get("platformio", "platforms_dir"))
         # check saved deps
         assert config.get("env:devkit", "platform_packages") == [
-            "platformio/tool-openocd@^2.1100.211028",
+            "platformio/tool-openocd@^2",
         ]
         # uninstall
         result = clirunner.invoke(

@@ -18,10 +18,9 @@ import json
 import os
 import platform
 import socket
-import time
 import uuid
 
-from platformio import __version__, exception, fs, proc
+from platformio import __version__, exception, fs, proc, util
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.config import ProjectConfig
@@ -254,7 +253,7 @@ def get_cid():
     cid = str(cid)
     if IS_WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
         set_state_item("cid", cid)
-        set_state_item("created_at", int(time.time()))
+        set_state_item("created_at", int(util.get_timestamp()))
     return cid
 
 

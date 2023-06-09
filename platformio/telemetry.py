@@ -67,7 +67,6 @@ class MeasurementProtocol:
     def to_payload(self):
         return {
             "client_id": self.client_id,
-            "user_id": f"cid:{self.client_id}",
             "non_personalized_ads": True,
             "user_properties": self._user_properties,
             "events": self._events,

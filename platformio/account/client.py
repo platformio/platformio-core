@@ -15,7 +15,7 @@
 import os
 import time
 
-from platformio import __accounts_api__, app
+from platformio import __accounts_api__, app, util
 from platformio.exception import PlatformioException
 from platformio.http import HTTPClient, HTTPClientError
 
@@ -68,7 +68,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
             return os.environ.get("PLATFORMIO_AUTH_TOKEN")
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
-            if auth.get("access_token_expire") > time.time():
+            if auth.get("access_token_expire") > util.get_timestamp():
                 return auth.get("access_token")
             if auth.get("refresh_token"):
                 try:
