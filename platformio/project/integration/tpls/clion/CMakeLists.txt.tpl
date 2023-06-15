@@ -10,9 +10,9 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
 
-project("{{project_name}}" C CXX)
-
 include(CMakeListsPrivate.txt)
+
+project("{{project_name}}" C CXX)
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
 include(CMakeListsUser.txt)
