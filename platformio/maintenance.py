@@ -38,7 +38,8 @@ def on_platformio_start(ctx, caller):
     after_upgrade(ctx)
 
 
-def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
+def on_platformio_end():
+    telemetry.on_platformio_end()
     if PlatformioCLI.in_silence():
         return
 

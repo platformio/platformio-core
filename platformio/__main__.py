@@ -14,7 +14,7 @@
 
 import os
 import sys
-from traceback import format_exc
+import traceback
 
 import click
 
@@ -56,12 +56,6 @@ def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
     maintenance.on_platformio_start(ctx, caller)
 
 
-@cli.result_callback()
-@click.pass_context
-def process_result(ctx, result, *_, **__):
-    maintenance.on_platformio_end(ctx, result)
-
-
 def configure():
     if IS_CYGWIN:
         raise exception.CygwinEnvDetected()
@@ -96,6 +90,7 @@ def main(argv=None):
     if argv:
         assert isinstance(argv, list)
         sys.argv = argv
+
     try:
         ensure_python3(raise_exception=True)
         configure()
@@ -110,7 +105,7 @@ def main(argv=None):
             if isinstance(exc, exception.PlatformioException):
                 error_str += str(exc)
             else:
-                error_str += format_exc()
+                error_str += traceback.format_exc()
                 error_str += """
 ============================================================
 
@@ -129,6 +124,8 @@ An unexpected error occurred. Further steps:
 """
             click.secho(error_str, fg="red", err=True)
         exit_code = int(str(exc)) if str(exc).isdigit() else 1
+
+    maintenance.on_platformio_end()
     sys.argv = prev_sys_argv
     return exit_code
 
