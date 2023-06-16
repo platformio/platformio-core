@@ -77,7 +77,6 @@ def system_info_cmd(json_output):
             ).get_installed()
         ),
     }
-
     click.echo(
         json.dumps(data)
         if json_output

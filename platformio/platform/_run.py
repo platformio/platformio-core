@@ -17,7 +17,6 @@ import json
 import os
 import re
 import sys
-import time
 from urllib.parse import quote
 
 import click
@@ -64,15 +63,9 @@ class PlatformRunMixin:
         if not os.path.isfile(variables["build_script"]):
             raise BuildScriptNotFound(variables["build_script"])
 
-        started_at = time.time()
+        telemetry.log_platform_run(self, self.config, variables["pioenv"], targets)
         result = self._run_scons(variables, targets, jobs)
-        telemetry.log_platform_run(
-            self,
-            self.config,
-            variables["pioenv"],
-            targets,
-            elapsed_time=time.time() - started_at,
-        )
+
         assert "returncode" in result
 
         return result
