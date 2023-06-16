@@ -13,13 +13,13 @@
 # limitations under the License.
 
 import os
-import re
 import signal
 import time
 
 from platformio import telemetry
 from platformio.compat import aio_get_running_loop, is_bytes
 from platformio.debug import helpers
+from platformio.debug.exception import DebugInitError
 from platformio.debug.process.client import DebugClientProcess
 
 
@@ -175,12 +175,7 @@ class GDBClientProcess(DebugClientProcess):
             and b"Error in sourced" in self._errors_buffer
         ):
             return
-
-        last_errors = self._errors_buffer.decode()
-        last_errors = " ".join(reversed(last_errors.split("\n")))
-        last_errors = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_errors, flags=re.M)
         telemetry.log_debug_exception(
-            "DebugInitError: %s" % last_errors, self.debug_config
+            DebugInitError(self._errors_buffer.decode()), self.debug_config
         )
-
         self.transport.close()
