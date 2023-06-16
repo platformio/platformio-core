@@ -18,7 +18,7 @@ import socket
 from urllib.parse import urljoin
 
 import requests.adapters
-from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
+from urllib3.util.retry import Retry
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
