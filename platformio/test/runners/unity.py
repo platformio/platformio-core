@@ -118,7 +118,7 @@ void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
-        """,
+        """.strip(' '),
             language="c",
         ),
         arduino=dict(
@@ -159,7 +159,7 @@ void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
-        """,
+        """.strip(' '),
             language="c",
         ),
         zephyr=dict(
