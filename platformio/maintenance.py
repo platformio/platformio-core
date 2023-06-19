@@ -80,9 +80,8 @@ def set_caller(caller=None):
 
 class Upgrader:
     def __init__(self, from_version, to_version):
-        self.from_version = pepver_to_semver(from_version)
-        self.to_version = pepver_to_semver(to_version)
-
+        self.from_version = from_version
+        self.to_version = to_version
         self._upgraders = [
             (semantic_version.Version("6.1.8-a.1"), self._appstate_migration),
         ]
@@ -121,17 +120,22 @@ class Upgrader:
 
 def after_upgrade(ctx):
     terminal_width = shutil.get_terminal_size().columns
-    last_version = app.get_state_item("last_version", "0.0.0")
-    if last_version == __version__:
-        return
+    last_version_str = app.get_state_item("last_version", "0.0.0")
+    if last_version_str == __version__:
+        return None
 
-    if last_version == "0.0.0":
+    if last_version_str == "0.0.0":
         app.set_state_item("last_version", __version__)
-    elif pepver_to_semver(last_version) > pepver_to_semver(__version__):
+        return print_welcome_banner()
+
+    last_version = pepver_to_semver(last_version_str)
+    current_version = pepver_to_semver(__version__)
+
+    if last_version > current_version and not last_version.prerelease:
         click.secho("*" * terminal_width, fg="yellow")
         click.secho(
             "Obsolete PIO Core v%s is used (previous was %s)"
-            % (__version__, last_version),
+            % (__version__, last_version_str),
             fg="yellow",
         )
         click.secho("Please remove multiple PIO Cores from a system:", fg="yellow")
@@ -141,46 +145,50 @@ def after_upgrade(ctx):
             fg="cyan",
         )
         click.secho("*" * terminal_width, fg="yellow")
-        return
-    else:
-        click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
+        return None
 
-        # Update PlatformIO's Core packages
-        cleanup_content_cache("http")
-        update_core_packages()
+    click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
 
-        u = Upgrader(last_version, __version__)
-        if u.run(ctx):
-            app.set_state_item("last_version", __version__)
-            click.secho(
-                "PlatformIO has been successfully upgraded to %s!\n" % __version__,
-                fg="green",
-            )
-            telemetry.log_event(
-                "pio_upgrade_core",
-                {
-                    "label": "%s > %s" % (last_version, __version__),
-                    "from_version": last_version,
-                    "to_version": __version__,
-                },
-            )
+    # Update PlatformIO's Core packages
+    cleanup_content_cache("http")
+    update_core_packages()
 
-    # PlatformIO banner
+    u = Upgrader(last_version, current_version)
+    if u.run(ctx):
+        app.set_state_item("last_version", __version__)
+        click.secho(
+            "PlatformIO has been successfully upgraded to %s!\n" % __version__,
+            fg="green",
+        )
+        telemetry.log_event(
+            "pio_upgrade_core",
+            {
+                "label": "%s > %s" % (last_version_str, __version__),
+                "from_version": last_version_str,
+                "to_version": __version__,
+            },
+        )
+
+    return print_welcome_banner()
+
+
+def print_welcome_banner():
+    terminal_width = shutil.get_terminal_size().columns
     click.echo("*" * terminal_width)
     click.echo("If you like %s, please:" % (click.style("PlatformIO", fg="cyan")))
-    click.echo(
-        "- %s us on Twitter to stay up-to-date "
-        "on the latest project news > %s"
-        % (
-            click.style("follow", fg="cyan"),
-            click.style("https://twitter.com/PlatformIO_Org", fg="cyan"),
-        )
-    )
     click.echo(
         "- %s it on GitHub > %s"
         % (
             click.style("star", fg="cyan"),
-            click.style("https://github.com/platformio/platformio", fg="cyan"),
+            click.style("https://github.com/platformio/platformio-core", fg="cyan"),
+        )
+    )
+    click.echo(
+        "- %s us on LinkedIn to stay up-to-date "
+        "on the latest project news > %s"
+        % (
+            click.style("follow", fg="cyan"),
+            click.style("https://www.linkedin.com/company/platformio/", fg="cyan"),
         )
     )
     if not os.getenv("PLATFORMIO_IDE"):
