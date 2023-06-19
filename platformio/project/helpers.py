@@ -180,7 +180,7 @@ def _load_build_metadata(project_dir, env_names, debug=False):
     ):
         raise result.exception
     if '"includes":' not in result.output:
-        raise exception.PlatformioException(result.output)
+        raise exception.UserSideException(result.output)
     return _get_cached_build_metadata(project_dir, env_names)
 
 

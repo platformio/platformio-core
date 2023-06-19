@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.exception import PlatformioException
+from platformio.exception import UserSideException
 
 
-class PlatformException(PlatformioException):
+class PlatformException(UserSideException):
     pass
 
 

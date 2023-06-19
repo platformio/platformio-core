@@ -18,7 +18,7 @@ import subprocess
 from urllib.parse import urlparse
 
 from platformio import proc
-from platformio.package.exception import PlatformioException, UserSideException
+from platformio.exception import UserSideException
 
 
 class VCSBaseException(UserSideException):
@@ -70,7 +70,7 @@ class VCSClientBase:
                 self.get_cmd_output(["--version"])
             else:
                 assert self.run_cmd(["--version"])
-        except (AssertionError, OSError, PlatformioException) as exc:
+        except (AssertionError, OSError) as exc:
             raise VCSBaseException(
                 "VCS: `%s` client is not installed in your system" % self.command
             ) from exc

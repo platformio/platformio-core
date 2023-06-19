@@ -17,6 +17,7 @@ import hashlib
 import os
 import queue
 import re
+import sys
 import threading
 import time
 import traceback
@@ -271,6 +272,7 @@ def log_exception(exc):
         "name": exc.__class__.__name__,
         "description": str(exc),
         "traceback": trace,
+        "cmd_args": sys.argv[1:],
         "is_fatal": is_fatal,
     }
     log_event("exception", params)
