@@ -29,17 +29,16 @@ from platformio.package.version import pepver_to_semver
 from platformio.system.prune import calculate_unnecessary_system_data
 
 
-def on_platformio_start(ctx, caller):
+def on_cmd_start(ctx, caller):
     app.set_session_var("command_ctx", ctx)
     set_caller(caller)
-    telemetry.on_platformio_start(ctx)
+    telemetry.on_cmd_start(ctx)
     if PlatformioCLI.in_silence():
         return
     after_upgrade(ctx)
 
 
-def on_platformio_end():
-    telemetry.on_platformio_end()
+def on_cmd_end():
     if PlatformioCLI.in_silence():
         return
 
@@ -60,6 +59,10 @@ def on_platformio_end():
 
 def on_platformio_exception(exc):
     telemetry.log_exception(exc)
+
+
+def on_platformio_exit():
+    telemetry.on_exit()
 
 
 def set_caller(caller=None):

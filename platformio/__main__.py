@@ -53,7 +53,13 @@ def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
     except:  # pylint: disable=bare-except
         pass
 
-    maintenance.on_platformio_start(ctx, caller)
+    maintenance.on_cmd_start(ctx, caller)
+
+
+@cli.result_callback()
+@click.pass_context
+def process_result(*_, **__):
+    maintenance.on_cmd_end()
 
 
 def configure():
@@ -125,7 +131,7 @@ An unexpected error occurred. Further steps:
             click.secho(error_str, fg="red", err=True)
         exit_code = int(str(exc)) if str(exc).isdigit() else 1
 
-    maintenance.on_platformio_end()
+    maintenance.on_platformio_exit()
     sys.argv = prev_sys_argv
     return exit_code
 

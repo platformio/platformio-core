@@ -170,12 +170,12 @@ def log_event(name, params, instant_sending=False):
     TelemetryLogger().log_event(name, params, instant_sending=instant_sending)
 
 
-def on_platformio_start(cmd_ctx):
+def on_cmd_start(cmd_ctx):
     process_postponed_logs()
     log_command(cmd_ctx)
 
 
-def on_platformio_end():
+def on_exit():
     TelemetryLogger().send()
 
 
