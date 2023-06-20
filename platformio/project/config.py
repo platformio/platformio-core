@@ -433,7 +433,41 @@ class ProjectConfigDirsMixin:
         return self.get("platformio", f"{name}_dir")
 
 
-class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
+class ProjectConfigLintMixin:
+    @classmethod
+    def lint(cls, path=None):
+        errors = []
+        warnings = []
+        try:
+            config = cls.get_instance(path)
+            config.validate(silent=True)
+            warnings = config.warnings
+            config.as_tuple()
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if exc.__cause__ is not None:
+                exc = exc.__cause__
+
+            item = {"type": exc.__class__.__name__, "message": str(exc)}
+            for attr in ("lineno", "source"):
+                if hasattr(exc, attr):
+                    item[attr] = getattr(exc, attr)
+
+            if item["type"] == "ParsingError" and hasattr(exc, "errors"):
+                for lineno, line in getattr(exc, "errors"):
+                    errors.append(
+                        {
+                            "type": item["type"],
+                            "message": f"Parsing error: {line}",
+                            "lineno": lineno,
+                            "source": item["source"],
+                        }
+                    )
+            else:
+                errors.append(item)
+        return {"errors": errors, "warnings": warnings}
+
+
+class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin, ProjectConfigLintMixin):
     _instances = {}
 
     @staticmethod

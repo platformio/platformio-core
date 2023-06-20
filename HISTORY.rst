@@ -18,6 +18,7 @@ PlatformIO Core 6
 6.1.8 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added a new ``--lint`` option to the `pio project config <https://docs.platformio.org/en/latest/core/userguide/project/cmd_config.html>`__ command, enabling users to efficiently perform linting on the |PIOCONF|
 * Enhanced the parsing of the |PIOCONF| to provide comprehensive diagnostic information
 * Optimized project integration templates to address the issue of long paths on Windows (`issue #4652 <https://github.com/platformio/platformio-core/issues/4652>`_)
 * Refactored |UNITTESTING| engine to resolve compiler warnings with "-Wpedantic" option (`pull #4671 <https://github.com/platformio/platformio-core/pull/4671>`_)
