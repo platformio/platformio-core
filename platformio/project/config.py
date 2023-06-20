@@ -339,7 +339,6 @@ class ProjectConfigBase:
         return str(value)
 
     def get(self, section, option, default=MISSING):
-        value = None
         try:
             value = self.getraw(section, option, default)
         except configparser.Error as exc:
