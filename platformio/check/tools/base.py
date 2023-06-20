@@ -60,8 +60,8 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         data = load_build_metadata(self.project_dir, self.envname)
         if not data:
             return
-        self.cc_flags = click.parser.split_arg_string(data.get("cc_flags", ""))
-        self.cxx_flags = click.parser.split_arg_string(data.get("cxx_flags", ""))
+        self.cc_flags = data.get("cc_flags", [])
+        self.cxx_flags = data.get("cxx_flags", [])
         self.cpp_includes = self._dump_includes(data.get("includes", {}))
         self.cpp_defines = data.get("defines", [])
         self.cc_path = data.get("cc_path")

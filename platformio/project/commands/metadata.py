@@ -37,6 +37,7 @@ from platformio.project.helpers import load_build_metadata
 @click.option("--json-output", is_flag=True)
 @click.option("--json-output-path", type=click.Path())
 def project_metadata_cmd(project_dir, environments, json_output, json_output_path):
+    project_dir = os.path.abspath(project_dir)
     with fs.cd(project_dir):
         config = ProjectConfig.get_instance()
         config.validate(environments)

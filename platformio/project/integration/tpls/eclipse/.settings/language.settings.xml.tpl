@@ -1,6 +1,4 @@
-% import re
-% STD_RE = re.compile(r"(\-std=[a-z\+]+\w+)")
-% cxx_stds = STD_RE.findall(cxx_flags)
+% cxx_stds = [arg for arg in cxx_flags if arg.startswith("-std=")]
 % cxx_std = cxx_stds[-1] if cxx_stds else ""
 %
 % if cxx_path.startswith(user_home_dir):

@@ -17,6 +17,7 @@
 import importlib.util
 import inspect
 import locale
+import shlex
 import sys
 
 from platformio.exception import UserSideException
@@ -35,6 +36,13 @@ IS_WINDOWS = WINDOWS = sys.platform.startswith("win")
 IS_MACOS = sys.platform.startswith("darwin")
 MISSING = object()
 string_types = (str,)
+
+try:
+    from shlex import join as shlex_join
+except ImportError:
+
+    def shlex_join(split_command):
+        return " ".join(shlex.quote(arg) for arg in split_command)
 
 
 def is_bytes(x):
