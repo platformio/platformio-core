@@ -86,7 +86,7 @@ class ProjectConfigBase:
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
-        self._maintain_renaimed_options()
+        self._maintain_renamed_options()
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
@@ -110,7 +110,7 @@ class ProjectConfigBase:
             for item in glob.glob(pattern, recursive=True):
                 self.read(item)
 
-    def _maintain_renaimed_options(self):
+    def _maintain_renamed_options(self):
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
