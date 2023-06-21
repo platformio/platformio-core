@@ -107,7 +107,7 @@ def main(argv=None):
     except Exception as exc:  # pylint: disable=broad-except
         if not isinstance(exc, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(exc)
-            error_str = "Error: "
+            error_str = f"{exc.__class__.__name__}: "
             if isinstance(exc, exception.PlatformioException):
                 error_str += str(exc)
             else:
