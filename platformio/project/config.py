@@ -324,6 +324,7 @@ class ProjectConfigBase:
                         f"`${{this.__env__}}` is called from the `{parent_section}` "
                         "section that is not valid PlatformIO environment, see",
                         option,
+                        " ",
                         section,
                     )
                 return parent_section[4:]
@@ -332,7 +333,10 @@ class ProjectConfigBase:
             value = self.get(section, option)
         except RecursionError as exc:
             raise exception.ProjectOptionValueError(
-                "Infinite recursion has been detected", option, section
+                "Infinite recursion has been detected",
+                option,
+                " ",
+                section,
             ) from exc
         if isinstance(value, list):
             return "\n".join(value)
@@ -359,7 +363,10 @@ class ProjectConfigBase:
             if not self.expand_interpolations:
                 return value
             raise exception.ProjectOptionValueError(
-                exc.format_message(), option, section
+                exc.format_message(),
+                option,
+                " (%s) " % option_meta.description,
+                section,
             )
 
     @staticmethod
