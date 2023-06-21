@@ -51,4 +51,4 @@ class InvalidEnvNameError(ProjectError):
 
 
 class ProjectOptionValueError(ProjectError):
-    MESSAGE = "{0} for option `{1}` in section [{2}]"
+    MESSAGE = "{0} for option `{1}`{2}in section [{3}]"
