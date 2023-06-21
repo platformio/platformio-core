@@ -16,6 +16,12 @@ import re
 
 import semantic_version
 
+from platformio.exception import UserSideException
+
+
+class SemanticVersionError(UserSideException):
+    pass
+
 
 def cast_version_to_semver(value, force=True, raise_exception=False):
     assert value
@@ -29,7 +35,7 @@ def cast_version_to_semver(value, force=True, raise_exception=False):
         except ValueError:
             pass
     if raise_exception:
-        raise ValueError("Invalid SemVer version %s" % value)
+        raise SemanticVersionError("Invalid SemVer version %s" % value)
     # parse commit hash
     if re.match(r"^[\da-f]+$", value, flags=re.I):
         return semantic_version.Version("0.0.0+sha." + value)

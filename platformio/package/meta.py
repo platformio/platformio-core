@@ -24,7 +24,7 @@ import semantic_version
 from platformio import fs
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
 from platformio.package.manifest.parser import ManifestFileType
-from platformio.package.version import cast_version_to_semver
+from platformio.package.version import SemanticVersionError, cast_version_to_semver
 from platformio.util import items_in_list
 
 
@@ -175,7 +175,7 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
         if requirements:
             try:
                 self.requirements = requirements
-            except ValueError as exc:
+            except SemanticVersionError as exc:
                 if not self.name or self.uri or self.raw:
                     raise exc
                 self.raw = "%s=%s" % (self.name, requirements)
@@ -224,11 +224,14 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
         if not value:
             self._requirements = None
             return
-        self._requirements = (
-            value
-            if isinstance(value, semantic_version.SimpleSpec)
-            else semantic_version.SimpleSpec(str(value))
-        )
+        try:
+            self._requirements = (
+                value
+                if isinstance(value, semantic_version.SimpleSpec)
+                else semantic_version.SimpleSpec(str(value))
+            )
+        except ValueError as exc:
+            raise SemanticVersionError(exc) from exc
 
     def humanize(self):
         result = ""
