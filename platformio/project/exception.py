@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.exception import UserSideException
+from platformio.exception import PlatformioException, UserSideException
 
 
-class ProjectError(UserSideException):
+class ProjectError(PlatformioException):
     pass
 
 
-class NotPlatformIOProjectError(ProjectError):
+class NotPlatformIOProjectError(ProjectError, UserSideException):
     MESSAGE = (
         "Not a PlatformIO project. `platformio.ini` file has not been "
         "found in current working directory ({0}). To initialize new project "
@@ -27,28 +27,28 @@ class NotPlatformIOProjectError(ProjectError):
     )
 
 
-class InvalidProjectConfError(ProjectError):
+class InvalidProjectConfError(ProjectError, UserSideException):
     MESSAGE = "Invalid '{0}' (project configuration file): '{1}'"
 
 
-class UndefinedEnvPlatformError(ProjectError):
+class UndefinedEnvPlatformError(ProjectError, UserSideException):
     MESSAGE = "Please specify platform for '{0}' environment"
 
 
-class ProjectEnvsNotAvailableError(ProjectError):
+class ProjectEnvsNotAvailableError(ProjectError, UserSideException):
     MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
-class UnknownEnvNamesError(ProjectError):
+class UnknownEnvNamesError(ProjectError, UserSideException):
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 
 
-class InvalidEnvNameError(ProjectError):
+class InvalidEnvNameError(ProjectError, UserSideException):
     MESSAGE = (
         "Invalid environment name '{0}'. The name can contain "
         "alphanumeric, underscore, and hyphen characters (a-z, 0-9, -, _)"
     )
 
 
-class ProjectOptionValueError(ProjectError):
+class ProjectOptionValueError(ProjectError, UserSideException):
     MESSAGE = "{0} for option `{1}`{2}in section [{3}]"
