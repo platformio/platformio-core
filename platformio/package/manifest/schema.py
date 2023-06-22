@@ -183,7 +183,7 @@ class ManifestSchema(BaseSchema):
             validate=[
                 validate.Length(min=1, max=50),
                 validate.Regexp(
-                    r"^[a-z\d\-\+\. ]+$", error="Only [a-z0-9-+. ] chars are allowed"
+                    r"^[a-z\d\-_\+\. ]+$", error="Only [a-z0-9+_-. ] chars are allowed"
                 ),
             ]
         )

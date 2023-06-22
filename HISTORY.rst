@@ -20,6 +20,7 @@ PlatformIO Core 6
 
 * Added a new ``--lint`` option to the `pio project config <https://docs.platformio.org/en/latest/core/userguide/project/cmd_config.html>`__ command, enabling users to efficiently perform linting on the |PIOCONF|
 * Enhanced the parsing of the |PIOCONF| to provide comprehensive diagnostic information
+* Expanded the functionality of the |LIBRARYJSON| manifest by allowing the use of the underscore symbol in the `keywords <https://docs.platformio.org/en/latest/manifests/library-json/fields/keywords.html>`__ field
 * Optimized project integration templates to address the issue of long paths on Windows (`issue #4652 <https://github.com/platformio/platformio-core/issues/4652>`_)
 * Refactored |UNITTESTING| engine to resolve compiler warnings with "-Wpedantic" option (`pull #4671 <https://github.com/platformio/platformio-core/pull/4671>`_)
 * Eliminated erroneous warning regarding the use of obsolete PlatformIO Core when downgrading to the stable version (`issue #4664 <https://github.com/platformio/platformio-core/issues/4664>`_)

@@ -28,7 +28,7 @@ def test_library_json_parser():
     contents = """
 {
     "name": "TestPackage",
-    "keywords": "kw1, KW2, kw3, KW2",
+    "keywords": "kw1, KW2, kw3, KW2, kw 4, kw_5, kw-6",
     "headers": "include1.h, Include2.hpp",
     "platforms": ["atmelavr", "espressif"],
     "repository": {
@@ -62,7 +62,7 @@ def test_library_json_parser():
                 "url": "https://github.com/username/repo.git",
             },
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
-            "keywords": ["kw1", "kw2", "kw3"],
+            "keywords": ["kw1", "kw2", "kw3", "kw 4", "kw_5", "kw-6"],
             "headers": ["include1.h", "Include2.hpp"],
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
