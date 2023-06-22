@@ -35,8 +35,6 @@ minimal_requirements = [
     "marshmallow==%s" % ("3.14.1" if PY36 else "3.*"),
     "pyelftools>=0.27,<1",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "requests==2.*",
-    "urllib3<2", # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
     "requests==%s" % ("2.27.1" if PY36 else "2.*"),
     "semantic_version==2.10.*",
     "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
@@ -49,6 +47,20 @@ home_requirements = [
     "uvicorn==%s" % ("0.16.0" if PY36 else "0.22.*"),
     "wsproto==%s" % ("1.0.0" if PY36 else "1.2.*"),
 ]
+
+# issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
+try:
+    import ssl
+
+    if ssl.OPENSSL_VERSION.startswith("OpenSSL ") and ssl.OPENSSL_VERSION_INFO < (
+        1,
+        1,
+        1,
+    ):
+        minimal_requirements.append("urllib3<2")
+except ImportError:
+    pass
+
 
 setup(
     name=__title__,
@@ -69,7 +81,7 @@ setup(
             "project/integration/tpls/*/.*.tpl",  # include hidden files
             "project/integration/tpls/*/.*/*.tpl",  # include hidden folders
             "project/integration/tpls/*/*/*.tpl",  # NetBeans
-            "project/integration/tpls/*/*/*/*.tpl", # NetBeans
+            "project/integration/tpls/*/*/*/*.tpl",  # NetBeans
         ]
     },
     entry_points={
