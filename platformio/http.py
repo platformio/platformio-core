@@ -27,7 +27,7 @@ from platformio.exception import PlatformioException, UserSideException
 __default_requests_timeout__ = (10, None)  # (connect, read)
 
 
-class HTTPClientError(PlatformioException):
+class HTTPClientError(UserSideException):
     def __init__(self, message, response=None):
         super().__init__()
         self.message = message
