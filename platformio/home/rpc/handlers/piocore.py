@@ -22,13 +22,13 @@ import threading
 
 import click
 from ajsonrpc.core import JSONRPC20DispatchException
-from starlette.concurrency import run_in_threadpool
 
 from platformio import __main__, __version__, app, fs, proc, util
 from platformio.compat import (
     IS_WINDOWS,
     aio_create_task,
     aio_get_running_loop,
+    aio_to_thread,
     get_locale_encoding,
     is_bytes,
 )
@@ -177,7 +177,7 @@ class PIOCoreRPC(BaseRPCHandler):
 
     @staticmethod
     async def _call_subprocess(args, options):
-        result = await run_in_threadpool(
+        result = await aio_to_thread(
             proc.exec_command,
             [get_core_fullpath()] + args,
             cwd=options.get("cwd") or os.getcwd(),
@@ -197,7 +197,7 @@ class PIOCoreRPC(BaseRPCHandler):
                 exit_code,
             )
 
-        return await run_in_threadpool(
+        return await aio_to_thread(
             _thread_safe_call, args=args, cwd=options.get("cwd") or os.getcwd()
         )
 
