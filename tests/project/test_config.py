@@ -22,6 +22,7 @@ from pathlib import Path
 import pytest
 
 from platformio import fs
+from platformio.compat import IS_WINDOWS
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import (
     InvalidEnvNameError,
@@ -115,7 +116,11 @@ build_flags = -Og
 src_filter = ${custom.src_filter} +<c>
 """
 
-DEFAULT_CORE_DIR = os.path.join(fs.expanduser("~"), ".platformio")
+xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
+if xdg_config_home:
+    DEFAULT_CORE_DIR = os.path.join(xdg_config_home, "platformio")
+else:
+    DEFAULT_CORE_DIR = os.path.join(fs.expanduser("~"), ".config", "platformio")
 
 
 @pytest.fixture(scope="module")
@@ -147,9 +152,16 @@ def test_warnings(config):
 
 
 def test_defaults(config):
-    assert config.get("platformio", "core_dir") == os.path.join(
-        os.path.expanduser("~"), ".platformio"
-    )
+    xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
+    if xdg_config_home:
+        expected_core_dir = os.path.join(xdg_config_home, "platformio")
+    else:
+        expected_core_dir = os.path.join(
+            os.path.expanduser("~"), ".config", "platformio"
+        )
+    if IS_WINDOWS:
+        expected_core_dir = os.path.join(os.path.expanduser("~"), ".platformio")
+    assert config.get("platformio", "core_dir") == expected_core_dir
     assert config.get("strict_ldf", "lib_deps", ["Empty"]) == ["Empty"]
     assert config.get("env:extra_2", "lib_compat_mode") == "soft"
     assert config.get("env:extra_2", "build_type") == "release"
