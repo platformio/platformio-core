@@ -17,7 +17,7 @@ import os
 from platformio import fs, util
 from platformio.compat import MISSING
 from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
-from platformio.exception import UserSideException
+from platformio.exception import InvalidJSONFile, UserSideException
 from platformio.platform.exception import InvalidBoardManifest
 
 
@@ -28,7 +28,7 @@ class PlatformBoardConfig:
         self.manifest_path = manifest_path
         try:
             self._manifest = fs.load_json(manifest_path)
-        except ValueError as exc:
+        except InvalidJSONFile as exc:
             raise InvalidBoardManifest(manifest_path) from exc
         if not set(["name", "url", "vendor"]) <= set(self._manifest):
             raise UserSideException(

@@ -15,7 +15,7 @@
 import os
 from time import sleep, time
 
-from platformio.exception import PlatformioException
+from platformio.exception import UserSideException
 
 LOCKFILE_TIMEOUT = 3600  # in seconds, 1 hour
 LOCKFILE_DELAY = 0.2
@@ -36,11 +36,11 @@ except ImportError:
         LOCKFILE_CURRENT_INTERFACE = None
 
 
-class LockFileExists(PlatformioException):
+class LockFileExists(UserSideException):
     pass
 
 
-class LockFileTimeoutError(PlatformioException):
+class LockFileTimeoutError(UserSideException):
     pass
 
 

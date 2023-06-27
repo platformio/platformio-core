@@ -157,7 +157,10 @@ class HTTPClient:
         with ContentCache("http") as cc:
             result = cc.get(cache_key)
             if result is not None:
-                return json.loads(result)
+                try:
+                    return json.loads(result)
+                except json.JSONDecodeError:
+                    pass
             response = self.send_request(method, path, **kwargs)
             data = self._parse_json_response(response)
             cc.set(cache_key, response.text, cache_valid)
