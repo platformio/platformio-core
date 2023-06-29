@@ -37,8 +37,10 @@ class HTTPAsyncSession(HTTPSession):
 
 
 class OSRPC(BaseRPCHandler):
-    @staticmethod
-    async def fetch_content(url, data=None, headers=None, cache_valid=None):
+    _http_session = None
+
+    @classmethod
+    async def fetch_content(cls, url, data=None, headers=None, cache_valid=None):
         if not headers:
             headers = {
                 "User-Agent": (
@@ -57,11 +59,13 @@ class OSRPC(BaseRPCHandler):
         # check internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
-        session = HTTPAsyncSession()
+        if not cls._http_session:
+            cls._http_session = HTTPAsyncSession()
+
         if data:
-            r = await session.post(url, data=data, headers=headers)
+            r = await cls._http_session.post(url, data=data, headers=headers)
         else:
-            r = await session.get(url, headers=headers)
+            r = await cls._http_session.get(url, headers=headers)
 
         r.raise_for_status()
         result = r.text
