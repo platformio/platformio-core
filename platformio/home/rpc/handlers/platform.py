@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os.path
+
 from platformio.compat import aio_to_thread
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.package.manager.platform import PlatformPackageManager
+from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import PackageSpec
 from platformio.platform.factory import PlatformFactory
 
@@ -43,11 +46,11 @@ class PlatformRPC(BaseRPCHandler):
             "items": [
                 {
                     "id": item["id"],
+                    "ownername": item["owner"]["username"],
                     "name": item["name"],
+                    "version": item["version"]["name"],
                     "description": item["description"],
                     "tier": item["tier"],
-                    "ownername": item["owner"]["username"],
-                    "version": item["version"]["name"],
                 }
                 for item in search_result["items"]
             ],
@@ -76,11 +79,11 @@ class PlatformRPC(BaseRPCHandler):
             items.append(
                 {
                     "__pkg_path": pkg.path,
+                    "ownername": pkg.metadata.spec.owner if pkg.metadata.spec else None,
                     "name": p.name,
+                    "version": str(pkg.metadata.version),
                     "title": p.title,
                     "description": p.description,
-                    "ownername": pkg.metadata.spec.owner if pkg.metadata.spec else None,
-                    "version": str(pkg.metadata.version),
                 }
             )
         return items
@@ -104,3 +107,34 @@ class PlatformRPC(BaseRPCHandler):
             [b.get_brief_data() for b in p.get_boards().values()],
             key=lambda item: item["name"],
         )
+
+    async def fetch_examples(self, platform_spec):
+        spec = PackageSpec(platform_spec)
+        if spec.owner:
+            return await self.factory.manager.dispatcher["registry.call_client"](
+                method="get_package",
+                typex="platform",
+                owner=spec.owner,
+                name=spec.name,
+                extra_path="/examples",
+            )
+        return await aio_to_thread(self._load_installed_examples, spec)
+
+    @staticmethod
+    def _load_installed_examples(platform_spec):
+        platform = PlatformFactory.new(platform_spec)
+        platform_dir = platform.get_dir()
+        parser = ManifestParserFactory.new_from_dir(platform_dir)
+        result = parser.as_dict().get("examples") or []
+        for example in result:
+            example["files"] = [
+                {
+                    "path": item,
+                    "url": (
+                        "file://%s"
+                        + os.path.join(platform_dir, "examples", example["name"], item)
+                    ),
+                }
+                for item in example["files"]
+            ]
+        return result
