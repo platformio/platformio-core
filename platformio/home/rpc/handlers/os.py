@@ -73,9 +73,9 @@ class OSRPC(BaseRPCHandler):
     async def request_content(self, uri, data=None, headers=None, cache_valid=None):
         if uri.startswith("http"):
             return await self.fetch_content(uri, data, headers, cache_valid)
-        if os.path.isfile(uri):
-            with io.open(uri, encoding="utf-8") as fp:
-                return fp.read()
+        local_path = uri[7:] if uri.startswith("file://") else uri
+        with io.open(local_path, encoding="utf-8") as fp:
+            return fp.read()
         return None
 
     @staticmethod
