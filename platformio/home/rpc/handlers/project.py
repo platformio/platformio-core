@@ -15,6 +15,7 @@
 import os
 import shutil
 import time
+from pathlib import Path
 
 import semantic_version
 from ajsonrpc.core import JSONRPC20DispatchException
@@ -267,15 +268,39 @@ class ProjectRPC(BaseRPCHandler):
         )
         return new_project_dir
 
-    async def create_empty(self, configuration, options=None):
+    async def init_v2(self, configuration, options=None):
         project_dir = os.path.join(configuration["location"], configuration["name"])
         if not os.path.isdir(project_dir):
             os.makedirs(project_dir)
 
+        envclone = os.environ.copy()
+        envclone["PLATFORMIO_FORCE_ANSI"] = "true"
+        options = options or {}
+        options["spawn"] = {"env": envclone, "cwd": project_dir}
+
+        args = ["project", "init"]
+        ide = app.get_session_var("caller_id")
+        if ide in ProjectGenerator.get_supported_ides():
+            args.extend(["--ide", ide])
+
+        if configuration.get("example"):
+            await self.factory.notify_clients(
+                method=options.get("stdoutNotificationMethod"),
+                params=["Copying example files...\n"],
+                actor="frontend",
+            )
+            await self._pre_init_example(configuration, project_dir)
+        else:
+            args.extend(self._pre_init_empty(configuration))
+
+        return await self.factory.manager.dispatcher["core.exec"](args, options=options)
+
+    @staticmethod
+    def _pre_init_empty(configuration):
         project_options = []
         platform = configuration["platform"]
-        board = configuration.get("board", {}).get("id")
-        env_name = board or platform["name"]
+        board_id = configuration.get("board", {}).get("id")
+        env_name = board_id or platform["name"]
         if configuration.get("description"):
             project_options.append(("description", configuration.get("description")))
         try:
@@ -288,20 +313,25 @@ class ProjectRPC(BaseRPCHandler):
             project_options.append(
                 ("platform", "{name} @ {version}".format(**platform))
             )
-        if board:
-            project_options.append(("board", board))
+        if board_id:
+            project_options.append(("board", board_id))
         if configuration.get("framework"):
             project_options.append(("framework", configuration["framework"]["name"]))
 
-        args = ["project", "init", "-e", env_name, "--sample-code"]
-        ide = app.get_session_var("caller_id")
-        if ide in ProjectGenerator.get_supported_ides():
-            args.extend(["--ide", ide])
+        args = ["-e", env_name, "--sample-code"]
         for name, value in project_options:
             args.extend(["-O", f"{name}={value}"])
+        return args
 
-        envclone = os.environ.copy()
-        envclone["PLATFORMIO_FORCE_ANSI"] = "true"
-        options = options or {}
-        options["spawn"] = {"env": envclone, "cwd": project_dir}
-        return await self.factory.manager.dispatcher["core.exec"](args, options=options)
+    async def _pre_init_example(self, configuration, project_dir):
+        for item in configuration["example"]["files"]:
+            p = Path(project_dir).joinpath(item["path"])
+            if not p.parent.is_dir():
+                p.parent.mkdir(parents=True)
+            p.write_text(
+                await self.factory.manager.dispatcher["os.request_content"](
+                    item["url"]
+                ),
+                encoding="utf-8",
+            )
+        return []
