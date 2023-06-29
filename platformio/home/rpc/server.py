@@ -14,6 +14,7 @@
 
 from urllib.parse import parse_qs
 
+import ajsonrpc.utils
 import click
 from ajsonrpc.core import JSONRPC20Error, JSONRPC20Request
 from ajsonrpc.dispatcher import Dispatcher
@@ -23,6 +24,10 @@ from starlette.endpoints import WebSocketEndpoint
 from platformio.compat import aio_create_task, aio_get_running_loop
 from platformio.http import InternetConnectionError
 from platformio.proc import force_exit
+
+# Remove this line when PR is merged
+# https://github.com/pavlov99/ajsonrpc/pull/22
+ajsonrpc.utils.is_invalid_params = lambda: False
 
 
 class JSONRPCServerFactoryBase:
