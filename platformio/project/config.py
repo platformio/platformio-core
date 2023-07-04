@@ -465,7 +465,17 @@ class ProjectConfigLintMixin:
         return {"errors": errors, "warnings": warnings}
 
 
-class ProjectConfig(ProjectConfigBase, ProjectConfigLintMixin):
+class ProjectConfigDirsMixin:
+    def get_optional_dir(self, name):
+        """
+        Deprecated, used by platformio-node-helpers.project.observer.fetchLibDirs
+        PlatformIO IDE for Atom depends on platformio-node-helpers@~7.2.0
+        PIO Home 3.0 Project Inspection depends on it
+        """
+        return self.get("platformio", f"{name}_dir")
+
+
+class ProjectConfig(ProjectConfigBase, ProjectConfigLintMixin, ProjectConfigDirsMixin):
     _instances = {}
 
     @staticmethod
