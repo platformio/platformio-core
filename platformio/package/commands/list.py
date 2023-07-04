@@ -59,7 +59,8 @@ def humanize_package(pkg, spec=None, verbose=False):
     if spec and not isinstance(spec, PackageSpec):
         spec = PackageSpec(spec)
     data = [
-        click.style("{name} @ {version}".format(**pkg.metadata.as_dict()), fg="cyan")
+        click.style(pkg.metadata.name, fg="cyan"),
+        click.style(f"@ {str(pkg.metadata.version)}", bold=True),
     ]
     extra_data = ["required: %s" % (spec.humanize() if spec else "Any")]
     if verbose:
