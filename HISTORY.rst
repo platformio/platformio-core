@@ -15,7 +15,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.8 (2023-??-??)
+6.1.8 (2023-07-05)
 ~~~~~~~~~~~~~~~~~~
 
 * Added a new ``--lint`` option to the `pio project config <https://docs.platformio.org/en/latest/core/userguide/project/cmd_config.html>`__ command, enabling users to efficiently perform linting on the |PIOCONF|
