@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -25,27 +24,32 @@ from platformio import (
     __version__,
 )
 
-PY36 = sys.version_info < (3, 7)
-
+env_marker_below_37 = "python_version < '3.7'"
+env_marker_gte_37 = "python_version >= '3.7'"
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click%s" % ("==8.0.4" if PY36 else ">=8.0.4,<9"),
+    "click==8.0.4; " + env_marker_below_37,
+    "click==8.1.*; " + env_marker_gte_37,
     "colorama",
-    "marshmallow==%s" % ("3.14.1" if PY36 else "3.*"),
-    "pyelftools>=0.27,<1",
+    "marshmallow==3.14.1; " + env_marker_below_37,
+    "marshmallow==3.19.*; " + env_marker_gte_37,
+    "pyelftools==0.29",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "requests==%s" % ("2.27.1" if PY36 else "2.*"),
+    "requests==2.*",
     "semantic_version==2.10.*",
-    "tabulate==%s" % ("0.8.10" if PY36 else "0.9.*"),
+    "tabulate==0.*",
 ]
 
 home_requirements = [
-    "aiofiles==%s" % ("0.8.0" if PY36 else "23.1.*"),
-    "ajsonrpc==1.*",
-    "starlette==%s" % ("0.19.1" if PY36 else "0.28.*"),
-    "uvicorn==%s" % ("0.16.0" if PY36 else "0.22.*"),
-    "wsproto==%s" % ("1.0.0" if PY36 else "1.2.*"),
+    "aiofiles>=0.8.0",
+    "ajsonrpc==1.2.*",
+    "starlette==0.19.1; " + env_marker_below_37,
+    "starlette==0.28.*; " + env_marker_gte_37,
+    "uvicorn==0.16.0; " + env_marker_below_37,
+    "uvicorn==0.22.*; " + env_marker_gte_37,
+    "wsproto==1.0.0; " + env_marker_below_37,
+    "wsproto==1.2.*; " + env_marker_gte_37,
 ]
 
 # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
