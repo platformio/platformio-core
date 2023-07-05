@@ -15,6 +15,9 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
+6.1.9 (2023-??-??)
+~~~~~~~~~~~~~~~~~~
+
 6.1.8 (2023-07-05)
 ~~~~~~~~~~~~~~~~~~
 
