@@ -53,16 +53,15 @@ def cli(dev, verbose):
         subprocess.run(
             [python_exe, "-m", "pip", "install", "--upgrade", pkg_spec],
             check=True,
-            capture_output=not verbose,
+            stdout=subprocess.PIPE if not verbose else None,
         )
-        r = subprocess.run(
+        output = subprocess.run(
             [python_exe, "-m", "platformio", "--version"],
             check=True,
-            capture_output=True,
-            text=True,
-        )
-        assert "version" in r.stdout
-        actual_version = r.stdout.split("version", 1)[1].strip()
+            stdout=subprocess.PIPE,
+        ).stdout.decode()
+        assert "version" in output
+        actual_version = output.split("version", 1)[1].strip()
         click.secho(
             "PlatformIO has been successfully upgraded to %s" % actual_version,
             fg="green",

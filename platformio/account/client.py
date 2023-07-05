@@ -16,7 +16,7 @@ import os
 import time
 
 from platformio import __accounts_api__, app
-from platformio.exception import PlatformioException
+from platformio.exception import PlatformioException, UserSideException
 from platformio.http import HTTPClient, HTTPClientError
 
 
@@ -24,11 +24,11 @@ class AccountError(PlatformioException):
     MESSAGE = "{0}"
 
 
-class AccountNotAuthorized(AccountError):
+class AccountNotAuthorized(AccountError, UserSideException):
     MESSAGE = "You are not authorized! Please log in to PlatformIO Account."
 
 
-class AccountAlreadyAuthorized(AccountError):
+class AccountAlreadyAuthorized(AccountError, UserSideException):
     MESSAGE = "You are already authorized with {0} account."
 
 

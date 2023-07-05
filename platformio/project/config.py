@@ -86,7 +86,7 @@ class ProjectConfigBase:
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
-        self._maintain_renaimed_options()
+        self._maintain_renamed_options()
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
@@ -98,7 +98,7 @@ class ProjectConfigBase:
         try:
             self._parser.read(path, "utf-8")
         except configparser.Error as exc:
-            raise exception.InvalidProjectConfError(path, str(exc))
+            raise exception.InvalidProjectConfError(path, str(exc)) from exc
 
         if not parse_extra:
             return
@@ -110,7 +110,7 @@ class ProjectConfigBase:
             for item in glob.glob(pattern, recursive=True):
                 self.read(item)
 
-    def _maintain_renaimed_options(self):
+    def _maintain_renamed_options(self):
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
@@ -324,6 +324,7 @@ class ProjectConfigBase:
                         f"`${{this.__env__}}` is called from the `{parent_section}` "
                         "section that is not valid PlatformIO environment, see",
                         option,
+                        " ",
                         section,
                     )
                 return parent_section[4:]
@@ -332,7 +333,10 @@ class ProjectConfigBase:
             value = self.get(section, option)
         except RecursionError as exc:
             raise exception.ProjectOptionValueError(
-                "Infinite recursion has been detected", option, section
+                "Infinite recursion has been detected",
+                option,
+                " ",
+                section,
             ) from exc
         if isinstance(value, list):
             return "\n".join(value)
@@ -359,7 +363,10 @@ class ProjectConfigBase:
             if not self.expand_interpolations:
                 return value
             raise exception.ProjectOptionValueError(
-                exc.format_message(), option, section
+                exc.format_message(),
+                option,
+                " (%s) " % option_meta.description,
+                section,
             )
 
     @staticmethod
@@ -424,16 +431,51 @@ class ProjectConfigBase:
         return True
 
 
+class ProjectConfigLintMixin:
+    @classmethod
+    def lint(cls, path=None):
+        errors = []
+        warnings = []
+        try:
+            config = cls.get_instance(path)
+            config.validate(silent=True)
+            warnings = config.warnings
+            config.as_tuple()
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if exc.__cause__ is not None:
+                exc = exc.__cause__
+
+            item = {"type": exc.__class__.__name__, "message": str(exc)}
+            for attr in ("lineno", "source"):
+                if hasattr(exc, attr):
+                    item[attr] = getattr(exc, attr)
+
+            if item["type"] == "ParsingError" and hasattr(exc, "errors"):
+                for lineno, line in getattr(exc, "errors"):
+                    errors.append(
+                        {
+                            "type": item["type"],
+                            "message": f"Parsing error: {line}",
+                            "lineno": lineno,
+                            "source": item["source"],
+                        }
+                    )
+            else:
+                errors.append(item)
+        return {"errors": errors, "warnings": warnings}
+
+
 class ProjectConfigDirsMixin:
     def get_optional_dir(self, name):
         """
         Deprecated, used by platformio-node-helpers.project.observer.fetchLibDirs
         PlatformIO IDE for Atom depends on platformio-node-helpers@~7.2.0
+        PIO Home 3.0 Project Inspection depends on it
         """
         return self.get("platformio", f"{name}_dir")
 
 
-class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
+class ProjectConfig(ProjectConfigBase, ProjectConfigLintMixin, ProjectConfigDirsMixin):
     _instances = {}
 
     @staticmethod

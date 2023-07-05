@@ -8,6 +8,7 @@
 % import os
 % import re
 %
+% from platformio.compat import shlex_join
 % from platformio.project.helpers import load_build_metadata
 %
 % def _normalize_path(path):
@@ -64,17 +65,16 @@ set(CLION_SVD_FILE_PATH "{{ _normalize_path(svd_path) }}" CACHE FILEPATH "Periph
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
-SET(CMAKE_CXX_FLAGS "{{ _normalize_path(to_unix_path(cxx_flags)) }}")
-SET(CMAKE_C_FLAGS "{{ _normalize_path(to_unix_path(cc_flags)) }}")
+SET(CMAKE_CXX_FLAGS {{ _normalize_path(to_unix_path(shlex_join(cxx_flags))) }})
+SET(CMAKE_C_FLAGS {{ _normalize_path(to_unix_path(shlex_join(cc_flags))) }})
 
-% STD_RE = re.compile(r"\-std=[a-z\+]+(\w+)")
-% cc_stds = STD_RE.findall(cc_flags)
-% cxx_stds = STD_RE.findall(cxx_flags)
+% cc_stds = [arg for arg in cc_flags if arg.startswith("-std=")]
+% cxx_stds = [arg for arg in cxx_flags if arg.startswith("-std=")]
 % if cc_stds:
-SET(CMAKE_C_STANDARD {{ cc_stds[-1] }})
+SET(CMAKE_C_STANDARD {{ cc_stds[-1][-2:] }})
 % end
 % if cxx_stds:
-set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
+set(CMAKE_CXX_STANDARD {{ cxx_stds[-1][-2:] }})
 % end
 
 if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")

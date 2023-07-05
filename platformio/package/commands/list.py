@@ -59,7 +59,8 @@ def humanize_package(pkg, spec=None, verbose=False):
     if spec and not isinstance(spec, PackageSpec):
         spec = PackageSpec(spec)
     data = [
-        click.style("{name} @ {version}".format(**pkg.metadata.as_dict()), fg="cyan")
+        click.style(pkg.metadata.name, fg="cyan"),
+        click.style(f"@ {str(pkg.metadata.version)}", bold=True),
     ]
     extra_data = ["required: %s" % (spec.humanize() if spec else "Any")]
     if verbose:
@@ -135,20 +136,20 @@ def list_global_packages(options):
         ("libraries", LibraryPackageManager(options.get("storage_dir"))),
     ]
     only_packages = any(
-        options.get(type_) or options.get(f"only_{type_}") for (type_, _) in data
+        options.get(typex) or options.get(f"only_{typex}") for (typex, _) in data
     )
-    for type_, pm in data:
+    for typex, pm in data:
         skip_conds = [
             only_packages
-            and not options.get(type_)
-            and not options.get(f"only_{type_}"),
+            and not options.get(typex)
+            and not options.get(f"only_{typex}"),
             not pm.get_installed(),
         ]
         if any(skip_conds):
             continue
-        click.secho(type_.capitalize(), bold=True)
+        click.secho(typex.capitalize(), bold=True)
         print_dependency_tree(
-            pm, filter_specs=options.get(type_), verbose=options.get("verbose")
+            pm, filter_specs=options.get(typex), verbose=options.get("verbose")
         )
         click.echo()
 
@@ -156,12 +157,12 @@ def list_global_packages(options):
 def list_project_packages(options):
     environments = options["environments"]
     only_packages = any(
-        options.get(type_) or options.get(f"only_{type_}")
-        for type_ in ("platforms", "tools", "libraries")
+        options.get(typex) or options.get(f"only_{typex}")
+        for typex in ("platforms", "tools", "libraries")
     )
     only_platform_packages = any(
-        options.get(type_) or options.get(f"only_{type_}")
-        for type_ in ("platforms", "tools")
+        options.get(typex) or options.get(f"only_{typex}")
+        for typex in ("platforms", "tools")
     )
     only_library_packages = options.get("libraries") or options.get("only_libraries")
 

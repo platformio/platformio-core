@@ -25,23 +25,20 @@ from platformio.cli import PlatformioCLI
 from platformio.commands.upgrade import get_latest_version
 from platformio.http import HTTPClientError, InternetConnectionError, ensure_internet_on
 from platformio.package.manager.core import update_core_packages
-from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageSpec
 from platformio.package.version import pepver_to_semver
 from platformio.system.prune import calculate_unnecessary_system_data
 
 
-def on_platformio_start(ctx, caller):
+def on_cmd_start(ctx, caller):
     app.set_session_var("command_ctx", ctx)
     set_caller(caller)
-    telemetry.on_command()
-
+    telemetry.on_cmd_start(ctx)
     if PlatformioCLI.in_silence():
         return
     after_upgrade(ctx)
 
 
-def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
+def on_cmd_end():
     if PlatformioCLI.in_silence():
         return
 
@@ -60,8 +57,12 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
         )
 
 
-def on_platformio_exception(e):
-    telemetry.on_exception(e)
+def on_platformio_exception(exc):
+    telemetry.log_exception(exc)
+
+
+def on_platformio_exit():
+    telemetry.on_exit()
 
 
 def set_caller(caller=None):
@@ -79,11 +80,10 @@ def set_caller(caller=None):
 
 class Upgrader:
     def __init__(self, from_version, to_version):
-        self.from_version = pepver_to_semver(from_version)
-        self.to_version = pepver_to_semver(to_version)
-
+        self.from_version = from_version
+        self.to_version = to_version
         self._upgraders = [
-            (semantic_version.Version("4.4.0-a.8"), self._update_pkg_metadata),
+            (semantic_version.Version("6.1.8-a.1"), self._appstate_migration),
         ]
 
     def run(self, ctx):
@@ -99,37 +99,43 @@ class Upgrader:
         return all(result)
 
     @staticmethod
-    def _update_pkg_metadata(_):
-        pm = ToolPackageManager()
-        for pkg in pm.get_installed():
-            if not pkg.metadata or pkg.metadata.spec.external or pkg.metadata.spec.id:
-                continue
-            result = pm.search_registry_packages(PackageSpec(name=pkg.metadata.name))
-            if len(result) != 1:
-                continue
-            result = result[0]
-            pkg.metadata.spec = PackageSpec(
-                id=result["id"],
-                owner=result["owner"]["username"],
-                name=result["name"],
+    def _appstate_migration(_):
+        state_path = app.resolve_state_path("core_dir", "appstate.json")
+        if not os.path.isfile(state_path):
+            return True
+        app.delete_state_item("telemetry")
+        created_at = app.get_state_item("created_at", None)
+        if not created_at:
+            state_stat = os.stat(state_path)
+            app.set_state_item(
+                "created_at",
+                int(
+                    state_stat.st_birthtime
+                    if hasattr(state_stat, "st_birthtime")
+                    else state_stat.st_ctime
+                ),
             )
-            pkg.dump_meta()
         return True
 
 
 def after_upgrade(ctx):
     terminal_width = shutil.get_terminal_size().columns
-    last_version = app.get_state_item("last_version", "0.0.0")
-    if last_version == __version__:
-        return
+    last_version_str = app.get_state_item("last_version", "0.0.0")
+    if last_version_str == __version__:
+        return None
 
-    if last_version == "0.0.0":
+    if last_version_str == "0.0.0":
         app.set_state_item("last_version", __version__)
-    elif pepver_to_semver(last_version) > pepver_to_semver(__version__):
+        return print_welcome_banner()
+
+    last_version = pepver_to_semver(last_version_str)
+    current_version = pepver_to_semver(__version__)
+
+    if last_version > current_version and not last_version.prerelease:
         click.secho("*" * terminal_width, fg="yellow")
         click.secho(
             "Obsolete PIO Core v%s is used (previous was %s)"
-            % (__version__, last_version),
+            % (__version__, last_version_str),
             fg="yellow",
         )
         click.secho("Please remove multiple PIO Cores from a system:", fg="yellow")
@@ -139,43 +145,50 @@ def after_upgrade(ctx):
             fg="cyan",
         )
         click.secho("*" * terminal_width, fg="yellow")
-        return
-    else:
-        click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
+        return None
 
-        # Update PlatformIO's Core packages
-        cleanup_content_cache("http")
-        update_core_packages()
+    click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
 
-        u = Upgrader(last_version, __version__)
-        if u.run(ctx):
-            app.set_state_item("last_version", __version__)
-            click.secho(
-                "PlatformIO has been successfully upgraded to %s!\n" % __version__,
-                fg="green",
-            )
-            telemetry.send_event(
-                category="Auto",
-                action="Upgrade",
-                label="%s > %s" % (last_version, __version__),
-            )
+    # Update PlatformIO's Core packages
+    cleanup_content_cache("http")
+    update_core_packages()
 
-    # PlatformIO banner
+    u = Upgrader(last_version, current_version)
+    if u.run(ctx):
+        app.set_state_item("last_version", __version__)
+        click.secho(
+            "PlatformIO has been successfully upgraded to %s!\n" % __version__,
+            fg="green",
+        )
+        telemetry.log_event(
+            "pio_upgrade_core",
+            {
+                "label": "%s > %s" % (last_version_str, __version__),
+                "from_version": last_version_str,
+                "to_version": __version__,
+            },
+        )
+
+    return print_welcome_banner()
+
+
+def print_welcome_banner():
+    terminal_width = shutil.get_terminal_size().columns
     click.echo("*" * terminal_width)
     click.echo("If you like %s, please:" % (click.style("PlatformIO", fg="cyan")))
-    click.echo(
-        "- %s us on Twitter to stay up-to-date "
-        "on the latest project news > %s"
-        % (
-            click.style("follow", fg="cyan"),
-            click.style("https://twitter.com/PlatformIO_Org", fg="cyan"),
-        )
-    )
     click.echo(
         "- %s it on GitHub > %s"
         % (
             click.style("star", fg="cyan"),
-            click.style("https://github.com/platformio/platformio", fg="cyan"),
+            click.style("https://github.com/platformio/platformio-core", fg="cyan"),
+        )
+    )
+    click.echo(
+        "- %s us on LinkedIn to stay up-to-date "
+        "on the latest project news > %s"
+        % (
+            click.style("follow", fg="cyan"),
+            click.style("https://www.linkedin.com/company/platformio/", fg="cyan"),
         )
     )
     if not os.getenv("PLATFORMIO_IDE"):
@@ -228,7 +241,7 @@ def check_platformio_upgrade():
     else:
         click.secho("platformio upgrade", fg="cyan", nl=False)
         click.secho("` or `", fg="yellow", nl=False)
-        click.secho("pip install -U platformio", fg="cyan", nl=False)
+        click.secho("python -m pip install -U platformio", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     click.secho("Changes: ", fg="yellow", nl=False)
     click.secho("https://docs.platformio.org/en/latest/history.html", fg="cyan")

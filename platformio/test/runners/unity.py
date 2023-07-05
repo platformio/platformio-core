@@ -55,8 +55,8 @@ extern "C"
 
 void unityOutputStart(unsigned long);
 void unityOutputChar(unsigned int);
-void unityOutputFlush();
-void unityOutputComplete();
+void unityOutputFlush(void);
+void unityOutputComplete(void);
 
 #define UNITY_OUTPUT_START()    unityOutputStart((unsigned long) $baudrate)
 #define UNITY_OUTPUT_CHAR(c)    unityOutputChar(c)
@@ -246,18 +246,20 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         unity_h = dst_dir / "unity_config.h"
         if not unity_h.is_file():
             unity_h.write_text(
-                string.Template(self.UNITY_CONFIG_H).substitute(
-                    baudrate=self.get_test_speed()
-                ),
+                string.Template(self.UNITY_CONFIG_H)
+                .substitute(baudrate=self.get_test_speed())
+                .strip()
+                + "\n",
                 encoding="utf8",
             )
         framework_config = self.get_unity_framework_config()
         unity_c = dst_dir / ("unity_config.%s" % framework_config.get("language", "c"))
         if not unity_c.is_file():
             unity_c.write_text(
-                string.Template(self.UNITY_CONFIG_C).substitute(
-                    framework_config_code=framework_config["code"]
-                ),
+                string.Template(self.UNITY_CONFIG_C)
+                .substitute(framework_config_code=framework_config["code"])
+                .strip()
+                + "\n",
                 encoding="utf8",
             )
 

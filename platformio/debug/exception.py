@@ -30,3 +30,7 @@ class DebugSupportError(DebugError, UserSideException):
 
 class DebugInvalidOptionsError(DebugError, UserSideException):
     pass
+
+
+class DebugInitError(DebugError, UserSideException):
+    pass

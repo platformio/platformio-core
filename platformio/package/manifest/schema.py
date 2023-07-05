@@ -183,7 +183,7 @@ class ManifestSchema(BaseSchema):
             validate=[
                 validate.Length(min=1, max=50),
                 validate.Regexp(
-                    r"^[a-z\d\-\+\. ]+$", error="Only [a-z0-9-+. ] chars are allowed"
+                    r"^[a-z\d\-_\+\. ]+$", error="Only [a-z0-9+_-. ] chars are allowed"
                 ),
             ]
         )
@@ -276,9 +276,9 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.20"
+        version = "3.21"
         spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data/"
-            "v%s/json/licenses.json" % version
+            f"v{version}/json/licenses.json"
         )
         return json.loads(fetch_remote_content(spdx_data_url))

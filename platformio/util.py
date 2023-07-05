@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datetime
 import functools
 import math
 import platform
 import re
 import shutil
 import time
-from datetime import datetime
 
 import click
 
@@ -169,8 +169,8 @@ def items_in_list(needle, haystack):
 
 def parse_datetime(datestr):
     if "T" in datestr and "Z" in datestr:
-        return datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
-    return datetime.strptime(datestr)
+        return datetime.datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
+    return datetime.datetime.strptime(datestr)
 
 
 def merge_dicts(d1, d2, path=None):

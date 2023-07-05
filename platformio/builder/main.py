@@ -72,7 +72,8 @@ DEFAULT_ENV_OPTIONS = dict(
     variables=clivars,
     # Propagating External Environment
     ENV=os.environ,
-    UNIX_TIME=int(time()),
+    TIMESTAMP=int(time()),
+    UNIX_TIME="$TIMESTAMP",  # deprecated
     BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
     BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
     BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),

@@ -14,10 +14,10 @@
 
 import os
 
-from platformio import fs, telemetry, util
+from platformio import fs, util
 from platformio.compat import MISSING
 from platformio.debug.exception import DebugInvalidOptionsError, DebugSupportError
-from platformio.exception import UserSideException
+from platformio.exception import InvalidJSONFile, UserSideException
 from platformio.platform.exception import InvalidBoardManifest
 
 
@@ -28,7 +28,7 @@ class PlatformBoardConfig:
         self.manifest_path = manifest_path
         try:
             self._manifest = fs.load_json(manifest_path)
-        except ValueError as exc:
+        except InvalidJSONFile as exc:
             raise InvalidBoardManifest(manifest_path) from exc
         if not set(["name", "url", "vendor"]) <= set(self._manifest):
             raise UserSideException(
@@ -119,7 +119,6 @@ class PlatformBoardConfig:
         if tool_name == "custom":
             return tool_name
         if not debug_tools:
-            telemetry.send_event("Debug", "Request", self.id)
             raise DebugSupportError(self._manifest["name"])
         if tool_name:
             if tool_name in debug_tools:

@@ -18,7 +18,7 @@ import socket
 from urllib.parse import urljoin
 
 import requests.adapters
-from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
+from urllib3.util.retry import Retry
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
@@ -27,7 +27,7 @@ from platformio.exception import PlatformioException, UserSideException
 __default_requests_timeout__ = (10, None)  # (connect, read)
 
 
-class HTTPClientError(PlatformioException):
+class HTTPClientError(UserSideException):
     def __init__(self, message, response=None):
         super().__init__()
         self.message = message
@@ -50,7 +50,10 @@ class HTTPSession(requests.Session):
         self._x_base_url = kwargs.pop("x_base_url") if "x_base_url" in kwargs else None
         super().__init__(*args, **kwargs)
         self.headers.update({"User-Agent": app.get_user_agent()})
-        self.verify = app.get_setting("enable_proxy_strict_ssl")
+        try:
+            self.verify = app.get_setting("enable_proxy_strict_ssl")
+        except PlatformioException:
+            self.verify = True
 
     def request(  # pylint: disable=signature-differs,arguments-differ
         self, method, url, *args, **kwargs
@@ -154,7 +157,10 @@ class HTTPClient:
         with ContentCache("http") as cc:
             result = cc.get(cache_key)
             if result is not None:
-                return json.loads(result)
+                try:
+                    return json.loads(result)
+                except json.JSONDecodeError:
+                    pass
             response = self.send_request(method, path, **kwargs)
             data = self._parse_json_response(response)
             cc.set(cache_key, response.text, cache_valid)

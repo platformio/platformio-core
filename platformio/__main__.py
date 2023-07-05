@@ -14,7 +14,7 @@
 
 import os
 import sys
-from traceback import format_exc
+import traceback
 
 import click
 
@@ -53,13 +53,13 @@ def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
     except:  # pylint: disable=bare-except
         pass
 
-    maintenance.on_platformio_start(ctx, caller)
+    maintenance.on_cmd_start(ctx, caller)
 
 
 @cli.result_callback()
 @click.pass_context
-def process_result(ctx, result, *_, **__):
-    maintenance.on_platformio_end(ctx, result)
+def process_result(*_, **__):
+    maintenance.on_cmd_end()
 
 
 def configure():
@@ -96,6 +96,7 @@ def main(argv=None):
     if argv:
         assert isinstance(argv, list)
         sys.argv = argv
+
     try:
         ensure_python3(raise_exception=True)
         configure()
@@ -106,18 +107,18 @@ def main(argv=None):
     except Exception as exc:  # pylint: disable=broad-except
         if not isinstance(exc, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(exc)
-            error_str = "Error: "
+            error_str = f"{exc.__class__.__name__}: "
             if isinstance(exc, exception.PlatformioException):
                 error_str += str(exc)
             else:
-                error_str += format_exc()
+                error_str += traceback.format_exc()
                 error_str += """
 ============================================================
 
 An unexpected error occurred. Further steps:
 
 * Verify that you have the latest version of PlatformIO using
-  `pip install -U platformio` command
+  `python -m pip install -U platformio` command
 
 * Try to find answer in FAQ Troubleshooting section
   https://docs.platformio.org/page/faq/index.html
@@ -129,6 +130,8 @@ An unexpected error occurred. Further steps:
 """
             click.secho(error_str, fg="red", err=True)
         exit_code = int(str(exc)) if str(exc).isdigit() else 1
+
+    maintenance.on_platformio_exit()
     sys.argv = prev_sys_argv
     return exit_code
 

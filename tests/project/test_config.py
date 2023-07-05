@@ -684,3 +684,34 @@ def test_invalid_env_names(tmp_path: Path):
     config = ProjectConfig(str(project_conf))
     with pytest.raises(InvalidEnvNameError, match=r".*Invalid environment name 'app:1"):
         config.validate()
+
+
+def test_linting_errors(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[env:app1]
+lib_use = 1
+broken_line
+    """
+    )
+    result = ProjectConfig.lint(str(project_conf))
+    assert not result["warnings"]
+    assert result["errors"] and len(result["errors"]) == 1
+    error = result["errors"][0]
+    assert error["type"] == "ParsingError"
+    assert error["lineno"] == 4
+
+
+def test_linting_warnings(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text(
+        """
+[env:app1]
+lib_use = 1
+    """
+    )
+    result = ProjectConfig.lint(str(project_conf))
+    assert not result["errors"]
+    assert result["warnings"] and len(result["warnings"]) == 1
+    assert "deprecated" in result["warnings"][0]

@@ -25,12 +25,13 @@ from platformio.registry.mirror import RegistryFileMirrorIterator
 
 class PackageManagerRegistryMixin:
     def install_from_registry(self, spec, search_qualifiers=None):
+        package = version = None
         if spec.owner and spec.name and not search_qualifiers:
             package = self.fetch_registry_package(spec)
             if not package:
                 raise UnknownPackageError(spec.humanize())
             version = self.pick_best_registry_version(package["versions"], spec)
-        else:
+        elif spec.id or spec.name:
             packages = self.search_registry_packages(spec, search_qualifiers)
             if not packages:
                 raise UnknownPackageError(spec.humanize())

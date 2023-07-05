@@ -163,7 +163,7 @@ class SerialPortFinder:
         for item in list_serial_ports(as_objects=True):
             if item.vid == device.vid and item.pid == device.pid:
                 candidates.append(item)
-        if len(candidates) == 1:
+        if len(candidates) <= 1:
             return device.device
         for item in candidates:
             if ("GDB" if self.prefer_gdb_port else "UART") in item.description:

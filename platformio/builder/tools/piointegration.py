@@ -16,6 +16,7 @@
 import glob
 import os
 
+import click
 import SCons.Defaults  # pylint: disable=import-error
 import SCons.Subst  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
@@ -154,8 +155,12 @@ def DumpIntegrationData(*args):
         ],
         "defines": dump_defines(projenv),
         "includes": projenv.DumpIntegrationIncludes(),
-        "cc_flags": _subst_cmd(projenv, "$CFLAGS $CCFLAGS $CPPFLAGS"),
-        "cxx_flags": _subst_cmd(projenv, "$CXXFLAGS $CCFLAGS $CPPFLAGS"),
+        "cc_flags": click.parser.split_arg_string(
+            _subst_cmd(projenv, "$CFLAGS $CCFLAGS $CPPFLAGS")
+        ),
+        "cxx_flags": click.parser.split_arg_string(
+            _subst_cmd(projenv, "$CXXFLAGS $CCFLAGS $CPPFLAGS")
+        ),
         "cc_path": where_is_program(
             globalenv.subst("$CC"), globalenv.subst("${ENV['PATH']}")
         ),

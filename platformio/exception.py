@@ -81,7 +81,7 @@ class InvalidSettingValue(UserSideException):
     MESSAGE = "Invalid value '{0}' for the setting '{1}'"
 
 
-class InvalidJSONFile(PlatformioException):
+class InvalidJSONFile(ValueError, UserSideException):
     MESSAGE = "Could not load broken JSON: {0}"
 
 

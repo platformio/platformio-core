@@ -23,6 +23,10 @@ def test_generic_build(clirunner, validate_cliresult, tmpdir):
         ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
         ('-DTEST_STR_SPACE="Andrew Smith"', '"-DTEST_STR_SPACE=Andrew Smith"'),
         ("-Iextra_inc", "-Iextra_inc"),
+        (
+            "-include $PROJECT_DIR/lib/component/component-forced-include.h",
+            "component-forced-include.h",
+        ),
     ]
 
     tmpdir.join("platformio.ini").write(
@@ -95,6 +99,10 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
 #error "POST_SCRIPT_MACRO"
 #endif
 
+#ifndef I_AM_FORCED_COMPONENT_INCLUDE
+#error "I_AM_FORCED_COMPONENT_INCLUDE"
+#endif
+
 #ifdef COMMENTED_MACRO
 #error "COMMENTED_MACRO"
 #endif
@@ -122,6 +130,11 @@ void dummy(void);
 #endif
 
 void dummy(void ) {};
+    """
+    )
+    component_dir.join("component-forced-include.h").write(
+        """
+#define I_AM_FORCED_COMPONENT_INCLUDE
     """
     )
 
