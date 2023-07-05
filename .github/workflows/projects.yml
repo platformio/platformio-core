@@ -13,11 +13,11 @@ jobs:
             folder: "Marlin"
             config_dir: "Marlin"
             env_name: "mega2560"
-          # - esphome:
-          #   repository: "esphome/esphome"
-          #   folder: "esphome"
-          #   config_dir: "esphome"
-          #   env_name: "esp32-arduino"
+          - esphome:
+            repository: "esphome/esphome"
+            folder: "esphome"
+            config_dir: "esphome"
+            env_name: "esp32-arduino"
           - smartknob:
             repository: "scottbez1/smartknob"
             folder: "smartknob"
