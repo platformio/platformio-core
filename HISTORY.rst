@@ -18,6 +18,8 @@ PlatformIO Core 6
 6.1.9 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Rectified a regression bug that occurred when the ``-include`` flag was passed via the `build_flags <https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_flags.html>`__ option as a relative path and subsequently expanded (`issue #4683 <https://github.com/platformio/platformio-core/issues/4683>`_)
+
 6.1.8 (2023-07-05)
 ~~~~~~~~~~~~~~~~~~
 
