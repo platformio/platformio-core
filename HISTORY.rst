@@ -15,7 +15,7 @@ PlatformIO Core 6
 
 **A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
 
-6.1.9 (2023-??-??)
+6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~
 
 * Rectified a regression bug that occurred when the ``-include`` flag was passed via the `build_flags <https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_flags.html>`__ option as a relative path and subsequently expanded (`issue #4683 <https://github.com/platformio/platformio-core/issues/4683>`_)
