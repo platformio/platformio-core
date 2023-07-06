@@ -25,7 +25,7 @@ def test_generic_build(clirunner, validate_cliresult, tmpdir):
         ("-Iinclude", "-Iinclude"),
         ("-include cpppath-include.h", "cpppath-include.h"),
         ("-Iextra_inc", "-Iextra_inc"),
-        ("-Inon-existing-dir", "-Inon-existing-dir"),
+        ("-Inon-existing-dir", "non-existing-dir"),
         (
             "-include $PROJECT_DIR/lib/component/component-forced-include.h",
             "component-forced-include.h",
