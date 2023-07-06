@@ -26,6 +26,7 @@ from SCons.Script import SConscript  # pylint: disable=import-error
 from platformio import __version__, fs
 from platformio.compat import IS_MACOS, string_types
 from platformio.package.version import pepver_to_semver
+from platformio.proc import where_is_program
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_ASM_EXT = ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
@@ -125,12 +126,21 @@ def ProcessProgramDeps(env):
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
-    if "compiledb" in COMMAND_LINE_TARGETS and env.get(
-        "COMPILATIONDB_INCLUDE_TOOLCHAIN"
-    ):
-        for scope, includes in env.DumpIntegrationIncludes().items():
-            if scope in ("toolchain",):
-                env.Append(CPPPATH=includes)
+    if "compiledb" in COMMAND_LINE_TARGETS:
+        # Resolve absolute path of toolchain
+        for cmd in ("CC", "CXX", "AS"):
+            if cmd not in env:
+                continue
+            if os.path.isabs(env[cmd]):
+                continue
+            env[cmd] = where_is_program(
+                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
+            )
+
+        if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
+            for scope, includes in env.DumpIntegrationIncludes().items():
+                if scope in ("toolchain",):
+                    env.Append(CPPPATH=includes)
 
 
 def ProcessProjectDeps(env):
@@ -207,9 +217,7 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
     # fix relative path for "-include"
     for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
-            p = env.subst(f[1].get_path())
-            if os.path.exists(p):
-                result["CCFLAGS"][i] = (f[0], os.path.abspath(p))
+            result["CCFLAGS"][i] = (f[0], env.subst(f[1].get_path()))
 
     return result
 
