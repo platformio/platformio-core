@@ -19,6 +19,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~
 
 * Rectified a regression bug that occurred when the ``-include`` flag was passed via the `build_flags <https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_flags.html>`__ option as a relative path and subsequently expanded (`issue #4683 <https://github.com/platformio/platformio-core/issues/4683>`_)
+* Resolved an issue that resulted in unresolved absolute toolchain paths when generating the `Compilation database "compile_commands.json" <https://docs.platformio.org/en/latest/integration/compile_commands.html>`__ (`issue #4684 <https://github.com/platformio/platformio-core/issues/4684>`_)
 
 6.1.8 (2023-07-05)
 ~~~~~~~~~~~~~~~~~~
