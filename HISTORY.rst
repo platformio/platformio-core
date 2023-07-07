@@ -18,6 +18,8 @@ PlatformIO Core 6
 6.1.10 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Resolved an issue that caused generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to break when the ``-iprefix`` compiler flag was used
+
 6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~
 

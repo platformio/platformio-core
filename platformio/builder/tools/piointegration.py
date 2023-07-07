@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import glob
 import os
+import shlex
 
-import click
 import SCons.Defaults  # pylint: disable=import-error
 import SCons.Subst  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
@@ -145,6 +144,11 @@ def _subst_cmd(env, cmd):
     return " ".join([SCons.Subst.quote_spaces(arg) for arg in args])
 
 
+def _split_flags_string(s):
+    flags = shlex.split(s, posix=False)
+    return [f[1:-1] if f.startswith('"') and f.endswith('"') else f for f in flags]
+
+
 def DumpIntegrationData(*args):
     projenv, globalenv = args[0:2]  # pylint: disable=unbalanced-tuple-unpacking
     data = {
@@ -155,10 +159,10 @@ def DumpIntegrationData(*args):
         ],
         "defines": dump_defines(projenv),
         "includes": projenv.DumpIntegrationIncludes(),
-        "cc_flags": click.parser.split_arg_string(
+        "cc_flags": _split_flags_string(
             _subst_cmd(projenv, "$CFLAGS $CCFLAGS $CPPFLAGS")
         ),
-        "cxx_flags": click.parser.split_arg_string(
+        "cxx_flags": _split_flags_string(
             _subst_cmd(projenv, "$CXXFLAGS $CCFLAGS $CPPFLAGS")
         ),
         "cc_path": where_is_program(
