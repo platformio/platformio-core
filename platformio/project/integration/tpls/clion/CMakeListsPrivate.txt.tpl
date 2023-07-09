@@ -11,15 +11,17 @@
 % from platformio.compat import shlex_join
 % from platformio.project.helpers import load_build_metadata
 %
+% if "windows" in systype:
+set(HOME_DIR "${ENV_HOME_PATH}")
+% else:
+set(HOME_DIR "$ENV{HOME}")
+% end
+%
 % def _normalize_path(path):
 %   if project_dir in path:
 %     path = path.replace(project_dir, "${CMAKE_CURRENT_LIST_DIR}")
 %   elif user_home_dir in path:
-%     if "windows" in systype:
-%       path = path.replace(user_home_dir, "${ENV_HOME_PATH}")
-%     else:
-%       path = path.replace(user_home_dir, "$ENV{HOME}")
-%     end
+%     path = path.replace(user_home_dir, "${HOME_DIR}")
 %   end
 %   return path
 % end
@@ -46,8 +48,7 @@
 % end
 %
 % envs = config.envs()
-
-
+%
 % if len(envs) > 1:
 set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
 % else:
@@ -65,8 +66,8 @@ set(CLION_SVD_FILE_PATH "{{ _normalize_path(svd_path) }}" CACHE FILEPATH "Periph
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
-SET(CMAKE_CXX_FLAGS {{ _normalize_path(to_unix_path(shlex_join(cxx_flags))) }})
-SET(CMAKE_C_FLAGS {{ _normalize_path(to_unix_path(shlex_join(cc_flags))) }})
+SET(CMAKE_CXX_FLAGS "{{ _normalize_path(to_unix_path(shlex_join(cxx_flags))) }}")
+SET(CMAKE_C_FLAGS "{{ _normalize_path(to_unix_path(shlex_join(cc_flags))) }}")
 
 % cc_stds = [arg for arg in cc_flags if arg.startswith("-std=")]
 % cxx_stds = [arg for arg in cxx_flags if arg.startswith("-std=")]
