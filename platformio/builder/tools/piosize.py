@@ -73,30 +73,6 @@ def _get_demangled_names(env, mangled_names):
     )
 
 
-def _determine_section(sections, symbol_addr):
-    for section, info in sections.items():
-        if not _is_flash_section(info) and not _is_ram_section(info):
-            continue
-        if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
-            return section
-    return "unknown"
-
-
-def _is_ram_section(section):
-    return (
-        section.get("type", "") in ("SHT_NOBITS", "SHT_PROGBITS")
-        and section.get("flags", "") == "WA"
-    )
-
-
-def _is_flash_section(section):
-    return section.get("type", "") == "SHT_PROGBITS" and "A" in section.get("flags", "")
-
-
-def _is_valid_symbol(symbol_name, symbol_type, symbol_address):
-    return symbol_name and symbol_address != 0 and symbol_type != "STT_NOTYPE"
-
-
 def _collect_sections_info(elffile):
     sections = {}
     for section in elffile.iter_sections():
@@ -136,7 +112,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         symbol_size = s["st_size"]
         symbol_type = symbol_info["type"]
 
-        if not _is_valid_symbol(s.name, symbol_type, symbol_addr):
+        if not env.pioSizeIsValidSymbol(s.name, symbol_type, symbol_addr):
             continue
 
         symbol = {
@@ -145,7 +121,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
-            "section": _determine_section(sections, symbol_addr),
+            "section": env.pioSizeDetermineSection(sections, symbol_addr),
         }
 
         if s.name.startswith("_Z"):
@@ -175,12 +151,36 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     return symbols
 
 
-def _calculate_firmware_size(sections):
+def pioSizeDetermineSection(env, sections, symbol_addr):
+    for section, info in sections.items():
+        if not env.pioSizeIsFlashSection(info) and not env.pioSizeIsRamSection(info):
+            continue
+        if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
+            return section
+    return "unknown"
+
+
+def pioSizeIsValidSymbol(_, symbol_name, symbol_type, symbol_address):
+    return symbol_name and symbol_address != 0 and symbol_type != "STT_NOTYPE"
+
+
+def pioSizeIsRamSection(_, section):
+    return (
+        section.get("type", "") in ("SHT_NOBITS", "SHT_PROGBITS")
+        and section.get("flags", "") == "WA"
+    )
+
+
+def pioSizeIsFlashSection(_, section):
+    return section.get("type", "") == "SHT_PROGBITS" and "A" in section.get("flags", "")
+
+
+def pioSizeCalculateFirmwareSize(env, sections):
     flash_size = ram_size = 0
     for section_info in sections.values():
-        if _is_flash_section(section_info):
+        if env.pioSizeIsFlashSection(section_info):
             flash_size += section_info.get("size", 0)
-        if _is_ram_section(section_info):
+        if env.pioSizeIsRamSection(section_info):
             ram_size += section_info.get("size", 0)
 
     return ram_size, flash_size
@@ -211,7 +211,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             env.Exit(1)
 
         sections = _collect_sections_info(elffile)
-        firmware_ram, firmware_flash = _calculate_firmware_size(sections)
+        firmware_ram, firmware_flash = env.pioSizeCalculateFirmwareSize(sections)
         data["memory"]["total"] = {
             "ram_size": firmware_ram,
             "flash_size": firmware_flash,
@@ -226,9 +226,9 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
             symbol_size = symbol.get("size", 0)
             section = sections.get(symbol.get("section", ""), {})
-            if _is_ram_section(section):
+            if env.pioSizeIsRamSection(section):
                 files[file_path]["ram_size"] += symbol_size
-            if _is_flash_section(section):
+            if env.pioSizeIsFlashSection(section):
                 files[file_path]["flash_size"] += symbol_size
 
             files[file_path]["symbols"].append(symbol)
@@ -250,5 +250,10 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(pioSizeIsRamSection)
+    env.AddMethod(pioSizeIsFlashSection)
+    env.AddMethod(pioSizeCalculateFirmwareSize)
+    env.AddMethod(pioSizeDetermineSection)
+    env.AddMethod(pioSizeIsValidSymbol)
     env.AddMethod(DumpSizeData)
     return env
