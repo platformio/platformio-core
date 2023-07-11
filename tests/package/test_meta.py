@@ -19,7 +19,7 @@ import semantic_version
 
 from platformio.package.meta import (
     PackageCompatibility,
-    PackageMetaData,
+    PackageMetadata,
     PackageOutdatedResult,
     PackageSpec,
     PackageType,
@@ -229,7 +229,7 @@ def test_spec_as_dependency():
 
 
 def test_metadata_as_dict():
-    metadata = PackageMetaData(PackageType.LIBRARY, "foo", "1.2.3")
+    metadata = PackageMetadata(PackageType.LIBRARY, "foo", "1.2.3")
     # test setter
     metadata.version = "0.1.2+12345"
     assert metadata.version == semantic_version.Version("0.1.2+12345")
@@ -244,7 +244,7 @@ def test_metadata_as_dict():
     )
 
     assert not jsondiff.diff(
-        PackageMetaData(
+        PackageMetadata(
             PackageType.TOOL,
             "toolchain",
             "2.0.5",
@@ -267,7 +267,7 @@ def test_metadata_as_dict():
 
 def test_metadata_dump(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
-    metadata = PackageMetaData(
+    metadata = PackageMetadata(
         PackageType.TOOL,
         "toolchain",
         "2.0.5",
@@ -297,9 +297,9 @@ def test_metadata_load(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
     dst = pkg_dir.join(".piopm")
     dst.write(contents)
-    metadata = PackageMetaData.load(str(dst))
+    metadata = PackageMetadata.load(str(dst))
     assert metadata.version == semantic_version.Version("0.1.3")
-    assert metadata == PackageMetaData(
+    assert metadata == PackageMetadata(
         PackageType.PLATFORM,
         "foo",
         "0.1.3",
@@ -307,11 +307,11 @@ def test_metadata_load(tmpdir_factory):
     )
 
     piopm_path = pkg_dir.join(".piopm")
-    metadata = PackageMetaData(
+    metadata = PackageMetadata(
         PackageType.LIBRARY, "mylib", version="1.2.3", spec=PackageSpec("mylib")
     )
     metadata.dump(str(piopm_path))
-    restored_metadata = PackageMetaData.load(str(piopm_path))
+    restored_metadata = PackageMetadata.load(str(piopm_path))
     assert metadata == restored_metadata
 
 

@@ -35,7 +35,7 @@ from platformio.package.manager._update import PackageManagerUpdateMixin
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import (
     PackageItem,
-    PackageMetaData,
+    PackageMetadata,
     PackageSpec,
     PackageType,
 )
@@ -199,7 +199,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 
     def build_metadata(self, pkg_dir, spec, vcs_revision=None):
         manifest = self.load_manifest(pkg_dir)
-        metadata = PackageMetaData(
+        metadata = PackageMetadata(
             type=self.pkg_type,
             name=manifest.get("name"),
             version=manifest.get("version"),

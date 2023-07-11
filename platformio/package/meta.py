@@ -401,7 +401,7 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
         return name
 
 
-class PackageMetaData:
+class PackageMetadata:
     def __init__(  # pylint: disable=redefined-builtin
         self, type, name, version, spec=None
     ):
@@ -416,7 +416,7 @@ class PackageMetaData:
 
     def __repr__(self):
         return (
-            "PackageMetaData <type={type} name={name} version={version} "
+            "PackageMetadata <type={type} name={name} version={version} "
             "spec={spec}".format(**self.as_dict())
         )
 
@@ -466,7 +466,7 @@ class PackageMetaData:
                 data["spec"]["uri"] = data["spec"]["url"]
                 del data["spec"]["url"]
             data["spec"] = PackageSpec(**data["spec"])
-        return PackageMetaData(**data)
+        return PackageMetadata(**data)
 
 
 class PackageItem:
@@ -515,7 +515,7 @@ class PackageItem:
         for location in self.get_metafile_locations():
             manifest_path = os.path.join(location, self.METAFILE_NAME)
             if os.path.isfile(manifest_path):
-                return PackageMetaData.load(manifest_path)
+                return PackageMetadata.load(manifest_path)
         return None
 
     def dump_meta(self):
