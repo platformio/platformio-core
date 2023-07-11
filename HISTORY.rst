@@ -19,6 +19,7 @@ PlatformIO Core 6
 ~~~~~~~~~~~~~~~~~~~
 
 * Resolved an issue that caused generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to break when the ``-iprefix`` compiler flag was used
+* Resolved an issue encountered while utilizing the `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`__ command on the Windows platform to execute Python scripts from a package
 
 6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~
