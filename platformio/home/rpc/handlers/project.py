@@ -37,8 +37,12 @@ class ProjectRPC(BaseRPCHandler):
     def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)
         assert "path" in init_kwargs
-        project_dir = get_project_dir()
-        if os.path.isfile(init_kwargs["path"]):
+        if os.path.isdir(init_kwargs["path"]):
+            project_dir = init_kwargs["path"]
+            init_kwargs["path"] = os.path.join(init_kwargs["path"], "platformio.ini")
+        elif os.path.isfile(init_kwargs["path"]):
+            project_dir = get_project_dir()
+        else:
             project_dir = os.path.dirname(init_kwargs["path"])
         with fs.cd(project_dir):
             return getattr(ProjectConfig(**init_kwargs), method)(*args)
