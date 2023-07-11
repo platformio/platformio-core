@@ -53,7 +53,7 @@ def _get_symbol_locations(env, elf_path, addrs):
     locations = [line for line in result["out"].split("\n") if line]
     assert len(addrs) == len(locations)
 
-    return dict(zip(addrs, [l.strip() for l in locations]))
+    return dict(zip(addrs, [loc.strip() for loc in locations]))
 
 
 def _get_demangled_names(env, mangled_names):
@@ -73,7 +73,7 @@ def _get_demangled_names(env, mangled_names):
     )
 
 
-def _collect_sections_info(elffile):
+def _collect_sections_info(env, elffile):
     sections = {}
     for section in elffile.iter_sections():
         if section.is_null() or section.name.startswith(".debug"):
@@ -83,12 +83,17 @@ def _collect_sections_info(elffile):
         section_flags = describe_sh_flags(section["sh_flags"])
         section_size = section.data_size
 
-        sections[section.name] = {
+        section_data = {
+            "name": section.name,
             "size": section_size,
             "start_addr": section["sh_addr"],
             "type": section_type,
             "flags": section_flags,
         }
+
+        sections[section.name] = section_data
+        sections[section.name]["in_flash"] = env.pioSizeIsFlashSection(section_data)
+        sections[section.name]["in_ram"] = env.pioSizeIsRamSection(section_data)
 
     return sections
 
@@ -153,7 +158,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
 
 def pioSizeDetermineSection(env, sections, symbol_addr):
     for section, info in sections.items():
-        if not env.pioSizeIsFlashSection(info) and not env.pioSizeIsRamSection(info):
+        if not info.get("in_flash", False) and not info.get("in_ram", False):
             continue
         if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
             return section
@@ -178,9 +183,9 @@ def pioSizeIsFlashSection(_, section):
 def pioSizeCalculateFirmwareSize(env, sections):
     flash_size = ram_size = 0
     for section_info in sections.values():
-        if env.pioSizeIsFlashSection(section_info):
+        if section_info.get("in_flash", False):
             flash_size += section_info.get("size", 0)
-        if env.pioSizeIsRamSection(section_info):
+        if section_info.get("in_ram", False):
             ram_size += section_info.get("size", 0)
 
     return ram_size, flash_size
@@ -210,7 +215,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             sys.stderr.write("Elf file doesn't contain DWARF information")
             env.Exit(1)
 
-        sections = _collect_sections_info(elffile)
+        sections = _collect_sections_info(env, elffile)
         firmware_ram, firmware_flash = env.pioSizeCalculateFirmwareSize(sections)
         data["memory"]["total"] = {
             "ram_size": firmware_ram,
@@ -226,9 +231,11 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
             symbol_size = symbol.get("size", 0)
             section = sections.get(symbol.get("section", ""), {})
-            if env.pioSizeIsRamSection(section):
+            if not section:
+                continue
+            if section.get("in_ram", False):
                 files[file_path]["ram_size"] += symbol_size
-            if env.pioSizeIsFlashSection(section):
+            if section.get("in_flash", False):
                 files[file_path]["flash_size"] += symbol_size
 
             files[file_path]["symbols"].append(symbol)
