@@ -21,6 +21,8 @@ from platformio.compat import load_python_module
 from platformio.package.meta import PackageItem
 from platformio.platform import base
 from platformio.platform.exception import UnknownPlatform
+from platformio.project.config import ProjectConfig
+from platformio.project.exception import UndefinedEnvPlatformError
 
 
 class PlatformFactory:
@@ -88,3 +90,14 @@ class PlatformFactory:
         _instance = platform_cls(os.path.join(platform_dir, "platform.json"))
         assert isinstance(_instance, base.PlatformBase)
         return _instance
+
+    @classmethod
+    def from_env(cls, env, targets=None, autoinstall=False):
+        config = ProjectConfig.get_instance()
+        spec = config.get(f"env:{env}", "platform", None)
+        if not spec:
+            raise UndefinedEnvPlatformError(env)
+        p = cls.new(spec, autoinstall=autoinstall)
+        p.project_env = env
+        p.configure_project_packages(env, targets)
+        return p

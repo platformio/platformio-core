@@ -34,6 +34,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
 
     def __init__(self, manifest_path):
         self.manifest_path = manifest_path
+        self.project_env = None  # set by factory.from_env(env)
         self.silent = False
         self.verbose = False
 

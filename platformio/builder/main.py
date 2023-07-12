@@ -38,7 +38,6 @@ AllowSubstExceptions(NameError)
 # append CLI arguments to build environment
 clivars = Variables(None)
 clivars.AddVariables(
-    ("PLATFORM_MANIFEST",),
     ("BUILD_SCRIPT",),
     ("PROJECT_CONFIG",),
     ("PIOENV",),

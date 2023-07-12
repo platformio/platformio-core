@@ -109,9 +109,7 @@ def cli(
 
 
 def _configure(ctx, project_config, env_name, load_mode, verbose, __unprocessed):
-    platform = PlatformFactory.new(
-        project_config.get(f"env:{env_name}", "platform"), autoinstall=True
-    )
+    platform = PlatformFactory.from_env(env_name, autoinstall=True)
     debug_config = DebugConfigFactory.new(
         platform,
         project_config,

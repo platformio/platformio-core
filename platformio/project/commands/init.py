@@ -26,6 +26,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.exception import UnknownBoard
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import UndefinedEnvPlatformError
 from platformio.project.helpers import is_platformio_project
 from platformio.project.integration.generator import ProjectGenerator
 from platformio.project.options import ProjectOptions
@@ -366,13 +367,10 @@ def update_project_env(environment, extra_project_options=None):
 
 
 def init_sample_code(config, environment):
-    platform_spec = config.get(f"env:{environment}", "platform", None)
-    if not platform_spec:
-        return None
-    p = PlatformFactory.new(platform_spec)
     try:
+        p = PlatformFactory.from_env(environment)
         return p.generate_sample_code(config, environment)
-    except NotImplementedError:
+    except (NotImplementedError, UndefinedEnvPlatformError):
         pass
 
     framework = config.get(f"env:{environment}", "framework", None)

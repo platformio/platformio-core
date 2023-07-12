@@ -206,7 +206,7 @@ def _install_project_env_libraries(project_env, options):
     config = ProjectConfig.get_instance()
 
     compatibility_qualifiers = {}
-    if config.get(f"env:{project_env}", "platform"):
+    if config.get(f"env:{project_env}", "platform", None):
         try:
             p = PlatformFactory.new(config.get(f"env:{project_env}", "platform"))
             compatibility_qualifiers["platforms"] = [p.name]
