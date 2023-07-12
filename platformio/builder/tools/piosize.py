@@ -156,7 +156,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     return symbols
 
 
-def pioSizeDetermineSection(env, sections, symbol_addr):
+def pioSizeDetermineSection(_, sections, symbol_addr):
     for section, info in sections.items():
         if not info.get("in_flash", False) and not info.get("in_ram", False):
             continue
@@ -180,7 +180,7 @@ def pioSizeIsFlashSection(_, section):
     return section.get("type", "") == "SHT_PROGBITS" and "A" in section.get("flags", "")
 
 
-def pioSizeCalculateFirmwareSize(env, sections):
+def pioSizeCalculateFirmwareSize(_, sections):
     flash_size = ram_size = 0
     for section_info in sections.values():
         if section_info.get("in_flash", False):
