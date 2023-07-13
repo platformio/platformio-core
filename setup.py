@@ -24,16 +24,16 @@ from platformio import (
     __version__,
 )
 
-env_marker_below_37 = "python_version < '3.7'"
-env_marker_gte_37 = "python_version >= '3.7'"
+py_below_37 = "python_version < '3.7'"
+py_gte_37 = "python_version >= '3.7'"
 
 minimal_requirements = [
     "bottle==0.12.*",
-    "click==8.0.4; " + env_marker_below_37,
-    "click==8.1.*; " + env_marker_gte_37,
+    "click==8.0.4; " + py_below_37,
+    "click==8.1.*; " + py_gte_37,
     "colorama",
-    "marshmallow==3.14.1; " + env_marker_below_37,
-    "marshmallow==3.19.*; " + env_marker_gte_37,
+    "marshmallow==3.14.1; " + py_below_37,
+    "marshmallow==3.19.*; " + py_gte_37,
     "pyelftools==0.29",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
@@ -44,12 +44,13 @@ minimal_requirements = [
 home_requirements = [
     "aiofiles>=0.8.0",
     "ajsonrpc==1.2.*",
-    "starlette==0.19.1; " + env_marker_below_37,
-    "starlette==0.28.*; " + env_marker_gte_37,
-    "uvicorn==0.16.0; " + env_marker_below_37,
-    "uvicorn==0.22.*; " + env_marker_gte_37,
-    "wsproto==1.0.0; " + env_marker_below_37,
-    "wsproto==1.2.*; " + env_marker_gte_37,
+    "starlette==0.19.1; " + py_below_37,
+    "starlette==0.29.0; python_version == '3.7'",
+    "starlette==0.30.*; python_version >= '3.8'",
+    "uvicorn==0.16.0; " + py_below_37,
+    "uvicorn==0.22.*; " + py_gte_37,
+    "wsproto==1.0.0; " + py_below_37,
+    "wsproto==1.2.*; " + py_gte_37,
 ]
 
 # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
