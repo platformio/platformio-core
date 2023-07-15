@@ -25,6 +25,7 @@ from platformio.home.rpc.handlers.app import AppRPC
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.package.manager.platform import PlatformPackageManager
+from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
 from platformio.project.helpers import get_project_dir, is_platformio_project
@@ -339,3 +340,47 @@ class ProjectRPC(BaseRPCHandler):
                 encoding="utf-8",
             )
         return []
+
+    @staticmethod
+    def configuration(project_dir, env):
+        assert is_platformio_project(project_dir)
+        with fs.cd(project_dir):
+            config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
+            platform = PlatformFactory.from_env(env, autoinstall=True)
+            platform_pkg = PlatformPackageManager().get_package(platform.get_dir())
+            board_id = config.get(f"env:{env}", "board", None)
+
+            # frameworks
+            frameworks = []
+            for name in config.get(f"env:{env}", "framework", []):
+                if name not in platform.frameworks:
+                    continue
+                f_pkg_name = platform.frameworks[name].get("package")
+                if not f_pkg_name:
+                    continue
+                f_pkg = platform.get_package(f_pkg_name)
+                if not f_pkg:
+                    continue
+                f_manifest = platform.pm.load_manifest(f_pkg)
+                frameworks.append(
+                    dict(
+                        name=name,
+                        title=f_manifest.get("title"),
+                        version=str(f_pkg.metadata.version),
+                    )
+                )
+
+            return dict(
+                platform=dict(
+                    ownername=platform_pkg.metadata.spec.owner
+                    if platform_pkg.metadata.spec
+                    else None,
+                    name=platform.name,
+                    title=platform.title,
+                    version=str(platform_pkg.metadata.version),
+                ),
+                board=platform.board_config(board_id).get_brief_data()
+                if board_id
+                else None,
+                frameworks=frameworks or None,
+            )
