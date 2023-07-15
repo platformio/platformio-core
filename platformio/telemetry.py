@@ -135,7 +135,7 @@ class TelemetryLogger:
         # print("_commit_payload", payload)
         try:
             r = self._http_session.post(
-                "https://telemetry.platformio.org/collect",
+                "https://collector.platformio.org/collect",
                 json=payload,
                 timeout=(2, 5),  # connect, read
             )

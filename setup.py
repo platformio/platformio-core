@@ -24,8 +24,10 @@ from platformio import (
     __version__,
 )
 
+py_37 = "python_version == '3.7'"
 py_below_37 = "python_version < '3.7'"
 py_gte_37 = "python_version >= '3.7'"
+py_gte_38 = "python_version >= '3.8'"
 
 minimal_requirements = [
     "bottle==0.12.*",
@@ -42,13 +44,13 @@ minimal_requirements = [
 ]
 
 home_requirements = [
-    "aiofiles>=0.8.0",
     "ajsonrpc==1.2.*",
     "starlette==0.19.1; " + py_below_37,
-    "starlette==0.29.0; python_version == '3.7'",
-    "starlette==0.30.*; python_version >= '3.8'",
+    "starlette==0.29.0; " + py_37,
+    "starlette==0.30.*; " + py_gte_38,
     "uvicorn==0.16.0; " + py_below_37,
-    "uvicorn==0.22.*; " + py_gte_37,
+    "uvicorn==0.22.0; " + py_37,
+    "uvicorn==0.23.*; " + py_gte_38,
     "wsproto==1.0.0; " + py_below_37,
     "wsproto==1.2.*; " + py_gte_37,
 ]
