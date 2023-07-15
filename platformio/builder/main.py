@@ -229,7 +229,10 @@ if env.IsIntegrationDump():
         encoding="utf8",
     ) as fp:
         json.dump(data, fp)
-    click.echo("\n%s\n" % json.dumps(data))  # pylint: disable=undefined-variable
+    click.echo(
+        "Data has been saved to the following location %s"
+        % projenv.subst(os.path.join("$BUILD_DIR", "idedata.json"))
+    )
     env.Exit(0)
 
 if "sizedata" in COMMAND_LINE_TARGETS:

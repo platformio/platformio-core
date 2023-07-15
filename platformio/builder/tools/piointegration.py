@@ -23,7 +23,7 @@ from platformio.proc import exec_command, where_is_program
 
 
 def IsIntegrationDump(_):
-    return set(["__idedata", "idedata"]) & set(COMMAND_LINE_TARGETS)
+    return "__idedata" in COMMAND_LINE_TARGETS
 
 
 def DumpIntegrationIncludes(env):
