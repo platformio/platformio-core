@@ -69,7 +69,7 @@ PVS_STUDIO_FREE_LICENSE_HEADER = """
 
 EXPECTED_ERRORS = 5
 EXPECTED_WARNINGS = 1
-EXPECTED_STYLE = 2
+EXPECTED_STYLE = 4
 EXPECTED_DEFECTS = EXPECTED_ERRORS + EXPECTED_WARNINGS + EXPECTED_STYLE
 
 
@@ -345,7 +345,10 @@ def test_check_individual_flags_passed(clirunner, validate_cliresult, tmpdir):
     assert pvs_flags_found
 
 
-def test_check_cppcheck_misra_addon(clirunner, validate_cliresult, check_dir):
+def test_check_cppcheck_misra_addon(clirunner, validate_cliresult, tmpdir_factory):
+    check_dir = tmpdir_factory.mktemp("project")
+    check_dir.join("platformio.ini").write(DEFAULT_CONFIG)
+    check_dir.mkdir("src").join("main.c").write(TEST_CODE)
     check_dir.join("misra.json").write(
         """
 {
@@ -508,16 +511,18 @@ TEST-TEST-TEST-TEST
     assert verbose_result.exit_code != 0
     assert "license information is incorrect" in verbose_result.output.lower()
 
-
-def test_check_embedded_platform_all_tools(clirunner, validate_cliresult, tmpdir):
-    config = """
+@pytest.mark.parametrize("framework", ["arduino", "stm32cube", "zephyr"])
+@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy", "pvs-studio"])
+def test_check_embedded_platform_all_tools(
+    clirunner, validate_cliresult, tmpdir, framework, check_tool
+):
+    config = f"""
 [env:test]
 platform = ststm32
 board = nucleo_f401re
-framework = %s
-check_tool = %s
+framework = {framework}
+check_tool = {check_tool}
 """
-    # tmpdir.join("platformio.ini").write(config)
     tmpdir.mkdir("src").join("main.c").write(
         PVS_STUDIO_FREE_LICENSE_HEADER
         + """
@@ -534,20 +539,12 @@ int main() {
 """
     )
 
-    for framework in (
-        "arduino",
-        "stm32cube",
-        "zephyr",
-    ):
-        for tool in ("cppcheck", "clangtidy", "pvs-studio"):
-            tmpdir.join("platformio.ini").write(config % (framework, tool))
-            result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
-            validate_cliresult(result)
-            defects = sum(count_defects(result.output))
-            assert defects > 0, "Failed %s with %s" % (
-                framework,
-                tool,
-            )
+
+    tmpdir.join("platformio.ini").write(config)
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    validate_cliresult(result)
+    defects = sum(count_defects(result.output))
+    assert defects > 0, "Not defects were found!"
 
 
 def test_check_skip_includes_from_packages(clirunner, validate_cliresult, tmpdir):

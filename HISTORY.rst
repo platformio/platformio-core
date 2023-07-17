@@ -21,6 +21,7 @@ PlatformIO Core 6
 * Resolved an issue that caused generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to break when the ``-iprefix`` compiler flag was used
 * Resolved an issue encountered while utilizing the `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`__ command on the Windows platform to execute Python scripts from a package
 * Implemented a crucial improvement to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, guaranteeing that the ``monitor`` target is not executed if any of the preceding targets, such as ``upload``, encounter failures
+* `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.11 with new checks, CLI commands and various analysis improvements
 
 6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~
