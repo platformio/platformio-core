@@ -511,6 +511,7 @@ TEST-TEST-TEST-TEST
     assert verbose_result.exit_code != 0
     assert "license information is incorrect" in verbose_result.output.lower()
 
+
 @pytest.mark.parametrize("framework", ["arduino", "stm32cube", "zephyr"])
 @pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy", "pvs-studio"])
 def test_check_embedded_platform_all_tools(
@@ -538,7 +539,6 @@ int main() {
 }
 """
     )
-
 
     tmpdir.join("platformio.ini").write(config)
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])

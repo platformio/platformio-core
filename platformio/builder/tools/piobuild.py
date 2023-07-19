@@ -44,6 +44,10 @@ def scons_patched_match_splitext(path, suffixes=None):
     return tokens
 
 
+def GetBuildType(env):
+    return env["BUILD_TYPE"]
+
+
 def BuildProgram(env):
     env.ProcessProgramDeps()
     env.ProcessProjectDeps()
@@ -363,6 +367,7 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(GetBuildType)
     env.AddMethod(BuildProgram)
     env.AddMethod(ProcessProgramDeps)
     env.AddMethod(ProcessProjectDeps)
