@@ -76,13 +76,18 @@ class NativeTestOutputReader:
             os.path.join(
                 build_dir,
                 self.test_runner.test_suite.env_name,
+                "test",
                 "program.exe" if IS_WINDOWS else "program",
             )
         ]
         # if user changed PROGNAME
         if not os.path.exists(cmd[0]):
             build_data = load_build_metadata(
-                os.getcwd(), self.test_runner.test_suite.env_name, cache=True
+                None,
+                self.test_runner.test_suite.env_name,
+                cache=True,
+                debug=not self.test_runner.options.without_debugging,
+                test=True,
             )
             if build_data:
                 cmd[0] = build_data["prog_path"]

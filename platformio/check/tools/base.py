@@ -57,7 +57,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         ]
 
     def _load_cpp_data(self):
-        data = load_build_metadata(self.project_dir, self.envname)
+        data = load_build_metadata(None, self.envname)
         if not data:
             return
         self.cc_flags = data.get("cc_flags", [])

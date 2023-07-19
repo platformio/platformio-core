@@ -31,7 +31,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 from platformio import app, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
-from platformio.project.helpers import get_project_dir
+from platformio.project.helpers import get_build_type, get_project_dir
 
 AllowSubstExceptions(NameError)
 
@@ -72,14 +72,6 @@ DEFAULT_ENV_OPTIONS = dict(
     # Propagating External Environment
     ENV=os.environ,
     UNIX_TIME=int(time()),
-    BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
-    BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
-    BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
-    LIBPATH=["$BUILD_DIR"],
-    PROGNAME="program",
-    PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
-    PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
 )
 
@@ -126,13 +118,21 @@ env.Replace(
     PROJECT_DATA_DIR=config.get("platformio", "data_dir"),
     PROJECTDATA_DIR="$PROJECT_DATA_DIR",  # legacy for dev/platform
     PROJECT_BUILD_DIR=config.get("platformio", "build_dir"),
-    BUILD_TYPE=env.GetBuildType(),
+    BUILD_TYPE=get_build_type(config, env["PIOENV"], COMMAND_LINE_TARGETS),
+    BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV", "$BUILD_TYPE"),
+    BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
+    BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
     BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
+    LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
         config.get("platformio", "lib_dir"),
         os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
         config.get("platformio", "globallib_dir"),
     ],
+    COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
+    PROGNAME="program",
+    PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    PROG_PATH="$PROGPATH",  # deprecated
 )
 
 if int(ARGUMENTS.get("ISATTY", 0)):
@@ -224,14 +224,14 @@ if env.IsIntegrationDump():
     data = projenv.DumpIntegrationData(env)
     # dump to file for the further reading by project.helpers.load_build_metadata
     with open(
-        projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
+        projenv.subst(os.path.join("$BUILD_DIR", "metadata.json")),
         mode="w",
         encoding="utf8",
     ) as fp:
         json.dump(data, fp)
     click.echo(
-        "Data has been saved to the following location %s"
-        % projenv.subst(os.path.join("$BUILD_DIR", "idedata.json"))
+        "Metadata has been saved to the following location: %s"
+        % projenv.subst(os.path.join("$BUILD_DIR", "metadata.json"))
     )
     env.Exit(0)
 

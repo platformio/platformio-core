@@ -268,7 +268,7 @@ test_testing_command =
     atmega328p
     -f
     16000000L
-    ${platformio.build_dir}/${this.__env__}/firmware.elf
+    ${platformio.build_dir}/${this.__env__}/test/firmware.elf
 """
     )
     test_dir = project_dir / "test" / "test_dummy"

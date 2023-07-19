@@ -308,7 +308,7 @@ def print_processing_summary(results, verbose=False):
 
 def print_target_list(envs):
     tabular_data = []
-    for env, data in load_build_metadata(os.getcwd(), envs).items():
+    for env, data in load_build_metadata(None, envs, cache=True).items():
         tabular_data.extend(
             sorted(
                 [

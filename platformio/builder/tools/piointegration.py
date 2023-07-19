@@ -23,7 +23,7 @@ from platformio.proc import exec_command, where_is_program
 
 
 def IsIntegrationDump(_):
-    return "__idedata" in COMMAND_LINE_TARGETS
+    return set(["__idedata", "__metadata"]) & set(COMMAND_LINE_TARGETS)
 
 
 def DumpIntegrationIncludes(env):
@@ -146,7 +146,7 @@ def _split_flags_string(env, s):
 def DumpIntegrationData(*args):
     projenv, globalenv = args[0:2]  # pylint: disable=unbalanced-tuple-unpacking
     data = {
-        "build_type": globalenv.GetBuildType(),
+        "build_type": globalenv["BUILD_TYPE"],
         "env_name": globalenv["PIOENV"],
         "libsource_dirs": [
             globalenv.subst(item) for item in globalenv.GetLibSourceDirs()

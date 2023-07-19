@@ -44,19 +44,6 @@ def scons_patched_match_splitext(path, suffixes=None):
     return tokens
 
 
-def GetBuildType(env):
-    modes = []
-    if (
-        set(["__debug", "sizedata"])  # sizedata = for memory inspection
-        & set(COMMAND_LINE_TARGETS)
-        or env.GetProjectOption("build_type") == "debug"
-    ):
-        modes.append("debug")
-    if "__test" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "test":
-        modes.append("test")
-    return "+".join(modes or ["release"])
-
-
 def BuildProgram(env):
     env.ProcessProgramDeps()
     env.ProcessProjectDeps()
@@ -74,7 +61,7 @@ def BuildProgram(env):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
-    program = env.Program(env.subst("$PROGPATH"), env["PIOBUILDFILES"])
+    program = env.Program(env.subst("$PROGPATH"), env.get("PIOBUILDFILES", []))
     env.Replace(PIOMAINPROG=program)
 
     AlwaysBuild(
@@ -156,6 +143,9 @@ def ProcessProjectDeps(env):
             if plb.env.get(key)
         }
     )
+
+    if env.IsIntegrationDump():
+        return
 
     if "test" in env["BUILD_TYPE"]:
         build_files_before_nums = len(env.get("PIOBUILDFILES", []))
@@ -373,7 +363,6 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(GetBuildType)
     env.AddMethod(BuildProgram)
     env.AddMethod(ProcessProgramDeps)
     env.AddMethod(ProcessProjectDeps)
