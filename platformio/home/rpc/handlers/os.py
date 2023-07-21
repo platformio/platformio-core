@@ -15,7 +15,6 @@
 import glob
 import io
 import os
-import shutil
 from functools import cmp_to_key
 
 import click
@@ -67,9 +66,10 @@ class OSRPC(BaseRPCHandler):
                 cc.set(cache_key, result, cache_valid)
         return result
 
-    def request_content(self, uri, data=None, headers=None, cache_valid=None):
+    @classmethod
+    def request_content(cls, uri, data=None, headers=None, cache_valid=None):
         if uri.startswith("http"):
-            return self.fetch_content(uri, data, headers, cache_valid)
+            return cls.fetch_content(uri, data, headers, cache_valid)
         local_path = uri[7:] if uri.startswith("file://") else uri
         with io.open(local_path, encoding="utf-8") as fp:
             return fp.read()
@@ -103,20 +103,8 @@ class OSRPC(BaseRPCHandler):
         return os.path.isdir(path)
 
     @staticmethod
-    def make_dirs(path):
-        return os.makedirs(path)
-
-    @staticmethod
     def get_file_mtime(path):
         return os.path.getmtime(path)
-
-    @staticmethod
-    def rename(src, dst):
-        return os.rename(src, dst)
-
-    @staticmethod
-    def copy(src, dst):
-        return shutil.copytree(src, dst, symlinks=True)
 
     @staticmethod
     def glob(pathnames, root=None):
