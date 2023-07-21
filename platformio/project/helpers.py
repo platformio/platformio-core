@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 import os
 import re
 import subprocess
@@ -26,6 +27,12 @@ from platformio.project.config import ProjectConfig
 
 def get_project_dir():
     return os.getcwd()
+
+
+def get_project_id(project_dir=None):
+    return hashlib.sha1(
+        hashlib_encode_data(project_dir or get_project_dir())
+    ).hexdigest()
 
 
 def is_platformio_project(project_dir=None):

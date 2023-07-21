@@ -29,6 +29,7 @@ from platformio.cli import PlatformioCLI
 from platformio.debug.config.base import DebugConfigBase
 from platformio.http import HTTPSession, ensure_internet_on
 from platformio.proc import is_ci
+from platformio.project.helpers import get_project_id
 
 KEEP_MAX_REPORTS = 100
 SEND_MAX_EVENTS = 25
@@ -218,7 +219,7 @@ def dump_project_env_params(config, env, platform):
         for option in non_sensitive_data
         if config.has_option(section, option)
     }
-    params["pid"] = app.get_project_id(os.path.dirname(config.path))
+    params["pid"] = get_project_id(os.path.dirname(config.path))
     params["platform_name"] = platform.name
     params["platform_version"] = platform.version
     return params
