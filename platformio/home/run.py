@@ -67,15 +67,15 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
         raise PlatformioException("Invalid path to PIO Home Contrib")
 
     ws_rpc_factory = WebSocketJSONRPCServerFactory(shutdown_timeout)
-    ws_rpc_factory.add_object_handler(AccountRPC(), namespace="account")
-    ws_rpc_factory.add_object_handler(AppRPC(), namespace="app")
-    ws_rpc_factory.add_object_handler(IDERPC(), namespace="ide")
-    ws_rpc_factory.add_object_handler(MiscRPC(), namespace="misc")
-    ws_rpc_factory.add_object_handler(OSRPC(), namespace="os")
-    ws_rpc_factory.add_object_handler(PIOCoreRPC(), namespace="core")
-    ws_rpc_factory.add_object_handler(ProjectRPC(), namespace="project")
-    ws_rpc_factory.add_object_handler(PlatformRPC(), namespace="platform")
-    ws_rpc_factory.add_object_handler(RegistryRPC(), namespace="registry")
+    ws_rpc_factory.add_object_handler(AccountRPC())
+    ws_rpc_factory.add_object_handler(AppRPC())
+    ws_rpc_factory.add_object_handler(IDERPC())
+    ws_rpc_factory.add_object_handler(MiscRPC())
+    ws_rpc_factory.add_object_handler(OSRPC())
+    ws_rpc_factory.add_object_handler(PIOCoreRPC())
+    ws_rpc_factory.add_object_handler(ProjectRPC())
+    ws_rpc_factory.add_object_handler(PlatformRPC())
+    ws_rpc_factory.add_object_handler(RegistryRPC())
 
     path = urlparse(home_url).path
     routes = [

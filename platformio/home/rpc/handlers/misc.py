@@ -22,6 +22,8 @@ from platformio.home.rpc.handlers.os import OSRPC
 
 
 class MiscRPC(BaseRPCHandler):
+    NAMESPACE = "misc"
+
     async def load_latest_tweets(self, data_url):
         cache_key = ContentCache.key_from_args(data_url, "tweets")
         cache_valid = "180d"

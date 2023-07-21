@@ -14,8 +14,8 @@
 
 import os.path
 
-from platformio.compat import aio_to_thread
 from platformio.home.rpc.handlers.base import BaseRPCHandler
+from platformio.home.rpc.handlers.registry import RegistryRPC
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.meta import PackageSpec
@@ -23,15 +23,13 @@ from platformio.platform.factory import PlatformFactory
 
 
 class PlatformRPC(BaseRPCHandler):
-    async def fetch_platforms(self, search_query=None, page=0, force_installed=False):
-        if force_installed:
-            return {
-                "items": await aio_to_thread(
-                    self._load_installed_platforms, search_query
-                )
-            }
+    NAMESPACE = "platform"
 
-        search_result = await self.factory.manager.dispatcher["registry.call_client"](
+    def fetch_platforms(self, search_query=None, page=0, force_installed=False):
+        if force_installed:
+            return {"items": self._load_installed_platforms(search_query)}
+
+        search_result = RegistryRPC.call_client(
             method="list_packages",
             query=search_query,
             qualifiers={
@@ -88,17 +86,17 @@ class PlatformRPC(BaseRPCHandler):
             )
         return items
 
-    async def fetch_boards(self, platform_spec):
+    def fetch_boards(self, platform_spec):
         spec = PackageSpec(platform_spec)
         if spec.owner:
-            return await self.factory.manager.dispatcher["registry.call_client"](
+            return RegistryRPC.call_client(
                 method="get_package",
                 typex="platform",
                 owner=spec.owner,
                 name=spec.name,
                 extra_path="/boards",
             )
-        return await aio_to_thread(self._load_installed_boards, spec)
+        return self._load_installed_boards(spec)
 
     @staticmethod
     def _load_installed_boards(platform_spec):
@@ -108,17 +106,17 @@ class PlatformRPC(BaseRPCHandler):
             key=lambda item: item["name"],
         )
 
-    async def fetch_examples(self, platform_spec):
+    def fetch_examples(self, platform_spec):
         spec = PackageSpec(platform_spec)
         if spec.owner:
-            return await self.factory.manager.dispatcher["registry.call_client"](
+            return RegistryRPC.call_client(
                 method="get_package",
                 typex="platform",
                 owner=spec.owner,
                 name=spec.name,
                 extra_path="/examples",
             )
-        return await aio_to_thread(self._load_installed_examples, spec)
+        return self._load_installed_examples(spec)
 
     @staticmethod
     def _load_installed_examples(platform_spec):

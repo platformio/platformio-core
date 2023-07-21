@@ -14,4 +14,6 @@
 
 
 class BaseRPCHandler:
+    NAMESPACE = None
+
     factory = None

@@ -102,6 +102,8 @@ def get_core_fullpath():
 
 
 class PIOCoreRPC(BaseRPCHandler):
+    NAMESPACE = "core"
+
     @staticmethod
     def version():
         return __version__

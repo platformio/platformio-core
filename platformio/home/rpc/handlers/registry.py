@@ -14,17 +14,17 @@
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
-from platformio.compat import aio_to_thread
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.registry.client import RegistryClient
 
 
 class RegistryRPC(BaseRPCHandler):
+    NAMESPACE = "registry"
+
     @staticmethod
-    async def call_client(method, *args, **kwargs):
+    def call_client(method, *args, **kwargs):
         try:
-            client = RegistryClient()
-            return await aio_to_thread(getattr(client, method), *args, **kwargs)
+            return getattr(RegistryClient(), method)(*args, **kwargs)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
                 code=5000, message="Registry Call Error", data=str(exc)

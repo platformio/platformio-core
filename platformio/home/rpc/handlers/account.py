@@ -19,11 +19,12 @@ from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 
 class AccountRPC(BaseRPCHandler):
+    NAMESPACE = "account"
+
     @staticmethod
     def call_client(method, *args, **kwargs):
         try:
-            client = AccountClient()
-            return getattr(client, method)(*args, **kwargs)
+            return getattr(AccountClient(), method)(*args, **kwargs)
         except Exception as exc:  # pylint: disable=bare-except
             raise JSONRPC20DispatchException(
                 code=5000, message="PIO Account Call Error", data=str(exc)

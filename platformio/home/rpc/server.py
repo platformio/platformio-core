@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
+import inspect
 from urllib.parse import parse_qs
 
-import ajsonrpc.utils
+import ajsonrpc.manager
 import click
 from ajsonrpc.core import JSONRPC20Error, JSONRPC20Request
 from ajsonrpc.dispatcher import Dispatcher
 from ajsonrpc.manager import AsyncJSONRPCResponseManager, JSONRPC20Response
 from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import aio_create_task, aio_get_running_loop
+from platformio.compat import aio_create_task, aio_get_running_loop, aio_to_thread
 from platformio.http import InternetConnectionError
 from platformio.proc import force_exit
 
 # Remove this line when PR is merged
 # https://github.com/pavlov99/ajsonrpc/pull/22
-ajsonrpc.utils.is_invalid_params = lambda: False
+ajsonrpc.manager.is_invalid_params = lambda *args, **kwargs: False
 
 
 class JSONRPCServerFactoryBase:
@@ -44,9 +46,18 @@ class JSONRPCServerFactoryBase:
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
-    def add_object_handler(self, handler, namespace):
-        handler.factory = self
-        self.manager.dispatcher.add_object(handler, prefix="%s." % namespace)
+    def add_object_handler(self, obj):
+        obj.factory = self
+        namespace = obj.NAMESPACE or obj.__class__.__name__
+        for name in dir(obj):
+            method = getattr(obj, name)
+            if name.startswith("_") or not (
+                inspect.ismethod(method) or inspect.isfunction(method)
+            ):
+                continue
+            if not inspect.iscoroutinefunction(method):
+                method = functools.partial(aio_to_thread, method)
+            self.manager.dispatcher.add_function(method, name=f"{namespace}.{name}")
 
     def on_client_connect(self, connection, actor=None):
         self._clients[connection] = {"actor": actor}

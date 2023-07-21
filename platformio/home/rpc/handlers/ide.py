@@ -22,6 +22,7 @@ from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 
 class IDERPC(BaseRPCHandler):
+    NAMESPACE = "ide"
     COMMAND_TIMEOUT = 1.5  # in seconds
 
     def __init__(self):

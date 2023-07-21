@@ -34,6 +34,8 @@ from platformio.project.options import get_config_options_schema
 
 
 class ProjectRPC(BaseRPCHandler):
+    NAMESPACE = "project"
+
     @staticmethod
     def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)
