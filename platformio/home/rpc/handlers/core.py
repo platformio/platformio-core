@@ -85,7 +85,7 @@ class CoreRPC(BaseRPCHandler):
             args = ["--caller", app.get_session_var("caller_id")] + args
         kwargs = options.get("spawn", {})
 
-        if "forceANSI" in options:
+        if "force_ansi" in options:
             environ = kwargs.get("env", os.environ.copy())
             environ["PLATFORMIO_FORCE_ANSI"] = "true"
             kwargs["env"] = environ
