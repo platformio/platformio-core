@@ -14,6 +14,7 @@
 
 import asyncio
 import functools
+import os
 
 from platformio import __main__, __version__, app, proc, util
 from platformio.compat import (
@@ -21,8 +22,14 @@ from platformio.compat import (
     aio_create_task,
     aio_get_running_loop,
     get_locale_encoding,
+    shlex_join,
 )
+from platformio.exception import UserSideException
 from platformio.home.rpc.handlers.base import BaseRPCHandler
+
+
+class PIOCoreCallError(UserSideException):
+    MESSAGE = 'An error occured while executing PIO Core command: "{0}"\n\n{1}'
 
 
 class PIOCoreProtocol(asyncio.SubprocessProtocol):
@@ -66,27 +73,41 @@ class CoreRPC(BaseRPCHandler):
     def version():
         return __version__
 
-    async def exec(self, args, options=None):
+    async def exec(self, args, options=None, raise_exception=False):
+        options = options or {}
         loop = aio_get_running_loop()
         exit_future = loop.create_future()
         data_callback = functools.partial(
             self._on_exec_data_received, exec_options=options
         )
+
         if args[0] != "--caller" and app.get_session_var("caller_id"):
             args = ["--caller", app.get_session_var("caller_id")] + args
+        kwargs = options.get("spawn", {})
+
+        if "forceANSI" in options:
+            environ = kwargs.get("env", os.environ.copy())
+            environ["PLATFORMIO_FORCE_ANSI"] = "true"
+            kwargs["env"] = environ
+
         transport, protocol = await loop.subprocess_exec(
             lambda: PIOCoreProtocol(exit_future, data_callback),
             get_core_fullpath(),
             *args,
             stdin=None,
-            **options.get("spawn", {}),
+            **kwargs,
         )
         await exit_future
         transport.close()
+        return_code = transport.get_returncode()
+        if return_code != 0 and raise_exception:
+            raise PIOCoreCallError(
+                shlex_join(["pio"] + args), f"{protocol.stdout}\n{protocol.stderr}"
+            )
         return {
             "stdout": protocol.stdout,
             "stderr": protocol.stderr,
-            "returncode": transport.get_returncode(),
+            "returncode": return_code,
         }
 
     def _on_exec_data_received(self, exec_options, pipe, data):

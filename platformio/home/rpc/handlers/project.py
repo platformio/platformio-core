@@ -48,19 +48,15 @@ class ProjectRPC(BaseRPCHandler):
         if not os.path.isdir(project_dir):
             os.makedirs(project_dir)
 
-        envclone = os.environ.copy()
-        envclone["PLATFORMIO_FORCE_ANSI"] = "true"
-        options = options or {}
-        options["spawn"] = {"env": envclone, "cwd": project_dir}
-
-        args = ["project", "init"]
+        args = ["project", "init", "-d", project_dir]
         ide = app.get_session_var("caller_id")
         if ide in ProjectGenerator.get_supported_ides():
             args.extend(["--ide", ide])
 
+        exec_options = options.get("exec", {})
         if configuration.get("example"):
             await self.factory.notify_clients(
-                method=options.get("stdoutNotificationMethod"),
+                method=exec_options.get("stdoutNotificationMethod"),
                 params=["Copying example files...\n"],
                 actor="frontend",
             )
@@ -68,7 +64,9 @@ class ProjectRPC(BaseRPCHandler):
         else:
             args.extend(self._pre_init_empty(configuration))
 
-        return await self.factory.manager.dispatcher["core.exec"](args, options=options)
+        return await self.factory.manager.dispatcher["core.exec"](
+            args, options=exec_options
+        )
 
     @staticmethod
     def _pre_init_empty(configuration):
@@ -115,9 +113,9 @@ class ProjectRPC(BaseRPCHandler):
     def configuration(project_dir, env):
         assert is_platformio_project(project_dir)
         with fs.cd(project_dir):
-            config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
             platform = PlatformFactory.from_env(env, autoinstall=True)
             platform_pkg = PlatformPackageManager().get_package(platform.get_dir())
+            config = ProjectConfig.get_instance()
             board_id = config.get(f"env:{env}", "board", None)
 
             # frameworks
