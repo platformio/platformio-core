@@ -143,8 +143,7 @@ def get_build_type(config, env, run_targets=None):
     run_targets = run_targets or []
     declared_build_type = config.get(f"env:{env}", "build_type")
     if (
-        set(["__debug", "sizedata"])  # sizedata = for memory inspection
-        & set(run_targets)
+        set(["__debug", "__memusage"]) & set(run_targets)
         or declared_build_type == "debug"
     ):
         types.append("debug")

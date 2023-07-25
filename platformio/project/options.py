@@ -83,7 +83,7 @@ def ConfigEnvOption(*args, **kwargs):
 def calculate_path_hash(path):
     return "%s-%s" % (
         os.path.basename(path),
-        hashlib.sha1(hashlib_encode_data(path)).hexdigest()[:10],
+        hashlib.sha1(hashlib_encode_data(path.lower())).hexdigest()[:10],
     )
 
 
@@ -264,6 +264,17 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_LIBDEPS_DIR",
                 default=os.path.join("${platformio.workspace_dir}", "libdeps"),
+                validate=validate_dir,
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="memusage_dir",
+                description=(
+                    "A location where PlatformIO Core will store "
+                    "project memory usage reports"
+                ),
+                sysenvvar="PLATFORMIO_MEMUSAGE_DIR",
+                default=os.path.join("${platformio.workspace_dir}", "memusage"),
                 validate=validate_dir,
             ),
             ConfigPlatformioOption(

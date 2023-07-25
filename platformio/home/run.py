@@ -30,6 +30,7 @@ from platformio.home.rpc.handlers.account import AccountRPC
 from platformio.home.rpc.handlers.app import AppRPC
 from platformio.home.rpc.handlers.core import CoreRPC
 from platformio.home.rpc.handlers.ide import IDERPC
+from platformio.home.rpc.handlers.memusage import MemUsageRPC
 from platformio.home.rpc.handlers.misc import MiscRPC
 from platformio.home.rpc.handlers.os import OSRPC
 from platformio.home.rpc.handlers.platform import PlatformRPC
@@ -70,6 +71,7 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
     ws_rpc_factory.add_object_handler(AccountRPC())
     ws_rpc_factory.add_object_handler(AppRPC())
     ws_rpc_factory.add_object_handler(IDERPC())
+    ws_rpc_factory.add_object_handler(MemUsageRPC())
     ws_rpc_factory.add_object_handler(MiscRPC())
     ws_rpc_factory.add_object_handler(OSRPC())
     ws_rpc_factory.add_object_handler(CoreRPC())

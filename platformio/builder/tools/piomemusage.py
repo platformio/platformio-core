@@ -14,33 +14,33 @@
 
 # pylint: disable=too-many-locals
 
-import json
+import os
 import sys
-from os import environ, makedirs, remove
-from os.path import isdir, join, splitdrive
+import time
 
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
 from platformio.compat import IS_WINDOWS
 from platformio.proc import exec_command
+from platformio.project.memusage import save_report
 
 
 def _run_tool(cmd, env, tool_args):
-    sysenv = environ.copy()
+    sysenv = os.environ.copy()
     sysenv["PATH"] = str(env["ENV"]["PATH"])
 
     build_dir = env.subst("$BUILD_DIR")
-    if not isdir(build_dir):
-        makedirs(build_dir)
-    tmp_file = join(build_dir, "size-data-longcmd.txt")
+    if not os.path.isdir(build_dir):
+        os.makedirs(build_dir)
+    tmp_file = os.path.join(build_dir, "size-data-longcmd.txt")
 
     with open(tmp_file, mode="w", encoding="utf8") as fp:
         fp.write("\n".join(tool_args))
 
     cmd.append("@" + tmp_file)
     result = exec_command(cmd, env=sysenv)
-    remove(tmp_file)
+    os.remove(tmp_file)
 
     return result
 
@@ -92,8 +92,8 @@ def _collect_sections_info(env, elffile):
         }
 
         sections[section.name] = section_data
-        sections[section.name]["in_flash"] = env.pioSizeIsFlashSection(section_data)
-        sections[section.name]["in_ram"] = env.pioSizeIsRamSection(section_data)
+        sections[section.name]["in_flash"] = env.memusageIsFlashSection(section_data)
+        sections[section.name]["in_ram"] = env.memusageIsRamSection(section_data)
 
     return sections
 
@@ -106,7 +106,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         sys.stderr.write("Couldn't find symbol table. Is ELF file stripped?")
         env.Exit(1)
 
-    sysenv = environ.copy()
+    sysenv = os.environ.copy()
     sysenv["PATH"] = str(env["ENV"]["PATH"])
 
     symbol_addrs = []
@@ -117,7 +117,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         symbol_size = s["st_size"]
         symbol_type = symbol_info["type"]
 
-        if not env.pioSizeIsValidSymbol(s.name, symbol_type, symbol_addr):
+        if not env.memusageIsValidSymbol(s.name, symbol_type, symbol_addr):
             continue
 
         symbol = {
@@ -126,7 +126,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
-            "section": env.pioSizeDetermineSection(sections, symbol_addr),
+            "section": env.memusageDetermineSection(sections, symbol_addr),
         }
 
         if s.name.startswith("_Z"):
@@ -144,8 +144,8 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         if not location or "?" in location:
             continue
         if IS_WINDOWS:
-            drive, tail = splitdrive(location)
-            location = join(drive.upper(), tail)
+            drive, tail = os.path.splitdrive(location)
+            location = os.path.join(drive.upper(), tail)
         symbol["file"] = location
         symbol["line"] = 0
         if ":" in location:
@@ -156,7 +156,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     return symbols
 
 
-def pioSizeDetermineSection(_, sections, symbol_addr):
+def memusageDetermineSection(_, sections, symbol_addr):
     for section, info in sections.items():
         if not info.get("in_flash", False) and not info.get("in_ram", False):
             continue
@@ -165,22 +165,22 @@ def pioSizeDetermineSection(_, sections, symbol_addr):
     return "unknown"
 
 
-def pioSizeIsValidSymbol(_, symbol_name, symbol_type, symbol_address):
+def memusageIsValidSymbol(_, symbol_name, symbol_type, symbol_address):
     return symbol_name and symbol_address != 0 and symbol_type != "STT_NOTYPE"
 
 
-def pioSizeIsRamSection(_, section):
+def memusageIsRamSection(_, section):
     return (
         section.get("type", "") in ("SHT_NOBITS", "SHT_PROGBITS")
         and section.get("flags", "") == "WA"
     )
 
 
-def pioSizeIsFlashSection(_, section):
+def memusageIsFlashSection(_, section):
     return section.get("type", "") == "SHT_PROGBITS" and "A" in section.get("flags", "")
 
 
-def pioSizeCalculateFirmwareSize(_, sections):
+def memusageCalculateFirmwareSize(_, sections):
     flash_size = ram_size = 0
     for section_info in sections.values():
         if section_info.get("in_flash", False):
@@ -191,8 +191,8 @@ def pioSizeCalculateFirmwareSize(_, sections):
     return ram_size, flash_size
 
 
-def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
-    data = {"device": {}, "memory": {}, "version": 1}
+def DumpMemoryUsage(_, target, source, env):  # pylint: disable=unused-argument
+    data = {"version": 1, "timestamp": int(time.time()), "device": {}, "memory": {}}
 
     board = env.BoardConfig()
     if board:
@@ -216,7 +216,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             env.Exit(1)
 
         sections = _collect_sections_info(env, elffile)
-        firmware_ram, firmware_flash = env.pioSizeCalculateFirmwareSize(sections)
+        firmware_ram, firmware_flash = env.memusageCalculateFirmwareSize(sections)
         data["memory"]["total"] = {
             "ram_size": firmware_ram,
             "flash_size": firmware_flash,
@@ -225,7 +225,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
         files = {}
         for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
-            file_path = symbol.get("file") or "unknown"
+            file_path = symbol.pop("file", "unknown")
             if not files.get(file_path, {}):
                 files[file_path] = {"symbols": [], "ram_size": 0, "flash_size": 0}
 
@@ -246,10 +246,10 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             file_data.update(v)
             data["memory"]["files"].append(file_data)
 
-    with open(
-        join(env.subst("$BUILD_DIR"), "sizedata.json"), mode="w", encoding="utf8"
-    ) as fp:
-        fp.write(json.dumps(data))
+    print(
+        "Memory usage report has been saved to the following location: "
+        f"\"{save_report(os.getcwd(), env['PIOENV'], data)}\""
+    )
 
 
 def exists(_):
@@ -257,10 +257,10 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(pioSizeIsRamSection)
-    env.AddMethod(pioSizeIsFlashSection)
-    env.AddMethod(pioSizeCalculateFirmwareSize)
-    env.AddMethod(pioSizeDetermineSection)
-    env.AddMethod(pioSizeIsValidSymbol)
-    env.AddMethod(DumpSizeData)
+    env.AddMethod(memusageIsRamSection)
+    env.AddMethod(memusageIsFlashSection)
+    env.AddMethod(memusageCalculateFirmwareSize)
+    env.AddMethod(memusageDetermineSection)
+    env.AddMethod(memusageIsValidSymbol)
+    env.AddMethod(DumpMemoryUsage)
     return env

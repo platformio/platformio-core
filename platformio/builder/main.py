@@ -15,7 +15,7 @@
 import json
 import os
 import sys
-from time import time
+import time
 
 import click
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
@@ -61,7 +61,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "piotarget",
         "piolib",
         "pioupload",
-        "piosize",
+        "piomemusage",
         "pioino",
         "piomisc",
         "piointegration",
@@ -71,7 +71,7 @@ DEFAULT_ENV_OPTIONS = dict(
     variables=clivars,
     # Propagating External Environment
     ENV=os.environ,
-    UNIX_TIME=int(time()),
+    UNIX_TIME=int(time.time()),
     PYTHONEXE=get_pythonexe_path(),
 )
 
@@ -183,7 +183,7 @@ env.SConscript(env.GetExtraScripts("post"), exports="env")
 
 # Checking program size
 if env.get("SIZETOOL") and not (
-    set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+    set(["nobuild", "__memusage"]) & set(COMMAND_LINE_TARGETS)
 ):
     env.Depends("upload", "checkprogsize")
     # Replace platform's "size" target with our
@@ -235,16 +235,16 @@ if env.IsIntegrationDump():
     )
     env.Exit(0)
 
-if "sizedata" in COMMAND_LINE_TARGETS:
+if "__memusage" in COMMAND_LINE_TARGETS:
     AlwaysBuild(
         env.Alias(
-            "sizedata",
+            "__memusage",
             DEFAULT_TARGETS,
-            env.VerboseAction(env.DumpSizeData, "Generating memory usage report..."),
+            env.VerboseAction(env.DumpMemoryUsage, "Generating memory usage report..."),
         )
     )
 
-    Default("sizedata")
+    Default("__memusage")
 
 # issue #4604: process targets sequentially
 for index, target in enumerate(
