@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ajsonrpc.core import JSONRPC20DispatchException
-
 from platformio.account.client import AccountClient
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 
@@ -23,9 +21,4 @@ class AccountRPC(BaseRPCHandler):
 
     @staticmethod
     def call_client(method, *args, **kwargs):
-        try:
-            return getattr(AccountClient(), method)(*args, **kwargs)
-        except Exception as exc:  # pylint: disable=bare-except
-            raise JSONRPC20DispatchException(
-                code=5000, message="PIO Account Call Error", data=str(exc)
-            ) from exc
+        return getattr(AccountClient(), method)(*args, **kwargs)
