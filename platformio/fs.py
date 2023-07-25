@@ -34,12 +34,10 @@ class cd:
         self.prev_path = os.getcwd()
 
     def __enter__(self):
-        if self.new_path != self.prev_path:
-            os.chdir(self.new_path)
+        os.chdir(self.new_path)
 
     def __exit__(self, etype, value, traceback):
-        if self.new_path != self.prev_path:
-            os.chdir(self.prev_path)
+        os.chdir(self.prev_path)
 
 
 def get_source_dir():

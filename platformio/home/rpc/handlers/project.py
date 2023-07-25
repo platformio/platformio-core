@@ -22,7 +22,7 @@ from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_dir, is_platformio_project
+from platformio.project.helpers import get_project_dir
 from platformio.project.integration.generator import ProjectGenerator
 
 
@@ -111,11 +111,11 @@ class ProjectRPC(BaseRPCHandler):
 
     @staticmethod
     def configuration(project_dir, env):
-        assert is_platformio_project(project_dir)
         with fs.cd(project_dir):
+            config = ProjectConfig.get_instance()
+            config.validate(envs=[env])
             platform = PlatformFactory.from_env(env, autoinstall=True)
             platform_pkg = PlatformPackageManager().get_package(platform.get_dir())
-            config = ProjectConfig.get_instance()
             board_id = config.get(f"env:{env}", "board", None)
 
             # frameworks
