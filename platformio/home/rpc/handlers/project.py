@@ -30,7 +30,7 @@ class ProjectRPC(BaseRPCHandler):
     NAMESPACE = "project"
 
     @staticmethod
-    def config_call(init_kwargs, method, *args):
+    async def config_call(init_kwargs, method, *args):
         assert isinstance(init_kwargs, dict)
         assert "path" in init_kwargs
         if os.path.isdir(init_kwargs["path"]):
@@ -110,7 +110,7 @@ class ProjectRPC(BaseRPCHandler):
         return []
 
     @staticmethod
-    def configuration(project_dir, env):
+    async def configuration(project_dir, env):
         with fs.cd(project_dir):
             config = ProjectConfig.get_instance()
             config.validate(envs=[env])
