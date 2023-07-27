@@ -274,6 +274,8 @@ def get_user_agent():
         data.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
     data.append("Python/%s" % platform.python_version())
     data.append("Platform/%s" % platform.platform())
+    if not get_setting("enable_telemetry"):
+        data.append("Telemetry/0")
     return " ".join(data)
 
 
