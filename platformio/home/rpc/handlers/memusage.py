@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import functools
+import os
 
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.project import memusage
@@ -21,27 +22,35 @@ from platformio.project import memusage
 class MemUsageRPC(BaseRPCHandler):
     NAMESPACE = "memusage"
 
-    async def summary(self, project_dir, env, options=None):
+    async def profile(self, project_dir, env, options=None):
         options = options or {}
-        existing_reports = memusage.list_reports(project_dir, env)
-        current_report = previous_report = None
-        if options.get("cached") and existing_reports:
-            current_report = memusage.read_report(existing_reports[-1])
-            if len(existing_reports) > 1:
-                previous_report = memusage.read_report(existing_reports[-2])
-        else:
+        report_dir = memusage.get_report_dir(project_dir, env)
+        if options.get("lazy"):
+            existing_reports = memusage.list_reports(report_dir)
             if existing_reports:
-                previous_report = memusage.read_report(existing_reports[-1])
-            await self.factory.manager.dispatcher["core.exec"](
-                ["run", "-d", project_dir, "-e", env, "-t", "__memusage"],
-                options=options.get("exec"),
-                raise_exception=True,
-            )
-            current_report = memusage.read_report(
-                memusage.list_reports(project_dir, env)[-1]
-            )
+                return existing_reports[-1]
+        await self.factory.manager.dispatcher["core.exec"](
+            ["run", "-d", project_dir, "-e", env, "-t", "__memusage"],
+            options=options.get("exec"),
+            raise_exception=True,
+        )
+        return memusage.list_reports(report_dir)[-1]
 
+    def summary(self, report_path):
         max_top_items = 10
+        report_dir = os.path.dirname(report_path)
+        existing_reports = memusage.list_reports(report_dir)
+        current_report = memusage.read_report(report_path)
+        previous_report = None
+        try:
+            current_index = existing_reports.index(report_path)
+            if current_index > 0:
+                previous_report = memusage.read_report(
+                    existing_reports[current_index - 1]
+                )
+        except ValueError:
+            pass
+
         return dict(
             timestamp=dict(
                 current=current_report["timestamp"],
@@ -62,7 +71,7 @@ class MemUsageRPC(BaseRPCHandler):
                     0:max_top_items
                 ],
                 sections=sorted(
-                    current_report["memory"]["total"]["sections"].values(),
+                    current_report["memory"]["sections"].values(),
                     key=lambda item: item["size"],
                     reverse=True,
                 )[0:max_top_items],
@@ -98,3 +107,18 @@ class MemUsageRPC(BaseRPCHandler):
             [],
         )
         return sorted(symbols, key=lambda item: item["size"], reverse=True)
+
+    async def history(self, project_dir, env, nums=10):
+        result = []
+        report_dir = memusage.get_report_dir(project_dir, env)
+        reports = memusage.list_reports(report_dir)[nums * -1 :]
+        for path in reports:
+            data = memusage.read_report(path)
+            result.append(
+                {
+                    "timestamp": data["timestamp"],
+                    "ram": data["memory"]["total"]["ram_size"],
+                    "flash": data["memory"]["total"]["flash_size"],
+                }
+            )
+        return result

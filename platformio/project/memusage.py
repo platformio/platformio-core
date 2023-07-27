@@ -28,8 +28,7 @@ def get_report_dir(project_dir, env):
         )
 
 
-def list_reports(project_dir, env):
-    report_dir = get_report_dir(project_dir, env)
+def list_reports(report_dir):
     if not os.path.isdir(report_dir):
         return []
     return [os.path.join(report_dir, item) for item in sorted(os.listdir(report_dir))]
