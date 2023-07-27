@@ -192,19 +192,21 @@ def memusageCalculateFirmwareSize(_, sections):
 
 
 def DumpMemoryUsage(_, target, source, env):  # pylint: disable=unused-argument
-    data = {"version": 1, "timestamp": int(time.time()), "device": {}, "memory": {}}
+    result = {"version": 1, "timestamp": int(time.time()), "device": {}, "memory": {}}
 
     board = env.BoardConfig()
     if board:
-        data["device"] = {
+        result["device"] = {
             "mcu": board.get("build.mcu", ""),
             "cpu": board.get("build.cpu", ""),
             "frequency": board.get("build.f_cpu"),
             "flash": int(board.get("upload.maximum_size", 0)),
             "ram": int(board.get("upload.maximum_ram_size", 0)),
         }
-        if data["device"]["frequency"] and data["device"]["frequency"].endswith("L"):
-            data["device"]["frequency"] = int(data["device"]["frequency"][0:-1])
+        if result["device"]["frequency"] and result["device"]["frequency"].endswith(
+            "L"
+        ):
+            result["device"]["frequency"] = int(result["device"]["frequency"][0:-1])
 
     elf_path = env.subst("$PIOMAINPROG")
 
@@ -217,11 +219,11 @@ def DumpMemoryUsage(_, target, source, env):  # pylint: disable=unused-argument
 
         sections = _collect_sections_info(env, elffile)
         firmware_ram, firmware_flash = env.memusageCalculateFirmwareSize(sections)
-        data["memory"]["total"] = {
+        result["memory"]["total"] = {
             "ram_size": firmware_ram,
             "flash_size": firmware_flash,
-            "sections": sections,
         }
+        result["memory"]["sections"] = sections
 
         files = {}
         for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
@@ -240,15 +242,15 @@ def DumpMemoryUsage(_, target, source, env):  # pylint: disable=unused-argument
 
             files[file_path]["symbols"].append(symbol)
 
-        data["memory"]["files"] = []
+        result["memory"]["files"] = []
         for k, v in files.items():
             file_data = {"path": k}
             file_data.update(v)
-            data["memory"]["files"].append(file_data)
+            result["memory"]["files"].append(file_data)
 
     print(
         "Memory usage report has been saved to the following location: "
-        f"\"{save_report(os.getcwd(), env['PIOENV'], data)}\""
+        f"\"{save_report(os.getcwd(), env['PIOENV'], result)}\""
     )
 
 
