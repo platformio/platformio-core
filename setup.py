@@ -35,7 +35,7 @@ minimal_requirements = [
     "click==8.1.*; " + py_gte_37,
     "colorama",
     "marshmallow==3.14.1; " + py_below_37,
-    "marshmallow==3.19.*; " + py_gte_37,
+    "marshmallow==3.20.*; " + py_gte_37,
     "pyelftools==0.29",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",
@@ -47,7 +47,7 @@ home_requirements = [
     "ajsonrpc==1.2.*",
     "starlette==0.19.1; " + py_below_37,
     "starlette==0.29.0; " + py_37,
-    "starlette==0.30.*; " + py_gte_38,
+    "starlette==0.31.*; " + py_gte_38,
     "uvicorn==0.16.0; " + py_below_37,
     "uvicorn==0.22.0; " + py_37,
     "uvicorn==0.23.*; " + py_gte_38,
