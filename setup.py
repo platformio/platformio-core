@@ -35,7 +35,8 @@ minimal_requirements = [
     "click==8.1.*; " + py_gte_37,
     "colorama",
     "marshmallow==3.14.1; " + py_below_37,
-    "marshmallow==3.20.*; " + py_gte_37,
+    "marshmallow==3.19.0; " + py_37,
+    "marshmallow==3.20.*; " + py_gte_38,
     "pyelftools==0.29",
     "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests==2.*",

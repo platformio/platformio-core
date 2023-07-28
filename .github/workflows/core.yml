@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, windows-latest, macos-latest]
-        python-version: ["3.6", "3.9", "3.11"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
 
     runs-on: ${{ matrix.os }}
 
@@ -27,12 +27,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox
 
+      - name: Core System Info
+        run: |
+          tox -e py
+
       - name: Python Lint
         if: ${{ matrix.python-version != '3.6' }}
         run: |
           tox -e lint
 
       - name: Integration Tests
+        if: ${{ matrix.python-version == '3.9' }}
         run: |
           tox -e testcore
 
