@@ -26,6 +26,9 @@ from platformio import (
     __install_requires__,
 )
 
+# issue #4702; Broken "requests/charset_normalizer" on macOS ARM
+if platform.system() == "Darwin" and "arm" in platform.machine().lower():
+    __install_requires__.append("chardet>=3.0.2,<4")
 
 
 setup(
