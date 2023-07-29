@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import platform
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -22,52 +23,12 @@ from platformio import (
     __title__,
     __url__,
     __version__,
+    __install_requires__,
 )
 
-py_37 = "python_version == '3.7'"
-py_below_37 = "python_version < '3.7'"
-py_gte_37 = "python_version >= '3.7'"
-py_gte_38 = "python_version >= '3.8'"
-
-minimal_requirements = [
-    "bottle==0.12.*",
-    "click==8.0.4; " + py_below_37,
-    "click==8.1.*; " + py_gte_37,
-    "colorama",
-    "marshmallow==3.14.1; " + py_below_37,
-    "marshmallow==3.19.0; " + py_37,
-    "marshmallow==3.20.*; " + py_gte_38,
-    "pyelftools==0.29",
-    "pyserial==3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "requests==2.*",
-    "semantic_version==2.10.*",
-    "tabulate==0.*",
-]
-
-home_requirements = [
-    "ajsonrpc==1.2.*",
-    "starlette==0.19.1; " + py_below_37,
-    "starlette==0.29.0; " + py_37,
-    "starlette==0.31.*; " + py_gte_38,
-    "uvicorn==0.16.0; " + py_below_37,
-    "uvicorn==0.22.0; " + py_37,
-    "uvicorn==0.23.*; " + py_gte_38,
-    "wsproto==1.0.0; " + py_below_37,
-    "wsproto==1.2.*; " + py_gte_37,
-]
-
-# issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
-try:
-    import ssl
-
-    if ssl.OPENSSL_VERSION.startswith("OpenSSL ") and ssl.OPENSSL_VERSION_INFO < (
-        1,
-        1,
-        1,
-    ):
-        minimal_requirements.append("urllib3<2")
-except ImportError:
-    pass
+# issue #4702; Broken "requests/charset_normalizer" on macOS ARM
+if platform.system() == "Darwin" and "arm" in platform.machine().lower():
+    __install_requires__.append("chardet>=3.0.2,<4")
 
 
 setup(
@@ -79,7 +40,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=minimal_requirements + home_requirements,
+    install_requires=__install_requires__,
     python_requires=">=3.6",
     packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={

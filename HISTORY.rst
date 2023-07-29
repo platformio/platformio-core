@@ -22,6 +22,7 @@ PlatformIO Core 6
 * Resolved an issue encountered while utilizing the `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`__ command on the Windows platform to execute Python scripts from a package
 * Implemented a crucial improvement to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, guaranteeing that the ``monitor`` target is not executed if any of the preceding targets, such as ``upload``, encounter failures
 * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.11 with new checks, CLI commands and various analysis improvements
+* Resolved a critical issue that arose on macOS ARM platforms due to the Python "requests" module, leading to a "ModuleNotFoundError: No module named 'chardet'" (`issue #4702 <https://github.com/platformio/platformio-core/issues/4702>`_)
 
 6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~
