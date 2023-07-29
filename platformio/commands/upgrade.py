@@ -18,7 +18,7 @@ import subprocess
 
 import click
 
-from platformio import VERSION, __version__, app, exception
+from platformio import VERSION, __install_requires__, __version__, app, exception
 from platformio.http import fetch_remote_content
 from platformio.package.manager.core import update_core_packages
 from platformio.proc import get_pythonexe_path
@@ -33,9 +33,14 @@ DEVELOP_INIT_SCRIPT_URL = (
 
 @click.command("upgrade", short_help="Upgrade PlatformIO Core to the latest version")
 @click.option("--dev", is_flag=True, help="Use development branch")
+@click.option("--only-dependencies", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
-def cli(dev, verbose):
+def cli(dev, only_dependencies, verbose):
+    if only_dependencies:
+        return upgrade_pypi_dependencies(verbose)
+
     update_core_packages()
+
     if not dev and __version__ == get_latest_version():
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
@@ -50,11 +55,21 @@ def cli(dev, verbose):
     pkg_spec = DEVELOP_ZIP_URL if to_develop else "platformio"
 
     try:
+        # PIO Core
         subprocess.run(
             [python_exe, "-m", "pip", "install", "--upgrade", pkg_spec],
             check=True,
             stdout=subprocess.PIPE if not verbose else None,
         )
+
+        # PyPI dependencies
+        subprocess.run(
+            [python_exe, "-m", "platformio", "upgrade", "--only-dependencies"],
+            check=False,
+            stdout=subprocess.PIPE,
+        )
+
+        # Check version
         output = subprocess.run(
             [python_exe, "-m", "platformio", "--version"],
             check=True,
@@ -87,9 +102,20 @@ def cli(dev, verbose):
     return True
 
 
-def get_pkg_spec(to_develop):
-    if to_develop:
-        return
+def upgrade_pypi_dependencies(verbose):
+    subprocess.run(
+        [
+            get_pythonexe_path(),
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+            *__install_requires__,
+        ],
+        check=True,
+        stdout=subprocess.PIPE if not verbose else None,
+    )
 
 
 def get_latest_version():
