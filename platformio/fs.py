@@ -29,15 +29,16 @@ from platformio.compat import IS_WINDOWS
 
 
 class cd:
-    def __init__(self, new_path):
-        self.new_path = new_path
-        self.prev_path = os.getcwd()
+    def __init__(self, path):
+        self.path = path
+        self._old_cwd = []
 
     def __enter__(self):
-        os.chdir(self.new_path)
+        self._old_cwd.append(os.getcwd())
+        os.chdir(self.path)
 
-    def __exit__(self, etype, value, traceback):
-        os.chdir(self.prev_path)
+    def __exit__(self, *excinfo):
+        os.chdir(self._old_cwd.pop())
 
 
 def get_source_dir():
