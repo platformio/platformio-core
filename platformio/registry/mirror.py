@@ -17,7 +17,6 @@ from urllib.parse import urlparse
 
 from platformio import __registry_mirror_hosts__
 from platformio.cache import ContentCache
-from platformio.http import HTTPClient
 from platformio.registry.client import RegistryClient
 
 
@@ -49,15 +48,15 @@ class RegistryFileMirrorIterator:
                 except (ValueError, KeyError):
                     pass
 
-            http = self.get_http_client()
-            response = http.send_request(
+            registry = self.get_api_client()
+            response = registry.send_request(
                 "head",
                 self._url_parts.path,
-                allow_redirects=False,
+                follow_redirects=False,
                 params=dict(bypass=",".join(self._visited_mirrors))
                 if self._visited_mirrors
                 else None,
-                x_with_authorization=RegistryClient.allowed_private_packages(),
+                x_with_authorization=registry.allowed_private_packages(),
             )
             stop_conditions = [
                 response.status_code not in (302, 307),
@@ -85,14 +84,14 @@ class RegistryFileMirrorIterator:
                 response.headers.get("X-PIO-Content-SHA256"),
             )
 
-    def get_http_client(self):
+    def get_api_client(self):
         if self._mirror not in RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES:
             endpoints = [self._mirror]
             for host in __registry_mirror_hosts__:
                 endpoint = f"https://dl.{host}"
                 if endpoint not in endpoints:
                     endpoints.append(endpoint)
-            RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror] = HTTPClient(
-                endpoints
-            )
+            RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[
+                self._mirror
+            ] = RegistryClient(endpoints)
         return RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror]

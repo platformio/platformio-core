@@ -15,7 +15,7 @@
 import os
 
 from platformio import util
-from platformio.http import HTTPClientError, InternetConnectionError
+from platformio.http import HttpClientApiError, InternetConnectionError
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.base import BasePackageManager
 from platformio.package.manager.core import get_installed_core_packages
@@ -128,7 +128,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
                 key = "%s:%s" % (board["platform"], board["id"])
                 if key not in know_boards:
                     boards.append(board)
-        except (HTTPClientError, InternetConnectionError):
+        except (HttpClientApiError, InternetConnectionError):
             pass
         return sorted(boards, key=lambda b: b["name"])
 

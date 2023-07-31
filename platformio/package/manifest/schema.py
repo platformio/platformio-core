@@ -17,8 +17,8 @@
 import json
 import re
 
+import httpx
 import marshmallow
-import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
@@ -252,7 +252,7 @@ class ManifestSchema(BaseSchema):
     def validate_license(self, value):
         try:
             spdx = self.load_spdx_licenses()
-        except requests.exceptions.RequestException as exc:
+        except httpx.HTTPError as exc:
             raise ValidationError(
                 "Could not load SPDX licenses for validation"
             ) from exc

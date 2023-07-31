@@ -16,13 +16,14 @@
 
 from platformio import __registry_mirror_hosts__, fs
 from platformio.account.client import AccountClient, AccountError
-from platformio.http import HTTPClient, HTTPClientError
+from platformio.http import HttpApiClient, HttpClientApiError
 
 
-class RegistryClient(HTTPClient):
-    def __init__(self):
-        endpoints = [f"https://api.{host}" for host in __registry_mirror_hosts__]
-        super().__init__(endpoints)
+class RegistryClient(HttpApiClient):
+    def __init__(self, endpoints=None):
+        super().__init__(
+            endpoints or [f"https://api.{host}" for host in __registry_mirror_hosts__]
+        )
 
     @staticmethod
     def allowed_private_packages():
@@ -157,7 +158,7 @@ class RegistryClient(HTTPClient):
                 x_cache_valid="1h",
                 x_with_authorization=self.allowed_private_packages(),
             )
-        except HTTPClientError as exc:
+        except HttpClientApiError as exc:
             if exc.response is not None and exc.response.status_code == 404:
                 return None
             raise exc

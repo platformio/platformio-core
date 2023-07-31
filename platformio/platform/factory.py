@@ -16,6 +16,8 @@ import os
 import re
 import sys
 
+import httpx
+
 from platformio import fs
 from platformio.compat import load_python_module
 from platformio.package.meta import PackageItem
@@ -31,13 +33,16 @@ class PlatformFactory:
         name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)
         return "%sPlatform" % name.lower().capitalize()
 
-    @staticmethod
-    def load_platform_module(name, path):
+    @classmethod
+    def load_platform_module(cls, name, path):
         # backward compatibiility with the legacy dev-platforms
         sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)
         except ImportError as exc:
+            if exc.name == "requests" and not sys.modules.get("requests"):
+                sys.modules["requests"] = httpx
+                return cls.load_platform_module(name, path)
             raise UnknownPlatform(name) from exc
 
     @classmethod

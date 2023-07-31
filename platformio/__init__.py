@@ -62,10 +62,10 @@ __install_requires__ = [
     "bottle == 0.12.*",
     "click >=8.0.4, <=8.2",
     "colorama",
+    "httpx >=0.22.0, <0.25",
     "marshmallow == 3.*",
     "pyelftools == 0.29",
     "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "requests == 2.*",
     "semantic_version == 2.10.*",
     "tabulate == 0.*",
 ] + [

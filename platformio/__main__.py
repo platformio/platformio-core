@@ -66,15 +66,6 @@ def configure():
     if IS_CYGWIN:
         raise exception.CygwinEnvDetected()
 
-    # https://urllib3.readthedocs.org
-    # /en/latest/security.html#insecureplatformwarning
-    try:
-        import urllib3  # pylint: disable=import-outside-toplevel
-
-        urllib3.disable_warnings()
-    except (AttributeError, ImportError):
-        pass
-
     # Handle IOError issue with VSCode's Terminal (Windows)
     click_echo_origin = [click.echo, click.secho]
 

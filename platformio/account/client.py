@@ -17,7 +17,7 @@ import time
 
 from platformio import __accounts_api__, app
 from platformio.exception import PlatformioException, UserSideException
-from platformio.http import HTTPClient, HTTPClientError
+from platformio.http import HttpApiClient, HttpClientApiError
 
 
 class AccountError(PlatformioException):
@@ -32,7 +32,7 @@ class AccountAlreadyAuthorized(AccountError, UserSideException):
     MESSAGE = "You are already authorized with {0} account."
 
 
-class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
+class AccountClient(HttpApiClient):  # pylint:disable=too-many-public-methods
     SUMMARY_CACHE_TTL = 60 * 60 * 24 * 7
 
     def __init__(self):
@@ -60,7 +60,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     def fetch_json_data(self, *args, **kwargs):
         try:
             return super().fetch_json_data(*args, **kwargs)
-        except HTTPClientError as exc:
+        except HttpClientApiError as exc:
             raise AccountError(exc) from exc
 
     def fetch_authentication_token(self):

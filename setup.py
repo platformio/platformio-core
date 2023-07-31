@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import platform
+import os
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -26,10 +26,12 @@ from platformio import (
     __install_requires__,
 )
 
-# issue #4702; Broken "requests/charset_normalizer" on macOS ARM
-if platform.system() == "Darwin" and "arm" in platform.machine().lower():
-    __install_requires__.append("chardet>=3.0.2,<4")
-
+# handle extra dependency for SOCKS proxy
+if any(
+    os.getenv(key, "").startswith("socks5://")
+    for key in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY")
+):
+    __install_requires__.append("socksio")
 
 setup(
     name=__title__,

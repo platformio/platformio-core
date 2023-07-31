@@ -12,22 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import contextlib
+import itertools
 import json
 import os
 import socket
-from urllib.parse import urljoin
+import time
 
-import requests.adapters
-from urllib3.util.retry import Retry
+import httpx
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
 
-__default_requests_timeout__ = (10, None)  # (connect, read)
+RETRIES_BACKOFF_FACTOR = 2  # 0s, 2s, 4s, 8s, etc.
+RETRIES_METHOD_WHITELIST = ["GET"]
+RETRIES_STATUS_FORCELIST = [429, 500, 502, 503, 504]
 
 
-class HTTPClientError(UserSideException):
+class HttpClientApiError(UserSideException):
     def __init__(self, message, response=None):
         super().__init__()
         self.message = message
@@ -40,84 +43,138 @@ class HTTPClientError(UserSideException):
 class InternetConnectionError(UserSideException):
     MESSAGE = (
         "You are not connected to the Internet.\n"
-        "PlatformIO needs the Internet connection to"
-        " download dependent packages or to work with PlatformIO Account."
+        "PlatformIO needs the Internet connection to "
+        "download dependent packages or to work with PlatformIO Account."
     )
 
 
-class HTTPSession(requests.Session):
-    def __init__(self, *args, **kwargs):
-        self._x_base_url = kwargs.pop("x_base_url") if "x_base_url" in kwargs else None
-        super().__init__(*args, **kwargs)
-        self.headers.update({"User-Agent": app.get_user_agent()})
-        try:
-            self.verify = app.get_setting("enable_proxy_strict_ssl")
-        except PlatformioException:
-            self.verify = True
+def exponential_backoff(factor):
+    yield 0
+    for n in itertools.count(2):
+        yield factor * (2 ** (n - 2))
 
-    def request(  # pylint: disable=signature-differs,arguments-differ
-        self, method, url, *args, **kwargs
+
+def apply_default_kwargs(kwargs=None):
+    kwargs = kwargs or {}
+    # enable redirects by default
+    kwargs["follow_redirects"] = kwargs.get("follow_redirects", True)
+
+    try:
+        kwargs["verify"] = kwargs.get(
+            "verify", app.get_setting("enable_proxy_strict_ssl")
+        )
+    except PlatformioException:
+        kwargs["verify"] = True
+
+    headers = kwargs.pop("headers", {})
+    if "User-Agent" not in headers:
+        headers.update({"User-Agent": app.get_user_agent()})
+        kwargs["headers"] = headers
+
+    retry = kwargs.pop("retry", None)
+    if retry:
+        kwargs["transport"] = HTTPRetryTransport(verify=kwargs["verify"], **retry)
+
+    return kwargs
+
+
+class HTTPRetryTransport(httpx.HTTPTransport):
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        verify=True,
+        retries=1,
+        backoff_factor=None,
+        status_forcelist=None,
+        method_whitelist=None,
     ):
-        # print("HTTPSession::request", self._x_base_url, method, url, args, kwargs)
-        if "timeout" not in kwargs:
-            kwargs["timeout"] = __default_requests_timeout__
-        return super().request(
-            method,
-            url
-            if url.startswith("http") or not self._x_base_url
-            else urljoin(self._x_base_url, url),
-            *args,
-            **kwargs
+        super().__init__(verify=verify)
+        self._retries = retries
+        self._backoff_factor = backoff_factor or RETRIES_BACKOFF_FACTOR
+        self._status_forcelist = status_forcelist or RETRIES_STATUS_FORCELIST
+        self._method_whitelist = method_whitelist or RETRIES_METHOD_WHITELIST
+
+    def handle_request(self, request):
+        retries_left = self._retries
+        delays = exponential_backoff(factor=RETRIES_BACKOFF_FACTOR)
+        while retries_left > 0:
+            retries_left -= 1
+            try:
+                response = super().handle_request(request)
+                if response.status_code in RETRIES_STATUS_FORCELIST:
+                    if request.method.upper() not in self._method_whitelist:
+                        return response
+                    raise httpx.HTTPStatusError(
+                        f"Server error '{response.status_code} {response.reason_phrase}' "
+                        f"for url '{request.url}'\n",
+                        request=request,
+                        response=response,
+                    )
+                return response
+            except httpx.HTTPError:
+                if retries_left == 0:
+                    raise
+                time.sleep(next(delays) or 1)
+
+        raise httpx.RequestError(
+            f"Could not process '{request.url}' request", request=request
         )
 
 
-class HTTPSessionIterator:
-    def __init__(self, endpoints):
+class HTTPSession(httpx.Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **apply_default_kwargs(kwargs))
+
+
+class HttpEndpointPool:
+    def __init__(self, endpoints, session_retry=None):
         if not isinstance(endpoints, list):
             endpoints = [endpoints]
         self.endpoints = endpoints
-        self.endpoints_iter = iter(endpoints)
-        # https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html
-        self.retry = Retry(
-            total=5,
-            backoff_factor=1,  # [0, 2, 4, 8, 16] secs
-            # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
-            status_forcelist=[413, 429, 500, 502, 503, 504],
-        )
+        self.session_retry = session_retry
 
-    def __iter__(self):  # pylint: disable=non-iterator-returned
-        return self
-
-    def __next__(self):
-        base_url = next(self.endpoints_iter)
-        session = HTTPSession(x_base_url=base_url)
-        adapter = requests.adapters.HTTPAdapter(max_retries=self.retry)
-        session.mount(base_url, adapter)
-        return session
-
-
-class HTTPClient:
-    def __init__(self, endpoints):
-        self._session_iter = HTTPSessionIterator(endpoints)
-        self._session = None
-        self._next_session()
-
-    def __del__(self):
-        if not self._session:
-            return
-        try:
-            self._session.close()
-        except:  # pylint: disable=bare-except
-            pass
+        self._endpoints_iter = iter(endpoints)
         self._session = None
 
-    def _next_session(self):
+        self.next()
+
+    def close(self):
         if self._session:
             self._session.close()
-        self._session = next(self._session_iter)
+
+    def next(self):
+        if self._session:
+            self._session.close()
+        self._session = HTTPSession(
+            base_url=next(self._endpoints_iter), retry=self.session_retry
+        )
+
+    def request(self, method, *args, **kwargs):
+        while True:
+            try:
+                return self._session.request(method, *args, **kwargs)
+            except httpx.HTTPError as exc:
+                try:
+                    self.next()
+                except StopIteration as exc2:
+                    raise exc from exc2
+
+
+class HttpApiClient(contextlib.AbstractContextManager):
+    def __init__(self, endpoints):
+        self._endpoint = HttpEndpointPool(endpoints, session_retry=dict(retries=5))
+
+    def __exit__(self, *excinfo):
+        self.close()
+
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        if getattr(self, "_endpoint"):
+            self._endpoint.close()
 
     @util.throttle(500)
-    def send_request(self, method, path, **kwargs):
+    def send_request(self, method, *args, **kwargs):
         # check Internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
@@ -131,19 +188,16 @@ class HTTPClient:
             # pylint: disable=import-outside-toplevel
             from platformio.account.client import AccountClient
 
-            headers["Authorization"] = (
-                "Bearer %s" % AccountClient().fetch_authentication_token()
-            )
+            with AccountClient() as client:
+                headers["Authorization"] = (
+                    "Bearer %s" % client.fetch_authentication_token()
+                )
         kwargs["headers"] = headers
 
-        while True:
-            try:
-                return getattr(self._session, method)(path, **kwargs)
-            except requests.exceptions.RequestException as exc:
-                try:
-                    self._next_session()
-                except Exception as exc2:
-                    raise HTTPClientError(str(exc2)) from exc
+        try:
+            return self._endpoint.request(method, *args, **kwargs)
+        except httpx.HTTPError as exc:
+            raise HttpClientApiError(str(exc)) from exc
 
     def fetch_json_data(self, method, path, **kwargs):
         if method not in ("get", "head", "options"):
@@ -177,7 +231,7 @@ class HTTPClient:
             message = response.json()["message"]
         except (KeyError, ValueError):
             message = response.text
-        raise HTTPClientError(message, response)
+        raise HttpClientApiError(message, response)
 
 
 #
@@ -191,10 +245,10 @@ def _internet_on():
     socket.setdefaulttimeout(timeout)
     for host in __check_internet_hosts__:
         try:
-            for var in ("HTTP_PROXY", "HTTPS_PROXY"):
+            for var in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
                 if not os.getenv(var) and not os.getenv(var.lower()):
                     continue
-                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
+                httpx.get("http://%s" % host, follow_redirects=False, timeout=timeout)
                 return True
             # try to resolve `host` for both AF_INET and AF_INET6, and then try to connect
             # to all possible addresses (IPv4 and IPv6) in turn until a connection succeeds:

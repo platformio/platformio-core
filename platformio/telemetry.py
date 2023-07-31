@@ -22,7 +22,7 @@ import time
 import traceback
 from collections import deque
 
-import requests
+import httpx
 
 from platformio import __title__, __version__, app, exception, fs, util
 from platformio.cli import PlatformioCLI
@@ -134,13 +134,11 @@ class TelemetryLogger:
         # print("_commit_payload", payload)
         try:
             r = self._http_session.post(
-                "https://collector.platformio.org/collect",
-                json=payload,
-                timeout=(2, 5),  # connect, read
+                "https://collector.platformio.org/collect", json=payload, timeout=2
             )
             r.raise_for_status()
             return True
-        except requests.exceptions.HTTPError as exc:
+        except httpx.HTTPStatusError as exc:
             # skip Bad Request
             if exc.response.status_code >= 400 and exc.response.status_code < 500:
                 return True

@@ -23,7 +23,11 @@ from platformio import __version__, app, exception, fs, telemetry
 from platformio.cache import cleanup_content_cache
 from platformio.cli import PlatformioCLI
 from platformio.commands.upgrade import get_latest_version
-from platformio.http import HTTPClientError, InternetConnectionError, ensure_internet_on
+from platformio.http import (
+    HttpClientApiError,
+    InternetConnectionError,
+    ensure_internet_on,
+)
 from platformio.package.manager.core import update_core_packages
 from platformio.package.version import pepver_to_semver
 from platformio.system.prune import calculate_unnecessary_system_data
@@ -46,7 +50,7 @@ def on_cmd_end():
         check_platformio_upgrade()
         check_prune_system()
     except (
-        HTTPClientError,
+        HttpClientApiError,
         InternetConnectionError,
         exception.GetLatestVersionError,
     ):

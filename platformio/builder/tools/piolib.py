@@ -29,7 +29,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from platformio import exception, fs
 from platformio.builder.tools import piobuild
 from platformio.compat import IS_WINDOWS, hashlib_encode_data, string_types
-from platformio.http import HTTPClientError, InternetConnectionError
+from platformio.http import HttpClientApiError, InternetConnectionError
 from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
@@ -983,7 +983,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 lm.install(spec)
                 did_install = True
             except (
-                HTTPClientError,
+                HttpClientApiError,
                 UnknownPackageError,
                 InternetConnectionError,
             ) as exc:

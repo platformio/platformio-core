@@ -15,6 +15,7 @@
 import time
 
 import click
+import httpx
 
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageSpec
@@ -57,7 +58,7 @@ class PackageManagerRegistryMixin:
                     ),
                     checksum or pkgfile["checksum"]["sha256"],
                 )
-            except Exception as exc:  # pylint: disable=broad-except
+            except httpx.HTTPError as exc:
                 self.log.warning(
                     click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
                 )
