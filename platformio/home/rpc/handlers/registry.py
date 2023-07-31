@@ -21,4 +21,5 @@ class RegistryRPC(BaseRPCHandler):
 
     @staticmethod
     def call_client(method, *args, **kwargs):
-        return getattr(RegistryClient(), method)(*args, **kwargs)
+        with RegistryClient() as client:
+            return getattr(client, method)(*args, **kwargs)

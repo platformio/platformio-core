@@ -34,8 +34,8 @@ from platformio.account.validate import validate_orgname_teamname, validate_team
 )
 def team_update_cmd(orgname_teamname, **kwargs):
     orgname, teamname = orgname_teamname.split(":", 1)
-    client = AccountClient()
-    team = client.get_team(orgname, teamname)
+    with AccountClient() as client:
+        team = client.get_team(orgname, teamname)
     new_team = {
         key: value if value is not None else team[key] for key, value in kwargs.items()
     }

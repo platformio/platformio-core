@@ -30,8 +30,8 @@ from platformio.account.validate import validate_email, validate_orgname
     "--displayname",
 )
 def org_create_cmd(orgname, email, displayname):
-    client = AccountClient()
-    client.create_org(orgname, email, displayname)
+    with AccountClient() as client:
+        client.create_org(orgname, email, displayname)
     return click.secho(
         "The organization `%s` has been successfully created." % orgname,
         fg="green",

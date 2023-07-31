@@ -25,8 +25,8 @@ from platformio.account.client import AccountClient
 @click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_show_cmd(offline, json_output):
-    client = AccountClient()
-    info = client.get_account_info(offline)
+    with AccountClient() as client:
+        info = client.get_account_info(offline)
     if json_output:
         click.echo(json.dumps(info))
         return

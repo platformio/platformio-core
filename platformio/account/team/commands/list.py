@@ -24,19 +24,22 @@ from platformio.account.client import AccountClient
 @click.argument("orgname", required=False)
 @click.option("--json-output", is_flag=True)
 def team_list_cmd(orgname, json_output):
-    client = AccountClient()
-    data = {}
-    if not orgname:
-        for item in client.list_orgs():
-            teams = client.list_teams(item.get("orgname"))
-            data[item.get("orgname")] = teams
-    else:
-        teams = client.list_teams(orgname)
-        data[orgname] = teams
+    with AccountClient() as client:
+        data = {}
+        if not orgname:
+            for item in client.list_orgs():
+                teams = client.list_teams(item.get("orgname"))
+                data[item.get("orgname")] = teams
+        else:
+            teams = client.list_teams(orgname)
+            data[orgname] = teams
+
     if json_output:
         return click.echo(json.dumps(data[orgname] if orgname else data))
+
     if not any(data.values()):
         return click.secho("You do not have any teams.", fg="yellow")
+
     for org_name, teams in data.items():
         for team in teams:
             click.echo()

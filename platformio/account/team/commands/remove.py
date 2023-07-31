@@ -27,8 +27,8 @@ from platformio.account.validate import validate_orgname_teamname
 @click.argument("username")
 def team_remove_cmd(orgname_teamname, username):
     orgname, teamname = orgname_teamname.split(":", 1)
-    client = AccountClient()
-    client.remove_team_member(orgname, teamname, username)
+    with AccountClient() as client:
+        client.remove_team_member(orgname, teamname, username)
     return click.secho(
         "The %s member has been successfully removed from the %s team."
         % (username, teamname),

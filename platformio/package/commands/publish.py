@@ -87,7 +87,8 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
 ):
     click.secho("Preparing a package...", fg="cyan")
     no_interactive = no_interactive or non_interactive
-    owner = owner or AccountClient().get_logged_username()
+    with AccountClient() as client:
+        owner = owner or client.get_logged_username()
     do_not_pack = (
         not os.path.isdir(package)
         and isinstance(FileUnpacker.new_archiver(package), TARArchiver)
@@ -145,9 +146,10 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments, too-many-locals
             fg="yellow",
         )
         click.echo("Publishing...")
-        response = RegistryClient().publish_package(
-            owner, typex, archive_path, released_at, private, notify
-        )
+        with RegistryClient() as client:
+            response = client.publish_package(
+                owner, typex, archive_path, released_at, private, notify
+            )
         if not do_not_pack:
             os.remove(archive_path)
         click.secho(response.get("message"), fg="green")

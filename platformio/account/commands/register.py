@@ -43,8 +43,8 @@ from platformio.account.validate import (
 @click.option("--firstname", prompt=True)
 @click.option("--lastname", prompt=True)
 def account_register_cmd(username, email, password, firstname, lastname):
-    client = AccountClient()
-    client.registration(username, email, password, firstname, lastname)
+    with AccountClient() as client:
+        client.registration(username, email, password, firstname, lastname)
     click.secho(
         "An account has been successfully created. "
         "Please check your mail to activate your account and verify your email address.",

@@ -24,8 +24,8 @@ from platformio.account.client import AccountClient
 @click.option("--regenerate", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_token_cmd(password, regenerate, json_output):
-    client = AccountClient()
-    auth_token = client.auth_token(password, regenerate)
+    with AccountClient() as client:
+        auth_token = client.auth_token(password, regenerate)
     if json_output:
         click.echo(json.dumps({"status": "success", "result": auth_token}))
         return

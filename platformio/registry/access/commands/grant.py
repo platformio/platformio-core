@@ -31,8 +31,8 @@ from platformio.registry.client import RegistryClient
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_grant_cmd(level, client, urn, urn_type):  # pylint: disable=unused-argument
-    reg_client = RegistryClient()
-    reg_client.grant_access_for_resource(urn=urn, client=client, level=level)
+    with RegistryClient() as reg_client:
+        reg_client.grant_access_for_resource(urn=urn, client=client, level=level)
     return click.secho(
         "Access for resource %s has been granted for %s" % (urn, client),
         fg="green",

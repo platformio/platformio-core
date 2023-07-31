@@ -15,7 +15,6 @@
 # pylint: disable=unused-argument
 
 import pytest
-import requests
 
 from platformio import __check_internet_hosts__, http, proc
 from platformio.registry.client import RegistryClient
@@ -30,19 +29,20 @@ def test_platformio_cli():
 
 def test_ping_internet_ips():
     for host in __check_internet_hosts__:
-        requests.get("http://%s" % host, allow_redirects=False, timeout=2)
+        with http.HTTPSession(follow_redirects=False, timeout=2) as session:
+            session.get("http://%s" % host)
 
 
 def test_api_internet_offline(without_internet, isolated_pio_core):
-    regclient = RegistryClient()
-    with pytest.raises(http.InternetConnectionError):
-        regclient.fetch_json_data("get", "/v3/search")
+    with RegistryClient() as client:
+        with pytest.raises(http.InternetConnectionError):
+            client.fetch_json_data("get", "/v3/search")
 
 
 def test_api_cache(monkeypatch, isolated_pio_core):
-    regclient = RegistryClient()
-    api_kwargs = {"method": "get", "path": "/v3/search", "x_cache_valid": "10s"}
-    result = regclient.fetch_json_data(**api_kwargs)
-    assert result and "total" in result
-    monkeypatch.setattr(http, "_internet_on", lambda: False)
-    assert regclient.fetch_json_data(**api_kwargs) == result
+    with RegistryClient() as client:
+        api_kwargs = {"method": "get", "path": "/v3/search", "x_cache_valid": "10s"}
+        result = client.fetch_json_data(**api_kwargs)
+        assert result and "total" in result
+        monkeypatch.setattr(http, "_internet_on", lambda: False)
+        assert client.fetch_json_data(**api_kwargs) == result

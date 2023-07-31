@@ -25,8 +25,8 @@ from platformio.account.client import AccountClient
     "username",
 )
 def org_add_cmd(orgname, username):
-    client = AccountClient()
-    client.add_org_owner(orgname, username)
+    with AccountClient() as client:
+        client.add_org_owner(orgname, username)
     return click.secho(
         "The new owner `%s` has been successfully added to the `%s` organization."
         % (username, orgname),

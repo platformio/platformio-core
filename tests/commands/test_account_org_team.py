@@ -19,11 +19,11 @@ import os
 import random
 
 import pytest
-import requests
 
 from platformio.account.cli import cli as cmd_account
 from platformio.account.org.cli import cli as cmd_org
 from platformio.account.team.cli import cli as cmd_team
+from platformio.http import HTTPSession
 
 pytestmark = pytest.mark.skipif(
     not all(
@@ -60,12 +60,11 @@ def verify_account(email_contents):
         .split("This link will expire within 12 hours.")[0]
         .strip()
     )
-    with requests.Session() as session:
+    with HTTPSession() as session:
         result = session.get(link).text
         link = result.split('<a href="')[1].split('"', 1)[0]
         link = link.replace("&amp;", "&")
         session.get(link)
-        session.close()
 
 
 def test_account_register(

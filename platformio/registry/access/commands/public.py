@@ -25,8 +25,8 @@ from platformio.registry.client import RegistryClient
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_public_cmd(urn, urn_type):  # pylint: disable=unused-argument
-    client = RegistryClient()
-    client.update_resource(urn=urn, private=0)
+    with RegistryClient() as client:
+        client.update_resource(urn=urn, private=0)
     return click.secho(
         "The resource %s has been successfully updated." % urn,
         fg="green",

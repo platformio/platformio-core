@@ -34,7 +34,8 @@ class RegistryClient(HTTPClient):
             ]
         )
         try:
-            info = AccountClient().get_account_info() or {}
+            with AccountClient() as client:
+                info = client.get_account_info() or {}
             for item in info.get("packages", []):
                 if set(item.keys()) & private_permissions:
                     return True

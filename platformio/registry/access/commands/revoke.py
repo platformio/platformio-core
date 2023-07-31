@@ -30,8 +30,8 @@ from platformio.registry.client import RegistryClient
 )
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 def access_revoke_cmd(client, urn, urn_type):  # pylint: disable=unused-argument
-    reg_client = RegistryClient()
-    reg_client.revoke_access_from_resource(urn=urn, client=client)
+    with RegistryClient() as reg_client:
+        reg_client.revoke_access_from_resource(urn=urn, client=client)
     return click.secho(
         "Access for resource %s has been revoked for %s" % (urn, client),
         fg="green",

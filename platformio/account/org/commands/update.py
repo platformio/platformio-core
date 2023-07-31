@@ -31,8 +31,8 @@ from platformio.account.validate import validate_email, validate_orgname
 )
 @click.option("--displayname")
 def org_update_cmd(cur_orgname, **kwargs):
-    client = AccountClient()
-    org = client.get_org(cur_orgname)
+    with AccountClient() as client:
+        org = client.get_org(cur_orgname)
     new_org = {
         key: value if value is not None else org[key] for key, value in kwargs.items()
     }

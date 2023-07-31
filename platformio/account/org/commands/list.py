@@ -23,8 +23,8 @@ from platformio.account.client import AccountClient
 @click.command("list", short_help="List organizations and their members")
 @click.option("--json-output", is_flag=True)
 def org_list_cmd(json_output):
-    client = AccountClient()
-    orgs = client.list_orgs()
+    with AccountClient() as client:
+        orgs = client.list_orgs()
     if json_output:
         return click.echo(json.dumps(orgs))
     if not orgs:

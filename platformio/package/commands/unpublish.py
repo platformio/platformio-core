@@ -36,11 +36,14 @@ from platformio.registry.client import RegistryClient
 )
 def package_unpublish_cmd(package, type, undo):  # pylint: disable=redefined-builtin
     spec = PackageSpec(package)
-    response = RegistryClient().unpublish_package(
-        owner=spec.owner or AccountClient().get_logged_username(),
-        type=type,
-        name=spec.name,
-        version=str(spec.requirements),
-        undo=undo,
-    )
-    click.secho(response.get("message"), fg="green")
+    with AccountClient() as client:
+        owner = spec.owner or client.get_logged_username()
+    with RegistryClient() as client:
+        response = client.unpublish_package(
+            owner=owner,
+            type=type,
+            name=spec.name,
+            version=str(spec.requirements),
+            undo=undo,
+        )
+        click.secho(response.get("message"), fg="green")

@@ -29,8 +29,6 @@ from platformio.http import HTTPSession, ensure_internet_on
 class OSRPC(BaseRPCHandler):
     NAMESPACE = "os"
 
-    _http_session = None
-
     @classmethod
     def fetch_content(cls, url, data=None, headers=None, cache_valid=None):
         if not headers:
@@ -44,27 +42,25 @@ class OSRPC(BaseRPCHandler):
         cache_key = ContentCache.key_from_args(url, data) if cache_valid else None
         with ContentCache() as cc:
             if cache_key:
-                result = cc.get(cache_key)
-                if result is not None:
-                    return result
+                content = cc.get(cache_key)
+                if content is not None:
+                    return content
 
         # check internet before and resolve issue with 60 seconds timeout
         ensure_internet_on(raise_exception=True)
 
-        if not cls._http_session:
-            cls._http_session = HTTPSession()
+        with HTTPSession() as session:
+            if data:
+                response = session.post(url, data=data, headers=headers)
+            else:
+                response = session.get(url, headers=headers)
 
-        if data:
-            r = cls._http_session.post(url, data=data, headers=headers)
-        else:
-            r = cls._http_session.get(url, headers=headers)
-
-        r.raise_for_status()
-        result = r.text
-        if cache_valid:
-            with ContentCache() as cc:
-                cc.set(cache_key, result, cache_valid)
-        return result
+            response.raise_for_status()
+            content = response.text
+            if cache_valid:
+                with ContentCache() as cc:
+                    cc.set(cache_key, content, cache_valid)
+            return content
 
     @classmethod
     def request_content(cls, uri, data=None, headers=None, cache_valid=None):

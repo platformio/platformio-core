@@ -21,4 +21,5 @@ class AccountRPC(BaseRPCHandler):
 
     @staticmethod
     def call_client(method, *args, **kwargs):
-        return getattr(AccountClient(), method)(*args, **kwargs)
+        with AccountClient() as client:
+            return getattr(client, method)(*args, **kwargs)

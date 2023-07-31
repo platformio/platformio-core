@@ -32,8 +32,8 @@ def team_destroy_cmd(orgname_teamname):
         ),
         abort=True,
     )
-    client = AccountClient()
-    client.destroy_team(orgname, teamname)
+    with AccountClient() as client:
+        client.destroy_team(orgname, teamname)
     return click.secho(
         "The team %s has been successfully destroyed." % teamname,
         fg="green",

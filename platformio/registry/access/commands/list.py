@@ -25,8 +25,8 @@ from platformio.registry.client import RegistryClient
 @click.option("--urn-type", type=click.Choice(["prn:reg:pkg"]), default="prn:reg:pkg")
 @click.option("--json-output", is_flag=True)
 def access_list_cmd(owner, urn_type, json_output):  # pylint: disable=unused-argument
-    reg_client = RegistryClient()
-    resources = reg_client.list_resources(owner=owner)
+    with RegistryClient() as client:
+        resources = client.list_resources(owner=owner)
     if json_output:
         return click.echo(json.dumps(resources))
     if not resources:

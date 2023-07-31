@@ -29,8 +29,8 @@ from platformio.account.validate import validate_orgname_teamname
 )
 def team_add_cmd(orgname_teamname, username):
     orgname, teamname = orgname_teamname.split(":", 1)
-    client = AccountClient()
-    client.add_team_member(orgname, teamname, username)
+    with AccountClient() as client:
+        client.add_team_member(orgname, teamname, username)
     return click.secho(
         "The new member %s has been successfully added to the %s team."
         % (username, teamname),

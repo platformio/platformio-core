@@ -124,31 +124,31 @@ def package_show_cmd(spec, pkg_type):
 
 def fetch_package_data(spec, pkg_type=None):
     assert isinstance(spec, PackageSpec)
-    client = RegistryClient()
-    if pkg_type and spec.owner and spec.name:
+    with RegistryClient() as client:
+        if pkg_type and spec.owner and spec.name:
+            return client.get_package(
+                pkg_type, spec.owner, spec.name, version=spec.requirements
+            )
+        qualifiers = {}
+        if spec.id:
+            qualifiers["ids"] = str(spec.id)
+        if spec.name:
+            qualifiers["names"] = spec.name.lower()
+        if pkg_type:
+            qualifiers["types"] = pkg_type
+        if spec.owner:
+            qualifiers["owners"] = spec.owner.lower()
+        packages = client.list_packages(qualifiers=qualifiers)["items"]
+        if not packages:
+            return None
+        if len(packages) > 1:
+            PackageManagerRegistryMixin.print_multi_package_issue(
+                click.echo, packages, spec
+            )
+            return None
         return client.get_package(
-            pkg_type, spec.owner, spec.name, version=spec.requirements
+            packages[0]["type"],
+            packages[0]["owner"]["username"],
+            packages[0]["name"],
+            version=spec.requirements,
         )
-    qualifiers = {}
-    if spec.id:
-        qualifiers["ids"] = str(spec.id)
-    if spec.name:
-        qualifiers["names"] = spec.name.lower()
-    if pkg_type:
-        qualifiers["types"] = pkg_type
-    if spec.owner:
-        qualifiers["owners"] = spec.owner.lower()
-    packages = client.list_packages(qualifiers=qualifiers)["items"]
-    if not packages:
-        return None
-    if len(packages) > 1:
-        PackageManagerRegistryMixin.print_multi_package_issue(
-            click.echo, packages, spec
-        )
-        return None
-    return client.get_package(
-        packages[0]["type"],
-        packages[0]["owner"]["username"],
-        packages[0]["name"],
-        version=spec.requirements,
-    )

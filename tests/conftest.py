@@ -143,8 +143,8 @@ def get_pkg_latest_version():
         if not isinstance(spec, PackageSpec):
             spec = PackageSpec(spec)
         pkg_type = pkg_type or PackageType.LIBRARY
-        client = RegistryClient()
-        pkg = client.get_package(pkg_type, spec.owner, spec.name)
+        with RegistryClient() as client:
+            pkg = client.get_package(pkg_type, spec.owner, spec.name)
         return pkg["version"]["name"]
 
     return wrap

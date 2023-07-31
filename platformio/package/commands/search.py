@@ -29,8 +29,8 @@ from platformio.registry.client import RegistryClient
     type=click.Choice(["relevance", "popularity", "trending", "added", "updated"]),
 )
 def package_search_cmd(query, page, sort):
-    client = RegistryClient()
-    result = client.list_packages(query, page=page, sort=sort)
+    with RegistryClient() as client:
+        result = client.list_packages(query, page=page, sort=sort)
     if not result["total"]:
         click.secho("Nothing has been found by your request", fg="yellow")
         click.echo(

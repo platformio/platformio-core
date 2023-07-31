@@ -25,8 +25,8 @@ from platformio.account.validate import validate_email, validate_username
 @click.option("--firstname")
 @click.option("--lastname")
 def account_update_cmd(current_password, **kwargs):
-    client = AccountClient()
-    profile = client.get_profile()
+    with AccountClient() as client:
+        profile = client.get_profile()
     new_profile = profile.copy()
     if not any(kwargs.values()):
         for field in profile:

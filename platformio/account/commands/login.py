@@ -21,6 +21,6 @@ from platformio.account.client import AccountClient
 @click.option("-u", "--username", prompt="Username or email")
 @click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login_cmd(username, password):
-    client = AccountClient()
-    client.login(username, password)
+    with AccountClient() as client:
+        client.login(username, password)
     click.secho("Successfully logged in!", fg="green")
