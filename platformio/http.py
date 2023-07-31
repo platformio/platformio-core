@@ -213,9 +213,8 @@ def ensure_internet_on(raise_exception=False):
     return result
 
 
-def fetch_remote_content(*args, **kwargs):
-    with HTTPSession() as s:
-        r = s.get(*args, **kwargs)
-        r.raise_for_status()
-        r.close()
-        return r.text
+def fetch_http_content(*args, **kwargs):
+    with HTTPSession() as session:
+        response = session.get(*args, **kwargs)
+        response.raise_for_status()
+        return response.text

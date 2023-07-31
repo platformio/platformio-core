@@ -19,7 +19,7 @@ import subprocess
 import click
 
 from platformio import VERSION, __install_requires__, __version__, app, exception
-from platformio.http import fetch_remote_content
+from platformio.http import fetch_http_content
 from platformio.package.manager.core import update_core_packages
 from platformio.proc import get_pythonexe_path
 
@@ -132,7 +132,7 @@ def get_latest_version():
 
 def get_develop_latest_version():
     version = None
-    content = fetch_remote_content(DEVELOP_INIT_SCRIPT_URL)
+    content = fetch_http_content(DEVELOP_INIT_SCRIPT_URL)
     for line in content.split("\n"):
         line = line.strip()
         if not line.startswith("VERSION"):
@@ -149,5 +149,5 @@ def get_develop_latest_version():
 
 
 def get_pypi_latest_version():
-    content = fetch_remote_content(PYPI_JSON_URL)
+    content = fetch_http_content(PYPI_JSON_URL)
     return json.loads(content)["info"]["version"]
