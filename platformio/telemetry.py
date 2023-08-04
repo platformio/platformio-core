@@ -27,7 +27,7 @@ import requests
 from platformio import __title__, __version__, app, exception, fs, util
 from platformio.cli import PlatformioCLI
 from platformio.debug.config.base import DebugConfigBase
-from platformio.http import HTTPSession, ensure_internet_on
+from platformio.http import HTTPSession
 from platformio.proc import is_ci
 
 KEEP_MAX_REPORTS = 100
@@ -363,8 +363,6 @@ def postpone_events(events):
 
 
 def process_postponed_logs():
-    if not ensure_internet_on():
-        return None
     events = load_postponed_events()
     if not events:
         return None
@@ -378,4 +376,5 @@ def process_postponed_logs():
                 timestamp=event["timestamp"],
                 instant_sending=False,
             )
+    telemetry.send()
     return True
