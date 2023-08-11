@@ -13,7 +13,9 @@ Release Notes
 PlatformIO Core 6
 -----------------
 
-**A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
+Unlock the true potential of embedded software development with
+PlatformIO's collaborative ecosystem, embracing declarative principles,
+test-driven methodologies, and modern toolchains for unrivaled success.
 
 6.1.10 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~~
