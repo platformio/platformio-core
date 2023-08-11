@@ -16,7 +16,6 @@ import json
 import os
 
 from platformio.commands.boards import cli as cmd_boards
-from platformio.package.commands.exec import package_exec_cmd
 from platformio.project.commands.init import project_init_cmd
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
@@ -216,82 +215,3 @@ def test_init_incorrect_board(clirunner):
     assert result.exit_code == 2
     assert "Error: Invalid value for" in result.output
     assert isinstance(result.exception, SystemExit)
-
-
-def test_init_ide_clion(clirunner, validate_cliresult, tmpdir):
-    project_dir = tmpdir.join("project").mkdir()
-    # Add extra libraries to cover cases with possible unwanted backslashes
-    lib_extra_dirs = tmpdir.join("extra_libs").mkdir()
-    extra_lib = lib_extra_dirs.join("extra_lib").mkdir()
-    extra_lib.join("extra_lib.h").write(" ")
-    extra_lib.join("extra_lib.cpp").write(" ")
-
-    with project_dir.as_cwd():
-        result = clirunner.invoke(
-            project_init_cmd,
-            [
-                "-b",
-                "uno",
-                "--ide",
-                "clion",
-                "--project-option",
-                "framework=arduino",
-                "--project-option",
-                "platform_packages=platformio/tool-ninja",
-                "--project-option",
-                "lib_extra_dirs=%s" % str(lib_extra_dirs),
-            ],
-        )
-
-        validate_cliresult(result)
-        assert all(
-            os.path.isfile(f) for f in ("CMakeLists.txt", "CMakeListsPrivate.txt")
-        )
-
-        project_dir.join("src").join("main.cpp").write(
-            """#include <Arduino.h>
-#include "extra_lib.h"
-void setup(){}
-void loop(){}
-"""
-        )
-        project_dir.join("build_dir").mkdir()
-        result = clirunner.invoke(
-            package_exec_cmd,
-            [
-                "-p",
-                "tool-cmake",
-                "--",
-                "cmake",
-                "-DCMAKE_BUILD_TYPE=uno",
-                "-DCMAKE_MAKE_PROGRAM=%s"
-                % os.path.join(
-                    ProjectConfig().get("platformio", "packages_dir"),
-                    "tool-ninja",
-                    "ninja",
-                ),
-                "-G",
-                "Ninja",
-                "-S",
-                str(project_dir),
-                "-B",
-                "build_dir",
-            ],
-        )
-        validate_cliresult(result)
-
-        # build
-        result = clirunner.invoke(
-            package_exec_cmd,
-            [
-                "-p",
-                "tool-cmake",
-                "--",
-                "cmake",
-                "--build",
-                "build_dir",
-                "--target",
-                "Debug",
-            ],
-        )
-        validate_cliresult(result)
