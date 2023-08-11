@@ -17,7 +17,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.10 (2023-??-??)
+6.1.10 (2023-08-11)
 ~~~~~~~~~~~~~~~~~~~
 
 * Resolved an issue that caused generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to break when the ``-iprefix`` compiler flag was used
