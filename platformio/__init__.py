@@ -12,20 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (6, 1, "10a4")
+VERSION = (6, 1, "11a1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "A professional collaborative platform for embedded development. "
-    "Cross-platform IDE and Unified Debugger. "
-    "Static Code Analyzer and Remote Unit Testing. "
-    "Multi-platform and Multi-architecture Build System. "
-    "Firmware File Explorer and Memory Inspection. "
-    "IoT, Arduino, CMSIS, ESP-IDF, FreeRTOS, libOpenCM3, mbedOS, Pulp OS, SPL, "
-    "STM32Cube, Zephyr RTOS, ARM, AVR, Espressif (ESP8266/ESP32), FPGA, "
-    "MCS-51 (8051), MSP430, Nordic (nRF51/nRF52), NXP i.MX RT, PIC32, RISC-V, "
-    "STMicroelectronics (STM8/STM32), Teensy"
+    "Your Gateway to Embedded Software Development Excellence. "
+    "Unlock the true potential of embedded software development "
+    "with PlatformIO's collaborative ecosystem, embracing "
+    "declarative principles, test-driven methodologies, and "
+    "modern toolchains for unrivaled success."
 )
 __url__ = "https://platformio.org"
 
