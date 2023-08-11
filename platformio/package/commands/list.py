@@ -22,6 +22,7 @@ from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
+from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
@@ -187,20 +188,20 @@ def list_project_packages(options):
 
 
 def print_project_env_platform_packages(project_env, options):
-    config = ProjectConfig.get_instance()
-    platform = config.get(f"env:{project_env}", "platform")
-    if not platform:
-        return None
-    pkg = PlatformPackageManager().get_package(platform)
-    if not pkg:
+    try:
+        p = PlatformFactory.from_env(project_env)
+    except UnknownPlatform:
         return None
     click.echo(
         "Platform %s"
-        % (humanize_package(pkg, platform, verbose=options.get("verbose")))
+        % (
+            humanize_package(
+                PlatformPackageManager().get_package(p.get_dir()),
+                p.config.get(f"env:{project_env}", "platform"),
+                verbose=options.get("verbose"),
+            )
+        )
     )
-    p = PlatformFactory.new(pkg)
-    if project_env:
-        p.configure_project_packages(project_env)
     print_dependency_tree(
         p.pm,
         specs=[p.get_package_spec(name) for name in p.packages],

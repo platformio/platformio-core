@@ -62,10 +62,9 @@ class OutdatedCandidate:
 )
 @click.option("-e", "--environment", "environments", multiple=True)
 def package_outdated_cmd(project_dir, environments):
-    candidates = fetch_outdated_candidates(
-        project_dir, environments, with_progress=True
-    )
-    print_outdated_candidates(candidates)
+    with fs.cd(project_dir):
+        candidates = fetch_outdated_candidates(environments, with_progress=True)
+        print_outdated_candidates(candidates)
 
 
 def print_outdated_candidates(candidates):
@@ -126,8 +125,10 @@ def get_candidate_update_color(outdated):
     return None
 
 
-def fetch_outdated_candidates(project_dir, environments, with_progress=False):
+def fetch_outdated_candidates(environments, with_progress=False):
     candidates = []
+    config = ProjectConfig.get_instance()
+    config.validate(environments)
 
     def _add_candidate(data):
         new_candidate = OutdatedCandidate(
@@ -139,20 +140,16 @@ def fetch_outdated_candidates(project_dir, environments, with_progress=False):
                 return
         candidates.append(new_candidate)
 
-    with fs.cd(project_dir):
-        config = ProjectConfig.get_instance()
-        config.validate(environments)
+    # platforms
+    for item in find_platform_candidates(config, environments):
+        _add_candidate(item)
+        # platform package dependencies
+        for dep_item in find_platform_dependency_candidates(item["env"]):
+            _add_candidate(dep_item)
 
-        # platforms
-        for item in find_platform_candidates(config, environments):
-            _add_candidate(item)
-            # platform package dependencies
-            for dep_item in find_platform_dependency_candidates(item):
-                _add_candidate(dep_item)
-
-        # libraries
-        for item in find_library_candidates(config, environments):
-            _add_candidate(item)
+    # libraries
+    for item in find_library_candidates(config, environments):
+        _add_candidate(item)
 
     result = []
     if not with_progress:
@@ -172,7 +169,7 @@ def find_platform_candidates(config, environments):
     result = []
     pm = PlatformPackageManager()
     for env in config.envs():
-        platform = config.get(f"env:{env}", "platform")
+        platform = config.get(f"env:{env}", "platform", None)
         if not platform or (environments and env not in environments):
             continue
         spec = PackageSpec(platform)
@@ -183,14 +180,13 @@ def find_platform_candidates(config, environments):
     return result
 
 
-def find_platform_dependency_candidates(platform_candidate):
+def find_platform_dependency_candidates(env):
     result = []
-    p = PlatformFactory.new(platform_candidate["spec"])
-    p.configure_project_packages(platform_candidate["env"])
+    p = PlatformFactory.from_env(env)
     for pkg in p.get_installed_packages():
         result.append(
             dict(
-                env=platform_candidate["env"],
+                env=env,
                 pm=p.pm,
                 pkg=pkg,
                 spec=p.get_package_spec(pkg.metadata.name),

@@ -62,8 +62,8 @@ class TestRunnerBase:
         self.test_suite = test_suite
         self.options = options
         self.project_config = project_config
-        self.platform = PlatformFactory.new(
-            self.project_config.get(f"env:{self.test_suite.env_name}", "platform"),
+        self.platform = PlatformFactory.from_env(
+            self.test_suite.env_name,
             autoinstall=True,
         )
         self.cmd_ctx = None

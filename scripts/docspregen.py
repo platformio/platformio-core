@@ -51,6 +51,12 @@ STATIC_FRAMEWORK_DATA = {
             "or physical experiences."
         ),
     },
+    "cmsis": {
+        "title": "CMSIS",
+        "description": (
+            "Vendor-independent hardware abstraction layer for the Cortex-M processor series"
+        ),
+    },
     "freertos": {
         "title": "FreeRTOS",
         "description": (

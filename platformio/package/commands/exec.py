@@ -20,7 +20,7 @@ import click
 from platformio.compat import IS_MACOS, IS_WINDOWS
 from platformio.exception import ReturnErrorCode, UserSideException
 from platformio.package.manager.tool import ToolPackageManager
-from platformio.proc import get_pythonexe_path
+from platformio.proc import get_pythonexe_path, where_is_program
 
 
 @click.command("exec", short_help="Run command from package tool")
@@ -52,9 +52,13 @@ def package_exec_cmd(obj, package, call, args):
 
     inject_pkg_to_environ(pkg)
     os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
+
     # inject current python interpreter on Windows
-    if IS_WINDOWS and args and args[0].endswith(".py"):
+    if args[0].endswith(".py"):
         args = [os.environ["PIO_PYTHON_EXE"]] + list(args)
+        if not os.path.exists(args[1]):
+            args[1] = where_is_program(args[1])
+
     result = None
     try:
         run_options = dict(shell=call is not None, env=os.environ)

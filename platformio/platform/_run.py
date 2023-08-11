@@ -51,12 +51,9 @@ class PlatformRunMixin:
         assert isinstance(targets, list)
 
         self.ensure_engine_compatible()
-        self.configure_project_packages(variables["pioenv"], targets)
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
-
-        variables["platform_manifest"] = self.manifest_path
 
         if "build_script" not in variables:
             variables["build_script"] = self.get_build_script()

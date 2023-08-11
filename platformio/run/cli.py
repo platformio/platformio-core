@@ -207,7 +207,7 @@ def process_env(
             verbose,
         ).process()
 
-    if "monitor" in targets and "nobuild" not in targets:
+    if result["succeeded"] and "monitor" in targets and "nobuild" not in targets:
         ctx.invoke(
             device_monitor_cmd,
             port=monitor_port,

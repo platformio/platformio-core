@@ -13,7 +13,18 @@ Release Notes
 PlatformIO Core 6
 -----------------
 
-**A professional collaborative platform for declarative, safety-critical, and test-driven embedded development.**
+Unlock the true potential of embedded software development with
+PlatformIO's collaborative ecosystem, embracing declarative principles,
+test-driven methodologies, and modern toolchains for unrivaled success.
+
+6.1.10 (2023-08-11)
+~~~~~~~~~~~~~~~~~~~
+
+* Resolved an issue that caused generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to break when the ``-iprefix`` compiler flag was used
+* Resolved an issue encountered while utilizing the `pio pkg exec <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_exec.html>`__ command on the Windows platform to execute Python scripts from a package
+* Implemented a crucial improvement to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html>`__ command, guaranteeing that the ``monitor`` target is not executed if any of the preceding targets, such as ``upload``, encounter failures
+* `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.11 with new checks, CLI commands and various analysis improvements
+* Resolved a critical issue that arose on macOS ARM platforms due to the Python "requests" module, leading to a "ModuleNotFoundError: No module named 'chardet'" (`issue #4702 <https://github.com/platformio/platformio-core/issues/4702>`_)
 
 6.1.9 (2023-07-06)
 ~~~~~~~~~~~~~~~~~~

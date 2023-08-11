@@ -72,8 +72,8 @@ class EnvironmentProcessor:
 
         # pre-clean
         if is_clean:
-            result = PlatformFactory.new(
-                self.options["platform"], autoinstall=True
+            result = PlatformFactory.from_env(
+                self.name, targets=self.targets, autoinstall=True
             ).run(build_vars, self.targets, self.silent, self.verbose, self.jobs)
             if not build_targets:
                 return result["returncode"] == 0
@@ -85,7 +85,7 @@ class EnvironmentProcessor:
                 "piotest_running_name": build_vars.get("piotest_running_name"),
             },
         )
-        result = PlatformFactory.new(self.options["platform"], autoinstall=True).run(
-            build_vars, build_targets, self.silent, self.verbose, self.jobs
-        )
+        result = PlatformFactory.from_env(
+            self.name, targets=build_targets, autoinstall=True
+        ).run(build_vars, build_targets, self.silent, self.verbose, self.jobs)
         return result["returncode"] == 0

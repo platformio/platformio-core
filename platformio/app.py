@@ -258,6 +258,10 @@ def get_cid():
     return cid
 
 
+def get_project_id(project_dir):
+    return hashlib.sha1(hashlib_encode_data(project_dir)).hexdigest()
+
+
 def get_user_agent():
     data = [
         "PlatformIO/%s" % __version__,
@@ -270,6 +274,8 @@ def get_user_agent():
         data.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
     data.append("Python/%s" % platform.python_version())
     data.append("Platform/%s" % platform.platform())
+    if not get_setting("enable_telemetry"):
+        data.append("Telemetry/0")
     return " ".join(data)
 
 

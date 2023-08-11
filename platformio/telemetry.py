@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import atexit
-import hashlib
 import os
 import queue
 import re
@@ -27,9 +26,8 @@ import requests
 
 from platformio import __title__, __version__, app, exception, fs, util
 from platformio.cli import PlatformioCLI
-from platformio.compat import hashlib_encode_data
 from platformio.debug.config.base import DebugConfigBase
-from platformio.http import HTTPSession, ensure_internet_on
+from platformio.http import HTTPSession
 from platformio.proc import is_ci
 
 KEEP_MAX_REPORTS = 100
@@ -135,7 +133,7 @@ class TelemetryLogger:
         # print("_commit_payload", payload)
         try:
             r = self._http_session.post(
-                "https://telemetry.platformio.org/collect",
+                "https://collector.platformio.org/collect",
                 json=payload,
                 timeout=(2, 5),  # connect, read
             )
@@ -220,7 +218,7 @@ def dump_project_env_params(config, env, platform):
         for option in non_sensitive_data
         if config.has_option(section, option)
     }
-    params["pid"] = hashlib.sha1(hashlib_encode_data(config.path)).hexdigest()
+    params["pid"] = app.get_project_id(os.path.dirname(config.path))
     params["platform_name"] = platform.name
     params["platform_version"] = platform.version
     return params
@@ -365,8 +363,6 @@ def postpone_events(events):
 
 
 def process_postponed_logs():
-    if not ensure_internet_on():
-        return None
     events = load_postponed_events()
     if not events:
         return None
@@ -380,4 +376,5 @@ def process_postponed_logs():
                 timestamp=event["timestamp"],
                 instant_sending=False,
             )
+    telemetry.send()
     return True
