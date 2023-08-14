@@ -20,6 +20,8 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.11 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Resolved a possible issue that may cause generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to fail to launch a debug session because of a missing objdump binary when GDB is not part of the toolchain package
+
 6.1.10 (2023-08-11)
 ~~~~~~~~~~~~~~~~~~~
 
