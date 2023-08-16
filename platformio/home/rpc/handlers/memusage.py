@@ -37,7 +37,7 @@ class MemUsageRPC(BaseRPCHandler):
         return memusage.list_reports(report_dir)[-1]
 
     @staticmethod
-    def read_report(path):
+    def load_report(path):
         return memusage.read_report(path)
 
     def summary(self, report_path):
