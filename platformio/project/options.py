@@ -118,7 +118,11 @@ def validate_dir(path):
 
 
 def get_default_core_dir():
-    path = os.path.join(fs.expanduser("~"), ".platformio")
+    xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
+    if xdg_config_home:
+        path = os.path.join(xdg_config_home, "platformio")
+    else:
+        path = os.path.join(fs.expanduser("~"), ".config", "platformio")
     if IS_WINDOWS:
         win_core_dir = os.path.splitdrive(path)[0] + "\\.platformio"
         if os.path.isdir(win_core_dir):
