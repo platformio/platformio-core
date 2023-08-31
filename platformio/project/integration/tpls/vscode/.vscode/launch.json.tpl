@@ -17,7 +17,7 @@
 %    "name": "PIO Debug (skip Pre-Debug)",
 %    "executable": _escape_path(prog_path),
 %    "projectEnvName": env_name if forced_env_name else default_debug_env_name,
-%    "toolchainBinDir": _escape_path(os.path.dirname(gdb_path)),
+%    "toolchainBinDir": _escape_path(os.path.dirname(cc_path)),
 %    "internalConsoleOptions": "openOnSessionStart",
 %  }
 %
