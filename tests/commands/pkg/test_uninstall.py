@@ -198,6 +198,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         assert pkgs_to_names(lm.get_installed()) == ["DallasTemperature", "OneWire"]
         assert pkgs_to_names(ToolPackageManager().get_installed()) == [
             "framework-arduino-avr-attiny",
+            "tool-scons",
             "toolchain-atmelavr",
         ]
         assert config.get("env:devkit", "lib_deps") == [
@@ -224,7 +225,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert not pkgs_to_names(lm.get_installed())
-        assert not pkgs_to_names(ToolPackageManager().get_installed())
+        assert pkgs_to_names(ToolPackageManager().get_installed()) == ["tool-scons"]
         assert config.get("env:devkit", "lib_deps") == [
             "milesburton/DallasTemperature@^3.9.1"
         ]

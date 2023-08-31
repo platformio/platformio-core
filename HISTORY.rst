@@ -17,7 +17,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.11 (2023-??-??)
+6.1.11 (2023-08-31)
 ~~~~~~~~~~~~~~~~~~~
 
 * Resolved a possible issue that may cause generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to fail to launch a debug session because of a missing "objdump" binary when GDB is not part of the toolchain package
