@@ -224,7 +224,7 @@ class InoToCPPConverter:
 
 def FindInoNodes(env):
     src_dir = glob.escape(env.subst("$PROJECT_SRC_DIR"))
-    return env.Glob(os.path.join(src_dir, "*.ino")) + env.Glob(
+    return env.Glob(os.path.join(src_dir, "**/*.ino")) + env.Glob(
         os.path.join(src_dir, "*.pde")
     )
 
@@ -234,9 +234,9 @@ def ConvertInoToCpp(env):
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
-    out_file = c.convert(ino_nodes)
-
-    atexit.register(_delete_file, out_file)
+    for ino_node in ino_nodes:
+        out_file = c.convert([ino_node])
+        atexit.register(_delete_file, out_file)
 
 
 def _delete_file(path):
