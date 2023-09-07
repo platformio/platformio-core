@@ -24,21 +24,24 @@ from platformio.test.result import TestStatus
 
 class JsonTestReport(TestReportBase):
     def generate(self, output_path, verbose=False):
-        if os.path.isdir(output_path):
-            output_path = os.path.join(
-                output_path,
-                "pio-test-report-%s-%s.json"
-                % (
-                    os.path.basename(self.test_result.project_dir),
-                    datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
-                ),
-            )
+        if output_path is not None:
+            if os.path.isdir(output_path):
+                output_path = os.path.join(
+                    output_path,
+                    "pio-test-report-%s-%s.json"
+                    % (
+                        os.path.basename(self.test_result.project_dir),
+                        datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
+                    ),
+                )
 
-        with open(output_path, mode="w", encoding="utf8") as fp:
-            json.dump(self.to_json(), fp)
+            with open(output_path, mode="w", encoding="utf8") as fp:
+                json.dump(self.to_json(), fp)
 
-        if verbose:
-            click.secho(f"Saved JSON report to the {output_path}", fg="green")
+            if verbose:
+                click.secho(f"Saved JSON report to the {output_path}", fg="green")
+        else:
+            click.echo(json.dumps(self.to_json()))
 
     def to_json(self):
         result = dict(
