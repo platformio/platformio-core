@@ -39,7 +39,7 @@ RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio
     limitations under the License.
 """
 
-SKIP_DEBUG_TOOLS = ["esp-bridge", "esp-builtin"]
+SKIP_DEBUG_TOOLS = ["esp-bridge", "esp-builtin", "dfu"]
 
 STATIC_FRAMEWORK_DATA = {
     "arduino": {
