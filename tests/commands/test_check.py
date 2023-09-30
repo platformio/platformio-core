@@ -540,6 +540,16 @@ int main() {
 """
     )
 
+    if framework == "zephyr":
+        zephyr_dir = tmpdir.mkdir("zephyr")
+        zephyr_dir.join("prj.conf").write("# nothing here")
+        zephyr_dir.join("CMakeLists.txt").write(
+            """cmake_minimum_required(VERSION 3.16.0)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(hello_world)
+target_sources(app PRIVATE ../src/main.c)"""
+        )
+
     tmpdir.join("platformio.ini").write(config)
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
     validate_cliresult(result)
