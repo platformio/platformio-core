@@ -59,7 +59,7 @@ __install_requires__ = [
     "click >=8.0.4, <=8.2",
     "colorama",
     "marshmallow == 3.*",
-    "pyelftools == 0.29",
+    "pyelftools == 0.30",
     "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
     "requests == 2.*",
     "semantic_version == 2.10.*",
