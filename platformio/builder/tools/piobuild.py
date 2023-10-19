@@ -126,6 +126,12 @@ def ProcessProgramDeps(env):
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
+    env.ProcessCompileDbToolchainOption()
+
+
+def ProcessCompileDbToolchainOption(
+    env,
+):  # separated out to selectively add to lib build step
     if "compiledb" in COMMAND_LINE_TARGETS:
         # Resolve absolute path of toolchain
         for cmd in ("CC", "CXX", "AS"):
@@ -138,6 +144,7 @@ def ProcessProgramDeps(env):
             )
 
         if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
+            print("Warning! `COMPILATIONDB_INCLUDE_TOOLCHAIN` is scoping")
             for scope, includes in env.DumpIntegrationIncludes().items():
                 if scope in ("toolchain",):
                     env.Append(CPPPATH=includes)
@@ -376,6 +383,7 @@ def generate(env):
     env.AddMethod(GetBuildType)
     env.AddMethod(BuildProgram)
     env.AddMethod(ProcessProgramDeps)
+    env.AddMethod(ProcessCompileDbToolchainOption)
     env.AddMethod(ProcessProjectDeps)
     env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
