@@ -70,7 +70,7 @@ class BuildAsyncPipe(AsyncPipeBase):
 
         for char in iter(lambda: self._pipe_reader.read(1), ""):
             # self._buffer += char
-            
+
             if line and char.strip() and line[-3:] == (char * 3):
                 print_immediately = True
 
