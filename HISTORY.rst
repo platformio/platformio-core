@@ -17,6 +17,11 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
+6.1.12 (2023-??-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
+
 6.1.11 (2023-08-31)
 ~~~~~~~~~~~~~~~~~~~
 

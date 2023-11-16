@@ -129,9 +129,7 @@ def ProcessProgramDeps(env):
     env.ProcessCompileDbToolchainOption()
 
 
-def ProcessCompileDbToolchainOption(
-    env,
-):  # separated out to selectively add to lib build step
+def ProcessCompileDbToolchainOption(env):
     if "compiledb" in COMMAND_LINE_TARGETS:
         # Resolve absolute path of toolchain
         for cmd in ("CC", "CXX", "AS"):
