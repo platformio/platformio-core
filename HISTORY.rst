@@ -20,6 +20,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.12 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Drastically enhanced the speed of project building when operating in verbose mode (`issue #4783 <https://github.com/platformio/platformio-core/issues/4783>`_)
 * Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
 * Resolved an issue where ``get_systype()`` inaccurately returned the architecture when executed within a Docker container on a 64-bit kernel with a 32-bit userspace (`issue #4777 <https://github.com/platformio/platformio-core/issues/4777>`_)
 
