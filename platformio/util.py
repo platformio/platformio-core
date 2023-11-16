@@ -143,6 +143,8 @@ def get_systype():
             arch = "x86_" + platform.architecture()[0]
         if "x86" in arch:
             arch = "amd64" if "64" in arch else "x86"
+    if arch == "aarch64" and platform.architecture()[0] == "32bit":
+        arch = "armv7l"
     return "%s_%s" % (system, arch) if arch else system
 
 
