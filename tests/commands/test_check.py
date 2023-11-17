@@ -767,3 +767,39 @@ check_patterns =
 
     assert errors + warnings + style == EXPECTED_DEFECTS * 2
     assert "main.cpp" not in result.output
+
+
+def test_check_src_filter_multiple_envs(clirunner, validate_cliresult, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+
+    config = """
+[env]
+check_tool = cppcheck
+check_src_filters =
+    +<src/*>
+
+[env:check_sources]
+platform = native
+
+[env:check_tests]
+platform = native
+check_src_filters =
+    +<test/*>
+    """
+    tmpdir.join("platformio.ini").write(config)
+
+    src_dir = tmpdir.mkdir("src")
+    src_dir.join("main.cpp").write(TEST_CODE)
+    src_dir.mkdir("spi").join("spi.cpp").write(TEST_CODE)
+    tmpdir.mkdir("test").join("test.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "-e", "check_tests"]
+    )
+    validate_cliresult(result)
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert errors + warnings + style == EXPECTED_DEFECTS
+    assert "test.cpp" in result.output
+    assert "main.cpp" not in result.output

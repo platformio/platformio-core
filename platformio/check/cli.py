@@ -108,7 +108,7 @@ def cli(
                 "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
             ]
 
-            src_filters = (
+            env_src_filters = (
                 src_filters
                 or pattern
                 or env_options.get(
@@ -120,7 +120,7 @@ def cli(
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                src_filters=src_filters,
+                src_filters=env_src_filters,
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent
