@@ -22,10 +22,11 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 
 * Introduced a warning during the verification of MCU maximum RAM usage, signaling when the allocated RAM surpasses 100% (`issue #4791 <https://github.com/platformio/platformio-core/issues/4791>`_)
 * Drastically enhanced the speed of project building when operating in verbose mode (`issue #4783 <https://github.com/platformio/platformio-core/issues/4783>`_)
+* Upgraded the build engine to the latest version of SCons (4.6.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.6.0>`__)
 * Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
 * Resolved an issue where ``get_systype()`` inaccurately returned the architecture when executed within a Docker container on a 64-bit kernel with a 32-bit userspace (`issue #4777 <https://github.com/platformio/platformio-core/issues/4777>`_)
 * Resolved an issue with incorrect handling of the ``check_src_filters`` option when used in multiple environments (`issue #4788 <https://github.com/platformio/platformio-core/issues/4788>`_)
-* Resolved an issue where running `pio project metadata <https://docs.platformio.org/en/latest/core/userguide/project/cmd_metadata.html>`__ resulted in duplicated include entries (`issue #4723 <https://github.com/platformio/platformio-core/issues/4723>`_)
+* Resolved an issue where running `pio project metadata <https://docs.platformio.org/en/latest/core/userguide/project/cmd_metadata.html>`__ resulted in duplicated "include" entries (`issue #4723 <https://github.com/platformio/platformio-core/issues/4723>`_)
 
 6.1.11 (2023-08-31)
 ~~~~~~~~~~~~~~~~~~~

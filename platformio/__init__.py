@@ -41,7 +41,7 @@ __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 __core_packages__ = {
     "contrib-piohome": "~3.4.2",
     "contrib-pioremote": "~1.0.0",
-    "tool-scons": "~4.40502.0",
+    "tool-scons": "~4.40600.0",
     "tool-cppcheck": "~1.21100.0",
     "tool-clangtidy": "~1.150005.0",
     "tool-pvs-studio": "~7.18.0",
