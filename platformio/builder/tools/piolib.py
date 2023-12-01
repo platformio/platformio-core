@@ -792,7 +792,9 @@ class PlatformIOLibBuilder(LibBuilderBase):
             include_dirs.append(os.path.join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
-            if path not in self.envorigin.get("CPPPATH", []):
+            if path not in include_dirs and path not in self.envorigin.get(
+                "CPPPATH", []
+            ):
                 include_dirs.append(self.env.subst(path))
 
         return include_dirs
