@@ -170,9 +170,8 @@ def items_in_list(needle, haystack):
 
 
 def parse_datetime(datestr):
-    if "T" in datestr and "Z" in datestr:
-        return datetime.datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
-    return datetime.datetime.strptime(datestr)
+    assert "T" in datestr and "Z" in datestr
+    return datetime.datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
 
 
 def merge_dicts(d1, d2, path=None):

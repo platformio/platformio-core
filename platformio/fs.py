@@ -210,7 +210,7 @@ def change_filemtime(path, mtime):
 
 
 def rmtree(path):
-    def _onerror(func, path, __):
+    def _onexc(func, path, _):
         try:
             st_mode = os.stat(path).st_mode
             if st_mode & stat.S_IREAD:
@@ -223,4 +223,5 @@ def rmtree(path):
                 err=True,
             )
 
-    return shutil.rmtree(path, onerror=_onerror)
+    kwargs = {"onexc" if sys.version_info >= (3, 12) else "onerror": _onexc}
+    return shutil.rmtree(path, **kwargs)

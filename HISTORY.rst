@@ -20,6 +20,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.12 (2023-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Python 3.12
 * Introduced a warning during the verification of MCU maximum RAM usage, signaling when the allocated RAM surpasses 100% (`issue #4791 <https://github.com/platformio/platformio-core/issues/4791>`_)
 * Drastically enhanced the speed of project building when operating in verbose mode (`issue #4783 <https://github.com/platformio/platformio-core/issues/4783>`_)
 * Upgraded the build engine to the latest version of SCons (4.6.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.6.0>`__)
