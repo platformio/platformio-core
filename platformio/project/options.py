@@ -110,6 +110,7 @@ ProjectOptions = OrderedDict(
                 group="generic",
                 name="name",
                 description="A project name",
+                default=lambda: os.path.basename(os.getcwd()),
             ),
             ConfigPlatformioOption(
                 group="generic",

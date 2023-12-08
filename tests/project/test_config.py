@@ -624,6 +624,30 @@ custom_option = ${this.board}
     assert config.get("env:myenv", "build_flags") == ["-Dmyenv"]
 
 
+def test_project_name(tmp_path: Path):
+    project_dir = tmp_path / "my-project-name"
+    project_dir.mkdir()
+    project_conf = project_dir / "platformio.ini"
+    project_conf.write_text(
+        """
+[env:myenv]
+    """
+    )
+    with fs.cd(str(project_dir)):
+        config = ProjectConfig(str(project_conf))
+        assert config.get("platformio", "name") == "my-project-name"
+
+    # custom name
+    project_conf.write_text(
+        """
+[platformio]
+name = custom-project-name
+    """
+    )
+    config = ProjectConfig(str(project_conf))
+    assert config.get("platformio", "name") == "custom-project-name"
+
+
 def test_nested_interpolation(tmp_path: Path):
     project_conf = tmp_path / "platformio.ini"
     project_conf.write_text(

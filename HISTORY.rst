@@ -24,6 +24,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Drastically enhanced the speed of project building when operating in verbose mode (`issue #4783 <https://github.com/platformio/platformio-core/issues/4783>`_)
 * Upgraded the build engine to the latest version of SCons (4.6.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.6.0>`__)
 * Enhanced the handling of built-in variables in |PIOCONF| during |INTERPOLATION| (`issue #4695 <https://github.com/platformio/platformio-core/issues/4695>`_)
+* Rectified an issue where ``${platformio.name}`` erroneously represented ``None`` as the default `project name <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/generic/name.html>`__ (`issue #4717 <https://github.com/platformio/platformio-core/issues/4717>`_)
 * Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
 * Resolved an issue where ``get_systype()`` inaccurately returned the architecture when executed within a Docker container on a 64-bit kernel with a 32-bit userspace (`issue #4777 <https://github.com/platformio/platformio-core/issues/4777>`_)
 * Resolved an issue with incorrect handling of the ``check_src_filters`` option when used in multiple environments (`issue #4788 <https://github.com/platformio/platformio-core/issues/4788>`_)
