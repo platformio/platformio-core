@@ -33,7 +33,6 @@ BASE_CONFIG = """
 [platformio]
 env_default = base, extra_2
 src_dir = ${custom.src_dir}
-build_dir = ${custom.build_dir}
 extra_configs =
   extra_envs.ini
   extra_debug.ini
@@ -61,7 +60,6 @@ build_flags = -D RELEASE
 
 [custom]
 src_dir = source
-build_dir = ~/tmp/pio-$PROJECT_HASH
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
 extra_flags = ${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}
@@ -319,7 +317,6 @@ def test_getraw_value(config):
         config.getraw("custom", "debug_server")
         == f"\n{packages_dir}/tool-openocd/openocd\n--help"
     )
-    assert config.getraw("platformio", "build_dir") == "~/tmp/pio-$PROJECT_HASH"
 
     # renamed option
     assert config.getraw("env:extra_1", "lib_install") == "574"
@@ -360,7 +357,6 @@ def test_get_value(config):
     assert config.get("platformio", "src_dir") == os.path.abspath(
         os.path.join(os.getcwd(), "source")
     )
-    assert "$PROJECT_HASH" not in config.get("platformio", "build_dir")
 
     # renamed option
     assert config.get("env:extra_1", "lib_install") == ["574"]
@@ -371,7 +367,6 @@ def test_get_value(config):
 def test_items(config):
     assert config.items("custom") == [
         ("src_dir", "source"),
-        ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
         ("debug_flags", "-D DEBUG=1"),
         ("lib_flags", "-lc -lm"),
         ("extra_flags", ""),
@@ -525,7 +520,6 @@ def test_dump(tmpdir_factory):
             [
                 ("env_default", ["base", "extra_2"]),
                 ("src_dir", "${custom.src_dir}"),
-                ("build_dir", "${custom.build_dir}"),
                 ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
             ],
         ),
@@ -549,7 +543,6 @@ def test_dump(tmpdir_factory):
             "custom",
             [
                 ("src_dir", "source"),
-                ("build_dir", "~/tmp/pio-$PROJECT_HASH"),
                 ("debug_flags", "-D RELEASE"),
                 ("lib_flags", "-lc -lm"),
                 ("extra_flags", "${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}"),
@@ -636,9 +629,10 @@ def test_nested_interpolation(tmp_path: Path):
     project_conf.write_text(
         """
 [platformio]
-build_dir = ~/tmp/pio-$PROJECT_HASH
+build_dir = /tmp/pio-$PROJECT_HASH
 
 [env:myenv]
+build_flags = -D UTIME=${UNIX_TIME}
 test_testing_command =
     ${platformio.packages_dir}/tool-simavr/bin/simavr
      -m
@@ -651,6 +645,7 @@ test_testing_command =
     config = ProjectConfig(str(project_conf))
     testing_command = config.get("env:myenv", "test_testing_command")
     assert "$" not in " ".join(testing_command)
+    assert config.get("env:myenv", "build_flags")[0][-10:].isdigit()
 
 
 def test_extends_order(tmp_path: Path):
@@ -707,11 +702,16 @@ def test_linting_warnings(tmp_path: Path):
     project_conf = tmp_path / "platformio.ini"
     project_conf.write_text(
         """
+[platformio]
+build_dir = /tmp/pio-$PROJECT_HASH
+
 [env:app1]
 lib_use = 1
+test_testing_command = /usr/bin/flash-tool -p $UPLOAD_PORT -b $UPLOAD_SPEED
     """
     )
     result = ProjectConfig.lint(str(project_conf))
     assert not result["errors"]
-    assert result["warnings"] and len(result["warnings"]) == 1
+    assert result["warnings"] and len(result["warnings"]) == 2
     assert "deprecated" in result["warnings"][0]
+    assert "Invalid variable declaration" in result["warnings"][1]

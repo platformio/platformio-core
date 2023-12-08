@@ -51,4 +51,4 @@ class InvalidEnvNameError(ProjectError, UserSideException):
 
 
 class ProjectOptionValueError(ProjectError, UserSideException):
-    MESSAGE = "{0} for option `{1}`{2}in section [{3}]"
+    pass

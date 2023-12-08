@@ -67,7 +67,7 @@ __install_requires__ = [
 ] + [
     # PIO Home requirements
     "ajsonrpc == 1.2.*",
-    "starlette >=0.19, <0.33",
+    "starlette >=0.19, <=0.33",
     "uvicorn >=0.16, <0.24",
     "wsproto == 1.*",
 ]
