@@ -15,14 +15,14 @@ jobs:
       PIO_INSTALL_DEVPLATFORM_NAMES: "aceinna_imu,atmelavr,atmelmegaavr,atmelsam,espressif32,espressif8266,nordicnrf52,raspberrypi,ststm32,teensy"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
