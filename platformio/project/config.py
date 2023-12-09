@@ -316,10 +316,11 @@ class ProjectConfigBase:
             return value
 
         # legacy support for variables delclared without "${}"
+        legacy_vars = ["PROJECT_HASH"]
         stop = False
         while not stop:
             stop = True
-            for name in self.BUILTIN_VARS:
+            for name in legacy_vars:
                 x = value.find(f"${name}")
                 if x < 0 or value[x - 1] == "$":
                     continue
