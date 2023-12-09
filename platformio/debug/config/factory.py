@@ -27,17 +27,13 @@ class DebugConfigFactory:
 
     @classmethod
     def new(cls, platform, project_config, env_name):
-        board_config = platform.board_config(
-            project_config.get("env:" + env_name, "board")
-        )
-        tool_name = (
-            board_config.get_debug_tool_name(
-                project_config.get("env:" + env_name, "debug_tool")
-            )
-            if board_config
-            else None
-        )
+        board_id = project_config.get("env:" + env_name, "board")
         config_cls = None
+        tool_name = None
+        if board_id:
+            tool_name = platform.board_config(
+                project_config.get("env:" + env_name, "board")
+            ).get_debug_tool_name(project_config.get("env:" + env_name, "debug_tool"))
         try:
             mod = importlib.import_module("platformio.debug.config.%s" % tool_name)
             config_cls = getattr(mod, cls.get_clsname(tool_name))

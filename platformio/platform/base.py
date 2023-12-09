@@ -169,6 +169,7 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
 
     def board_config(self, id_):
+        assert id_
         return self.get_boards(id_)
 
     def get_package_type(self, name):
