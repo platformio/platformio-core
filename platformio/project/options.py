@@ -87,8 +87,7 @@ def validate_dir(path):
         return path
     if path.startswith("~"):
         path = fs.expanduser(path)
-    return path
-    # return os.path.abspath(path)
+    return os.path.abspath(path)
 
 
 def get_default_core_dir():

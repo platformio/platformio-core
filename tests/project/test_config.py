@@ -354,7 +354,10 @@ def test_get_value(config):
         "--help",
     ]
     # test relative dir
-    assert config.get("platformio", "src_dir") == "source"
+    assert config.get("platformio", "src_dir") == os.path.abspath(
+        os.path.join(os.getcwd(), "source")
+    )
+
     # renamed option
     assert config.get("env:extra_1", "lib_install") == ["574"]
     assert config.get("env:extra_1", "lib_deps") == ["574"]
@@ -651,7 +654,7 @@ def test_nested_interpolation(tmp_path: Path):
         """
 [platformio]
 build_dir = /tmp/pio-$PROJECT_HASH
-data_dir = $PROJECT_DIR/assets
+data_dir = /$PROJECT_DIR/assets
 
 [env:myenv]
 build_flags = -D UTIME=${UNIX_TIME}
@@ -665,7 +668,7 @@ test_testing_command =
     """
     )
     config = ProjectConfig(str(project_conf))
-    assert config.get("platformio", "data_dir") == "$PROJECT_DIR/assets"
+    assert config.get("platformio", "data_dir") == "/$PROJECT_DIR/assets"
     assert config.get("env:myenv", "build_flags")[0][-10:].isdigit()
     testing_command = config.get("env:myenv", "test_testing_command")
     assert "$" not in " ".join(testing_command)
