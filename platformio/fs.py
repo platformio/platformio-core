@@ -223,6 +223,7 @@ def rmtree(path):
                 err=True,
             )
 
+    # pylint: disable=unexpected-keyword-arg, deprecated-argument
     if sys.version_info < (3, 12):
         return shutil.rmtree(path, onerror=_onexc)
-    return shutil.rmtree(path, onexc=_onexc)  # pylint: disable=unexpected-keyword-arg
+    return shutil.rmtree(path, onexc=_onexc)
