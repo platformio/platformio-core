@@ -54,7 +54,7 @@ from platformio.project.options import ProjectOptions
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--load-mode", type=ProjectOptions["env.debug_load_mode"].type)
 @click.option("--verbose", "-v", is_flag=True)
-@click.option("--interface", type=click.Choice(["gdb"]))
+@click.option("--interface", type=click.Choice(["gdb"]), default="gdb")
 @click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
 def cli(
