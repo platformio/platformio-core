@@ -30,6 +30,19 @@ from platformio import (
 if platform.system() == "Darwin" and "arm" in platform.machine().lower():
     __install_requires__.append("chardet>=3.0.2,<4")
 
+# issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
+try:
+    import ssl
+
+    if ssl.OPENSSL_VERSION.startswith("OpenSSL ") and ssl.OPENSSL_VERSION_INFO < (
+        1,
+        1,
+        1,
+    ):
+        __install_requires__.append("urllib3<2")
+except ImportError:
+    pass
+
 
 setup(
     name=__title__,
