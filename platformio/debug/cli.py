@@ -54,8 +54,8 @@ from platformio.project.options import ProjectOptions
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--load-mode", type=ProjectOptions["env.debug_load_mode"].type)
 @click.option("--verbose", "-v", is_flag=True)
-@click.option("--interface", type=click.Choice(["gdb"]), default="gdb")
-@click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
+@click.option("--interface", type=click.Choice(["gdb"]))
+@click.argument("client_extra_args", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
 def cli(
     ctx,
@@ -65,9 +65,12 @@ def cli(
     load_mode,
     verbose,
     interface,
-    __unprocessed,
+    client_extra_args,
 ):
     app.set_session_var("custom_project_conf", project_conf)
+
+    if not interface and client_extra_args:
+        raise click.UsageError("Please specify debugging interface")
 
     # use env variables from Eclipse or CLion
     for name in ("CWD", "PWD", "PLATFORMIO_PROJECT_DIR"):
@@ -92,7 +95,7 @@ def cli(
             env_name,
             load_mode,
             verbose,
-            __unprocessed,
+            client_extra_args,
         )
         if helpers.is_gdbmi_mode():
             os.environ["PLATFORMIO_DISABLE_PROGRESSBAR"] = "true"
@@ -103,19 +106,19 @@ def cli(
         else:
             debug_config = _configure(*configure_args)
 
-        _run(project_dir, debug_config, __unprocessed)
+        _run(project_dir, debug_config, client_extra_args)
 
     return None
 
 
-def _configure(ctx, project_config, env_name, load_mode, verbose, __unprocessed):
+def _configure(ctx, project_config, env_name, load_mode, verbose, client_extra_args):
     platform = PlatformFactory.from_env(env_name, autoinstall=True)
     debug_config = DebugConfigFactory.new(
         platform,
         project_config,
         env_name,
     )
-    if "--version" in __unprocessed:
+    if "--version" in client_extra_args:
         raise ReturnErrorCode(
             subprocess.run(
                 [debug_config.client_executable_path, "--version"], check=True
@@ -161,12 +164,12 @@ def _configure(ctx, project_config, env_name, load_mode, verbose, __unprocessed)
     return debug_config
 
 
-def _run(project_dir, debug_config, __unprocessed):
+def _run(project_dir, debug_config, client_extra_args):
     loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
     asyncio.set_event_loop(loop)
 
     client = GDBClientProcess(project_dir, debug_config)
-    coro = client.run(__unprocessed)
+    coro = client.run(client_extra_args)
     try:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         loop.run_until_complete(coro)
