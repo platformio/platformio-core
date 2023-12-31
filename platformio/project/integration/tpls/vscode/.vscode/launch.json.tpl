@@ -1,4 +1,3 @@
-% import codecs
 % import json
 % import os
 %
@@ -47,9 +46,14 @@
 %  return data
 % end
 %
-% def _contains_external_configurations(launch_config):
+% def _contains_custom_configurations(launch_config):
+%  pio_config_names = [
+%    c["name"]
+%    for c in get_pio_configurations()
+%  ]
 %  return any(
 %    c.get("type", "") != "platformio-debug"
+%    or c.get("name", "") in pio_config_names
 %    for c in launch_config.get("configurations", [])
 %  )
 % end
@@ -59,10 +63,14 @@
 %    return launch_config
 %  end
 %
+%  pio_config_names = [
+%    c["name"]
+%    for c in get_pio_configurations()
+%  ]
 %  external_configurations = [
-%    config
-%    for config in launch_config["configurations"]
-%    if config.get("type", "") != "platformio-debug"
+%    c
+%    for c in launch_config["configurations"]
+%    if c.get("type", "") != "platformio-debug" or c.get("name", "") not in pio_config_names
 %  ]
 %
 %  launch_config["configurations"] = external_configurations
@@ -73,11 +81,11 @@
 %  launch_config = {"version": "0.2.0", "configurations": []}
 %  launch_file = os.path.join(project_dir, ".vscode", "launch.json")
 %  if os.path.isfile(launch_file):
-%    with codecs.open(launch_file, "r", encoding="utf8") as fp:
+%    with open(launch_file, "r", encoding="utf8") as fp:
 %      launch_data = _remove_comments(fp.readlines())
 %      try:
 %        prev_config = json.loads(launch_data)
-%        if _contains_external_configurations(prev_config):
+%        if _contains_custom_configurations(prev_config):
 %          launch_config = _remove_pio_configurations(prev_config)
 %        end
 %      except:
@@ -91,9 +99,9 @@
 %
 // AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
 //
-// PIO Unified Debugger
+// PlatformIO Debugging Solution
 //
-// Documentation: https://docs.platformio.org/page/plus/debugging.html
-// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+// Documentation: https://docs.platformio.org/en/latest/plus/debugging.html
+// Configuration: https://docs.platformio.org/en/latest/projectconf/sections/env/options/debug/index.html
 
 {{ json.dumps(get_launch_configuration(), indent=4, ensure_ascii=False) }}

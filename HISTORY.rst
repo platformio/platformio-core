@@ -17,7 +17,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.12 (2023-??-??)
+6.1.12 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
 * Added support for Python 3.12
