@@ -32,6 +32,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Resolved an issue with incorrect handling of the ``check_src_filters`` option when used in multiple environments (`issue #4788 <https://github.com/platformio/platformio-core/issues/4788>`_)
 * Resolved an issue where running `pio project metadata <https://docs.platformio.org/en/latest/core/userguide/project/cmd_metadata.html>`__ resulted in duplicated "include" entries (`issue #4723 <https://github.com/platformio/platformio-core/issues/4723>`_)
 * Resolved an issue where native debugging failed on the host machine (`issue #4745 <https://github.com/platformio/platformio-core/issues/4745>`_)
+* Resolved an issue where custom debug configurations were being inadvertently overwritten in VSCode's ``launch.json`` (`issue #4810 <https://github.com/platformio/platformio-core/issues/4810>`_)
 
 6.1.11 (2023-08-31)
 ~~~~~~~~~~~~~~~~~~~
