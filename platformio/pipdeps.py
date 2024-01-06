@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import platform
 import sys
 
@@ -26,7 +27,7 @@ def get_pip_dependencies():
         "marshmallow == 3.*",
         "pyelftools == 0.30",
         "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
-        "requests == 2.*",
+        "requests%s == 2.*" % ("[socks]" if is_proxy_set(socks=True) else ""),
         "semantic_version == 2.10.*",
         "tabulate == 0.*",
     ]
@@ -59,3 +60,12 @@ def get_pip_dependencies():
         pass
 
     return core + home + extra
+
+
+def is_proxy_set(socks=False):
+    for var in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
+        value = os.getenv(var, os.getenv(var.lower()))
+        if not value or (socks and not value.startswith("socks5://")):
+            continue
+        return True
+    return False

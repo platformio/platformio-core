@@ -26,6 +26,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Upgraded the build engine to the latest version of SCons (4.6.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.6.0>`__)
 * Enhanced the handling of built-in variables in |PIOCONF| during |INTERPOLATION| (`issue #4695 <https://github.com/platformio/platformio-core/issues/4695>`_)
 * Enhanced PIP dependency declarations for improved reliability and extended support to include Python 3.6 (`issue #4819 <https://github.com/platformio/platformio-core/issues/4819>`_)
+* Implemented automatic installation of missing dependencies when utilizing a SOCKS proxy (`issue #4822 <https://github.com/platformio/platformio-core/issues/4822>`_)
 * Implemented a fail-safe mechanism to terminate a debugging session if an unknown CLI option is passed (`issue #4699 <https://github.com/platformio/platformio-core/issues/4699>`_)
 * Rectified an issue where ``${platformio.name}`` erroneously represented ``None`` as the default `project name <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/generic/name.html>`__ (`issue #4717 <https://github.com/platformio/platformio-core/issues/4717>`_)
 * Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
