@@ -52,22 +52,3 @@ __check_internet_hosts__ = [
     "88.198.170.159",  # platformio.org
     "github.com",
 ] + __registry_mirror_hosts__
-
-__install_requires__ = [
-    # Core requirements
-    "bottle == 0.12.*",
-    "click >=8.0.4, <=8.2",
-    "colorama",
-    "marshmallow == 3.*",
-    "pyelftools == 0.30",
-    "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "requests == 2.*",
-    "semantic_version == 2.10.*",
-    "tabulate == 0.*",
-] + [
-    # PIO Home requirements
-    "ajsonrpc == 1.2.*",
-    "starlette >=0.19, <=0.34",
-    "uvicorn >=0.16, <=0.25",
-    "wsproto == 1.*",
-]
