@@ -16,6 +16,7 @@ from platformio.debug.config.base import DebugConfigBase
 
 
 class GenericDebugConfig(DebugConfigBase):
+    DEFAULT_PORT = ":3333"
     GDB_INIT_SCRIPT = """
 define pio_reset_halt_target
     monitor reset halt
@@ -31,8 +32,3 @@ $LOAD_CMDS
 pio_reset_halt_target
 $INIT_BREAK
 """
-
-    def __init__(self, *args, **kwargs):
-        if "port" not in kwargs:
-            kwargs["port"] = ":3333"
-        super().__init__(*args, **kwargs)
