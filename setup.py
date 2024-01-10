@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import platform
 from setuptools import find_packages, setup
 
 from platformio import (
@@ -23,13 +22,8 @@ from platformio import (
     __title__,
     __url__,
     __version__,
-    __install_requires__,
 )
-
-# issue #4702; Broken "requests/charset_normalizer" on macOS ARM
-if platform.system() == "Darwin" and "arm" in platform.machine().lower():
-    __install_requires__.append("chardet>=3.0.2,<4")
-
+from platformio.pipdeps import get_pip_dependencies
 
 setup(
     name=__title__,
@@ -40,7 +34,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=__install_requires__,
+    install_requires=get_pip_dependencies(),
     python_requires=">=3.6",
     packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={

@@ -477,6 +477,7 @@ class LibBuilderBase:
         self.is_built = True
 
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
+        self.env.ProcessCompileDbToolchainOption()
 
         if self.lib_ldf_mode == "off":
             for lb in self.env.GetLibBuilders():
@@ -791,7 +792,9 @@ class PlatformIOLibBuilder(LibBuilderBase):
             include_dirs.append(os.path.join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
-            if path not in self.envorigin.get("CPPPATH", []):
+            if path not in include_dirs and path not in self.envorigin.get(
+                "CPPPATH", []
+            ):
                 include_dirs.append(self.env.subst(path))
 
         return include_dirs

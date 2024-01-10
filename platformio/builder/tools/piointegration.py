@@ -29,12 +29,7 @@ def IsIntegrationDump(_):
 def DumpIntegrationIncludes(env):
     result = dict(build=[], compatlib=[], toolchain=[])
 
-    result["build"].extend(
-        [
-            env.subst("$PROJECT_INCLUDE_DIR"),
-            env.subst("$PROJECT_SRC_DIR"),
-        ]
-    )
+    # `env`(project) CPPPATH
     result["build"].extend(
         [os.path.abspath(env.subst(item)) for item in env.get("CPPPATH", [])]
     )

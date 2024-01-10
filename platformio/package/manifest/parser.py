@@ -540,6 +540,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             "esp32": "espressif32",
             "arc32": "intel_arc32",
             "stm32": "ststm32",
+            "nrf52": "nordicnrf52",
+            "rp2040": "raspberrypi",
         }
         for arch in properties.get("architectures", "").split(","):
             if "particle-" in arch:

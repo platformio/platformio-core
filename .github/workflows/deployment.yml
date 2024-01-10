@@ -12,14 +12,14 @@ jobs:
     environment: production
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -35,7 +35,8 @@ jobs:
           tox -e testcore
 
       - name: Build Python source tarball
-        run:  python setup.py sdist bdist_wheel
+        # run:  python setup.py sdist bdist_wheel
+        run:  python setup.py sdist
 
       - name: Publish package to PyPI
         if: ${{ github.ref == 'refs/heads/master' }}

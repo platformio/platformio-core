@@ -651,4 +651,4 @@ def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
     lm.set_log_level(logging.ERROR)
     new_pkg = lm.update(pkg)
     assert len(lm.get_installed()) == 4
-    assert new_pkg.metadata.spec.owner == "ottowinter"
+    assert new_pkg.metadata.spec.owner == "heman"
