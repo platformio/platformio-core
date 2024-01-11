@@ -348,7 +348,7 @@ class ProjectConfigBase:
             if option in self.BUILTIN_VARS:
                 return self.BUILTIN_VARS[option]()
             # SCons varaibles
-            return f"${option}"
+            return f"${{{option}}}"
 
         # handle system environment variables
         if section == "sysenv":
