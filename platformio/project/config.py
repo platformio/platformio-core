@@ -164,6 +164,7 @@ class ProjectConfigBase:
 
     @staticmethod
     def get_section_scope(section):
+        assert section
         return section.split(":", 1)[0] if ":" in section else section
 
     def walk_options(self, root_section):
@@ -343,8 +344,11 @@ class ProjectConfigBase:
         section, option = match.group(1), match.group(2)
 
         # handle built-in variables
-        if section is None and option in self.BUILTIN_VARS:
-            return self.BUILTIN_VARS[option]()
+        if section is None:
+            if option in self.BUILTIN_VARS:
+                return self.BUILTIN_VARS[option]()
+            # SCons varaibles
+            return f"${option}"
 
         # handle system environment variables
         if section == "sysenv":

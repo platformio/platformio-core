@@ -657,7 +657,9 @@ build_dir = /tmp/pio-$PROJECT_HASH
 data_dir = $PROJECT_DIR/assets
 
 [env:myenv]
-build_flags = -D UTIME=${UNIX_TIME}
+build_flags =
+    -D UTIME=${UNIX_TIME}
+    -I ${PROJECTSRC_DIR}/hal
 test_testing_command =
     ${platformio.packages_dir}/tool-simavr/bin/simavr
      -m
@@ -672,6 +674,7 @@ test_testing_command =
         os.path.join("$PROJECT_DIR", "assets")
     )
     assert config.get("env:myenv", "build_flags")[0][-10:].isdigit()
+    assert config.get("env:myenv", "build_flags")[1] == "-I $PROJECTSRC_DIR/hal"
     testing_command = config.get("env:myenv", "test_testing_command")
     assert "$" not in " ".join(testing_command)
 
