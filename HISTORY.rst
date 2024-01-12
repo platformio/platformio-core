@@ -17,7 +17,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.13 (2024-??-??)
+6.1.13 (2024-01-12)
 ~~~~~~~~~~~~~~~~~~~
 
 * Expanded support for SCons variables declared in the legacy format ``${SCONS_VARNAME}`` (`issue #4828 <https://github.com/platformio/platformio-core/issues/4828>`_)
