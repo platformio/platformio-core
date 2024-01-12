@@ -657,13 +657,17 @@ build_dir = /tmp/pio-$PROJECT_HASH
 data_dir = $PROJECT_DIR/assets
 
 [env:myenv]
-build_flags = -D UTIME=${UNIX_TIME}
+build_flags =
+    -D UTIME=${UNIX_TIME}
+    -I ${PROJECTSRC_DIR}/hal
+    -Wl,-Map,${BUILD_DIR}/${PROGNAME}.map
 test_testing_command =
     ${platformio.packages_dir}/tool-simavr/bin/simavr
      -m
      atmega328p
      -f
      16000000L
+     ${UPLOAD_PORT and "-p "+UPLOAD_PORT}
      ${platformio.build_dir}/${this.__env__}/firmware.elf
     """
     )
@@ -672,8 +676,14 @@ test_testing_command =
         os.path.join("$PROJECT_DIR", "assets")
     )
     assert config.get("env:myenv", "build_flags")[0][-10:].isdigit()
+    assert config.get("env:myenv", "build_flags")[1] == "-I ${PROJECTSRC_DIR}/hal"
+    assert (
+        config.get("env:myenv", "build_flags")[2]
+        == "-Wl,-Map,${BUILD_DIR}/${PROGNAME}.map"
+    )
     testing_command = config.get("env:myenv", "test_testing_command")
-    assert "$" not in " ".join(testing_command)
+    assert "$" not in testing_command[0]
+    assert testing_command[5] == '${UPLOAD_PORT and "-p "+UPLOAD_PORT}'
 
 
 def test_extends_order(tmp_path: Path):
