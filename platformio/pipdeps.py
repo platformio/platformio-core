@@ -25,7 +25,7 @@ def get_pip_dependencies():
         "click >=8.0.4, <9",
         "colorama",
         "marshmallow == 3.*",
-        "pyelftools == 0.30",
+        "pyelftools >=0.27, <1",
         "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
         "requests%s == 2.*" % ("[socks]" if is_proxy_set(socks=True) else ""),
         "semantic_version == 2.10.*",
