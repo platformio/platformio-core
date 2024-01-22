@@ -20,7 +20,8 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.14 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
-* Broadened version support for the pyelftools dependency, enabling compatibility with lower versions and facilitating integration with a wider range of third-party tools  (`issue #4834 <https://github.com/platformio/platformio-core/issues/4834>`_)
+* Broadened version support for the ``pyelftools`` dependency, enabling compatibility with lower versions and facilitating integration with a wider range of third-party tools (`issue #4834 <https://github.com/platformio/platformio-core/issues/4834>`_)
+* Resolved an issue related to the relative package path in the `pio pkg publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command
 
 6.1.13 (2024-01-12)
 ~~~~~~~~~~~~~~~~~~~
