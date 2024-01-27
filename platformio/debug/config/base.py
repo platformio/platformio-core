@@ -194,9 +194,11 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                     cwd=server_package_dir if server_package else None,
                     executable=result.get("executable"),
                     arguments=[
-                        a.replace("$PACKAGE_DIR", server_package_dir)
-                        if server_package_dir
-                        else a
+                        (
+                            a.replace("$PACKAGE_DIR", server_package_dir)
+                            if server_package_dir
+                            else a
+                        )
                         for a in result.get("arguments", [])
                     ],
                 )

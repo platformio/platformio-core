@@ -485,9 +485,11 @@ class PackageItem:
 
     def __eq__(self, other):
         conds = [
-            os.path.realpath(self.path) == os.path.realpath(other.path)
-            if self.path and other.path
-            else self.path == other.path,
+            (
+                os.path.realpath(self.path) == os.path.realpath(other.path)
+                if self.path and other.path
+                else self.path == other.path
+            ),
             self.metadata == other.metadata,
         ]
         return all(conds)

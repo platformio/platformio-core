@@ -48,11 +48,13 @@ def team_list_cmd(orgname, json_output):
             table_data.append(
                 (
                     "Members:",
-                    ", ".join(
-                        (member.get("username") for member in team.get("members"))
-                    )
-                    if team.get("members")
-                    else "-",
+                    (
+                        ", ".join(
+                            (member.get("username") for member in team.get("members"))
+                        )
+                        if team.get("members")
+                        else "-"
+                    ),
                 )
             )
             click.echo(tabulate(table_data, tablefmt="plain"))

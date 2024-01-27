@@ -63,9 +63,11 @@ class HTTPSession(requests.Session):
             kwargs["timeout"] = __default_requests_timeout__
         return super().request(
             method,
-            url
-            if url.startswith("http") or not self._x_base_url
-            else urljoin(self._x_base_url, url),
+            (
+                url
+                if url.startswith("http") or not self._x_base_url
+                else urljoin(self._x_base_url, url)
+            ),
             *args,
             **kwargs
         )

@@ -144,9 +144,9 @@ def list_mdns_services():
             if service.properties:
                 try:
                     properties = {
-                        k.decode("utf8"): v.decode("utf8")
-                        if isinstance(v, bytes)
-                        else v
+                        k.decode("utf8"): (
+                            v.decode("utf8") if isinstance(v, bytes) else v
+                        )
                         for k, v in service.properties.items()
                     }
                     json.dumps(properties)
