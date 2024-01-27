@@ -242,6 +242,17 @@ ProjectOptions = OrderedDict(
             ),
             ConfigPlatformioOption(
                 group="directory",
+                name="memusage_dir",
+                description=(
+                    "A location where PlatformIO Core will store "
+                    "project memory usage reports"
+                ),
+                sysenvvar="PLATFORMIO_MEMUSAGE_DIR",
+                default=os.path.join("${platformio.workspace_dir}", "memusage"),
+                validate=validate_dir,
+            ),
+            ConfigPlatformioOption(
+                group="directory",
                 name="include_dir",
                 description=(
                     "A default location for project header files. PlatformIO Build "
