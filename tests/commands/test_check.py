@@ -540,6 +540,16 @@ int main() {
 """
     )
 
+    if framework == "zephyr":
+        zephyr_dir = tmpdir.mkdir("zephyr")
+        zephyr_dir.join("prj.conf").write("# nothing here")
+        zephyr_dir.join("CMakeLists.txt").write(
+            """cmake_minimum_required(VERSION 3.16.0)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(hello_world)
+target_sources(app PRIVATE ../src/main.c)"""
+        )
+
     tmpdir.join("platformio.ini").write(config)
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
     validate_cliresult(result)
@@ -756,4 +766,40 @@ check_patterns =
     errors, warnings, style = count_defects(result.output)
 
     assert errors + warnings + style == EXPECTED_DEFECTS * 2
+    assert "main.cpp" not in result.output
+
+
+def test_check_src_filter_multiple_envs(clirunner, validate_cliresult, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+
+    config = """
+[env]
+check_tool = cppcheck
+check_src_filters =
+    +<src/*>
+
+[env:check_sources]
+platform = native
+
+[env:check_tests]
+platform = native
+check_src_filters =
+    +<test/*>
+    """
+    tmpdir.join("platformio.ini").write(config)
+
+    src_dir = tmpdir.mkdir("src")
+    src_dir.join("main.cpp").write(TEST_CODE)
+    src_dir.mkdir("spi").join("spi.cpp").write(TEST_CODE)
+    tmpdir.mkdir("test").join("test.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "-e", "check_tests"]
+    )
+    validate_cliresult(result)
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert errors + warnings + style == EXPECTED_DEFECTS
+    assert "test.cpp" in result.output
     assert "main.cpp" not in result.output

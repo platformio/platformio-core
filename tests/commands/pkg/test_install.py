@@ -18,7 +18,7 @@ import os
 
 import pytest
 
-from platformio import fs
+from platformio import __core_packages__, fs
 from platformio.package.commands.install import package_install_cmd
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
@@ -148,7 +148,7 @@ def test_skip_dependencies(
             ),
             PackageSpec("ESPAsyncWebServer-esphome@2.1.0"),
         ]
-        assert len(ToolPackageManager().get_installed()) == 0
+        assert len(ToolPackageManager().get_installed()) == 1  # SCons
 
 
 def test_baremetal_project(
@@ -177,6 +177,7 @@ def test_baremetal_project(
             ),
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
+            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
 
@@ -209,6 +210,7 @@ def test_project(
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.5.2"),
+            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
@@ -443,7 +445,7 @@ def test_custom_project_libraries(
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("ArduinoJson@5.13.4"),
-            PackageSpec("Nanopb@0.4.7"),
+            PackageSpec("Nanopb@0.4.8"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
             "bblanchon/ArduinoJson@^5",

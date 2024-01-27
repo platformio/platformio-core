@@ -16,7 +16,7 @@
 
 import os
 
-from platformio import fs
+from platformio import __core_packages__, fs
 from platformio.package.commands.install import package_install_cmd
 from platformio.package.commands.update import package_update_cmd
 from platformio.package.exception import UnknownPackageError
@@ -172,6 +172,7 @@ def test_project(
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
+            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
@@ -201,6 +202,7 @@ def test_project(
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
+            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]

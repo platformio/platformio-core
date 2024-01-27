@@ -62,11 +62,13 @@ class JsonTestReport(TestReportBase):
             test_dir=test_suite.test_dir,
             status=test_suite.status.name,
             duration=test_suite.duration,
-            timestamp=datetime.datetime.fromtimestamp(test_suite.timestamp).strftime(
-                "%Y-%m-%dT%H:%M:%S"
-            )
-            if test_suite.timestamp
-            else None,
+            timestamp=(
+                datetime.datetime.fromtimestamp(test_suite.timestamp).strftime(
+                    "%Y-%m-%dT%H:%M:%S"
+                )
+                if test_suite.timestamp
+                else None
+            ),
             testcase_nums=len(test_suite.cases),
             error_nums=test_suite.get_status_nums(TestStatus.ERRORED),
             failure_nums=test_suite.get_status_nums(TestStatus.FAILED),

@@ -62,7 +62,9 @@ class DebugServerProcess(DebugBaseProcess):
 
         openocd_pipe_allowed = all(
             [
-                not self.debug_config.env_options.get("debug_port"),
+                not self.debug_config.env_options.get(
+                    "debug_port", self.debug_config.tool_settings.get("port")
+                ),
                 "gdb" in self.debug_config.client_executable_path,
                 "openocd" in server_executable,
             ]

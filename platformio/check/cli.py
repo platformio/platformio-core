@@ -108,7 +108,7 @@ def cli(
                 "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
             ]
 
-            src_filters = (
+            env_src_filters = (
                 src_filters
                 or pattern
                 or env_options.get(
@@ -120,11 +120,13 @@ def cli(
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                src_filters=src_filters,
+                src_filters=env_src_filters,
                 flags=flags or env_options.get("check_flags"),
-                severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
-                if silent
-                else severity or config.get("env:" + envname, "check_severity"),
+                severity=(
+                    [DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
+                    if silent
+                    else severity or config.get("env:" + envname, "check_severity")
+                ),
                 skip_packages=skip_packages or env_options.get("check_skip_packages"),
                 platform_packages=env_options.get("platform_packages"),
             )
@@ -142,9 +144,11 @@ def cli(
 
                 result = {"env": envname, "tool": tool, "duration": time()}
                 rc = ct.check(
-                    on_defect_callback=None
-                    if (json_output or verbose)
-                    else lambda defect: click.echo(repr(defect))
+                    on_defect_callback=(
+                        None
+                        if (json_output or verbose)
+                        else lambda defect: click.echo(repr(defect))
+                    )
                 )
 
                 result["defects"] = ct.get_defects()

@@ -294,9 +294,11 @@ class BaseManifestParser:
             if not matched_files:
                 continue
             result[root] = dict(
-                name="Examples"
-                if root == examples_dir
-                else os.path.relpath(root, examples_dir),
+                name=(
+                    "Examples"
+                    if root == examples_dir
+                    else os.path.relpath(root, examples_dir)
+                ),
                 base=os.path.relpath(root, package_dir),
                 files=matched_files,
             )
@@ -540,6 +542,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             "esp32": "espressif32",
             "arc32": "intel_arc32",
             "stm32": "ststm32",
+            "nrf52": "nordicnrf52",
+            "rp2040": "raspberrypi",
         }
         for arch in properties.get("architectures", "").split(","):
             if "particle-" in arch:

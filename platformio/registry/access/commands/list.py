@@ -41,9 +41,11 @@ def access_list_cmd(owner, urn_type, json_output):  # pylint: disable=unused-arg
         table_data.append(
             (
                 "Access:",
-                click.style("Private", fg="red")
-                if resource.get("private", False)
-                else "Public",
+                (
+                    click.style("Private", fg="red")
+                    if resource.get("private", False)
+                    else "Public"
+                ),
             )
         )
         table_data.append(

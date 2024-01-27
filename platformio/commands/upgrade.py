@@ -18,9 +18,10 @@ import subprocess
 
 import click
 
-from platformio import VERSION, __install_requires__, __version__, app, exception
+from platformio import VERSION, __version__, app, exception
 from platformio.http import fetch_http_content
 from platformio.package.manager.core import update_core_packages
+from platformio.pipdeps import get_pip_dependencies
 from platformio.proc import get_pythonexe_path
 
 PYPI_JSON_URL = "https://pypi.org/pypi/platformio/json"
@@ -37,7 +38,7 @@ DEVELOP_INIT_SCRIPT_URL = (
 @click.option("--verbose", "-v", is_flag=True)
 def cli(dev, only_dependencies, verbose):
     if only_dependencies:
-        return upgrade_pypi_dependencies(verbose)
+        return upgrade_pip_dependencies(verbose)
 
     update_core_packages()
 
@@ -102,7 +103,7 @@ def cli(dev, only_dependencies, verbose):
     return True
 
 
-def upgrade_pypi_dependencies(verbose):
+def upgrade_pip_dependencies(verbose):
     subprocess.run(
         [
             get_pythonexe_path(),
@@ -111,7 +112,7 @@ def upgrade_pypi_dependencies(verbose):
             "install",
             "--upgrade",
             "pip",
-            *__install_requires__,
+            *get_pip_dependencies(),
         ],
         check=True,
         stdout=subprocess.PIPE if not verbose else None,

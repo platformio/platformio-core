@@ -17,7 +17,38 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.11 (2023-??-??)
+6.1.14 (2024-??-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Broadened version support for the ``pyelftools`` dependency, enabling compatibility with lower versions and facilitating integration with a wider range of third-party tools (`issue #4834 <https://github.com/platformio/platformio-core/issues/4834>`_)
+* Resolved an issue related to the relative package path in the `pio pkg publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command
+
+6.1.13 (2024-01-12)
+~~~~~~~~~~~~~~~~~~~
+
+* Expanded support for SCons variables declared in the legacy format ``${SCONS_VARNAME}`` (`issue #4828 <https://github.com/platformio/platformio-core/issues/4828>`_)
+
+6.1.12 (2024-01-10)
+~~~~~~~~~~~~~~~~~~~
+
+* Added support for Python 3.12
+* Introduced the capability to launch the debug server in a separate process (`issue #4722 <https://github.com/platformio/platformio-core/issues/4722>`_)
+* Introduced a warning during the verification of MCU maximum RAM usage, signaling when the allocated RAM surpasses 100% (`issue #4791 <https://github.com/platformio/platformio-core/issues/4791>`_)
+* Drastically enhanced the speed of project building when operating in verbose mode (`issue #4783 <https://github.com/platformio/platformio-core/issues/4783>`_)
+* Upgraded the build engine to the latest version of SCons (4.6.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.6.0>`__)
+* Enhanced the handling of built-in variables in |PIOCONF| during |INTERPOLATION| (`issue #4695 <https://github.com/platformio/platformio-core/issues/4695>`_)
+* Enhanced PIP dependency declarations for improved reliability and extended support to include Python 3.6 (`issue #4819 <https://github.com/platformio/platformio-core/issues/4819>`_)
+* Implemented automatic installation of missing dependencies when utilizing a SOCKS proxy (`issue #4822 <https://github.com/platformio/platformio-core/issues/4822>`_)
+* Implemented a fail-safe mechanism to terminate a debugging session if an unknown CLI option is passed (`issue #4699 <https://github.com/platformio/platformio-core/issues/4699>`_)
+* Rectified an issue where ``${platformio.name}`` erroneously represented ``None`` as the default `project name <https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/generic/name.html>`__ (`issue #4717 <https://github.com/platformio/platformio-core/issues/4717>`_)
+* Resolved an issue where the ``COMPILATIONDB_INCLUDE_TOOLCHAIN`` setting was not correctly applying to private libraries (`issue #4762 <https://github.com/platformio/platformio-core/issues/4762>`_)
+* Resolved an issue where ``get_systype()`` inaccurately returned the architecture when executed within a Docker container on a 64-bit kernel with a 32-bit userspace (`issue #4777 <https://github.com/platformio/platformio-core/issues/4777>`_)
+* Resolved an issue with incorrect handling of the ``check_src_filters`` option when used in multiple environments (`issue #4788 <https://github.com/platformio/platformio-core/issues/4788>`_)
+* Resolved an issue where running `pio project metadata <https://docs.platformio.org/en/latest/core/userguide/project/cmd_metadata.html>`__ resulted in duplicated "include" entries (`issue #4723 <https://github.com/platformio/platformio-core/issues/4723>`_)
+* Resolved an issue where native debugging failed on the host machine (`issue #4745 <https://github.com/platformio/platformio-core/issues/4745>`_)
+* Resolved an issue where custom debug configurations were being inadvertently overwritten in VSCode's ``launch.json`` (`issue #4810 <https://github.com/platformio/platformio-core/issues/4810>`_)
+
+6.1.11 (2023-08-31)
 ~~~~~~~~~~~~~~~~~~~
 
 * Resolved a possible issue that may cause generated projects for `PlatformIO IDE for VSCode <https://docs.platformio.org/en/latest/integration/ide/vscode.html>`__ to fail to launch a debug session because of a missing "objdump" binary when GDB is not part of the toolchain package

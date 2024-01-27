@@ -16,6 +16,7 @@ from platformio.debug.config.base import DebugConfigBase
 
 
 class MspdebugDebugConfig(DebugConfigBase):
+    DEFAULT_PORT = ":2000"
     GDB_INIT_SCRIPT = """
 define pio_reset_halt_target
 end
@@ -29,8 +30,3 @@ $LOAD_CMDS
 pio_reset_halt_target
 $INIT_BREAK
 """
-
-    def __init__(self, *args, **kwargs):
-        if "port" not in kwargs:
-            kwargs["port"] = ":2000"
-        super().__init__(*args, **kwargs)

@@ -15,7 +15,6 @@
 import contextlib
 import itertools
 import json
-import os
 import socket
 import time
 
@@ -24,6 +23,7 @@ import httpx
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
 from platformio.exception import PlatformioException, UserSideException
+from platformio.pipdeps import is_proxy_set
 
 RETRIES_BACKOFF_FACTOR = 2  # 0s, 2s, 4s, 8s, etc.
 RETRIES_METHOD_WHITELIST = ["GET"]
@@ -245,9 +245,7 @@ def _internet_on():
     socket.setdefaulttimeout(timeout)
     for host in __check_internet_hosts__:
         try:
-            for var in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
-                if not os.getenv(var) and not os.getenv(var.lower()):
-                    continue
+            if is_proxy_set():
                 httpx.get("http://%s" % host, follow_redirects=False, timeout=timeout)
                 return True
             # try to resolve `host` for both AF_INET and AF_INET6, and then try to connect

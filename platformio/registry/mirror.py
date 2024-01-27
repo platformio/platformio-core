@@ -53,9 +53,11 @@ class RegistryFileMirrorIterator:
                 "head",
                 self._url_parts.path,
                 follow_redirects=False,
-                params=dict(bypass=",".join(self._visited_mirrors))
-                if self._visited_mirrors
-                else None,
+                params=(
+                    dict(bypass=",".join(self._visited_mirrors))
+                    if self._visited_mirrors
+                    else None
+                ),
                 x_with_authorization=registry.allowed_private_packages(),
             )
             stop_conditions = [
@@ -91,7 +93,7 @@ class RegistryFileMirrorIterator:
                 endpoint = f"https://dl.{host}"
                 if endpoint not in endpoints:
                     endpoints.append(endpoint)
-            RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[
-                self._mirror
-            ] = RegistryClient(endpoints)
+            RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror] = (
+                RegistryClient(endpoints)
+            )
         return RegistryFileMirrorIterator.HTTP_CLIENT_INSTANCES[self._mirror]

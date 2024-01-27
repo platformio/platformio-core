@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (6, 1, "11a2")
+VERSION = (6, 1, "14a1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -41,7 +41,7 @@ __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 __core_packages__ = {
     "contrib-piohome": "~3.4.2",
     "contrib-pioremote": "~1.0.0",
-    "tool-scons": "~4.40502.0",
+    "tool-scons": "~4.40600.0",
     "tool-cppcheck": "~1.21100.0",
     "tool-clangtidy": "~1.150005.0",
     "tool-pvs-studio": "~7.18.0",
@@ -52,22 +52,3 @@ __check_internet_hosts__ = [
     "88.198.170.159",  # platformio.org
     "github.com",
 ] + __registry_mirror_hosts__
-
-__install_requires__ = [
-    # Core requirements
-    "bottle == 0.12.*",
-    "click >=8.0.4, <=8.2",
-    "colorama",
-    "httpx >=0.22.0, <0.25",
-    "marshmallow == 3.*",
-    "pyelftools == 0.29",
-    "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
-    "semantic_version == 2.10.*",
-    "tabulate == 0.*",
-] + [
-    # PIO Home requirements
-    "ajsonrpc == 1.2.*",
-    "starlette >=0.19, <0.32",
-    "uvicorn >=0.16, <0.24",
-    "wsproto == 1.*",
-]

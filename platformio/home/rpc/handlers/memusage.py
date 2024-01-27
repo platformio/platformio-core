@@ -63,9 +63,9 @@ class MemUsageRPC(BaseRPCHandler):
             device=current_report["device"],
             trend=dict(
                 current=current_report["memory"]["total"],
-                previous=previous_report["memory"]["total"]
-                if previous_report
-                else None,
+                previous=(
+                    previous_report["memory"]["total"] if previous_report else None
+                ),
             ),
             top=dict(
                 files=self._calculate_top_files(current_report["memory"]["files"])[

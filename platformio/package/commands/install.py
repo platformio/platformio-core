@@ -20,6 +20,7 @@ import click
 
 from platformio import fs
 from platformio.package.exception import UnknownPackageError
+from platformio.package.manager.core import get_core_package_dir
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -120,7 +121,7 @@ def install_project_env_dependencies(project_env, options=None):
     # custom tools
     if options.get("tools"):
         installed_conds.append(_install_project_env_custom_tools(project_env, options))
-    # custom ibraries
+    # custom libraries
     if options.get("libraries"):
         installed_conds.append(
             _install_project_env_custom_libraries(project_env, options)
@@ -152,6 +153,8 @@ def _install_project_env_platform(project_env, options):
         skip_dependencies=options.get("skip_dependencies"),
         force=options.get("force"),
     )
+    # ensure SCons is installed
+    get_core_package_dir("tool-scons")
     return not already_up_to_date
 
 
@@ -219,9 +222,11 @@ def _install_project_env_libraries(project_env, options):
 
     env_lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "libdeps_dir"), project_env),
-        compatibility=PackageCompatibility(**compatibility_qualifiers)
-        if compatibility_qualifiers
-        else None,
+        compatibility=(
+            PackageCompatibility(**compatibility_qualifiers)
+            if compatibility_qualifiers
+            else None
+        ),
     )
     private_lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "lib_dir"))
