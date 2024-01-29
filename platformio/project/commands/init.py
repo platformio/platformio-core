@@ -223,7 +223,7 @@ def init_lib_readme(lib_dir):
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
 
-The source code of each library should be placed in a an own separate directory
+The source code of each library should be placed in an own separate directory
 ("lib/your_library_name/[here are source files]").
 
 For example, see a structure of the following two libraries `Foo` and `Bar`:
