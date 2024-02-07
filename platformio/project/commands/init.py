@@ -79,6 +79,7 @@ def project_init_cmd(
     env_prefix,
     silent,
 ):
+    project_dir = os.path.abspath(project_dir)
     is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
         if not silent:
