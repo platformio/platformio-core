@@ -23,10 +23,10 @@ from SCons.Subst import quote_spaces  # pylint: disable=import-error
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
 
 # There are the next limits depending on a platform:
-# - Windows = 8192
+# - Windows = 8191
 # - Unix    = 131072
 # We need ~512 characters for compiler and temporary file paths
-MAX_LINE_LENGTH = (8192 if IS_WINDOWS else 131072) - 512
+MAX_LINE_LENGTH = (8191 if IS_WINDOWS else 131072) - 512
 
 WINPATHSEP_RE = re.compile(r"\\([^\"'\\]|$)")
 
