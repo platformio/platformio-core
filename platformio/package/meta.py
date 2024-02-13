@@ -65,7 +65,14 @@ class PackageType:
 
 
 class PackageCompatibility:
-    KNOWN_QUALIFIERS = ("platforms", "frameworks", "authors")
+    KNOWN_QUALIFIERS = (
+        "owner",
+        "name",
+        "version",
+        "platforms",
+        "frameworks",
+        "authors",
+    )
 
     @classmethod
     def from_dependency(cls, dependency):
@@ -89,18 +96,44 @@ class PackageCompatibility:
     def __repr__(self):
         return "PackageCompatibility <%s>" % self.qualifiers
 
-    def to_search_qualifiers(self):
-        return self.qualifiers
+    def to_search_qualifiers(self, fields=None):
+        result = {}
+        for name, value in self.qualifiers.items():
+            if not fields or name in fields:
+                result[name] = value
+        return result
 
     def is_compatible(self, other):
         assert isinstance(other, PackageCompatibility)
-        for key, value in self.qualifiers.items():
+        for key, current_value in self.qualifiers.items():
             other_value = other.qualifiers.get(key)
-            if not value or not other_value:
+            if not current_value or not other_value:
                 continue
-            if not items_in_list(value, other_value):
+            if any(isinstance(v, list) for v in (current_value, other_value)):
+                if not items_in_list(current_value, other_value):
+                    return False
+                continue
+            if key == "version":
+                if not self._compare_versions(current_value, other_value):
+                    return False
+                continue
+            if current_value != other_value:
                 return False
         return True
+
+    def _compare_versions(self, current, other):
+        if current == other:
+            return True
+        try:
+            version = (
+                other
+                if isinstance(other, semantic_version.Version)
+                else cast_version_to_semver(other)
+            )
+            return version in semantic_version.SimpleSpec(current)
+        except ValueError:
+            pass
+        return False
 
 
 class PackageOutdatedResult:
