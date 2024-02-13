@@ -332,9 +332,9 @@ class LibBuilderBase:
             qualifiers = {"name": pkg.metadata.name, "version": pkg.metadata.version}
             if pkg.metadata.spec and pkg.metadata.spec.owner:
                 qualifiers["owner"] = pkg.metadata.spec.owner
-        return PackageCompatibility.from_dependency(dependency).is_compatible(
-            PackageCompatibility(**qualifiers)
-        )
+        return PackageCompatibility.from_dependency(
+            {k: v for k, v in dependency.items() if k in ("owner", "name", "version")}
+        ).is_compatible(PackageCompatibility(**qualifiers))
 
     def get_search_files(self):
         return [
