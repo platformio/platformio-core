@@ -58,7 +58,7 @@ from platformio.project.options import ProjectOptions
     "--encoding",
     help=(
         "Set the encoding for the serial port "
-        "(e.g. hexlify, Latin1, UTF-8) [default=%s]"
+        "(e.g. hexlify, Latin-1, UTF-8) [default=%s]"
         % ProjectOptions["env.monitor_encoding"].default
     ),
 )

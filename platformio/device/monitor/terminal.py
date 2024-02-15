@@ -110,6 +110,12 @@ def new_terminal(options):
     term.raw = options["raw"]
     term.set_rx_encoding(options["encoding"])
     term.set_tx_encoding(options["encoding"])
+    for ts in (term.tx_transformations, term.rx_transformations):
+        for t in ts:
+            try:
+                t.set_running_terminal(term)
+            except AttributeError:
+                pass
     return term
 
 
