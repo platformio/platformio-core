@@ -14,6 +14,7 @@
 
 import os
 import shutil
+import subprocess
 
 import click
 
@@ -79,6 +80,7 @@ from platformio.test.runners.factory import TestRunnerFactory
     help="A program argument (multiple are allowed)",
 )
 @click.option("--list-tests", is_flag=True)
+@click.option("--json-output", is_flag=True)
 @click.option("--json-output-path", type=click.Path())
 @click.option("--junit-output-path", type=click.Path())
 @click.option(
@@ -105,6 +107,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
     monitor_dtr,
     program_args,
     list_tests,
+    json_output,
     json_output_path,
     junit_output_path,
     verbose,
@@ -156,6 +159,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
     stdout_report.generate(verbose=verbose or list_tests)
 
     for output_format, output_path in [
+        ("json", subprocess.STDOUT if json_output else None),
         ("json", json_output_path),
         ("junit", junit_output_path),
     ]:
