@@ -31,7 +31,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         self.project_config = project_config
         self.env_name = env_name
         self.env_options = project_config.items(env=env_name, as_dict=True)
-        self.build_metadata = self._load_debug_build_metadata()
+        self.build_data = self._load_build_data()
 
         self.tool_name = None
         self.board_config = {}
@@ -64,11 +64,11 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def program_path(self):
-        return self.build_metadata["prog_path"]
+        return self.build_data["prog_path"]
 
     @property
     def client_executable_path(self):
-        return self.build_metadata["gdb_path"]
+        return self.build_data["gdb_path"]
 
     @property
     def load_cmds(self):
@@ -147,13 +147,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
             "debug_server_ready_pattern", (self.server or {}).get("ready_pattern")
         )
 
-    def _load_debug_build_metadata(self):
+    def _load_build_data(self):
         data = load_build_metadata(
-            None,
-            self.env_name,
-            cache=True,
-            debug=True,
-            test=self.env_options.get("debug_test", False),
+            os.getcwd(), self.env_name, cache=True, build_type="debug"
         )
         if not data:
             raise DebugInvalidOptionsError("Could not load a build configuration")

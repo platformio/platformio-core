@@ -20,8 +20,12 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.14 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Introduced the ``--json-output`` option to the `pio test <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html>`__ command, enabling users to generate test results in the JSON format
 * Broadened version support for the ``pyelftools`` dependency, enabling compatibility with lower versions and facilitating integration with a wider range of third-party tools (`issue #4834 <https://github.com/platformio/platformio-core/issues/4834>`_)
+* Addressed an issue where passing a relative path (``--project-dir``) to the `pio project init <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command resulted in an error (`issue #4847 <https://github.com/platformio/platformio-core/issues/4847>`_)
 * Resolved an issue related to the relative package path in the `pio pkg publish <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_publish.html>`__ command
+* Resolved an issue where the |LDF| selected an incorrect library version (`issue #4860 <https://github.com/platformio/platformio-core/issues/4860>`_)
+* Resolved an issue with the ``hexlify`` filter in the `device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ command, ensuring proper representation of characters with Unicode code points higher than 127 (`issue #4732 <https://github.com/platformio/platformio-core/issues/4732>`_)
 
 6.1.13 (2024-01-12)
 ~~~~~~~~~~~~~~~~~~~

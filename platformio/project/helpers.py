@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import hashlib
 import os
 import re
 import subprocess
@@ -27,12 +26,6 @@ from platformio.project.config import ProjectConfig
 
 def get_project_dir():
     return os.getcwd()
-
-
-def get_project_id(project_dir=None):
-    return hashlib.sha1(
-        hashlib_encode_data(project_dir or get_project_dir())
-    ).hexdigest()
 
 
 def is_platformio_project(project_dir=None):
@@ -138,36 +131,27 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def get_build_type(config, env, run_targets=None):
-    types = []
-    run_targets = run_targets or []
-    declared_build_type = config.get(f"env:{env}", "build_type")
-    if (
-        set(["__debug", "__memusage"]) & set(run_targets)
-        or declared_build_type == "debug"
-    ):
-        types.append("debug")
-    if "__test" in run_targets or declared_build_type == "test":
-        types.append("test")
-    return "+".join(types or ["release"])
-
-
-def load_build_metadata(project_dir, env_or_envs, cache=False, debug=False, test=False):
+def load_build_metadata(project_dir, env_or_envs, cache=False, build_type=None):
     assert env_or_envs
-    envs = env_or_envs
-    if not isinstance(envs, list):
-        envs = [envs]
-    run_targets = []
-    if debug:
-        run_targets.append("__debug")
-    if test:
-        run_targets.append("__test")
+    env_names = env_or_envs
+    if not isinstance(env_names, list):
+        env_names = [env_names]
 
-    with fs.cd(project_dir or os.getcwd()):
-        result = _get_cached_build_metadata(envs, run_targets) if cache else {}
-        missed_envs = set(envs) - set(result.keys())
-        if missed_envs:
-            result.update(_load_build_metadata(missed_envs, run_targets))
+    with fs.cd(project_dir):
+        result = _get_cached_build_metadata(env_names) if cache else {}
+        # incompatible build-type data
+        for env_name in list(result.keys()):
+            if build_type is None:
+                build_type = ProjectConfig.get_instance().get(
+                    f"env:{env_name}", "build_type"
+                )
+            if result[env_name].get("build_type", "") != build_type:
+                del result[env_name]
+        missed_env_names = set(env_names) - set(result.keys())
+        if missed_env_names:
+            result.update(
+                _load_build_metadata(project_dir, missed_env_names, build_type)
+            )
 
     if not isinstance(env_or_envs, list) and env_or_envs in result:
         return result[env_or_envs]
@@ -178,28 +162,18 @@ def load_build_metadata(project_dir, env_or_envs, cache=False, debug=False, test
 load_project_ide_data = load_build_metadata
 
 
-def _get_cached_build_metadata(envs, run_targets=None):
-    config = ProjectConfig.get_instance(os.path.join(os.getcwd(), "platformio.ini"))
-    build_dir = config.get("platformio", "build_dir")
-    result = {}
-    for env in envs:
-        build_type = get_build_type(config, env, run_targets)
-        json_path = os.path.join(build_dir, env, build_type, "metadata.json")
-        if os.path.isfile(json_path):
-            result[env] = fs.load_json(json_path)
-    return result
-
-
-def _load_build_metadata(envs, run_targets=None):
+def _load_build_metadata(project_dir, env_names, build_type=None):
     # pylint: disable=import-outside-toplevel
     from platformio import app
     from platformio.run.cli import cli as cmd_run
 
-    args = ["--target", "__metadata"]
-    for target in run_targets or []:
-        args.extend(["--target", target])
-    for env in envs:
-        args.extend(["-e", env])
+    args = ["--project-dir", project_dir, "--target", "__idedata"]
+    if build_type == "debug":
+        args.extend(["--target", "__debug"])
+    # if build_type == "test":
+    #     args.extend(["--target", "__test"])
+    for name in env_names:
+        args.extend(["-e", name])
     app.set_session_var("pause_telemetry", True)
     result = CliRunner().invoke(cmd_run, args)
     app.set_session_var("pause_telemetry", False)
@@ -207,6 +181,18 @@ def _load_build_metadata(envs, run_targets=None):
         result.exception, exception.ReturnErrorCode
     ):
         raise result.exception
-    if "Metadata has been saved to the following location" not in result.output:
+    if '"includes":' not in result.output:
         raise exception.UserSideException(result.output)
-    return _get_cached_build_metadata(envs, run_targets)
+    return _get_cached_build_metadata(env_names)
+
+
+def _get_cached_build_metadata(env_names):
+    build_dir = ProjectConfig.get_instance().get("platformio", "build_dir")
+    result = {}
+    for env_name in env_names:
+        if not os.path.isfile(os.path.join(build_dir, env_name, "idedata.json")):
+            continue
+        result[env_name] = fs.load_json(
+            os.path.join(build_dir, env_name, "idedata.json")
+        )
+    return result

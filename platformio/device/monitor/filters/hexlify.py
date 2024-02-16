@@ -24,12 +24,18 @@ class Hexlify(DeviceMonitorFilterBase):
         super().__init__(*args, **kwargs)
         self._counter = 0
 
+    def set_running_terminal(self, terminal):
+        # force to Latin-1, issue #4732
+        if terminal.input_encoding == "UTF-8":
+            terminal.set_rx_encoding("Latin-1")
+        super().set_running_terminal(terminal)
+
     def rx(self, text):
         result = ""
-        for b in serial.iterbytes(text):
+        for c in serial.iterbytes(text):
             if (self._counter % 16) == 0:
                 result += "\n{:04X} | ".format(self._counter)
-            asciicode = ord(b)
+            asciicode = ord(c)
             if asciicode <= 255:
                 result += "{:02X} ".format(asciicode)
             else:

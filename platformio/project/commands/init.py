@@ -79,6 +79,7 @@ def project_init_cmd(
     env_prefix,
     silent,
 ):
+    project_dir = os.path.abspath(project_dir)
     is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
         if not silent:
@@ -223,7 +224,7 @@ def init_lib_readme(lib_dir):
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
 
-The source code of each library should be placed in a an own separate directory
+The source code of each library should be placed in an own separate directory
 ("lib/your_library_name/[here are source files]").
 
 For example, see a structure of the following two libraries `Foo` and `Bar`:

@@ -15,6 +15,7 @@
 import datetime
 import json
 import os
+import subprocess
 
 import click
 
@@ -24,6 +25,9 @@ from platformio.test.result import TestStatus
 
 class JsonTestReport(TestReportBase):
     def generate(self, output_path, verbose=False):
+        if output_path == subprocess.STDOUT:
+            return click.echo("\n\n" + json.dumps(self.to_json()))
+
         if os.path.isdir(output_path):
             output_path = os.path.join(
                 output_path,
@@ -39,6 +43,8 @@ class JsonTestReport(TestReportBase):
 
         if verbose:
             click.secho(f"Saved JSON report to the {output_path}", fg="green")
+
+        return True
 
     def to_json(self):
         result = dict(

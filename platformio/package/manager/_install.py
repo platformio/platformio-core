@@ -99,7 +99,11 @@ class PackageManagerInstallMixin:
             pkg = self.install_from_registry(
                 spec,
                 search_qualifiers=(
-                    compatibility.to_search_qualifiers() if compatibility else None
+                    compatibility.to_search_qualifiers(
+                        ["platforms", "frameworks", "authors"]
+                    )
+                    if compatibility
+                    else None
                 ),
             )
 

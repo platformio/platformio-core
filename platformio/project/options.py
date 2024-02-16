@@ -560,7 +560,7 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="monitor",
                 name="monitor_encoding",
-                description="Custom encoding (e.g. hexlify, Latin1, UTF-8)",
+                description="Custom encoding (e.g. hexlify, Latin-1, UTF-8)",
                 default="UTF-8",
             ),
             # Library

@@ -309,10 +309,10 @@ class LibBuilderBase:
         if not self.dependencies or self._deps_are_processed:
             return
         self._deps_are_processed = True
-        for item in self.dependencies:
+        for dependency in self.dependencies:
             found = False
             for lb in self.env.GetLibBuilders():
-                if item["name"] != lb.name:
+                if not lb.is_dependency_compatible(dependency):
                     continue
                 found = True
                 if lb not in self.depbuilders:
@@ -322,8 +322,19 @@ class LibBuilderBase:
             if not found and self.verbose:
                 sys.stderr.write(
                     "Warning: Ignored `%s` dependency for `%s` "
-                    "library\n" % (item["name"], self.name)
+                    "library\n" % (dependency["name"], self.name)
                 )
+
+    def is_dependency_compatible(self, dependency):
+        pkg = PackageItem(self.path)
+        qualifiers = {"name": self.name, "version": self.version}
+        if pkg.metadata:
+            qualifiers = {"name": pkg.metadata.name, "version": pkg.metadata.version}
+            if pkg.metadata.spec and pkg.metadata.spec.owner:
+                qualifiers["owner"] = pkg.metadata.spec.owner
+        return PackageCompatibility.from_dependency(
+            {k: v for k, v in dependency.items() if k in ("owner", "name", "version")}
+        ).is_compatible(PackageCompatibility(**qualifiers))
 
     def get_search_files(self):
         return [
