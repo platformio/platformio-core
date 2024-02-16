@@ -27,7 +27,7 @@ from platformio.project.helpers import load_build_metadata
 class ProjectGenerator:
     def __init__(self, config, env_name, ide, boards=None):
         self.config = config
-        self.project_dir = os.getcwd()
+        self.project_dir = os.path.dirname(config.path)
         self.forced_env_name = env_name
         self.env_name = str(env_name or self.get_best_envname(boards))
         self.ide = str(ide)
@@ -103,18 +103,20 @@ class ProjectGenerator:
         # default env configuration
         tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
         # build data
-        tpl_vars.update(load_build_metadata(None, self.env_name) or {})
-        tpl_vars.update(
-            {
-                "src_files": self.get_src_files(),
-                "project_src_dir": self.config.get("platformio", "src_dir"),
-                "project_lib_dir": self.config.get("platformio", "lib_dir"),
-                "project_test_dir": self.config.get("platformio", "test_dir"),
-                "project_libdeps_dir": os.path.join(
-                    self.config.get("platformio", "libdeps_dir"), self.env_name
-                ),
-            }
-        )
+        tpl_vars.update(load_build_metadata(self.project_dir, self.env_name) or {})
+
+        with fs.cd(self.project_dir):
+            tpl_vars.update(
+                {
+                    "src_files": self.get_src_files(),
+                    "project_src_dir": self.config.get("platformio", "src_dir"),
+                    "project_lib_dir": self.config.get("platformio", "lib_dir"),
+                    "project_test_dir": self.config.get("platformio", "test_dir"),
+                    "project_libdeps_dir": os.path.join(
+                        self.config.get("platformio", "libdeps_dir"), self.env_name
+                    ),
+                }
+            )
 
         for key, value in tpl_vars.items():
             if key.endswith(("_path", "_dir")):
@@ -130,9 +132,12 @@ class ProjectGenerator:
 
     def get_src_files(self):
         result = []
-        for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
-            for f in files:
-                result.append(os.path.relpath(os.path.join(os.path.abspath(root), f)))
+        with fs.cd(self.project_dir):
+            for root, _, files in os.walk(self.config.get("platformio", "src_dir")):
+                for f in files:
+                    result.append(
+                        os.path.relpath(os.path.join(os.path.abspath(root), f))
+                    )
         return result
 
     def get_tpls(self):

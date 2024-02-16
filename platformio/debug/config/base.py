@@ -149,7 +149,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
 
     def _load_build_data(self):
         data = load_build_metadata(
-            os.getcwd(), self.env_name, cache=True, build_type="debug"
+            os.getcwd(), self.env_name, cache=True, force_targets=["__debug"]
         )
         if not data:
             raise DebugInvalidOptionsError("Could not load a build configuration")

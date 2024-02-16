@@ -42,7 +42,7 @@ def project_metadata_cmd(project_dir, environments, json_output, json_output_pat
         config = ProjectConfig.get_instance()
         config.validate(environments)
         environments = list(environments or config.envs())
-        build_metadata = load_build_metadata(None, environments)
+        build_metadata = load_build_metadata(project_dir, environments)
 
     if not json_output:
         install_project_dependencies(

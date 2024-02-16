@@ -83,11 +83,15 @@ class NativeTestOutputReader:
         # if user changed PROGNAME
         if not os.path.exists(cmd[0]):
             build_data = load_build_metadata(
-                None,
+                os.getcwd(),
                 self.test_runner.test_suite.env_name,
                 cache=True,
-                debug=not self.test_runner.options.without_debugging,
-                test=True,
+                force_targets=["__test"]
+                + (
+                    ["__debug"]
+                    if not self.test_runner.options.without_debugging
+                    else []
+                ),
             )
             if build_data:
                 cmd[0] = build_data["prog_path"]
