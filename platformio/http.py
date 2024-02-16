@@ -202,6 +202,14 @@ class HttpApiClient(contextlib.AbstractContextManager):
     def fetch_json_data(self, method, path, **kwargs):
         if method not in ("get", "head", "options"):
             cleanup_content_cache("http")
+        # remove empty params
+        if kwargs.get("params"):
+            kwargs["params"] = {
+                key: value
+                for key, value in kwargs.get("params").items()
+                if value is not None
+            }
+
         cache_valid = kwargs.pop("x_cache_valid") if "x_cache_valid" in kwargs else None
         if not cache_valid:
             return self._parse_json_response(self.send_request(method, path, **kwargs))
