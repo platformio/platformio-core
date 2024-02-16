@@ -54,7 +54,7 @@ def GetBuildType(env):
         modes.append("debug")
     if "__test" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "test":
         modes.append("test")
-    return "+".join(modes or ["release"])
+    return ", ".join(modes or ["release"])
 
 
 def BuildProgram(env):
