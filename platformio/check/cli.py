@@ -104,8 +104,8 @@ def cli(
                 )
 
             default_src_filters = [
-                "+<%s>" % os.path.basename(config.get("platformio", "src_dir")),
-                "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
+                "+<%s>" % os.path.relpath(config.get("platformio", "src_dir")),
+                "+<%s>" % os.path.relpath(config.get("platformio", "include_dir")),
             ]
 
             env_src_filters = (
