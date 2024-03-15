@@ -103,10 +103,21 @@ def cli(
                     "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v)
                 )
 
-            default_src_filters = [
-                "+<%s>" % os.path.relpath(config.get("platformio", "src_dir")),
-                "+<%s>" % os.path.relpath(config.get("platformio", "include_dir")),
-            ]
+            default_src_filters = []
+            for d in (
+                config.get("platformio", "src_dir"),
+                config.get("platformio", "include_dir"),
+            ):
+                try:
+                    default_src_filters.append("+<%s>" % os.path.relpath(d))
+                except ValueError as exc:
+                    # On Windows if sources are located on a different logical drive
+                    if not json_output and not silent:
+                        click.echo(
+                            "Error: Project cannot be analyzed! The project folder `%s`"
+                            " is located on a different logical drive\n" % d
+                        )
+                    raise exception.ReturnErrorCode(1) from exc
 
             env_src_filters = (
                 src_filters
