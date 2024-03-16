@@ -280,11 +280,15 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 
         # external "URL" mismatch
         if spec.external:
-            # local folder mismatch
-            if os.path.abspath(spec.uri) == os.path.abspath(pkg.path) or (
+            # local/symlinked folder mismatch
+            check_conds = [
+                os.path.abspath(spec.uri) == os.path.abspath(pkg.path),
                 spec.uri.startswith("file://")
-                and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[7:])
-            ):
+                and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[7:]),
+                spec.uri.startswith("symlink://")
+                and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[10:]),
+            ]
+            if any(check_conds):
                 return True
             if spec.uri != pkg.metadata.spec.uri:
                 return False
