@@ -61,7 +61,7 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_cor
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "ArduinoJson",
-        "fArduinoJson@{ARDUINO_JSON_VERSION}",
+        f"ArduinoJson@{ARDUINO_JSON_VERSION}",
         "NeoPixelBus",
         "AsyncMqttClient",
         "ESPAsyncTCP",
@@ -189,7 +189,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
         for n in (
             "__pkg_dir",
             '"__src_url": "git+https://github.com/gioblu/PJON.git#6.2"',
-            '"version": "5.10.1"',
+            f'"version": "{ARDUINO_JSON_VERSION}"',
         )
     )
     items1 = [i["name"] for i in json.loads(result.output)]
@@ -219,13 +219,13 @@ def test_global_lib_list(clirunner, validate_cliresult):
     ]
     versions2 = [
         "ArduinoJson@5.8.2",
-        "ArduinoJson@5.10.1",
+        f"ArduinoJson@{ARDUINO_JSON_VERSION}",
         "AsyncMqttClient@0.8.2",
         "NeoPixelBus@2.7.3",
         "PJON@6.2.0+sha.07fe9aa",
         "PJON@3.0.0+sha.1fb26fd",
         "PubSubClient@2.6.0+sha.bef5814",
-        "Adafruit PN532@1.2.0",
+        "Adafruit PN532@1.3.2",
     ]
     assert set(versions1) >= set(versions2)
 
