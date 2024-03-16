@@ -219,7 +219,7 @@ def test_install_from_registry(isolated_pio_core, tmpdir_factory):
     # test conflicted names
     lm = LibraryPackageManager(str(tmpdir_factory.mktemp("conflicted-storage")))
     lm.set_log_level(logging.ERROR)
-    lm.install("z3t0/IRremote@2.6.1")
+    lm.install("z3t0/IRremote")
     lm.install("mbed-yuhki50/IRremote")
     assert len(lm.get_installed()) == 2
 
@@ -554,14 +554,14 @@ def test_uninstall(isolated_pio_core, tmpdir_factory):
     assert not lm.get_installed()
 
     # test uninstall dependencies
-    assert lm.install("AsyncMqttClient-esphome @ 0.8.4")
+    assert lm.install("AsyncMqttClient-esphome")
     assert len(lm.get_installed()) == 3
     assert lm.uninstall("AsyncMqttClient-esphome", skip_dependencies=True)
     assert len(lm.get_installed()) == 2
 
     lm = LibraryPackageManager(str(storage_dir))
     lm.set_log_level(logging.ERROR)
-    assert lm.install("AsyncMqttClient-esphome @ 0.8.4")
+    assert lm.install("AsyncMqttClient-esphome")
     assert lm.uninstall("AsyncMqttClient-esphome")
     assert not lm.get_installed()
 
@@ -604,23 +604,23 @@ def test_update_with_metadata(isolated_pio_core, tmpdir_factory):
     assert str(outdated.current) == "1.8.7"
     assert outdated.latest > semantic_version.Version("1.10.0")
 
-    pkg = lm.install("ArduinoJson @ 5.10.1")
+    pkg = lm.install("ArduinoJson @ 6.19.4")
     # test latest
     outdated = lm.outdated(pkg)
-    assert str(outdated.current) == "5.10.1"
+    assert str(outdated.current) == "6.19.4"
     assert outdated.wanted is None
     assert outdated.latest > outdated.current
     assert outdated.latest > semantic_version.Version("5.99.99")
 
     # test wanted
-    outdated = lm.outdated(pkg, PackageSpec("ArduinoJson@~5"))
-    assert str(outdated.current) == "5.10.1"
-    assert str(outdated.wanted) == "5.13.4"
+    outdated = lm.outdated(pkg, PackageSpec("ArduinoJson@~6"))
+    assert str(outdated.current) == "6.19.4"
+    assert str(outdated.wanted) == "6.21.5"
     assert outdated.latest > semantic_version.Version("6.16.0")
 
-    # update to the wanted 5.x
-    new_pkg = lm.update("ArduinoJson@^5", PackageSpec("ArduinoJson@^5"))
-    assert str(new_pkg.metadata.version) == "5.13.4"
+    # update to the wanted 6.x
+    new_pkg = lm.update("ArduinoJson@^6", PackageSpec("ArduinoJson@^6"))
+    assert str(new_pkg.metadata.version) == "6.21.5"
     # check that old version is removed
     assert len(lm.get_installed()) == 2
 
