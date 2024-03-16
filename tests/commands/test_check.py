@@ -803,3 +803,49 @@ check_src_filters =
     assert errors + warnings + style == EXPECTED_DEFECTS
     assert "test.cpp" in result.output
     assert "main.cpp" not in result.output
+
+
+def test_check_sources_in_project_root(clirunner, validate_cliresult, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+
+    config = (
+        """
+[platformio]
+src_dir = ./
+    """
+        + DEFAULT_CONFIG
+    )
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.join("main.cpp").write(TEST_CODE)
+    tmpdir.mkdir("spi").join("uart.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    validate_cliresult(result)
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert result.exit_code == 0
+    assert errors + warnings + style == EXPECTED_DEFECTS * 2
+
+
+def test_check_sources_in_external_dir(clirunner, validate_cliresult, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    external_src_dir = tmpdir_factory.mktemp("external_src_dir")
+
+    config = (
+        f"""
+[platformio]
+src_dir = {external_src_dir}
+    """
+        + DEFAULT_CONFIG
+    )
+    tmpdir.join("platformio.ini").write(config)
+    external_src_dir.join("main.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    validate_cliresult(result)
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert result.exit_code == 0
+    assert errors + warnings + style == EXPECTED_DEFECTS
