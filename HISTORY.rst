@@ -22,6 +22,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 ~~~~~~~~~~~~~~~~~~~
 
 * Introduced the ``--json-output`` option to the `pio test <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html>`__ command, enabling users to generate test results in the JSON format
+* Upgraded the build engine to the latest version of SCons (4.7.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.7.0>`__)
 * Broadened version support for the ``pyelftools`` dependency, enabling compatibility with lower versions and facilitating integration with a wider range of third-party tools (`issue #4834 <https://github.com/platformio/platformio-core/issues/4834>`_)
 * Addressed an issue where passing a relative path (``--project-dir``) to the `pio project init <https://docs.platformio.org/en/latest/core/userguide/project/cmd_init.html>`__ command resulted in an error (`issue #4847 <https://github.com/platformio/platformio-core/issues/4847>`_)
 * Enhanced |STATICCODEANALYSIS| to accommodate scenarios where custom ``src_dir`` or ``include_dir`` are located outside the project folder (`pull #4874 <https://github.com/platformio/platformio-core/pull/4874>`_)
