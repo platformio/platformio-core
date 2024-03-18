@@ -19,9 +19,9 @@ import subprocess
 import click
 
 from platformio import VERSION, __version__, app, exception
+from platformio.dependencies import get_pip_dependencies
 from platformio.http import fetch_remote_content
 from platformio.package.manager.core import update_core_packages
-from platformio.pipdeps import get_pip_dependencies
 from platformio.proc import get_pythonexe_path
 
 PYPI_JSON_URL = "https://pypi.org/pypi/platformio/json"

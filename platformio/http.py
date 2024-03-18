@@ -21,8 +21,8 @@ from urllib3.util.retry import Retry
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
+from platformio.compat import is_proxy_set
 from platformio.exception import PlatformioException, UserSideException
-from platformio.pipdeps import is_proxy_set
 
 __default_requests_timeout__ = (10, None)  # (connect, read)
 

@@ -14,7 +14,8 @@
 
 import os
 
-from platformio import __core_packages__, exception
+from platformio import exception
+from platformio.dependencies import get_core_dependencies
 from platformio.package.exception import UnknownPackageError
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
@@ -23,7 +24,7 @@ from platformio.package.meta import PackageSpec
 def get_installed_core_packages():
     result = []
     pm = ToolPackageManager()
-    for name, requirements in __core_packages__.items():
+    for name, requirements in get_core_dependencies().items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
         pkg = pm.get_package(spec)
         if pkg:
@@ -32,11 +33,11 @@ def get_installed_core_packages():
 
 
 def get_core_package_dir(name, spec=None, auto_install=True):
-    if name not in __core_packages__:
+    if name not in get_core_dependencies():
         raise exception.PlatformioException("Please upgrade PlatformIO Core")
     pm = ToolPackageManager()
     spec = spec or PackageSpec(
-        owner="platformio", name=name, requirements=__core_packages__[name]
+        owner="platformio", name=name, requirements=get_core_dependencies()[name]
     )
     pkg = pm.get_package(spec)
     if pkg:
@@ -50,7 +51,7 @@ def get_core_package_dir(name, spec=None, auto_install=True):
 
 def update_core_packages():
     pm = ToolPackageManager()
-    for name, requirements in __core_packages__.items():
+    for name, requirements in get_core_dependencies().items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
         try:
             pm.update(spec, spec)
@@ -65,7 +66,7 @@ def remove_unnecessary_core_packages(dry_run=False):
     pm = ToolPackageManager()
     best_pkg_versions = {}
 
-    for name, requirements in __core_packages__.items():
+    for name, requirements in get_core_dependencies().items():
         spec = PackageSpec(owner="platformio", name=name, requirements=requirements)
         pkg = pm.get_package(spec)
         if not pkg:

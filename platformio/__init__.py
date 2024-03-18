@@ -38,15 +38,6 @@ __registry_mirror_hosts__ = [
 ]
 __pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"
 
-__core_packages__ = {
-    "contrib-piohome": "~3.4.2",
-    "contrib-pioremote": "~1.0.0",
-    "tool-scons": "~4.40600.0",
-    "tool-cppcheck": "~1.21100.0",
-    "tool-clangtidy": "~1.150005.0",
-    "tool-pvs-studio": "~7.18.0",
-}
-
 __check_internet_hosts__ = [
     "185.199.110.153",  # Github.com
     "88.198.170.159",  # platformio.org
