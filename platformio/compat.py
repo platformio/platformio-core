@@ -42,7 +42,10 @@ else:
 if sys.version_info >= (3, 9):
     from asyncio import to_thread as aio_to_thread
 else:
-    from starlette.concurrency import run_in_threadpool as aio_to_thread
+    try:
+        from starlette.concurrency import run_in_threadpool as aio_to_thread
+    except ImportError:
+        pass
 
 
 PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
