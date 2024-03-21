@@ -33,7 +33,7 @@ def get_pip_dependencies():
         "bottle == 0.12.*",
         "click >=8.0.4, <9",
         "colorama",
-        "httpx%s >=0.22.0, <0.27" % ("[socks]" if is_proxy_set(socks=True) else ""),
+        "httpx%s >=0.22.0, <0.28" % ("[socks]" if is_proxy_set(socks=True) else ""),
         "marshmallow == 3.*",
         "pyelftools >=0.27, <1",
         "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
