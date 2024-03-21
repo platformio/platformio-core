@@ -12,11 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import platform
-import sys
 
-PY36 = sys.version_info[0:2] == (3, 6)
+from platformio.compat import PY36, is_proxy_set
+
+
+def get_core_dependencies():
+    return {
+        "contrib-piohome": "~3.4.2",
+        "contrib-pioremote": "~1.0.0",
+        "tool-scons": "~4.40700.0",
+        "tool-cppcheck": "~1.21100.0",
+        "tool-clangtidy": "~1.150005.0",
+        "tool-pvs-studio": "~7.18.0",
+    }
 
 
 def get_pip_dependencies():
@@ -36,7 +45,7 @@ def get_pip_dependencies():
         # PIO Home requirements
         "ajsonrpc == 1.2.*",
         "starlette >=0.19, <0.38",
-        "uvicorn %s" % ("== 0.16.0" if PY36 else ">=0.16, <0.29"),
+        "uvicorn %s" % ("== 0.16.0" if PY36 else ">=0.16, <0.30"),
         "wsproto == 1.*",
     ]
 
@@ -60,12 +69,3 @@ def get_pip_dependencies():
         pass
 
     return core + home + extra
-
-
-def is_proxy_set(socks=False):
-    for var in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
-        value = os.getenv(var, os.getenv(var.lower()))
-        if not value or (socks and not value.startswith("socks5://")):
-            continue
-        return True
-    return False

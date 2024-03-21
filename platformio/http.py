@@ -22,8 +22,8 @@ import httpx
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
+from platformio.compat import is_proxy_set
 from platformio.exception import PlatformioException, UserSideException
-from platformio.pipdeps import is_proxy_set
 
 RETRIES_BACKOFF_FACTOR = 2  # 0s, 2s, 4s, 8s, etc.
 RETRIES_METHOD_WHITELIST = ["GET"]

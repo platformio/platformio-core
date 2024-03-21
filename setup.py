@@ -23,7 +23,7 @@ from platformio import (
     __url__,
     __version__,
 )
-from platformio.pipdeps import get_pip_dependencies
+from platformio.dependencies import get_pip_dependencies
 
 setup(
     name=__title__,
