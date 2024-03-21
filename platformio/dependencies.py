@@ -45,7 +45,7 @@ def get_pip_dependencies():
         # PIO Home requirements
         "ajsonrpc == 1.2.*",
         "starlette >=0.19, <0.38",
-        "uvicorn %s" % ("== 0.16.0" if PY36 else ">=0.16, <0.29"),
+        "uvicorn %s" % ("== 0.16.0" if PY36 else ">=0.16, <0.30"),
         "wsproto == 1.*",
     ]
 
