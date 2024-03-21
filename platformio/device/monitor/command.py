@@ -58,7 +58,7 @@ from platformio.project.options import ProjectOptions
     "--encoding",
     help=(
         "Set the encoding for the serial port "
-        "(e.g. hexlify, Latin1, UTF-8) [default=%s]"
+        "(e.g. hexlify, Latin-1, UTF-8) [default=%s]"
         % ProjectOptions["env.monitor_encoding"].default
     ),
 )
@@ -125,9 +125,11 @@ def device_monitor_cmd(**options):
         options = apply_project_monitor_options(options, project_options)
         register_filters(platform=platform, options=options)
         options["port"] = SerialPortFinder(
-            board_config=platform.board_config(project_options.get("board"))
-            if platform and project_options.get("board")
-            else None,
+            board_config=(
+                platform.board_config(project_options.get("board"))
+                if platform and project_options.get("board")
+                else None
+            ),
             upload_protocol=project_options.get("upload_protocol"),
             ensure_ready=True,
         ).find(initial_port=options["port"])

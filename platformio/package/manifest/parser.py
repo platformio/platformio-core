@@ -294,9 +294,11 @@ class BaseManifestParser:
             if not matched_files:
                 continue
             result[root] = dict(
-                name="Examples"
-                if root == examples_dir
-                else os.path.relpath(root, examples_dir),
+                name=(
+                    "Examples"
+                    if root == examples_dir
+                    else os.path.relpath(root, examples_dir)
+                ),
                 base=os.path.relpath(root, package_dir),
                 files=matched_files,
             )

@@ -222,9 +222,11 @@ def _install_project_env_libraries(project_env, options):
 
     env_lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "libdeps_dir"), project_env),
-        compatibility=PackageCompatibility(**compatibility_qualifiers)
-        if compatibility_qualifiers
-        else None,
+        compatibility=(
+            PackageCompatibility(**compatibility_qualifiers)
+            if compatibility_qualifiers
+            else None
+        ),
     )
     private_lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "lib_dir"))

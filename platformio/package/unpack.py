@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import sys
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
@@ -82,19 +83,23 @@ class TARArchiver(BaseArchiver):
         ).startswith(base)
 
     def extract_item(self, item, dest_dir):
+        if sys.version_info >= (3, 12):
+            self._afo.extract(item, dest_dir, filter="data")
+            return self.after_extract(item, dest_dir)
+
+        # apply custom security logic
         dest_dir = self.resolve_path(dest_dir)
         bad_conds = [
             self.is_bad_path(item.name, dest_dir),
             self.is_link(item) and self.is_bad_link(item, dest_dir),
         ]
-        if not any(bad_conds):
-            super().extract_item(item, dest_dir)
-        else:
-            click.secho(
+        if any(bad_conds):
+            return click.secho(
                 "Blocked insecure item `%s` from TAR archive" % item.name,
                 fg="red",
                 err=True,
             )
+        return super().extract_item(item, dest_dir)
 
 
 class ZIPArchiver(BaseArchiver):

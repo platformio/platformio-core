@@ -23,6 +23,7 @@ from platformio.package.exception import UnknownPackageError
 from platformio.util import strip_ansi_codes
 
 PlatformioCLI.leftover_args = ["--json-output"]  # hook for click
+ARDUINO_JSON_VERSION = "6.21.5"
 
 
 def test_search(clirunner, validate_cliresult):
@@ -44,10 +45,10 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_cor
             "-g",
             "install",
             "64",
-            "ArduinoJson@~5.10.0",
-            "547@2.2.4",
+            "ArduinoJson@~6",
+            "547@2.7.3",
             "AsyncMqttClient@<=0.8.2",
-            "Adafruit PN532@1.2.0",
+            "Adafruit PN532@1.3.2",
         ],
     )
     validate_cliresult(result)
@@ -60,7 +61,7 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_cor
     items1 = [d.basename for d in isolated_pio_core.join("lib").listdir()]
     items2 = [
         "ArduinoJson",
-        "ArduinoJson@5.10.1",
+        f"ArduinoJson@{ARDUINO_JSON_VERSION}",
         "NeoPixelBus",
         "AsyncMqttClient",
         "ESPAsyncTCP",
@@ -79,7 +80,7 @@ def test_global_install_archive(clirunner, validate_cliresult, isolated_pio_core
             "install",
             "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip",
             "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip@5.8.2",
-            "SomeLib=https://dl.registry.platformio.org/download/milesburton/library/DallasTemperature/3.8.1/DallasTemperature-3.8.1.tar.gz",
+            "SomeLib=https://dl.registry.platformio.org/download/milesburton/library/DallasTemperature/3.11.0/DallasTemperature-3.11.0.tar.gz",
             "https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
         ],
     )
@@ -142,7 +143,7 @@ def test_install_duplicates(  # pylint: disable=unused-argument
         [
             "-g",
             "install",
-            "https://dl.registry.platformio.org/download/milesburton/library/DallasTemperature/3.8.1/DallasTemperature-3.8.1.tar.gz",
+            "https://dl.registry.platformio.org/download/milesburton/library/DallasTemperature/3.11.0/DallasTemperature-3.11.0.tar.gz",
         ],
     )
     validate_cliresult(result)
@@ -176,11 +177,11 @@ def test_global_lib_list(clirunner, validate_cliresult):
         n in result.output
         for n in (
             "required: https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
-            "ArduinoJson @ 5.10.1",
+            f"ArduinoJson @ {ARDUINO_JSON_VERSION}",
             "required: git+https://github.com/gioblu/PJON.git#3.0",
             "PJON @ 3.0.0+sha.1fb26f",
         )
-    )
+    ), result.output
 
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     assert all(
@@ -188,7 +189,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
         for n in (
             "__pkg_dir",
             '"__src_url": "git+https://github.com/gioblu/PJON.git#6.2"',
-            '"version": "5.10.1"',
+            f'"version": "{ARDUINO_JSON_VERSION}"',
         )
     )
     items1 = [i["name"] for i in json.loads(result.output)]
@@ -218,13 +219,13 @@ def test_global_lib_list(clirunner, validate_cliresult):
     ]
     versions2 = [
         "ArduinoJson@5.8.2",
-        "ArduinoJson@5.10.1",
+        f"ArduinoJson@{ARDUINO_JSON_VERSION}",
         "AsyncMqttClient@0.8.2",
-        "NeoPixelBus@2.2.4",
+        "NeoPixelBus@2.7.3",
         "PJON@6.2.0+sha.07fe9aa",
         "PJON@3.0.0+sha.1fb26fd",
         "PubSubClient@2.6.0+sha.bef5814",
-        "Adafruit PN532@1.2.0",
+        "Adafruit PN532@1.3.2",
     ]
     assert set(versions1) >= set(versions2)
 
@@ -249,7 +250,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert "__pkg_dir" in oudated[0]
     result = clirunner.invoke(cmd_lib, ["-g", "update", oudated[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert "Removing NeoPixelBus @ 2.2.4" in strip_ansi_codes(result.output)
+    assert "Removing NeoPixelBus @ 2.7.3" in strip_ansi_codes(result.output)
 
     # update all libraries
     result = clirunner.invoke(

@@ -16,7 +16,8 @@
 
 import os
 
-from platformio import __core_packages__, fs
+from platformio import fs
+from platformio.dependencies import get_core_dependencies
 from platformio.package.commands.install import package_install_cmd
 from platformio.package.commands.update import package_update_cmd
 from platformio.package.exception import UnknownPackageError
@@ -26,12 +27,14 @@ from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
 
+DALLASTEMPERATURE_LATEST_VERSION = "3.11.0"
+
 PROJECT_OUTDATED_CONFIG_TPL = """
 [env:devkit]
 platform = platformio/atmelavr@^2
 framework = arduino
 board = attiny88
-lib_deps = milesburton/DallasTemperature@~3.8.0
+lib_deps = milesburton/DallasTemperature@^3.8.0
 """
 
 PROJECT_UPDATED_CONFIG_TPL = """
@@ -162,7 +165,7 @@ def test_project(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.8.1"),
+            PackageSpec(f"DallasTemperature@{DALLASTEMPERATURE_LATEST_VERSION}"),
             PackageSpec(
                 "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
             ),
@@ -172,11 +175,11 @@ def test_project(
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
-            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
+            PackageSpec("tool-scons@%s" % get_core_dependencies()["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@~3.8.0"
+            "milesburton/DallasTemperature@^3.8.0"
         ]
 
         # update packages
@@ -202,7 +205,7 @@ def test_project(
         ]
         assert pkgs_to_specs(ToolPackageManager().get_installed()) == [
             PackageSpec("framework-arduino-avr-attiny@1.3.2"),
-            PackageSpec("tool-scons@%s" % __core_packages__["tool-scons"][1:]),
+            PackageSpec("tool-scons@%s" % get_core_dependencies()["tool-scons"][1:]),
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]
@@ -227,7 +230,7 @@ def test_custom_project_libraries(
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_OUTDATED_CONFIG_TPL)
-    spec = "milesburton/DallasTemperature@~3.8.0"
+    spec = "milesburton/DallasTemperature@^3.8.0"
     result = clirunner.invoke(
         package_install_cmd,
         ["-d", str(project_dir), "-e", "devkit", "-l", spec],
@@ -240,7 +243,7 @@ def test_custom_project_libraries(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec("DallasTemperature@3.8.1"),
+            PackageSpec(f"DallasTemperature@{DALLASTEMPERATURE_LATEST_VERSION}"),
             PackageSpec(
                 "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
             ),

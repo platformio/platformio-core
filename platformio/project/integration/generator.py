@@ -91,9 +91,11 @@ class ProjectGenerator:
             "default_debug_env_name": get_default_debug_env(self.config),
             "env_name": self.env_name,
             "user_home_dir": os.path.abspath(fs.expanduser("~")),
-            "platformio_path": sys.argv[0]
-            if os.path.isfile(sys.argv[0])
-            else where_is_program("platformio"),
+            "platformio_path": (
+                sys.argv[0]
+                if os.path.isfile(sys.argv[0])
+                else where_is_program("platformio")
+            ),
             "env_path": os.getenv("PATH"),
             "env_pathsep": os.pathsep,
         }

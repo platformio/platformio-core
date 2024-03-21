@@ -25,11 +25,12 @@ from platformio.project.config import ProjectConfig
 class DeviceMonitorFilterBase(miniterm.Transform):
     def __init__(self, options=None):
         """Called by PlatformIO to pass context"""
-        miniterm.Transform.__init__(self)
+        super().__init__()
 
         self.options = options or {}
         self.project_dir = self.options.get("project_dir")
         self.environment = self.options.get("environment")
+        self._running_terminal = None
 
         self.config = ProjectConfig.get_instance()
         if not self.environment:
@@ -46,6 +47,12 @@ class DeviceMonitorFilterBase(miniterm.Transform):
     @property
     def NAME(self):
         raise NotImplementedError("Please declare NAME attribute for the filter class")
+
+    def set_running_terminal(self, terminal):
+        self._running_terminal = terminal
+
+    def get_running_terminal(self):
+        return self._running_terminal
 
 
 def register_filters(platform=None, options=None):

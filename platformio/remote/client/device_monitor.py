@@ -123,9 +123,11 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
                         index=i + 1,
                         host=device[0] + ":" if len(result) > 1 else "",
                         port=device[1]["port"],
-                        description=device[1]["description"]
-                        if device[1]["description"] != "n/a"
-                        else "",
+                        description=(
+                            device[1]["description"]
+                            if device[1]["description"] != "n/a"
+                            else ""
+                        ),
                     )
                 )
             device_index = click.prompt(

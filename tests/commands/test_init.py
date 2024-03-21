@@ -15,6 +15,7 @@
 import json
 import os
 
+from platformio import fs
 from platformio.commands.boards import cli as cmd_boards
 from platformio.project.commands.init import project_init_cmd
 from platformio.project.config import ProjectConfig
@@ -36,27 +37,28 @@ def test_init_default(clirunner, validate_cliresult):
         validate_pioproject(os.getcwd())
 
 
-def test_init_ext_folder(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
-        ext_folder_name = "ext_folder"
-        os.makedirs(ext_folder_name)
-        result = clirunner.invoke(project_init_cmd, ["-d", ext_folder_name])
-        validate_cliresult(result)
-        validate_pioproject(os.path.join(os.getcwd(), ext_folder_name))
-
-
 def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
-    with tmpdir.as_cwd():
-        for _ in range(2):
-            result = clirunner.invoke(
-                project_init_cmd,
-                ["-b", "uno", "-b", "uno", "--no-install-dependencies"],
-            )
-            validate_cliresult(result)
-            validate_pioproject(str(tmpdir))
-        config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
-        config.validate()
-        assert set(config.sections()) == set(["env:uno"])
+    project_dir = str(tmpdir.join("ext_folder"))
+    os.makedirs(project_dir)
+
+    with fs.cd(os.path.dirname(project_dir)):
+        result = clirunner.invoke(
+            project_init_cmd,
+            [
+                "-d",
+                os.path.basename(project_dir),
+                "-b",
+                "uno",
+                "-b",
+                "uno",
+                "--no-install-dependencies",
+            ],
+        )
+    validate_cliresult(result)
+    validate_pioproject(project_dir)
+    config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
+    config.validate()
+    assert set(config.sections()) == set(["env:uno"])
 
 
 def test_init_ide_without_board(clirunner, tmpdir):

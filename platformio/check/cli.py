@@ -103,10 +103,21 @@ def cli(
                     "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v)
                 )
 
-            default_src_filters = [
-                "+<%s>" % os.path.basename(config.get("platformio", "src_dir")),
-                "+<%s>" % os.path.basename(config.get("platformio", "include_dir")),
-            ]
+            default_src_filters = []
+            for d in (
+                config.get("platformio", "src_dir"),
+                config.get("platformio", "include_dir"),
+            ):
+                try:
+                    default_src_filters.append("+<%s>" % os.path.relpath(d))
+                except ValueError as exc:
+                    # On Windows if sources are located on a different logical drive
+                    if not json_output and not silent:
+                        click.echo(
+                            "Error: Project cannot be analyzed! The project folder `%s`"
+                            " is located on a different logical drive\n" % d
+                        )
+                    raise exception.ReturnErrorCode(1) from exc
 
             env_src_filters = (
                 src_filters
@@ -122,9 +133,11 @@ def cli(
                 silent=silent,
                 src_filters=env_src_filters,
                 flags=flags or env_options.get("check_flags"),
-                severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
-                if silent
-                else severity or config.get("env:" + envname, "check_severity"),
+                severity=(
+                    [DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
+                    if silent
+                    else severity or config.get("env:" + envname, "check_severity")
+                ),
                 skip_packages=skip_packages or env_options.get("check_skip_packages"),
                 platform_packages=env_options.get("platform_packages"),
             )
@@ -142,9 +155,11 @@ def cli(
 
                 result = {"env": envname, "tool": tool, "duration": time()}
                 rc = ct.check(
-                    on_defect_callback=None
-                    if (json_output or verbose)
-                    else lambda defect: click.echo(repr(defect))
+                    on_defect_callback=(
+                        None
+                        if (json_output or verbose)
+                        else lambda defect: click.echo(repr(defect))
+                    )
                 )
 
                 result["defects"] = ct.get_defects()

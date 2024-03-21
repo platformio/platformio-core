@@ -148,7 +148,9 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
         )
 
     def _load_build_data(self):
-        data = load_build_metadata(os.getcwd(), self.env_name, cache=True, debug=True)
+        data = load_build_metadata(
+            os.getcwd(), self.env_name, cache=True, build_type="debug"
+        )
         if not data:
             raise DebugInvalidOptionsError("Could not load a build configuration")
         return data
@@ -194,9 +196,11 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                     cwd=server_package_dir if server_package else None,
                     executable=result.get("executable"),
                     arguments=[
-                        a.replace("$PACKAGE_DIR", server_package_dir)
-                        if server_package_dir
-                        else a
+                        (
+                            a.replace("$PACKAGE_DIR", server_package_dir)
+                            if server_package_dir
+                            else a
+                        )
                         for a in result.get("arguments", [])
                     ],
                 )

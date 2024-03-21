@@ -82,9 +82,11 @@ def lint_configuration(json_output=False):
                     (
                         click.style(error["type"], fg="red"),
                         error["message"],
-                        error.get("source", "") + (f":{error.get('lineno')}")
-                        if "lineno" in error
-                        else "",
+                        (
+                            error.get("source", "") + (f":{error.get('lineno')}")
+                            if "lineno" in error
+                            else ""
+                        ),
                     )
                     for error in errors
                 ],

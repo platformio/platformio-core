@@ -184,10 +184,6 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         ),
     )
 
-    def __init__(self, *args, **kwargs):
-        """Delete when Unity > 2.5.2 is released"""
-        super().__init__(*args, **kwargs)
-
     def get_unity_framework_config(self):
         if not self.platform.is_embedded():
             return self.UNITY_FRAMEWORK_CONFIG["native"]

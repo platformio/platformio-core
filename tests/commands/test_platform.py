@@ -63,7 +63,7 @@ def test_install_unknown_from_registry(clirunner):
 def test_install_core_3_dev_platform(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
-        ["atmelavr@1.2.0", "--skip-default-package"],
+        ["atmelavr@2.2.0", "--skip-default-package"],
     )
     assert result.exit_code == 0
 
@@ -71,11 +71,11 @@ def test_install_core_3_dev_platform(clirunner, validate_cliresult, isolated_pio
 def test_install_known_version(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
         cli_platform.platform_install,
-        ["atmelavr@2.0.0", "--skip-default-package", "--with-package", "tool-avrdude"],
+        ["atmelavr@4.2.0", "--skip-default-package", "--with-package", "tool-avrdude"],
     )
     validate_cliresult(result)
     output = strip_ansi_codes(result.output)
-    assert "atmelavr @ 2.0.0" in output
+    assert "atmelavr@4.2.0" in output
     assert not os.path.isdir(str(isolated_pio_core.join("packages")))
 
 
@@ -128,14 +128,14 @@ def test_update_raw(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(cli_platform.platform_update, ["atmelavr"])
     validate_cliresult(result)
     output = strip_ansi_codes(result.output)
-    assert "Removing atmelavr @ 2.0.0" in output
+    assert "Removing atmelavr @ 4.2.0" in output
     assert "Platform Manager: Installing platformio/atmelavr @" in output
     assert len(isolated_pio_core.join("packages").listdir()) == 2
 
 
 def test_uninstall(clirunner, validate_cliresult, isolated_pio_core):
     result = clirunner.invoke(
-        cli_platform.platform_uninstall, ["atmelavr@1.2.0", "atmelavr", "espressif8266"]
+        cli_platform.platform_uninstall, ["atmelavr@2.2.0", "atmelavr", "espressif8266"]
     )
     validate_cliresult(result)
     assert not isolated_pio_core.join("platforms").listdir()

@@ -372,15 +372,19 @@ class ProjectRPC(BaseRPCHandler):
 
             return dict(
                 platform=dict(
-                    ownername=platform_pkg.metadata.spec.owner
-                    if platform_pkg.metadata.spec
-                    else None,
+                    ownername=(
+                        platform_pkg.metadata.spec.owner
+                        if platform_pkg.metadata.spec
+                        else None
+                    ),
                     name=platform.name,
                     title=platform.title,
                     version=str(platform_pkg.metadata.version),
                 ),
-                board=platform.board_config(board_id).get_brief_data()
-                if board_id
-                else None,
+                board=(
+                    platform.board_config(board_id).get_brief_data()
+                    if board_id
+                    else None
+                ),
                 frameworks=frameworks or None,
             )

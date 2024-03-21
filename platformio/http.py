@@ -21,8 +21,8 @@ from urllib3.util.retry import Retry
 
 from platformio import __check_internet_hosts__, app, util
 from platformio.cache import ContentCache, cleanup_content_cache
+from platformio.compat import is_proxy_set
 from platformio.exception import PlatformioException, UserSideException
-from platformio.pipdeps import is_proxy_set
 
 __default_requests_timeout__ = (10, None)  # (connect, read)
 
@@ -63,9 +63,11 @@ class HTTPSession(requests.Session):
             kwargs["timeout"] = __default_requests_timeout__
         return super().request(
             method,
-            url
-            if url.startswith("http") or not self._x_base_url
-            else urljoin(self._x_base_url, url),
+            (
+                url
+                if url.startswith("http") or not self._x_base_url
+                else urljoin(self._x_base_url, url)
+            ),
             *args,
             **kwargs
         )

@@ -75,9 +75,11 @@ def LoadPioPlatform(env):
             continue
         env.PrependENVPath(
             "PATH",
-            os.path.join(pkg.path, "bin")
-            if os.path.isdir(os.path.join(pkg.path, "bin"))
-            else pkg.path,
+            (
+                os.path.join(pkg.path, "bin")
+                if os.path.isdir(os.path.join(pkg.path, "bin"))
+                else pkg.path
+            ),
         )
         if (
             not IS_WINDOWS
