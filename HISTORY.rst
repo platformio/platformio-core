@@ -18,7 +18,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.14 (2024-??-??)
+6.1.14 (2024-03-21)
 ~~~~~~~~~~~~~~~~~~~
 
 * Introduced the ``--json-output`` option to the `pio test <https://docs.platformio.org/en/latest/core/userguide/cmd_test.html>`__ command, enabling users to generate test results in the JSON format
