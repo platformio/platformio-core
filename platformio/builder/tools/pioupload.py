@@ -219,17 +219,24 @@ def CheckUploadSize(_, target, source, env):
         print(output)
 
     memory_exceeded = False
+    ram_free = ARGUMENTS.get("RAMFREE", 0)
     if data_max_size and data_size > data_max_size:
         memory_exceeded = True
         sys.stderr.write(
             "Error: Pre-allocated RAM usage (%d bytes) is greater "
-            "than RAM available (%s bytes)\n" % (data_size, data_max_size)
+            "than RAM available (%d bytes)\n" % (data_size, data_max_size)
+        )
+    elif ramfree and data_max_size and data_size + ram_free > data_max_size:
+        memory_exceeded = True
+        sys.stderr.write(
+            "Error: Pre-allocated RAM usage (%d bytes of %d total bytes) results in "
+            "less RAM available than minimum required (%d bytes)\n" % (data_size, data_max_size, ram_free)
         )
     if program_size > program_max_size:
         memory_exceeded = True
         sys.stderr.write(
             "Error: Flash usage (%d bytes) is greater "
-            "than Flash available (%s bytes)\n" % (program_size, program_max_size)
+            "than Flash available (%d bytes)\n" % (program_size, program_max_size)
         )
     if memory_exceeded:
         env.Exit(1)
