@@ -230,7 +230,7 @@ def CheckUploadSize(_, target, source, env):
         memory_exceeded = True
         sys.stderr.write(
             "Error: Pre-allocated RAM usage (%d bytes of %d total bytes) results in "
-            "less RAM available than minimum required (%d bytes)\n" % (data_size, data_max_size, ram_free)
+            "less RAM remaining than minimum required (%d bytes)\n" % (data_size, data_max_size, ram_free)
         )
     if program_size > program_max_size:
         memory_exceeded = True
