@@ -80,6 +80,7 @@ class PlatformRunMixin:
             os.path.join(fs.get_source_dir(), "builder", "main.py"),
         ]
         args.append("PIOVERBOSE=%d" % int(self.verbose))
+        args.append("RAMFREE=%d" % int(self.ramfree))
         # pylint: disable=protected-access
         args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))
         # encode and append variables
