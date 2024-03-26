@@ -39,7 +39,7 @@ from platformio.package.manifest.parser import (
     ManifestParserError,
     ManifestParserFactory,
 )
-from platformio.package.meta import PackageCompatibility, PackageItem
+from platformio.package.meta import PackageCompatibility, PackageItem, PackageSpec
 from platformio.project.options import ProjectOptions
 
 
@@ -332,9 +332,17 @@ class LibBuilderBase:
             qualifiers = {"name": pkg.metadata.name, "version": pkg.metadata.version}
             if pkg.metadata.spec and pkg.metadata.spec.owner:
                 qualifiers["owner"] = pkg.metadata.spec.owner
-        return PackageCompatibility.from_dependency(
-            {k: v for k, v in dependency.items() if k in ("owner", "name", "version")}
-        ).is_compatible(PackageCompatibility(**qualifiers))
+        dep_qualifiers = {
+            k: v for k, v in dependency.items() if k in ("owner", "name", "version")
+        }
+        if (
+            "version" in dep_qualifiers
+            and not PackageSpec(dep_qualifiers["version"]).requirements
+        ):
+            del dep_qualifiers["version"]
+        return PackageCompatibility.from_dependency(dep_qualifiers).is_compatible(
+            PackageCompatibility(**qualifiers)
+        )
 
     def get_search_files(self):
         return [
