@@ -50,3 +50,18 @@ jobs:
           commit: true
           url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
           token: ${{ secrets.SLACK_GITHUB_TOKEN }}
+
+  # https://github.com/marketplace/actions/alls-green#why
+  check:  # This job does nothing and is only used for the branch protection
+    if: always()
+
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
