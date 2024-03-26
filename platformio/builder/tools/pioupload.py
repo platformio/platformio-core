@@ -222,14 +222,14 @@ def CheckUploadSize(_, target, source, env):
     if data_max_size and data_size > data_max_size:
         memory_exceeded = True
         sys.stderr.write(
-            "Warning! The data size (%d bytes) is greater "
-            "than maximum allowed (%s bytes)\n" % (data_size, data_max_size)
+            "Error: Pre-allocated RAM usage (%d bytes) is greater "
+            "than RAM available (%s bytes)\n" % (data_size, data_max_size)
         )
     if program_size > program_max_size:
         memory_exceeded = True
         sys.stderr.write(
-            "Error: The program size (%d bytes) is greater "
-            "than maximum allowed (%s bytes)\n" % (program_size, program_max_size)
+            "Error: Flash usage (%d bytes) is greater "
+            "than Flash available (%s bytes)\n" % (program_size, program_max_size)
         )
     if memory_exceeded:
         env.Exit(1)
