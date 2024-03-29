@@ -73,7 +73,7 @@ class CoreRPC(BaseRPCHandler):
     def version():
         return __version__
 
-    async def exec(self, args, options=None, raise_exception=False):
+    async def exec(self, args, options=None, raise_exception=True):
         options = options or {}
         loop = aio_get_running_loop()
         exit_future = loop.create_future()

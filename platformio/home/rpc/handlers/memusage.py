@@ -32,7 +32,6 @@ class MemUsageRPC(BaseRPCHandler):
         await self.factory.manager.dispatcher["core.exec"](
             ["run", "-d", project_dir, "-e", env, "-t", "__memusage"],
             options=options.get("exec"),
-            raise_exception=True,
         )
         return memusage.list_reports(report_dir)[-1]
 

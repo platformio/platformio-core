@@ -65,7 +65,7 @@ class ProjectRPC(BaseRPCHandler):
             args.extend(self._pre_init_empty(configuration))
 
         return await self.factory.manager.dispatcher["core.exec"](
-            args, options=exec_options
+            args, options=exec_options, raise_exception=False
         )
 
     @staticmethod
