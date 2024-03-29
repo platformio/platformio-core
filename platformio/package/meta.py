@@ -23,7 +23,7 @@ import semantic_version
 
 from platformio import fs
 from platformio.compat import get_object_members, hashlib_encode_data, string_types
-from platformio.package.manifest.parser import ManifestFileType
+from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.version import SemanticVersionError, cast_version_to_semver
 from platformio.util import items_in_list
 
@@ -561,3 +561,29 @@ class PackageItem:
                 break
         assert location
         return self.metadata.dump(os.path.join(location, self.METAFILE_NAME))
+
+    def as_dict(self):
+        return {"path": self.path, "metadata": self.metadata.as_dict()}
+
+
+class PackageInfo:
+
+    def __init__(self, spec: PackageSpec, item: PackageItem = None, dependencies=None):
+        assert isinstance(spec, PackageSpec)
+        self.spec = spec
+        self.item = item
+        self.dependencies = dependencies or []
+
+    def as_dict(self, with_manifest=False):
+        result = {
+            "spec": self.spec.as_dict(),
+            "item": self.item.as_dict() if self.item else None,
+            "dependencies": [d.as_dict() for d in self.dependencies],
+        }
+        if with_manifest:
+            result["manifest"] = (
+                ManifestParserFactory.new_from_dir(self.item.path).as_dict()
+                if self.item
+                else None
+            )
+        return result

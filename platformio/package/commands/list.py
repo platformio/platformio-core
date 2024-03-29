@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
-from typing import List
 
 import click
 
@@ -21,13 +21,13 @@ from platformio import fs
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageInfo, PackageItem, PackageSpec
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 
 
-@click.command("list", short_help="List installed packages")
+@click.command("list", short_help="List project packages")
 @click.option(
     "-d",
     "--project-dir",
@@ -48,79 +48,116 @@ from platformio.project.config import ProjectConfig
 @click.option("--only-platforms", is_flag=True, help="List only platform packages")
 @click.option("--only-tools", is_flag=True, help="List only tool packages")
 @click.option("--only-libraries", is_flag=True, help="List only library packages")
+@click.option("--json-output", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 def package_list_cmd(**options):
-    if options.get("global"):
+    data = (
         list_global_packages(options)
+        if options.get("global")
+        else list_project_packages(options)
+    )
+
+    if options.get("json_output"):
+        return click.echo(_dump_to_json(data, options))
+
+    def _print_items(typex, items):
+        click.secho(typex.capitalize(), bold=True)
+        print_dependency_tree(items, verbose=options.get("verbose"))
+        click.echo()
+
+    if options.get("global"):
+        for typex, items in data.items():
+            _print_items(typex, items)
     else:
-        list_project_packages(options)
+        for env, env_data in data.items():
+            click.echo("Resolving %s dependencies..." % click.style(env, fg="cyan"))
+            for typex, items in env_data.items():
+                _print_items(typex, items)
+
+    return None
 
 
-def humanize_package(pkg, spec=None, verbose=False):
-    if spec and not isinstance(spec, PackageSpec):
-        spec = PackageSpec(spec)
-    data = [
-        click.style(pkg.metadata.name, fg="cyan"),
-        click.style(f"@ {str(pkg.metadata.version)}", bold=True),
-    ]
-    extra_data = ["required: %s" % (spec.humanize() if spec else "Any")]
-    if verbose:
-        extra_data.append(pkg.path)
-    data.append("(%s)" % ", ".join(extra_data))
-    return " ".join(data)
+def _dump_to_json(data, options):
+    result = {}
+
+    if options.get("global"):
+        for typex, items in data.items():
+            result[typex] = [info.as_dict(with_manifest=True) for info in items]
+    else:
+        for env, env_data in data.items():
+            result[env] = {}
+            for typex, items in env_data.items():
+                result[env][typex] = [
+                    info.as_dict(with_manifest=True) for info in items
+                ]
+    return json.dumps(result)
 
 
-def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=False):
+def build_package_info(pm, specs=None, filter_specs=None, resolve_dependencies=True):
     filtered_pkgs = [
-        pm.get_package(spec) for spec in filter_specs or [] if pm.get_package(spec)
+        pm.get_package(spec) for spec in filter_specs if pm.get_package(spec)
     ]
-    candidates = {}
+    candidates = []
     if specs:
         for spec in specs:
-            pkg = pm.get_package(spec)
-            if not pkg:
-                continue
-            candidates[pkg.path] = (pkg, spec)
+            candidates.append(
+                PackageInfo(
+                    spec if isinstance(spec, PackageSpec) else PackageSpec(spec),
+                    pm.get_package(spec),
+                )
+            )
     else:
-        candidates = {pkg.path: (pkg, pkg.metadata.spec) for pkg in pm.get_installed()}
+        candidates = [PackageInfo(pkg.metadata.spec, pkg) for pkg in pm.get_installed()]
     if not candidates:
-        return
-    candidates = sorted(candidates.values(), key=lambda item: item[0].metadata.name)
+        return []
 
-    for index, (pkg, spec) in enumerate(candidates):
-        if filtered_pkgs and not _pkg_tree_contains(pm, pkg, filtered_pkgs):
-            continue
-        printed_pkgs = pm.memcache_get("__printed_pkgs", [])
-        if printed_pkgs and pkg.path in printed_pkgs:
-            continue
-        printed_pkgs.append(pkg.path)
-        pm.memcache_set("__printed_pkgs", printed_pkgs)
+    candidates = sorted(
+        candidates,
+        key=lambda info: info.item.metadata.name if info.item else info.spec.humanize(),
+    )
 
-        click.echo(
-            "%s%s %s"
-            % (
-                "│   " * level,
-                "├──" if index < len(candidates) - 1 else "└──",
-                humanize_package(
-                    pkg,
-                    spec=spec,
-                    verbose=verbose,
+    result = []
+    for info in candidates:
+        if filter_specs and (
+            not info.item or not _pkg_tree_contains(pm, info.item, filtered_pkgs)
+        ):
+            continue
+        if not info.item:
+            if not info.spec.external and not info.spec.owner:  # built-in library?
+                continue
+            result.append(info)
+            continue
+
+        visited_pkgs = pm.memcache_get("__visited_pkgs", [])
+        if visited_pkgs and info.item.path in visited_pkgs:
+            continue
+        visited_pkgs.append(info.item.path)
+        pm.memcache_set("__visited_pkgs", visited_pkgs)
+
+        result.append(
+            PackageInfo(
+                info.spec,
+                info.item,
+                (
+                    build_package_info(
+                        pm,
+                        specs=[
+                            pm.dependency_to_spec(item)
+                            for item in pm.get_pkg_dependencies(info.item)
+                        ],
+                        filter_specs=filter_specs,
+                        resolve_dependencies=True,
+                    )
+                    if resolve_dependencies and pm.get_pkg_dependencies(info.item)
+                    else []
                 ),
             )
         )
 
-        dependencies = pm.get_pkg_dependencies(pkg)
-        if dependencies:
-            print_dependency_tree(
-                pm,
-                specs=[pm.dependency_to_spec(item) for item in dependencies],
-                filter_specs=filter_specs,
-                level=level + 1,
-                verbose=verbose,
-            )
+    return result
 
 
-def _pkg_tree_contains(pm, root: PackageItem, children: List[PackageItem]):
+def _pkg_tree_contains(pm, root: PackageItem, children: list[PackageItem]):
     if root in children:
         return True
     for dependency in pm.get_pkg_dependencies(root) or []:
@@ -139,6 +176,7 @@ def list_global_packages(options):
     only_packages = any(
         options.get(typex) or options.get(f"only_{typex}") for (typex, _) in data
     )
+    result = {}
     for typex, pm in data:
         skip_conds = [
             only_packages
@@ -148,82 +186,115 @@ def list_global_packages(options):
         ]
         if any(skip_conds):
             continue
-        click.secho(typex.capitalize(), bold=True)
-        print_dependency_tree(
-            pm, filter_specs=options.get(typex), verbose=options.get("verbose")
-        )
-        click.echo()
+        result[typex] = build_package_info(pm, filter_specs=options.get(typex))
+
+    return result
 
 
 def list_project_packages(options):
     environments = options["environments"]
-    only_packages = any(
+    only_filtered_packages = any(
         options.get(typex) or options.get(f"only_{typex}")
         for typex in ("platforms", "tools", "libraries")
     )
-    only_platform_packages = any(
-        options.get(typex) or options.get(f"only_{typex}")
-        for typex in ("platforms", "tools")
-    )
+    only_platform_package = options.get("platforms") or options.get("only_platforms")
+    only_tool_packages = options.get("tools") or options.get("only_tools")
     only_library_packages = options.get("libraries") or options.get("only_libraries")
 
+    result = {}
     with fs.cd(options["project_dir"]):
         config = ProjectConfig.get_instance()
         config.validate(environments)
         for env in config.envs():
             if environments and env not in environments:
                 continue
-            click.echo("Resolving %s dependencies..." % click.style(env, fg="cyan"))
-            found = False
-            if not only_packages or only_platform_packages:
-                _found = print_project_env_platform_packages(env, options)
-                found = found or _found
-            if not only_packages or only_library_packages:
-                _found = print_project_env_library_packages(env, options)
-                found = found or _found
-            if not found:
-                click.echo("No packages")
-            if (not environments and len(config.envs()) > 1) or len(environments) > 1:
-                click.echo()
+            result[env] = {}
+            if not only_filtered_packages or only_platform_package:
+                result[env]["platforms"] = list_project_env_platform_package(
+                    env, options
+                )
+            if not only_filtered_packages or only_tool_packages:
+                result[env]["tools"] = list_project_env_tool_packages(env, options)
+            if not only_filtered_packages or only_library_packages:
+                result[env]["libraries"] = list_project_env_library_packages(
+                    env, options
+                )
+
+    return result
 
 
-def print_project_env_platform_packages(project_env, options):
-    try:
-        p = PlatformFactory.from_env(project_env)
-    except UnknownPlatform:
-        return None
-    click.echo(
-        "Platform %s"
-        % (
-            humanize_package(
-                PlatformPackageManager().get_package(p.get_dir()),
-                p.config.get(f"env:{project_env}", "platform"),
-                verbose=options.get("verbose"),
-            )
-        )
+def list_project_env_platform_package(project_env, options):
+    pm = PlatformPackageManager()
+    return build_package_info(
+        pm,
+        specs=[PackageSpec(pm.config.get(f"env:{project_env}", "platform"))],
+        filter_specs=options.get("platforms"),
+        resolve_dependencies=False,
     )
-    print_dependency_tree(
+
+
+def list_project_env_tool_packages(project_env, options):
+    try:
+        p = PlatformFactory.from_env(project_env, targets=["upload"])
+    except UnknownPlatform:
+        return []
+
+    return build_package_info(
         p.pm,
-        specs=[p.get_package_spec(name) for name in p.packages],
+        specs=[
+            p.get_package_spec(name)
+            for name, options in p.packages.items()
+            if not options.get("optional")
+        ],
         filter_specs=options.get("tools"),
     )
-    click.echo()
-    return True
 
 
-def print_project_env_library_packages(project_env, options):
+def list_project_env_library_packages(project_env, options):
     config = ProjectConfig.get_instance()
     lib_deps = config.get(f"env:{project_env}", "lib_deps")
     lm = LibraryPackageManager(
         os.path.join(config.get("platformio", "libdeps_dir"), project_env)
     )
-    if not lib_deps or not lm.get_installed():
-        return None
-    click.echo("Libraries")
-    print_dependency_tree(
+    return build_package_info(
         lm,
         lib_deps,
         filter_specs=options.get("libraries"),
-        verbose=options.get("verbose"),
     )
-    return True
+
+
+def humanize_package(info, verbose=False):
+    data = (
+        [
+            click.style(info.item.metadata.name, fg="cyan"),
+            click.style(f"@ {str(info.item.metadata.version)}", bold=True),
+        ]
+        if info.item
+        else ["Not installed"]
+    )
+    extra_data = ["required: %s" % (info.spec.humanize() if info.spec else "Any")]
+    if verbose and info.item:
+        extra_data.append(info.item.path)
+    data.append("(%s)" % ", ".join(extra_data))
+    return " ".join(data)
+
+
+def print_dependency_tree(items, verbose=False, level=0):
+    for index, info in enumerate(items):
+        click.echo(
+            "%s%s %s"
+            % (
+                "│   " * level,
+                "├──" if index < len(items) - 1 else "└──",
+                humanize_package(
+                    info,
+                    verbose=verbose,
+                ),
+            )
+        )
+        if info.dependencies:
+            print_dependency_tree(
+                info.dependencies,
+                verbose=verbose,
+                level=level + 1,
+            )
