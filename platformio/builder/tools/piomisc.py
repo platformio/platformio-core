@@ -23,6 +23,8 @@ from platformio.proc import exec_command
 def GetCompilerType(env):
     if env.subst("$CC").endswith("-gcc"):
         return "gcc"
+    if os.path.basename(env.subst("$CC")) == "clang":
+        return "clang"
     try:
         sysenv = os.environ.copy()
         sysenv["PATH"] = str(env["ENV"]["PATH"])
@@ -32,8 +34,6 @@ def GetCompilerType(env):
     if result["returncode"] != 0:
         return None
     output = "".join([result["out"], result["err"]]).lower()
-    if "clang" in output and "LLVM" in output:
-        return "clang"
     if "gcc" in output:
         return "gcc"
     return None
