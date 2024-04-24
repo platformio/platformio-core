@@ -20,19 +20,23 @@ from platformio.proc import exec_command
 
 
 @util.memoized()
-def GetCompilerType(env):
-    if env.subst("$CC").endswith("-gcc"):
+def GetCompilerType(env):  # pylint: disable=too-many-return-statements
+    CC = env.subst("$CC")
+    if CC.endswith("-gcc"):
         return "gcc"
+    if os.path.basename(CC) == "clang":
+        return "clang"
     try:
+
         sysenv = os.environ.copy()
         sysenv["PATH"] = str(env["ENV"]["PATH"])
-        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = exec_command([CC, "-v"], env=sysenv)
     except OSError:
         return None
     if result["returncode"] != 0:
         return None
     output = "".join([result["out"], result["err"]]).lower()
-    if "clang" in output and "LLVM" in output:
+    if "clang version" in output:
         return "clang"
     if "gcc" in output:
         return "gcc"
