@@ -18,6 +18,12 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
+6.1.15 (2024-04-25)
+~~~~~~~~~~~~~~~~~~~
+
+* Resolved an issue where the |LDF| couldn't locate a library dependency declared via version control system repository (`issue #4885 <https://github.com/platformio/platformio-core/issues/4885>`_)
+* Resolved an issue related to the inaccurate detection of the Clang compiler (`pull #4897 <https://github.com/platformio/platformio-core/pull/4897>`_)
+
 6.1.14 (2024-03-21)
 ~~~~~~~~~~~~~~~~~~~
 

@@ -357,6 +357,8 @@ Packages
       - Description"""
     )
     for name, options in dict(sorted(packages.items())).items():
+        if name == "toolchain-gccarmnoneeab":  # aceinna typo fix
+            name = name + "i"
         package = REGCLIENT.get_package(
             "tool", options.get("owner", "platformio"), name
         )
