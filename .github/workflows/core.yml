@@ -11,7 +11,9 @@ jobs:
         python-version: ["3.6", "3.7", "3.11", "3.12"]
         exclude:
           - os: macos-latest
-          - python-version: ["3.6", "3.7"]
+            python-version: "3.6"
+          - os: macos-latest
+            python-version: "3.7"
 
     runs-on: ${{ matrix.os }}
 
