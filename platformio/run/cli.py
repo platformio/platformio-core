@@ -75,6 +75,17 @@ except NotImplementedError:
 @click.option("--list-targets", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
+@click.option(
+    "-r",
+    "--ramfree",
+    type=int,
+    default=0,
+    help=(
+        "Specify the minimum number of bytes of RAM that must remain after pre-allocation. "
+        "Insufficient free ram can lead to crashes, reboots etc. when memory "
+        "becomes exhausted during dynamic allocation or stack usage."
+    ),
+)
 @click.pass_context
 def cli(
     ctx,
@@ -90,6 +101,7 @@ def cli(
     list_targets,
     silent,
     verbose,
+    ramfree,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -154,6 +166,7 @@ def cli(
                     is_test_running,
                     silent,
                     verbose,
+                    ramfree,
                 )
             )
         command_failed = any(r.get("succeeded") is False for r in results)
@@ -186,6 +199,7 @@ def process_env(
     is_test_running,
     silent,
     verbose,
+    ramfree,
 ):
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
@@ -205,6 +219,7 @@ def process_env(
             program_args,
             silent,
             verbose,
+            ramfree,
         ).process()
 
     if result["succeeded"] and "monitor" in targets and "nobuild" not in targets:
