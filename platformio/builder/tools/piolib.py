@@ -497,6 +497,7 @@ class LibBuilderBase:
 
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         self.env.ProcessCompileDbToolchainOption()
+        self.env.ProcessCompileDbIncludeToolchainOption()
 
         if self.lib_ldf_mode == "off":
             for lb in self.env.GetLibBuilders():
