@@ -23,7 +23,7 @@ from platformio.project.helpers import get_project_watch_lib_dirs, load_build_me
 from platformio.project.options import get_config_options_schema
 from platformio.test.result import TestCase, TestCaseSource, TestStatus
 from platformio.test.runners.base import TestRunnerBase
-from platformio.test.runners.doctest import DoctestTestCaseParser
+from platformio.test.runners.doctest import DoctestTestRunner
 from platformio.test.runners.googletest import GoogletestTestRunner
 from platformio.test.runners.unity import UnityTestRunner
 from platformio.util import get_systype

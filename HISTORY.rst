@@ -21,6 +21,8 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.16 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Corrected an issue where the incorrect public class was imported for the ``DoctestTestRunner`` (`issue #4949 <https://github.com/platformio/platformio-core/issues/4949>`_)
+
 6.1.15 (2024-04-25)
 ~~~~~~~~~~~~~~~~~~~
 
