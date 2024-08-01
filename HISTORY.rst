@@ -21,7 +21,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.16 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
-* Upgraded the `Unity <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/unity.html>`__ testing framework to version 2.6.0, incorporating the latest features and improvements for enhanced testing capabilities
+* Upgraded the `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework to version 2.4.11, the `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ to version 1.15.2, and the `Unity <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/unity.html>`__ to version 2.6.0, incorporating the latest features and improvements for enhanced testing capabilities
 * Corrected an issue where the incorrect public class was imported for the ``DoctestTestRunner`` (`issue #4949 <https://github.com/platformio/platformio-core/issues/4949>`_)
 
 6.1.15 (2024-04-25)
