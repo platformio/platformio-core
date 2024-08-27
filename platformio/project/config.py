@@ -41,7 +41,7 @@ CONFIG_HEADER = """
 
 
 class ProjectConfigBase:
-    ENVNAME_RE = re.compile(r"^[a-z\d\_\-]+$", flags=re.I)
+    ENVNAME_RE = re.compile(r"^[a-z\d\_\-]+(\+)?$", flags=re.I)
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{(?:([^\.\}\()]+)\.)?([^\}]+)\}")
 
