@@ -413,6 +413,7 @@ Packages
 
 
 def generate_platform(pkg, rst_dir):
+    owner = pkg.metadata.spec.owner
     name = pkg.metadata.name
     print("Processing platform: %s" % name)
 
@@ -428,9 +429,9 @@ def generate_platform(pkg, rst_dir):
     p = PlatformFactory.new(name)
     assert p.repository_url.endswith(".git")
     github_url = p.repository_url[:-4]
-    registry_url = reg_package_url("platform", pkg.metadata.spec.owner, name)
+    registry_url = reg_package_url("platform", owner, name)
 
-    lines.append(".. _platform_%s:" % p.name)
+    lines.append(".. _platform_%s:" % name)
     lines.append("")
 
     lines.append(p.title)
@@ -439,7 +440,7 @@ def generate_platform(pkg, rst_dir):
     lines.append(":Registry:")
     lines.append("  `%s <%s>`__" % (registry_url, registry_url))
     lines.append(":Configuration:")
-    lines.append("  :ref:`projectconf_env_platform` = ``%s``" % p.name)
+    lines.append("  :ref:`projectconf_env_platform` = ``%s/%s``" % (owner, name))
     lines.append("")
     lines.append(p.description)
     lines.append(
