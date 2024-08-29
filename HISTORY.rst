@@ -21,6 +21,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.16 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Introduced the `PLATFORMIO_SYSTEM_TYPE <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_SYSTEM_TYPE>`__ environment variable, enabling manual override of the detected system type for greater flexibility and control in custom build environments
 * Upgraded the `Doctest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ testing framework to version 2.4.11, the `GoogleTest <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/doctest.html>`__ to version 1.15.2, and the `Unity <https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/unity.html>`__ to version 2.6.0, incorporating the latest features and improvements for enhanced testing capabilities
 * Corrected an issue where the incorrect public class was imported for the ``DoctestTestRunner`` (`issue #4949 <https://github.com/platformio/platformio-core/issues/4949>`_)
 
