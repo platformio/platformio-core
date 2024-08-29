@@ -15,6 +15,7 @@
 import datetime
 import functools
 import math
+import os
 import platform
 import re
 import shutil
@@ -136,6 +137,11 @@ def singleton(cls):
 
 
 def get_systype():
+    # allow manual override, eg. for
+    # windows on arm64 systems with emulated x86
+    if "PLATFORMIO_SYSTEM_TYPE" in os.environ:
+        return os.environ.get("PLATFORMIO_SYSTEM_TYPE")
+
     system = platform.system().lower()
     arch = platform.machine().lower()
     if system == "windows":
