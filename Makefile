@@ -11,7 +11,7 @@ format:
 	black ./tests
 
 test:
-	py.test --verbose --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
+	pytest --verbose --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
 
 before-commit: isort format lint
 
