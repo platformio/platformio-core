@@ -30,7 +30,7 @@ def get_core_dependencies():
 
 def get_pip_dependencies():
     core = [
-        "bottle == 0.12.*",
+        "bottle == %s" % ("0.12.*" if PY36 else "0.13.*"),
         "click >=8.0.4, <9",
         "colorama",
         "marshmallow == 3.*",

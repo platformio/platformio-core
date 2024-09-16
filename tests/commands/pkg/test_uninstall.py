@@ -117,7 +117,7 @@ def test_global_packages(
         "ArduinoJson",
         "AsyncMqttClient",
         "Bounce2",
-        "ESPAsyncTCP"
+        "ESPAsyncTCP",
     ]
 
     # custom storage
