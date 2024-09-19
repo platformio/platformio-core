@@ -23,7 +23,7 @@ def get_core_dependencies():
         "contrib-pioremote": "~1.0.0",
         "tool-scons": "~4.40801.0",
         "tool-cppcheck": "~1.21100.0",
-        "tool-clangtidy": "~1.150005.0",
+        "tool-clangtidy": "~1.190100.0",
         "tool-pvs-studio": "~7.18.0",
     }
 
