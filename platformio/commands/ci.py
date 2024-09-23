@@ -63,7 +63,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 @click.option("-e", "--environment", "environments", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
-def cli(  # pylint: disable=too-many-arguments, too-many-branches
+def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments, too-many-branches
     ctx,
     src,
     lib,

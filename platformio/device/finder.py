@@ -89,7 +89,7 @@ def is_serial_port_ready(port, timeout=1):
 
 
 class SerialPortFinder:
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         board_config=None,
         upload_protocol=None,

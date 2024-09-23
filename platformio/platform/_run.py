@@ -44,7 +44,7 @@ class PlatformRunMixin:
             value = json.loads(value)
         return value
 
-    def run(  # pylint: disable=too-many-arguments
+    def run(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self, variables, targets, silent, verbose, jobs
     ):
         assert isinstance(variables, dict)

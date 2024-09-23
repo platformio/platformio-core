@@ -239,7 +239,7 @@ class RunOrTestClient(AsyncClientBase):
         except (AttributeError, pb.DeadReferenceError):
             self.disconnect(exit_code=1)
 
-    def cb_psync_upload_chunk_result(  # pylint: disable=too-many-arguments
+    def cb_psync_upload_chunk_result(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self, result, agent_id, ac_id, dbindex, fileobj
     ):
         result = PROJECT_SYNC_STAGE.lookupByValue(result)

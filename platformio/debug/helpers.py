@@ -76,7 +76,7 @@ def get_default_debug_env(config):
 
 def predebug_project(
     ctx, project_dir, project_config, env_name, preload, verbose
-):  # pylint: disable=too-many-arguments
+):  # pylint: disable=too-many-arguments,too-many-positional-arguments
     debug_testname = project_config.get("env:" + env_name, "debug_test")
     if debug_testname:
         test_names = list_test_names(project_config)

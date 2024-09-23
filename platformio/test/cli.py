@@ -90,7 +90,7 @@ from platformio.test.runners.factory import TestRunnerFactory
     help="Increase verbosity level, maximum is 3 levels (-vvv), see docs for details",
 )
 @click.pass_context
-def cli(  # pylint: disable=too-many-arguments,too-many-locals,redefined-builtin
+def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals,redefined-builtin
     ctx,
     environment,
     ignore,

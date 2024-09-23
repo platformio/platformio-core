@@ -26,7 +26,7 @@ CTX_META_TEST_RUNNING_NAME = __name__ + ".test_running_name"
 
 
 class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         verbose=0,
         without_building=False,

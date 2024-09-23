@@ -42,7 +42,7 @@ class RegistryClient(HTTPClient):
             pass
         return False
 
-    def publish_package(  # pylint: disable=redefined-builtin
+    def publish_package(  # pylint: disable=redefined-builtin, too-many-positional-arguments
         self, owner, type, archive_path, released_at=None, private=False, notify=True
     ):
         with open(archive_path, "rb") as fp:
@@ -64,7 +64,7 @@ class RegistryClient(HTTPClient):
                 x_with_authorization=True,
             )
 
-    def unpublish_package(  # pylint: disable=redefined-builtin
+    def unpublish_package(  # pylint: disable=redefined-builtin, too-many-positional-arguments
         self, owner, type, name, version=None, undo=False
     ):
         path = "/v3/packages/%s/%s/%s" % (owner, type, name)
@@ -142,7 +142,9 @@ class RegistryClient(HTTPClient):
             x_with_authorization=self.allowed_private_packages(),
         )
 
-    def get_package(self, typex, owner, name, version=None, extra_path=None):
+    def get_package(
+        self, typex, owner, name, version=None, extra_path=None
+    ):  # pylint: disable=too-many-positional-arguments
         try:
             return self.fetch_json_data(
                 "get",

@@ -23,7 +23,7 @@ from platformio import fs
 from platformio.compat import IS_WINDOWS
 
 
-class ConfigOption:  # pylint: disable=too-many-instance-attributes
+class ConfigOption:  # pylint: disable=too-many-instance-attributes,too-many-positional-arguments
     def __init__(
         self,
         scope,

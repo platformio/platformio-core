@@ -68,7 +68,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=unused-argument
 @click.option("--no-install-dependencies", is_flag=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
-def project_init_cmd(
+def project_init_cmd(  # pylint: disable=too-many-positional-arguments
     project_dir,
     boards,
     ide,

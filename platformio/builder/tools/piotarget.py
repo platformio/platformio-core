@@ -61,7 +61,7 @@ def CleanProject(env, fullclean=False):
     print("Done cleaning")
 
 
-def AddTarget(  # pylint: disable=too-many-arguments
+def AddTarget(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     env,
     name,
     dependencies,
