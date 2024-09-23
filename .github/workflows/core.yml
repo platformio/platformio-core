@@ -7,8 +7,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
-        python-version: ["3.6", "3.7", "3.11", "3.12"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.6", "3.7", "3.11", "3.12", "3.13.0-rc.2"]
         exclude:
           - os: macos-latest
             python-version: "3.6"
@@ -23,7 +23,7 @@ jobs:
           submodules: "recursive"
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -37,7 +37,7 @@ jobs:
           tox -e py
 
       - name: Python Lint
-        if: ${{ matrix.python-version != '3.6' }}
+        if: ${{ matrix.python-version != '3.6' && matrix.python-version != '3.7' }}
         run: |
           tox -e lint
 

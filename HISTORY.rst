@@ -21,6 +21,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.16 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Python 3.13
 * Introduced the `PLATFORMIO_SYSTEM_TYPE <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_SYSTEM_TYPE>`__ environment variable, enabling manual override of the detected system type for greater flexibility and control in custom build environments
 * Enhanced internet connection checks by falling back to HTTPS protocol when HTTP (port 80) fails (`issue #4980 <https://github.com/platformio/platformio-core/issues/4980>`_)
 * Upgraded the build engine to the latest version of SCons (4.8.1) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.8.1>`__)
