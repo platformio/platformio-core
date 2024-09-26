@@ -76,7 +76,7 @@ except NotImplementedError:
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
-def cli(
+def cli(  # pylint: disable=too-many-positional-arguments
     ctx,
     environment,
     target,
@@ -174,7 +174,7 @@ def cli(
     return True
 
 
-def process_env(
+def process_env(  # pylint: disable=too-many-positional-arguments
     ctx,
     name,
     config,

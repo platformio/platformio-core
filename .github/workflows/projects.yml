@@ -13,11 +13,6 @@ jobs:
             folder: "Marlin"
             config_dir: "Marlin"
             env_name: "mega2560"
-          - esphome:
-            repository: "esphome/esphome"
-            folder: "esphome"
-            config_dir: "esphome"
-            env_name: "esp32-arduino"
           - smartknob:
             repository: "scottbez1/smartknob"
             folder: "smartknob"
@@ -34,9 +29,6 @@ jobs:
             config_dir: "OpenMQTTGateway"
             env_name: "esp32-m5atom-lite"
         os: [ubuntu-latest, windows-latest, macos-latest]
-        exclude:
-        - os: windows-latest
-          project: {"esphome": "", "repository": "esphome/esphome", "folder": "esphome", "config_dir": "esphome", "env_name": "esp32-arduino"}
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -58,11 +50,6 @@ jobs:
           submodules: "recursive"
           repository: ${{ matrix.project.repository }}
           path: ${{ matrix.project.folder }}
-
-      - name: Install ESPHome dependencies
-        # Requires esptool package as it's used in a custom prescript
-        if: ${{ contains(matrix.project.repository, 'esphome') }}
-        run: pip install esptool==3.*
 
       - name: Compile ${{ matrix.project.repository }}
         run: pio run -d ${{ matrix.project.config_dir }} -e ${{ matrix.project.env_name }}

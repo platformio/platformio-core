@@ -57,7 +57,7 @@ from platformio.project.options import ProjectOptions
 @click.option("--interface", type=click.Choice(["gdb"]))
 @click.argument("client_extra_args", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def cli(
+def cli(  # pylint: disable=too-many-positional-arguments
     ctx,
     project_dir,
     project_conf,
@@ -111,7 +111,9 @@ def cli(
     return None
 
 
-def _configure(ctx, project_config, env_name, load_mode, verbose, client_extra_args):
+def _configure(
+    ctx, project_config, env_name, load_mode, verbose, client_extra_args
+):  # pylint: disable=too-many-positional-arguments
     platform = PlatformFactory.from_env(env_name, autoinstall=True)
     debug_config = DebugConfigFactory.new(
         platform,

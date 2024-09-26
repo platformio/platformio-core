@@ -26,7 +26,7 @@ from platformio.util import strip_ansi_codes
 
 
 class UnityTestRunner(TestRunnerBase):
-    EXTRA_LIB_DEPS = ["throwtheswitch/Unity@^2.5.2"]
+    EXTRA_LIB_DEPS = ["throwtheswitch/Unity@^2.6.0"]
 
     # Examples:
     # test/test_foo.cpp:44:test_function_foo:FAIL: Expected 32 Was 33

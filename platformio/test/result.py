@@ -55,7 +55,7 @@ class TestCaseSource:
 
 
 class TestCase:
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         name,
         status,

@@ -152,7 +152,7 @@ def cli(ctx, **options):
     "-f", "--force", is_flag=True, help="Reinstall/redownload library if exists"
 )
 @click.pass_context
-def lib_install(  # pylint: disable=too-many-arguments,unused-argument
+def lib_install(  # pylint: disable=too-many-arguments,too-many-positional-arguments,unused-argument
     ctx, libraries, save, silent, interactive, force
 ):
     click.secho(
@@ -210,7 +210,7 @@ def lib_uninstall(ctx, libraries, save, silent):
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option("--json-output", is_flag=True)
 @click.pass_context
-def lib_update(  # pylint: disable=too-many-arguments
+def lib_update(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     ctx, libraries, only_check, dry_run, silent, json_output
 ):
     only_check = dry_run or only_check

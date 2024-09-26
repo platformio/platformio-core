@@ -60,7 +60,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
     type=click.Choice(DefectItem.SEVERITY_LABELS.values()),
 )
 @click.option("--skip-packages", is_flag=True)
-def cli(
+def cli(  # pylint: disable=too-many-positional-arguments
     environment,
     project_dir,
     project_conf,

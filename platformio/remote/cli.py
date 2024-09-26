@@ -110,7 +110,7 @@ def remote_update(agents, only_check, dry_run):
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_obj
 @click.pass_context
-def remote_run(
+def remote_run(  # pylint: disable=too-many-positional-arguments
     ctx,
     agents,
     environment,
@@ -198,7 +198,7 @@ def remote_run(
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_obj
 @click.pass_context
-def remote_test(  # pylint: disable=redefined-builtin
+def remote_test(  # pylint: disable=redefined-builtin,too-many-positional-arguments
     ctx,
     agents,
     environment,

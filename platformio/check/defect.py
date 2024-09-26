@@ -29,7 +29,7 @@ class DefectItem:
     SEVERITY_LOW = 4
     SEVERITY_LABELS = {4: "low", 2: "medium", 1: "high"}
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-positional-arguments
         self,
         severity,
         category,

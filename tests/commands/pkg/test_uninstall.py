@@ -63,6 +63,7 @@ def test_global_packages(
         "Bounce2",
         "ESP Async WebServer",
         "ESPAsyncTCP",
+        "ESPAsyncTCP",
         "Homie",
     ]
     # uninstall all deps
@@ -100,6 +101,7 @@ def test_global_packages(
         "Bounce2",
         "ESP Async WebServer",
         "ESPAsyncTCP",
+        "ESPAsyncTCP",
     ]
     # remove specific dependency
     result = clirunner.invoke(
@@ -115,6 +117,7 @@ def test_global_packages(
         "ArduinoJson",
         "AsyncMqttClient",
         "Bounce2",
+        "ESPAsyncTCP",
     ]
 
     # custom storage

@@ -30,7 +30,7 @@ class SSLContextFactory(ssl.ClientContextFactory):
         ctx.load_verify_locations(certifi.where())
         return ctx
 
-    def verifyHostname(  # pylint: disable=unused-argument,too-many-arguments
+    def verifyHostname(  # pylint: disable=unused-argument,too-many-arguments,too-many-positional-arguments
         self, connection, x509, errno, depth, status
     ):
         cn = x509.get_subject().commonName

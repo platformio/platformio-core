@@ -38,7 +38,7 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
     def manifest_names(self):
         return PackageType.get_manifest_map()[PackageType.PLATFORM]
 
-    def install(  # pylint: disable=arguments-differ,too-many-arguments
+    def install(  # pylint: disable=arguments-differ,too-many-arguments,too-many-positional-arguments
         self,
         spec,
         skip_dependencies=False,

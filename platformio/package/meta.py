@@ -196,7 +196,7 @@ class PackageOutdatedResult:
 
 
 class PackageSpec:  # pylint: disable=too-many-instance-attributes
-    def __init__(  # pylint: disable=redefined-builtin,too-many-arguments
+    def __init__(  # pylint: disable=redefined-builtin,too-many-arguments,too-many-positional-arguments
         self, raw=None, owner=None, id=None, name=None, requirements=None, uri=None
     ):
         self._requirements = None

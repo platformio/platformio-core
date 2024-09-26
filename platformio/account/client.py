@@ -144,7 +144,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
 
     def registration(
         self, username, email, password, firstname, lastname
-    ):  # pylint:disable=too-many-arguments
+    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         try:
             self.fetch_authentication_token()
         except:  # pylint:disable=bare-except

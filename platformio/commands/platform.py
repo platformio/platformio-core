@@ -159,7 +159,7 @@ def platform_show(ctx, platform, json_output):  # pylint: disable=too-many-branc
     help="Reinstall/redownload dev/platform and its packages if exist",
 )
 @click.pass_context
-def platform_install(  # pylint: disable=too-many-arguments
+def platform_install(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     ctx,
     platforms,
     with_package,
@@ -224,7 +224,7 @@ def platform_uninstall(ctx, platforms):
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option("--json-output", is_flag=True)
 @click.pass_context
-def platform_update(  # pylint: disable=too-many-locals, too-many-arguments
+def platform_update(  # pylint: disable=too-many-locals,too-many-arguments,too-many-positional-arguments
     ctx, platforms, only_check, dry_run, silent, json_output, **_
 ):
     only_check = dry_run or only_check
