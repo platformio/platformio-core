@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import platform
-
 from platformio.compat import is_proxy_set
 
 
@@ -52,12 +50,10 @@ def get_pip_dependencies():
     ]
 
     extra = []
-
     # issue #4702; Broken "requests/charset_normalizer" on macOS ARM
-    if platform.system() == "Darwin" and "arm" in platform.machine().lower():
-        extra.append(
-            'chardet >= 3.0.2,<6; platform_system == "Darwin" and "arm" in platform_machine'
-        )
+    extra.append(
+        'chardet >= 3.0.2,<6; platform_system == "Darwin" and "arm" in platform_machine'
+    )
 
     # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
     try:
