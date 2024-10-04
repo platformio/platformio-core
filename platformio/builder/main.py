@@ -148,7 +148,7 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
 # Dynamically load dependent tools
-if "compiledb" in COMMAND_LINE_TARGETS:
+if "compiledb" or "compiledbtc" in COMMAND_LINE_TARGETS:
     env.Tool("compilation_db")
 
 if not os.path.isdir(env.subst("$BUILD_DIR")):
@@ -194,6 +194,9 @@ if env.get("SIZETOOL") and not (
 
 if "compiledb" in COMMAND_LINE_TARGETS:
     env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
+
+if "compiledbtc" in COMMAND_LINE_TARGETS:
+    env.Alias("compiledbtc", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
 env.AddPreAction(

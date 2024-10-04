@@ -127,25 +127,39 @@ def ProcessProgramDeps(env):
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     env.ProcessCompileDbToolchainOption()
+    env.ProcessCompileDbIncludeToolchainOption()
+
+
+def ProccessCompileDb(env, include_toolchain=False):
+    # Resolve absolute path of toolchain
+    for cmd in ("CC", "CXX", "AS"):
+        if cmd not in env:
+            continue
+        if os.path.isabs(env[cmd]):
+            continue
+        env[cmd] = where_is_program(
+            env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
+        )
+
+    if include_toolchain:
+        for scope, includes in env.DumpIntegrationIncludes().items():
+            if scope in ("toolchain",):
+                env.Append(CPPPATH=includes)
 
 
 def ProcessCompileDbToolchainOption(env):
     if "compiledb" in COMMAND_LINE_TARGETS:
-        # Resolve absolute path of toolchain
-        for cmd in ("CC", "CXX", "AS"):
-            if cmd not in env:
-                continue
-            if os.path.isabs(env[cmd]):
-                continue
-            env[cmd] = where_is_program(
-                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
-            )
+        ProccessCompileDb(env)
 
-        if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
-            print("Warning! `COMPILATIONDB_INCLUDE_TOOLCHAIN` is scoping")
-            for scope, includes in env.DumpIntegrationIncludes().items():
-                if scope in ("toolchain",):
-                    env.Append(CPPPATH=includes)
+    if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
+        print("Warning! `COMPILATIONDB_INCLUDE_TOOLCHAIN` is scoping")
+        print("Use 'pio run -t compiledbtc' instead.")
+        ProccessCompileDb(env, include_toolchain=True)
+
+
+def ProcessCompileDbIncludeToolchainOption(env):
+    if "compiledbtc" in COMMAND_LINE_TARGETS:
+        ProccessCompileDb(env, include_toolchain=True)
 
 
 def ProcessProjectDeps(env):
@@ -382,6 +396,7 @@ def generate(env):
     env.AddMethod(BuildProgram)
     env.AddMethod(ProcessProgramDeps)
     env.AddMethod(ProcessCompileDbToolchainOption)
+    env.AddMethod(ProcessCompileDbIncludeToolchainOption)
     env.AddMethod(ProcessProjectDeps)
     env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)

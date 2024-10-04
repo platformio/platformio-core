@@ -70,7 +70,7 @@ def _file_long_data(env, data):
 
 
 def exists(env):
-    return "compiledb" not in COMMAND_LINE_TARGETS and not env.IsIntegrationDump()
+    return "compiledb" and "compiledbtc" not in COMMAND_LINE_TARGETS and not env.IsIntegrationDump()
 
 
 def generate(env):
