@@ -396,7 +396,7 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
             parts.path.endswith(".git"),
             # Handle GitHub URL (https://github.com/user/package)
             parts.netloc in ("github.com", "gitlab.com", "bitbucket.com")
-            and not parts.path.endswith((".zip", ".tar.gz")),
+            and not parts.path.endswith((".zip", ".tar.gz", ".tar.xz")),
         ]
         hg_conditions = [
             # Handle Developer Mbed URL
