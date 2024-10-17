@@ -58,6 +58,7 @@ def GetBuildType(env):
 
 
 def BuildProgram(env):
+    env.ProcessCompileDbToolchainOption()
     env.ProcessProgramDeps()
     env.ProcessProjectDeps()
 
@@ -88,6 +89,26 @@ def BuildProgram(env):
     print("Building in %s mode" % env["BUILD_TYPE"])
 
     return program
+
+
+def ProcessCompileDbToolchainOption(env):
+    if "compiledb" not in COMMAND_LINE_TARGETS:
+        return
+    # Resolve absolute path of toolchain
+    for cmd in ("CC", "CXX", "AS"):
+        if cmd not in env:
+            continue
+        if os.path.isabs(env[cmd]) or '"' in env[cmd]:
+            continue
+        env[cmd] = where_is_program(env.subst("$%s" % cmd), env.subst("${ENV['PATH']}"))
+        if " " in env[cmd]:  # issue #4998: Space in compilator path
+            env[cmd] = f'"{env[cmd]}"'
+
+    if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
+        print("Warning! `COMPILATIONDB_INCLUDE_TOOLCHAIN` is scoping")
+        for scope, includes in env.DumpIntegrationIncludes().items():
+            if scope in ("toolchain",):
+                env.Append(CPPPATH=includes)
 
 
 def ProcessProgramDeps(env):
@@ -125,27 +146,6 @@ def ProcessProgramDeps(env):
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
-
-    env.ProcessCompileDbToolchainOption()
-
-
-def ProcessCompileDbToolchainOption(env):
-    if "compiledb" in COMMAND_LINE_TARGETS:
-        # Resolve absolute path of toolchain
-        for cmd in ("CC", "CXX", "AS"):
-            if cmd not in env:
-                continue
-            if os.path.isabs(env[cmd]):
-                continue
-            env[cmd] = where_is_program(
-                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
-            )
-
-        if env.get("COMPILATIONDB_INCLUDE_TOOLCHAIN"):
-            print("Warning! `COMPILATIONDB_INCLUDE_TOOLCHAIN` is scoping")
-            for scope, includes in env.DumpIntegrationIncludes().items():
-                if scope in ("toolchain",):
-                    env.Append(CPPPATH=includes)
 
 
 def ProcessProjectDeps(env):
