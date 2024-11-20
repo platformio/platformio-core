@@ -23,6 +23,7 @@ import click
 
 from platformio import fs
 from platformio.compat import IS_WINDOWS
+from test_core_dir import PackageException, VCSBaseException
 
 
 class ConfigOption:  # pylint: disable=too-many-instance-attributes,too-many-positional-arguments
@@ -91,12 +92,6 @@ def validate_dir(path):
         path = fs.expanduser(path)
     return os.path.abspath(path)
 
-# Custom exceptions
-class PackageException(Exception):
-    pass
-
-class VCSBaseException(Exception):
-    pass
 
 def get_default_core_dir():
     # Default to ~/.platformio
