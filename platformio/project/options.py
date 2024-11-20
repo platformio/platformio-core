@@ -118,7 +118,6 @@ def get_default_core_dir():
 
     return path
 
-
 ProjectOptions = OrderedDict(
     [
         ("%s.%s" % (option.scope, option.name), option)
