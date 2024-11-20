@@ -14,8 +14,10 @@
 
 # pylint: disable=redefined-builtin, too-many-arguments
 
+import logging
 import os
 from collections import OrderedDict
+from posixpath import expanduser
 
 import click
 
@@ -89,13 +91,36 @@ def validate_dir(path):
         path = fs.expanduser(path)
     return os.path.abspath(path)
 
+# Custom exceptions
+class PackageException(Exception):
+    pass
+
+class VCSBaseException(Exception):
+    pass
 
 def get_default_core_dir():
-    path = os.path.join(fs.expanduser("~"), ".platformio")
+    # Default to ~/.platformio
+    path = os.path.join(expanduser("~"), ".platformio")
+    
+    # Handle Windows-specific directory fallback
     if IS_WINDOWS:
         win_core_dir = os.path.splitdrive(path)[0] + "\\.platformio"
-        if os.path.isdir(win_core_dir):
-            return win_core_dir
+        # Use Windows root directory only if it exists and is writable
+        if os.path.isdir(win_core_dir) and os.access(win_core_dir, os.W_OK):
+            path = win_core_dir
+
+    # Ensure the directory exists, but handle invalid symlink creation
+    if not os.path.exists(path):
+        try:
+            os.makedirs(path, exist_ok=True)
+        except OSError as e:
+            logging.error(f"Library Manager: Installing symlink: {path}")
+            raise PackageException(f"Can not create a symbolic link for `{path}`, not a directory") from e
+
+    if not os.path.isdir(path):
+        logging.error(f"Library Manager: Installing symlink: {path}")
+        raise VCSBaseException(f"VCS: Unknown repository type symlink: {path}")
+
     return path
 
 
