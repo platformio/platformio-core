@@ -109,11 +109,11 @@ def get_default_core_dir():
         try:
             os.makedirs(path, exist_ok=True)
         except OSError as e:
-            logging.error(f"Library Manager: Installing symlink: {path}")
+            logging.error("Library Manager: Installing symlink: %s", path)
             raise PackageException(f"Can not create a symbolic link for `{path}`, not a directory") from e
 
     if not os.path.isdir(path):
-        logging.error(f"Library Manager: Installing symlink: {path}")
+        logging.error("Library Manager: Installing symlink: %s", path)
         raise VCSBaseException(f"VCS: Unknown repository type symlink: {path}")
 
     return path
