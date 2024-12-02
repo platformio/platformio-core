@@ -45,7 +45,7 @@ def get_pip_dependencies():
         "ajsonrpc == 1.2.*",
         "starlette >=0.19, <0.42",
         'uvicorn == 0.16.0; python_version < "3.7"',
-        'uvicorn >=0.16, <0.31; python_version >= "3.7"',
+        'uvicorn >=0.16, <0.33; python_version >= "3.7"',
         "wsproto == 1.*",
     ]
 
