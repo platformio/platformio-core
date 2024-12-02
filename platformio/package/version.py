@@ -44,7 +44,7 @@ def cast_version_to_semver(value, force=True, raise_exception=False):
 
 def pepver_to_semver(pepver):
     return cast_version_to_semver(
-        re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
+        re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, count=1)
     )
 
 
