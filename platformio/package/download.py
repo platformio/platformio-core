@@ -34,7 +34,7 @@ class FileDownloader:
             url,
             stream=True,
         )
-        if self._http_response.status_code != 200:
+        if self._http_response.status_code not in (200, 203):
             raise PackageException(
                 "Got the unrecognized status code '{0}' when downloaded {1}".format(
                     self._http_response.status_code, url
