@@ -219,6 +219,11 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
             if os.path.isdir(p):
                 result[k][i] = os.path.abspath(p)
 
+    # fix relative LIBs
+    for i, l in enumerate(result.get("LIBS", [])):
+        if isinstance(l, FS.File):
+            result["LIBS"][i] = os.path.abspath(l.get_path())
+
     # fix relative path for "-include"
     for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
