@@ -54,7 +54,7 @@ def package_exec_cmd(obj, package, call, args):
     os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
 
     # inject current python interpreter on Windows
-    if args[0].endswith(".py"):
+    if args and args[0].endswith(".py"):
         args = [os.environ["PIO_PYTHON_EXE"]] + list(args)
         if not os.path.exists(args[1]):
             args[1] = where_is_program(args[1])
