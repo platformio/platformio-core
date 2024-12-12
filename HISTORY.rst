@@ -22,6 +22,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 ~~~~~~~~~~~~~~~~~~~
 
 * Added support for ``tar.xz`` tarball dependencies (`pull #4974 <https://github.com/platformio/platformio-core/pull/4974>`_)
+* Ensured that dependencies of private libraries are no longer unnecessarily re-installed, optimizing dependency management and reducing redundant operations (`issue #4987 <https://github.com/platformio/platformio-core/issues/4987>`_)
 * Resolved an issue where the ``compiledb`` target failed to properly escape compiler executable paths containing spaces (`issue #4998 <https://github.com/platformio/platformio-core/issues/4998>`_)
 * Resolved an issue with incorrect path resolution when linking static libraries via the `build_flags <https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_flags.html>`__ option (`issue #5004 <https://github.com/platformio/platformio-core/issues/5004>`_)
 
