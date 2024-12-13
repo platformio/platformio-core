@@ -86,7 +86,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
 
         if not interface:
             return helpers.predebug_project(
-                ctx, project_dir, project_config, env_name, False, verbose
+                ctx, os.getcwd(), project_config, env_name, False, verbose
             )
 
         configure_args = (
@@ -106,7 +106,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
         else:
             debug_config = _configure(*configure_args)
 
-        _run(project_dir, debug_config, client_extra_args)
+        _run(os.getcwd(), debug_config, client_extra_args)
 
     return None
 
