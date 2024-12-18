@@ -1159,6 +1159,8 @@ def ConfigureProjectLibBuilder(env):
         for lb in lib_builders:
             if lb in found_lbs:
                 lb.search_deps_recursive(lb.get_search_files())
+        # refill found libs after recursive search
+        found_lbs = [lb for lb in lib_builders if lb.is_dependent]
         for lb in lib_builders:
             for deplb in lb.depbuilders[:]:
                 if deplb not in found_lbs:
