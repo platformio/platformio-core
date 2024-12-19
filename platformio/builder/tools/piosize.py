@@ -16,61 +16,82 @@
 
 import json
 import sys
-from os import environ, makedirs, remove
-from os.path import isdir, join, splitdrive
+from os import environ
+from os.path import join, splitdrive
+from pathlib import Path
 
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
 from platformio.compat import IS_WINDOWS
-from platformio.proc import exec_command
 
 
-def _run_tool(cmd, env, tool_args):
-    sysenv = environ.copy()
-    sysenv["PATH"] = str(env["ENV"]["PATH"])
-
-    build_dir = env.subst("$BUILD_DIR")
-    if not isdir(build_dir):
-        makedirs(build_dir)
-    tmp_file = join(build_dir, "size-data-longcmd.txt")
-
-    with open(tmp_file, mode="w", encoding="utf8") as fp:
-        fp.write("\n".join(tool_args))
-
-    cmd.append("@" + tmp_file)
-    result = exec_command(cmd, env=sysenv)
-    remove(tmp_file)
-
-    return result
-
-
-def _get_symbol_locations(env, elf_path, addrs):
-    if not addrs:
-        return {}
-    cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path]
-    result = _run_tool(cmd, env, addrs)
-    locations = [line for line in result["out"].split("\n") if line]
-    assert len(addrs) == len(locations)
-
-    return dict(zip(addrs, [loc.strip() for loc in locations]))
-
-
-def _get_demangled_names(env, mangled_names):
-    if not mangled_names:
-        return {}
-    result = _run_tool(
-        [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names
+def _get_source_path(top_DIE):
+    src_file_dir = (
+        top_DIE.attributes["DW_AT_name"].value.decode("utf-8").replace("\\", "/")
+        if ("DW_AT_name" in top_DIE.attributes)
+        else "?"
     )
-    demangled_names = [line for line in result["out"].split("\n") if line]
-    assert len(mangled_names) == len(demangled_names)
-
-    return dict(
-        zip(
-            mangled_names,
-            [dn.strip().replace("::__FUNCTION__", "") for dn in demangled_names],
-        )
+    comp_dir = (
+        top_DIE.attributes["DW_AT_comp_dir"].value.decode("utf-8").replace("\\", "/")
+        if ("DW_AT_comp_dir" in top_DIE.attributes)
+        else ""
     )
+
+    return str(Path.resolve(Path(comp_dir) / Path(src_file_dir)).as_posix())
+
+
+def _collect_dwarf_info(elffile):
+    dwarf_list = []
+    dwarfinfo = elffile.get_dwarf_info()
+    src_path = ""
+
+    for CU in dwarfinfo.iter_CUs():
+        top_DIE = CU.get_top_DIE()
+
+        if top_DIE.tag == "DW_TAG_compile_unit":
+            src_path = _get_source_path(top_DIE)
+
+        for DIE in top_DIE.iter_children():
+            die_name_attr = DIE.attributes.get("DW_AT_name", None)
+            die_name = die_name_attr.value.decode("utf-8") if die_name_attr else ""
+
+            if die_name != "":
+                if (DIE.tag == "DW_TAG_subprogram") or (
+                    DIE.tag == "DW_TAG_variable" and "DW_AT_location" in DIE.attributes
+                ):
+                    src_line_attr = DIE.attributes.get("DW_AT_decl_line", None)
+                    src_line = src_line_attr.value if src_line_attr else ""
+
+                    dwarf_list.append(
+                        {
+                            "dw_name": die_name,
+                            "src_path": src_path,
+                            "src_line": src_line,
+                        }
+                    )
+
+    sorted_dwarf_list = sorted(
+        dwarf_list, key=lambda x: len(x["dw_name"]), reverse=False
+    )
+    return sorted_dwarf_list
+
+
+def _get_dwarf_info(symbol, dwarfs):
+    location = "?"
+    line = ""
+    demangled_name = ""
+
+    for d in dwarfs:
+        if d["dw_name"] in symbol["name"]:
+            location = d["src_path"]
+            line = d["src_line"]
+            demangled_name = d["dw_name"]
+
+    if demangled_name == "":
+        demangled_name = symbol["name"]
+
+    return location, line, demangled_name
 
 
 def _collect_sections_info(env, elffile):
@@ -98,7 +119,7 @@ def _collect_sections_info(env, elffile):
     return sections
 
 
-def _collect_symbols_info(env, elffile, elf_path, sections):
+def _collect_symbols_info(env, elffile, sections):
     symbols = []
 
     symbol_section = elffile.get_section_by_name(".symtab")
@@ -110,14 +131,13 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     sysenv["PATH"] = str(env["ENV"]["PATH"])
 
     symbol_addrs = []
-    mangled_names = []
     for s in symbol_section.iter_symbols():
         symbol_info = s.entry["st_info"]
         symbol_addr = s["st_value"]
         symbol_size = s["st_size"]
         symbol_type = symbol_info["type"]
 
-        if not env.pioSizeIsValidSymbol(s.name, symbol_type, symbol_addr):
+        if not env.pioSizeIsValidSymbol(s.name, symbol_size, symbol_type, symbol_addr):
             continue
 
         symbol = {
@@ -129,31 +149,26 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
             "section": env.pioSizeDetermineSection(sections, symbol_addr),
         }
 
-        if s.name.startswith("_Z"):
-            mangled_names.append(s.name)
-
         symbol_addrs.append(hex(symbol_addr))
         symbols.append(symbol)
 
-    symbol_locations = _get_symbol_locations(env, elf_path, symbol_addrs)
-    demangled_names = _get_demangled_names(env, mangled_names)
-    for symbol in symbols:
-        if symbol["name"].startswith("_Z"):
-            symbol["demangled_name"] = demangled_names.get(symbol["name"])
-        location = symbol_locations.get(hex(symbol["addr"]))
+    sorted_symbols = sorted(symbols, key=lambda x: len(x["name"]), reverse=True)
+    sorted_dwarf = _collect_dwarf_info(elffile)
+
+    for symbol in sorted_symbols:
+
+        location, line, demangled_name = _get_dwarf_info(symbol, sorted_dwarf)
+        symbol["demangled_name"] = demangled_name
+
         if not location or "?" in location:
             continue
         if IS_WINDOWS:
             drive, tail = splitdrive(location)
             location = join(drive.upper(), tail)
         symbol["file"] = location
-        symbol["line"] = 0
-        if ":" in location:
-            file_, line = location.rsplit(":", 1)
-            if line.isdigit():
-                symbol["file"] = file_
-                symbol["line"] = int(line)
-    return symbols
+        symbol["line"] = line if (line != "") else 0
+
+    return sorted_symbols
 
 
 def pioSizeDetermineSection(_, sections, symbol_addr):
@@ -165,8 +180,13 @@ def pioSizeDetermineSection(_, sections, symbol_addr):
     return "unknown"
 
 
-def pioSizeIsValidSymbol(_, symbol_name, symbol_type, symbol_address):
-    return symbol_name and symbol_address != 0 and symbol_type != "STT_NOTYPE"
+def pioSizeIsValidSymbol(_, symbol_name, symbol_size, symbol_type, symbol_address):
+    return (
+        symbol_name
+        and symbol_size != 0
+        and symbol_address != 0
+        and symbol_type != "STT_NOTYPE"
+    )
 
 
 def pioSizeIsRamSection(_, section):
@@ -224,7 +244,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
         }
 
         files = {}
-        for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
+        for symbol in _collect_symbols_info(env, elffile, sections):
             file_path = symbol.get("file") or "unknown"
             if not files.get(file_path, {}):
                 files[file_path] = {"symbols": [], "ram_size": 0, "flash_size": 0}
