@@ -28,8 +28,7 @@ def get_core_dependencies():
 
 def get_pip_dependencies():
     core = [
-        'bottle == 0.12.*; python_version < "3.7"',
-        'bottle == 0.13.*; python_version >= "3.7"',
+        "bottle == 0.13.*",
         "click >=8.0.4, <9",
         "colorama",
         "marshmallow == 3.*",
@@ -43,9 +42,8 @@ def get_pip_dependencies():
     home = [
         # PIO Home requirements
         "ajsonrpc == 1.2.*",
-        "starlette >=0.19, <0.43",
-        'uvicorn == 0.16.0; python_version < "3.7"',
-        'uvicorn >=0.16, <0.35; python_version >= "3.7"',
+        "starlette >=0.19, <0.46",
+        "uvicorn >=0.16, <0.35",
         "wsproto == 1.*",
     ]
 
