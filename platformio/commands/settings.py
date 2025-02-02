@@ -76,5 +76,5 @@ def settings_set(ctx, name, value):
 @click.pass_context
 def settings_reset(ctx):
     app.reset_settings()
-    click.secho("The settings have been reseted!", fg="green")
+    click.secho("The settings have been reset!", fg="green")
     ctx.invoke(settings_get)

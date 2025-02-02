@@ -17,7 +17,7 @@
 # common.symbolFiles=<Symbol Files loaded by debugger>
 # (This value is overwritten by a launcher specific symbolFiles value if the latter exists)
 #
-# In runDir, symbolFiles and env fields you can use these macroses:
+# In runDir, symbolFiles and env fields you can use these macros:
 # ${PROJECT_DIR}    -   project directory absolute path
 # ${OUTPUT_PATH}    -   linker output path (relative to project directory path)
 # ${OUTPUT_BASENAME}-   linker output filename

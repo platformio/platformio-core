@@ -335,7 +335,7 @@ def test_symlink(tmp_path: Path):
     # uninstall
     lm.uninstall("External")
     assert ["Installed"] == [pkg.metadata.name for pkg in lm.get_installed()]
-    # ensure original package was not rmeoved
+    # ensure original package was not removed
     assert external_pkg_dir.is_dir()
 
     # install again, remove from a disk
