@@ -110,7 +110,7 @@ def update_project_env_dependencies(project_env, options=None):
     # custom tools
     if options.get("tools"):
         updated_conds.append(_update_project_env_custom_tools(project_env, options))
-    # custom ibraries
+    # custom libraries
     if options.get("libraries"):
         updated_conds.append(_update_project_env_custom_libraries(project_env, options))
     # declared dependencies

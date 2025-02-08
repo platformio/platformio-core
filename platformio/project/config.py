@@ -347,7 +347,7 @@ class ProjectConfigBase:
         if section is None:
             if option in self.BUILTIN_VARS:
                 return self.BUILTIN_VARS[option]()
-            # SCons varaibles
+            # SCons variables
             return f"${{{option}}}"
 
         # handle system environment variables

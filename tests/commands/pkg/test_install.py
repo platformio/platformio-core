@@ -340,7 +340,7 @@ def test_remove_project_unused_libdeps(
             ),
         ]
 
-        # manually remove from cofiguration file
+        # manually remove from configuration file
         config.set("env:baremetal", "lib_deps", ["bblanchon/ArduinoJson@^5"])
         config.save()
         result = clirunner.invoke(
