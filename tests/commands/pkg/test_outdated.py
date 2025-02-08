@@ -56,7 +56,7 @@ def test_project(clirunner, validate_cliresult, isolated_pio_core, tmp_path):
         re.MULTILINE,
     )
     assert re.search(
-        r"^DallasTemperature\s+3\.\d\.1\s+3\.\d+\.\d+\s+3\.\d+\.\d+\s+Library\s+devkit",
+        r"^DallasTemperature\s+3\.\d\.1\s+3\.\d+\.\d+\s+4\.\d+\.\d+\s+Library\s+devkit",
         result.output,
         re.MULTILINE,
     )

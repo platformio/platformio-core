@@ -34,7 +34,7 @@ jobs:
         run: |
           # Free space
           sudo apt clean
-          docker rmi $(docker image ls -aq)
+          # docker rmi $(docker image ls -aq)
           df -h
           tox -e testexamples
 
