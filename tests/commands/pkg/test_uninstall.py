@@ -58,12 +58,14 @@ def test_global_packages(
     validate_cliresult(result)
     assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
         "ArduinoJson",
+        "Async TCP",
         "AsyncMqttClient",
         "AsyncTCP",
+        "AsyncTCP_RP2040W",
         "Bounce2",
         "ESP Async WebServer",
         "ESPAsyncTCP",
-        "ESPAsyncTCP",
+        "ESPAsyncTCP-esphome",
         "Homie",
     ]
     # uninstall all deps
@@ -96,12 +98,14 @@ def test_global_packages(
     validate_cliresult(result)
     assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
         "ArduinoJson",
+        "Async TCP",
         "AsyncMqttClient",
         "AsyncTCP",
+        "AsyncTCP_RP2040W",
         "Bounce2",
         "ESP Async WebServer",
         "ESPAsyncTCP",
-        "ESPAsyncTCP",
+        "ESPAsyncTCP-esphome",
     ]
     # remove specific dependency
     result = clirunner.invoke(
@@ -116,6 +120,7 @@ def test_global_packages(
     assert pkgs_to_names(LibraryPackageManager().get_installed()) == [
         "ArduinoJson",
         "AsyncMqttClient",
+        "AsyncTCP",
         "Bounce2",
         "ESPAsyncTCP",
     ]
