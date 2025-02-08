@@ -17,10 +17,6 @@ jobs:
         with:
           submodules: "recursive"
 
-      - uses: codespell-project/actions-codespell@v2
-        with:
-          ignore_words_list: ans,homestate,ser
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -30,6 +26,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install tox
+
+      - name: Run "codespell" on Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          python -m pip install codespell
+          make codespell
 
       - name: Core System Info
         run: |
