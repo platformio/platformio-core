@@ -21,6 +21,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.17 (2024-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Introduced the `PLATFORMIO_RUN_JOBS <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_RUN_JOBS>`__ environment variable, allowing manual override of the number of parallel build jobs (`issue #5077 <https://github.com/platformio/platformio-core/issues/5077>`_)
 * Added support for ``tar.xz`` tarball dependencies (`pull #4974 <https://github.com/platformio/platformio-core/pull/4974>`_)
 * Ensured that dependencies of private libraries are no longer unnecessarily re-installed, optimizing dependency management and reducing redundant operations (`issue #4987 <https://github.com/platformio/platformio-core/issues/4987>`_)
 * Resolved an issue where the ``compiledb`` target failed to properly escape compiler executable paths containing spaces (`issue #4998 <https://github.com/platformio/platformio-core/issues/4998>`_)

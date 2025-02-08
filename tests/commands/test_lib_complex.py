@@ -235,7 +235,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     validate_cliresult(result)
     output = json.loads(result.output)
     assert set(
-        ["Adafruit PN532", "AsyncMqttClient", "ESPAsyncTCP", "NeoPixelBus"]
+        ["Adafruit PN532", "AsyncMqttClient", "AsyncTCP", "ESPAsyncTCP", "NeoPixelBus"]
     ) == set(lib["name"] for lib in output)
 
 

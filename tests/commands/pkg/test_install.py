@@ -31,7 +31,7 @@ PROJECT_CONFIG_TPL = """
 [env]
 platform = platformio/atmelavr@^3.4.0
 lib_deps =
-    milesburton/DallasTemperature@^3.9.1
+    milesburton/DallasTemperature@^4.0.4
     https://github.com/esphome/ESPAsyncWebServer/archive/refs/tags/v2.1.0.zip
 
 [env:baremetal]
@@ -215,7 +215,7 @@ def test_project(
             PackageSpec("toolchain-atmelavr@1.70300.191015"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.9.1",
+            "milesburton/DallasTemperature@^4.0.4",
             "https://github.com/esphome/ESPAsyncWebServer/archive/refs/tags/v2.1.0.zip",
         ]
 
@@ -241,7 +241,7 @@ def test_private_lib_deps(
     "version": "1.0.0",
     "dependencies": {
         "bblanchon/ArduinoJson": "^5",
-        "milesburton/DallasTemperature": "^3.9.1"
+        "milesburton/DallasTemperature": "^4.0.4"
     }
 }
 """
