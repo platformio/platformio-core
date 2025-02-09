@@ -11,7 +11,7 @@ format:
 	black ./tests
 
 codespell:
-	codespell --skip "./build,./docs/_build" -L "AtLeast,PreProcesor,TRE,ans,dout,homestate,ser"
+	codespell --skip "./build,./docs/_build" -L "AtLeast,TRE,ans,dout,homestate,ser"
 
 test:
 	pytest --verbose --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
