@@ -201,9 +201,7 @@ new version when next recompiled. The header file eliminates the labor of
 finding and changing all the copies as well as the risk that a failure to
 find one copy will result in inconsistencies within a program.
 
-In C, the usual convention is to give header files names that end with `.h'.
-It is most portable to use only letters, digits, dashes, and underscores in
-header file names, and at most one dot.
+In C, the convention is to give header files names that end with `.h'.
 
 Read more about using header files in official GCC documentation:
 
@@ -222,12 +220,12 @@ def init_lib_readme(lib_dir):
         fp.write(
             """
 This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into executable file.
+PlatformIO will compile them to static libraries and link into the executable file.
 
-The source code of each library should be placed in an own separate directory
-("lib/your_library_name/[here are source files]").
+The source code of each library should be placed in a separate directory
+("lib/your_library_name/[Code]").
 
-For example, see a structure of the following two libraries `Foo` and `Bar`:
+For example, see the structure of the following example libraries `Foo` and `Bar`:
 
 |--lib
 |  |
@@ -237,7 +235,7 @@ For example, see a structure of the following two libraries `Foo` and `Bar`:
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
-|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
+|  |  |- library.json (optional. for custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
 |  |
 |  |--Foo
 |  |  |- Foo.c
@@ -249,7 +247,7 @@ For example, see a structure of the following two libraries `Foo` and `Bar`:
 |--src
    |- main.c
 
-and a contents of `src/main.c`:
+Example contents of `src/main.c` using Foo and Bar:
 ```
 #include <Foo.h>
 #include <Bar.h>
@@ -261,8 +259,8 @@ int main (void)
 
 ```
 
-PlatformIO Library Dependency Finder will find automatically dependent
-libraries scanning project source files.
+The PlatformIO Library Dependency Finder will find automatically dependent
+libraries by scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
 - https://docs.platformio.org/page/librarymanager/ldf.html
