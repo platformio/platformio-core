@@ -18,7 +18,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.17 (2024-??-??)
+6.1.17 (2025-02-13)
 ~~~~~~~~~~~~~~~~~~~
 
 * Introduced the `PLATFORMIO_RUN_JOBS <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_RUN_JOBS>`__ environment variable, allowing manual override of the number of parallel build jobs (`issue #5077 <https://github.com/platformio/platformio-core/issues/5077>`_)
