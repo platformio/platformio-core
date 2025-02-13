@@ -147,12 +147,12 @@ if env.subst("$BUILD_CACHE_DIR"):
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
+if not os.path.isdir(env.subst("$BUILD_DIR")):
+    os.makedirs(env.subst("$BUILD_DIR"))
+
 # Dynamically load dependent tools
 if "compiledb" in COMMAND_LINE_TARGETS:
     env.Tool("compilation_db")
-
-if not os.path.isdir(env.subst("$BUILD_DIR")):
-    os.makedirs(env.subst("$BUILD_DIR"))
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()

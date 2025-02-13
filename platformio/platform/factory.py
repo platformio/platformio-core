@@ -33,7 +33,7 @@ class PlatformFactory:
 
     @staticmethod
     def load_platform_module(name, path):
-        # backward compatibiility with the legacy dev-platforms
+        # backward compatibility with the legacy dev-platforms
         sys.modules["platformio.managers.platform"] = base
         try:
             return load_python_module("platformio.platform.%s" % name, path)

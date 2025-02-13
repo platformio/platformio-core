@@ -111,7 +111,7 @@ def uninstall_project_env_dependencies(project_env, options=None):
         uninstalled_conds.append(
             _uninstall_project_env_custom_tools(project_env, options)
         )
-    # custom ibraries
+    # custom libraries
     if options.get("libraries"):
         uninstalled_conds.append(
             _uninstall_project_env_custom_libraries(project_env, options)

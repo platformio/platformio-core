@@ -10,10 +10,13 @@ format:
 	black ./platformio
 	black ./tests
 
+codespell:
+	codespell --skip "./build,./docs/_build" -L "AtLeast,TRE,ans,dout,homestate,ser"
+
 test:
 	pytest --verbose --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
 
-before-commit: isort format lint
+before-commit: codespell isort format lint
 
 clean-docs:
 	rm -rf docs/_build

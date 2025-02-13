@@ -11,7 +11,7 @@ jobs:
         with:
           submodules: "recursive"
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
 
       - name: Save artifact
         if: ${{ github.event_name == 'push' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: ./docs.tar.gz
@@ -57,7 +57,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docs
       - name: Unpack artifact
@@ -65,7 +65,7 @@ jobs:
           mkdir ./${{ env.LATEST_DOCS_DIR }}
           tar -xzf ./docs.tar.gz -C ./${{ env.LATEST_DOCS_DIR }}
       - name: Delete Artifact
-        uses: geekyeggo/delete-artifact@v2
+        uses: geekyeggo/delete-artifact@v5
         with:
           name: docs
       - name: Select Docs type
@@ -101,7 +101,7 @@ jobs:
              exit 1
           fi
       - name: Deploy to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.DEPLOY_GH_DOCS_TOKEN }}
           external_repository: ${{ env.DOCS_REPO }}

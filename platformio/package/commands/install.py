@@ -297,7 +297,11 @@ def _install_project_private_library_deps(private_pkg, private_lm, env_lm, optio
         if not spec.external and not spec.owner:
             continue
         pkg = private_lm.get_package(spec)
-        if not pkg and not env_lm.get_package(spec):
+        if (
+            not pkg
+            and not private_lm.get_package(spec)
+            and not env_lm.get_package(spec)
+        ):
             pkg = env_lm.install(
                 spec,
                 skip_dependencies=True,

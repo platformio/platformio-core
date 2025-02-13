@@ -34,7 +34,7 @@ PROJECT_OUTDATED_CONFIG_TPL = """
 platform = platformio/atmelavr@^2
 framework = arduino
 board = attiny88
-lib_deps = milesburton/DallasTemperature@^3.8.0
+lib_deps = milesburton/DallasTemperature@^3.9.1
 """
 
 PROJECT_UPDATED_CONFIG_TPL = """
@@ -42,7 +42,7 @@ PROJECT_UPDATED_CONFIG_TPL = """
 platform = platformio/atmelavr@<4
 framework = arduino
 board = attiny88
-lib_deps = milesburton/DallasTemperature@^3.8.0
+lib_deps = milesburton/DallasTemperature@^3.9.1
 """
 
 
@@ -179,7 +179,7 @@ def test_project(
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.8.0"
+            "milesburton/DallasTemperature@^3.9.1"
         ]
 
         # update packages
@@ -195,10 +195,7 @@ def test_project(
         assert pkgs[0].metadata.name == "atmelavr"
         assert pkgs[0].metadata.version.major == 3
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec(
-                "DallasTemperature@%s"
-                % get_pkg_latest_version("milesburton/DallasTemperature")
-            ),
+            PackageSpec("DallasTemperature@3.11.0"),
             PackageSpec(
                 "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
             ),
@@ -210,7 +207,7 @@ def test_project(
             PackageSpec("toolchain-atmelavr@1.50400.190710"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.8.0"
+            "milesburton/DallasTemperature@^3.9.1"
         ]
 
         # update again
@@ -230,7 +227,7 @@ def test_custom_project_libraries(
     project_dir = tmp_path / "project"
     project_dir.mkdir()
     (project_dir / "platformio.ini").write_text(PROJECT_OUTDATED_CONFIG_TPL)
-    spec = "milesburton/DallasTemperature@^3.8.0"
+    spec = "milesburton/DallasTemperature@^3.9.1"
     result = clirunner.invoke(
         package_install_cmd,
         ["-d", str(project_dir), "-e", "devkit", "-l", spec],
@@ -251,15 +248,15 @@ def test_custom_project_libraries(
         # update package
         result = clirunner.invoke(
             package_update_cmd,
-            ["-e", "devkit", "-l", "milesburton/DallasTemperature@^3.8.0"],
+            ["-e", "devkit", "-l", "milesburton/DallasTemperature@^3.9.1"],
         )
         assert ProjectConfig().get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.8.0"
+            "milesburton/DallasTemperature@^3.9.1"
         ]
         # try again
         result = clirunner.invoke(
             package_update_cmd,
-            ["-e", "devkit", "-l", "milesburton/DallasTemperature@^3.8.0"],
+            ["-e", "devkit", "-l", "milesburton/DallasTemperature@^3.9.1"],
         )
         validate_cliresult(result)
         assert "Already up-to-date." in result.output
@@ -276,16 +273,13 @@ def test_custom_project_libraries(
             os.path.join(config.get("platformio", "libdeps_dir"), "devkit")
         )
         assert pkgs_to_specs(lm.get_installed()) == [
-            PackageSpec(
-                "DallasTemperature@%s"
-                % get_pkg_latest_version("milesburton/DallasTemperature")
-            ),
+            PackageSpec("DallasTemperature@3.11.0"),
             PackageSpec(
                 "OneWire@%s" % get_pkg_latest_version("paulstoffregen/OneWire")
             ),
         ]
         assert config.get("env:devkit", "lib_deps") == [
-            "milesburton/DallasTemperature@^3.8.0"
+            "milesburton/DallasTemperature@^3.9.1"
         ]
 
         # unknown libraries

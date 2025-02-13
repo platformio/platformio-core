@@ -158,7 +158,7 @@ def load_build_metadata(project_dir, env_or_envs, cache=False, build_type=None):
     return result or None
 
 
-# Backward compatibiility with dev-platforms
+# Backward compatibility with dev-platforms
 load_project_ide_data = load_build_metadata
 
 

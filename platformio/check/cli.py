@@ -19,7 +19,6 @@ import json
 import os
 import shutil
 from collections import Counter
-from os.path import dirname, isfile
 from time import time
 
 import click
@@ -77,7 +76,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     app.set_session_var("custom_project_conf", project_conf)
 
     # find project directory on upper level
-    if isfile(project_dir):
+    if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
     results = []
@@ -150,7 +149,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
                     print_processing_header(tool, envname, env_dump)
 
                 ct = CheckToolFactory.new(
-                    tool, project_dir, config, envname, tool_options
+                    tool, os.getcwd(), config, envname, tool_options
                 )
 
                 result = {"env": envname, "tool": tool, "duration": time()}
@@ -250,12 +249,12 @@ def collect_component_stats(result):
         components[component].update({DefectItem.SEVERITY_LABELS[defect.severity]: 1})
 
     for defect in result.get("defects", []):
-        component = dirname(defect.file) or defect.file
+        component = os.path.dirname(defect.file) or defect.file
         _append_defect(component, defect)
 
         if component.lower().startswith(get_project_dir().lower()):
             while os.sep in component:
-                component = dirname(component)
+                component = os.path.dirname(component)
                 _append_defect(component, defect)
 
     return components
