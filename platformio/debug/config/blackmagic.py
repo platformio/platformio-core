@@ -19,12 +19,25 @@ from platformio.device.finder import SerialPortFinder, is_pattern_port
 
 class BlackmagicDebugConfig(DebugConfigBase):
     GDB_INIT_SCRIPT = """
+define bmconnect
+  target extended-remote $arg0
+  set $i = 1
+  while $i < $argc
+    eval "monitor $arg%d enable", $i
+    set $i = $i + 1
+  end
+  monitor swdp_scan
+  attach 1
+end
+
 define pio_reset_halt_target
     set language c
     set *0xE000ED0C = 0x05FA0004
-    set $busy = (*0xE000ED0C & 0x4)
-    while ($busy)
+    while (1)
         set $busy = (*0xE000ED0C & 0x4)
+        if (! $busy)
+            loop_break
+        end
     end
     set language auto
 end
@@ -33,20 +46,12 @@ define pio_reset_run_target
     pio_reset_halt_target
 end
 
-target extended-remote $DEBUG_PORT
-monitor swdp_scan
-attach 1
+bmconnect $DEBUG_PORT
 set mem inaccessible-by-default off
 $LOAD_CMDS
 $INIT_BREAK
 
-set language c
-set *0xE000ED0C = 0x05FA0004
-set $busy = (*0xE000ED0C & 0x4)
-while ($busy)
-    set $busy = (*0xE000ED0C & 0x4)
-end
-set language auto
+pio_reset_halt_target
 """
 
     @property
