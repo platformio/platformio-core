@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install tox wheel
+          pip install tox build
 
       - name: Deployment Tests
         env:
@@ -34,9 +34,8 @@ jobs:
         run: |
           tox -e testcore
 
-      - name: Build Python source tarball
-        # run:  python setup.py sdist bdist_wheel
-        run:  python setup.py sdist
+      - name: Build Python distributions
+        run:  python -m build
 
       - name: Publish package to PyPI
         if: ${{ github.ref == 'refs/heads/master' }}
