@@ -42,7 +42,7 @@ def get_pip_dependencies():
     home = [
         # PIO Home requirements
         "ajsonrpc == 1.2.*",
-        "starlette >=0.19, <0.46",
+        "starlette >=0.19, <0.47",
         "uvicorn >=0.16, <0.35",
         "wsproto == 1.*",
     ]
