@@ -19,6 +19,7 @@ import click
 
 from platformio import fs, proc
 from platformio.check.defect import DefectItem
+from platformio.compat import IS_WINDOWS
 from platformio.package.manager.core import get_core_package_dir
 from platformio.package.meta import PackageSpec
 from platformio.project.helpers import load_build_metadata
@@ -189,6 +190,9 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         return cmd_result["returncode"] == 0
 
     def execute_check_cmd(self, cmd):
+        if IS_WINDOWS and len(" ".join(cmd)) > 8191:
+            cmd = self._create_response_file(cmd)
+
         result = proc.exec_command(
             cmd,
             stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
@@ -206,6 +210,10 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
             self._bad_input = True
 
         return result
+
+    def _create_response_file(self, cmd):
+        response_file = self._create_tmp_file("\n".join(cmd[1:]))
+        return [cmd[0], "@%s" % response_file]
 
     @staticmethod
     def get_project_target_files(project_dir, src_filters):
