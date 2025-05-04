@@ -58,8 +58,8 @@ def GetBuildType(env):
 
 
 def BuildProgram(env):
-    env.ProcessCompileDbToolchainOption()
     env.ProcessProgramDeps()
+    env.ProcessCompileDbToolchainOption()
     env.ProcessProjectDeps()
 
     # append into the beginning a main LD script
