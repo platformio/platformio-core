@@ -26,6 +26,7 @@ from platformio.compat import IS_WINDOWS, hashlib_encode_data
 from platformio.package.lockfile import LockFile
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_default_projects_dir
+from platformio.util import get_systype
 
 
 def projects_dir_validate(projects_dir):
@@ -64,6 +65,12 @@ DEFAULT_SETTINGS = {
         "value": True,
     },
 }
+
+if "linux" in get_systype():
+    DEFAULT_SETTINGS["disable_udev_rules_check"] = {
+        "description": "Disable udev rules check",
+        "value": False
+    }
 
 SESSION_VARS = {
     "command_ctx": None,

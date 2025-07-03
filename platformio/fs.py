@@ -24,7 +24,7 @@ import sys
 
 import click
 
-from platformio import exception
+from platformio import exception, app
 from platformio.compat import IS_WINDOWS
 
 
@@ -120,7 +120,7 @@ def ensure_udev_rules():
                 result.add(line)
         return result
 
-    if "linux" not in get_systype():
+    if "linux" not in get_systype() or app.get_setting("disable_udev_rules_check"):
         return None
     installed_rules = [
         "/etc/udev/rules.d/99-platformio-udev.rules",
