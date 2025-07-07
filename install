@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# This script installs the project and its dependencies using uv.
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Check if uv is installed, and install it if not
+if ! command -v uv &> /dev/null
+then
+    echo "uv not found, installing..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+# Install the project in editable mode with the dev dependencies.
+# $HOME/.local/bin/uv pip install -e .[dev]
+uv pip install -e .[dev]

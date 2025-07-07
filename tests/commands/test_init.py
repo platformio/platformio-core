@@ -58,7 +58,7 @@ def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
     validate_pioproject(project_dir)
     config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
     config.validate()
-    assert set(config.sections()) == set(["env:uno"])
+    assert set(config.sections()) == {"env:uno"}
 
 
 def test_init_ide_without_board(clirunner, tmpdir):
@@ -153,11 +153,11 @@ def test_init_special_board(clirunner, validate_cliresult):
         config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
         config.validate()
 
-        expected_result = dict(
-            platform=str(boards[0]["platform"]),
-            board="uno",
-            framework=[str(boards[0]["frameworks"][0])],
-        )
+        expected_result = {
+            "platform": str(boards[0]["platform"]),
+            "board": "uno",
+            "framework": [str(boards[0]["frameworks"][0])],
+        }
         assert config.has_section("env:uno")
         assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
             expected_result.items()
@@ -180,9 +180,9 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
         validate_pioproject(os.getcwd())
         config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = dict(
-            targets=["upload"], platform="atmelavr", board="uno", framework=["arduino"]
-        )
+        expected_result = {
+            "targets": ["upload"], "platform": "atmelavr", "board": "uno", "framework": ["arduino"]
+        }
         assert config.has_section("env:uno")
         assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
             expected_result.items()
@@ -205,7 +205,7 @@ def test_init_custom_framework(clirunner, validate_cliresult):
         validate_pioproject(os.getcwd())
         config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = dict(platform="teensy", board="teensy31", framework=["mbed"])
+        expected_result = {"platform": "teensy", "board": "teensy31", "framework": ["mbed"]}
         assert config.has_section("env:teensy31")
         assert sorted(config.items(env="teensy31", as_dict=True).items()) == sorted(
             expected_result.items()

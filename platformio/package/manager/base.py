@@ -262,20 +262,20 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
             return spec
         spec = self.ensure_spec(spec)
         best = None
-        for pkg in self.get_installed():
+        for pkg in self.get_installed():  # type: ignore
             if not self.test_pkg_spec(pkg, spec):
                 continue
             assert isinstance(pkg.metadata.version, semantic_version.Version)
             if spec.requirements and pkg.metadata.version not in spec.requirements:
                 continue
-            if not best or (pkg.metadata.version > best.metadata.version):
+            if not best or (pkg.metadata.version > best.metadata.version):  # type: ignore
                 best = pkg
         return best
 
     @staticmethod
     def test_pkg_spec(pkg, spec):
         # "id" mismatch
-        if spec.id and spec.id != pkg.metadata.spec.id:
+        if spec.id and spec.id != pkg.metadata.spec.id:  # type: ignore
             return False
 
         # external "URL" mismatch
@@ -286,27 +286,27 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
                 spec.uri.startswith("file://")
                 and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[7:]),
                 spec.uri.startswith("symlink://")
-                and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[10:]),
+                and os.path.abspath(pkg.path) == os.path.abspath(spec.uri[10:]),  # type: ignore
             ]
             if any(check_conds):
                 return True
-            if spec.uri != pkg.metadata.spec.uri:
+            if spec.uri != pkg.metadata.spec.uri:  # type: ignore
                 return False
 
         # "owner" mismatch
         elif spec.owner and not ci_strings_are_equal(
-            spec.owner, pkg.metadata.spec.owner
+            spec.owner, pkg.metadata.spec.owner  # type: ignore
         ):
             return False
 
         # "name" mismatch
-        elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):
+        elif not spec.id and not ci_strings_are_equal(spec.name, pkg.metadata.name):  # type: ignore
             return False
 
         return True
 
     def get_pkg_dependencies(self, pkg):
-        return self.load_manifest(pkg).get("dependencies")
+        return self.load_manifest(pkg).get("dependencies")  # type: ignore
 
     @staticmethod
     def dependency_to_spec(dependency):

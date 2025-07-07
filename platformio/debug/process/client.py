@@ -88,7 +88,7 @@ class DebugClientProcess(DebugBaseProcess):
             kill = ["kill", pid]
         try:
             proc.exec_command(kill)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             pass
 
     def _lock_session(self, pid):

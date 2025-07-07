@@ -55,7 +55,7 @@ class RegistryFileMirrorIterator:
                 self._url_parts.path,
                 allow_redirects=False,
                 params=(
-                    dict(bypass=",".join(self._visited_mirrors))
+                    {"bypass": ",".join(self._visited_mirrors)}
                     if self._visited_mirrors
                     else None
                 ),

@@ -16,7 +16,7 @@ import json
 import time
 
 from platformio.cache import ContentCache
-from platformio.compat import aio_create_task
+from platformio.compat import aio_create_task  # type: ignore
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.os import OSRPC
 

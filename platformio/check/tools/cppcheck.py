@@ -103,7 +103,7 @@ class CppcheckCheckTool(CheckToolBase):
         return DefectItem(**args)
 
     def configure_command(self, language, src_file):  # pylint: disable=arguments-differ
-        tool_path = os.path.join(self.get_tool_dir("tool-cppcheck"), "cppcheck")
+        tool_path = os.path.join(self.get_tool_dir("tool-cppcheck"), "cppcheck")  # type: ignore
 
         cmd = [
             tool_path,
@@ -148,14 +148,14 @@ class CppcheckCheckTool(CheckToolBase):
                     cmd.append("-" + self.convert_language_standard(flag))
 
         cmd.extend(
-            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines[language]]
+            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines[language]]  # type: ignore
         )
 
         cmd.extend(flags)
 
         cmd.extend(
             "--include=" + inc
-            for inc in self.get_forced_includes(build_flags, self.cpp_includes)
+            for inc in self.get_forced_includes(build_flags, self.cpp_includes)  # type: ignore
         )
         cmd.append("--includes-file=%s" % self._generate_inc_file())
         cmd.append('"%s"' % src_file)

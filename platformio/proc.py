@@ -107,24 +107,24 @@ class LineBufferedAsyncPipe(AsyncPipeBase):
 def exec_command(*args, **kwargs):
     result = {"out": None, "err": None, "returncode": None}
 
-    default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    default = {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE}
     default.update(kwargs)
     kwargs = default
 
     with subprocess.Popen(*args, **kwargs) as p:
         try:
-            result["out"], result["err"] = p.communicate()
-            result["returncode"] = p.returncode
+            result["out"], result["err"] = p.communicate()  # type: ignore
+            result["returncode"] = p.returncode  # type: ignore
         except KeyboardInterrupt as exc:
             raise exception.AbortedByUser() from exc
         finally:
             for s in ("stdout", "stderr"):
                 if isinstance(kwargs[s], AsyncPipeBase):
-                    kwargs[s].close()  # pylint: disable=no-member
+                    kwargs[s].close()  # type: ignore
 
     for s in ("stdout", "stderr"):
         if isinstance(kwargs[s], AsyncPipeBase):
-            result[s[3:]] = kwargs[s].get_buffer()  # pylint: disable=no-member
+            result[s[3:]] = kwargs[s].get_buffer()  # type: ignore
 
     for key, value in result.items():
         if isinstance(value, bytes):
@@ -171,8 +171,8 @@ def get_pythonexe_path():
 def copy_pythonpath_to_osenv():
     _PYTHONPATH = []
     if "PYTHONPATH" in os.environ:
-        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
-    for p in os.sys.path:
+        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)  # type: ignore
+    for p in os.sys.path:  # type: ignore
         conditions = [p not in _PYTHONPATH]
         if not IS_WINDOWS:
             conditions.append(
@@ -199,8 +199,8 @@ def where_is_program(program, envpath=None):
     # try OS's built-in commands
     try:
         result = exec_command(["where" if IS_WINDOWS else "which", program], env=env)
-        if result["returncode"] == 0 and os.path.isfile(result["out"].strip()):
-            return result["out"].strip()
+        if result["returncode"] == 0 and os.path.isfile(result["out"].strip()):  # type: ignore
+            return result["out"].strip()  # type: ignore
     except OSError:
         pass
 

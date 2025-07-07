@@ -18,7 +18,7 @@ import re
 import time
 from glob import glob
 
-from platformio import __version__, exception, proc
+from platformio import exception, proc
 from platformio.compat import IS_MACOS, IS_WINDOWS
 
 
@@ -57,7 +57,7 @@ def list_logical_devices():
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]
             ).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
-            for line in result.split("\n"):
+            for line in result.split("\n"):  # type: ignore
                 match = devicenamere.match(line.strip())
                 if not match:
                     continue
@@ -67,13 +67,16 @@ def list_logical_devices():
             pass
         # try "fsutil"
         result = proc.exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
-        for device in re.findall(r"[A-Z]:\\", result):
+        assert result is not None
+        for device in re.findall(r"[A-Z]:\\", result):  # type: ignore
             items.append({"path": device, "name": None})
         return items
 
     result = proc.exec_command(["df"]).get("out")
+    assert result is not None
+    assert isinstance(result, str)
     devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
-    for line in result.split("\n"):
+    for line in result.split("\n"):  # type: ignore
         match = devicenamere.match(line.strip())
         if not match:
             continue
@@ -83,14 +86,14 @@ def list_logical_devices():
 
 def list_mdns_services():
     try:
-        import zeroconf  # pylint: disable=import-outside-toplevel
+        import zeroconf  # type: ignore
     except ImportError:
         result = proc.exec_command(
             [proc.get_pythonexe_path(), "-m", "pip", "install", "zeroconf"]
         )
         if result.get("returncode") != 0:
             print(result.get("err"))
-        import zeroconf  # pylint: disable=import-outside-toplevel
+        import zeroconf  # type: ignore
 
     class mDNSListener:
         def __init__(self):

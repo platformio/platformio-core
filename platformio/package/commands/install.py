@@ -256,7 +256,7 @@ def _install_project_env_libraries(project_env, options):
         )
 
     # install dependencies from the private libraries
-    for pkg in private_lm.get_installed():
+    for pkg in private_lm.get_installed():  # type: ignore
         _install_project_private_library_deps(pkg, private_lm, env_lm, options)
 
     return not already_up_to_date

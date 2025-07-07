@@ -44,10 +44,12 @@ class ProjectSyncAsyncCmd(AsyncCommandBase):
         stage = PROJECT_SYNC_STAGE.lookupByValue(data.get("stage"))
 
         if stage is PROJECT_SYNC_STAGE.DBINDEX:
+            assert self.psync is not None
             self.psync.rebuild_dbindex()
             return zlib.compress(json.dumps(self.psync.get_dbindex()).encode())
 
         if stage is PROJECT_SYNC_STAGE.DELETE:
+            assert self.psync is not None
             return self.psync.delete_dbindex(
                 json.loads(zlib.decompress(data["dbindex"]))
             )
@@ -57,6 +59,7 @@ class ProjectSyncAsyncCmd(AsyncCommandBase):
                 self._upstream = BytesIO()
             self._upstream.write(data["chunk"])
             if self._upstream.tell() == data["total"]:
+                assert self.psync is not None
                 self.psync.decompress_items(self._upstream)
                 self._upstream = None
                 return PROJECT_SYNC_STAGE.EXTRACTED.value

@@ -28,7 +28,7 @@ def fix_symlink(root, fname, brokenlink):
 
 
 def main():
-    for root, dirnames, filenames in walk("."):
+    for root, _dirnames, filenames in walk("."):
         for f in filenames:
             path = join(root, f)
             if not islink(path) or exists(path):

@@ -18,15 +18,17 @@ import sys
 from time import time
 
 import click
-from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
-from SCons.Script import DEFAULT_TARGETS  # pylint: disable=import-error
-from SCons.Script import AllowSubstExceptions  # pylint: disable=import-error
-from SCons.Script import AlwaysBuild  # pylint: disable=import-error
-from SCons.Script import Default  # pylint: disable=import-error
-from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
-from SCons.Script import Import  # pylint: disable=import-error
-from SCons.Script import Variables  # pylint: disable=import-error
+from SCons.Script import (  # type: ignore
+    ARGUMENTS,
+    COMMAND_LINE_TARGETS,
+    DEFAULT_TARGETS,
+    AllowSubstExceptions,
+    AlwaysBuild,
+    Default,
+    DefaultEnvironment,
+    Import,
+    Variables,
+)
 
 from platformio import app, fs
 from platformio.platform.base import PlatformBase
@@ -46,8 +48,8 @@ clivars.AddVariables(
     ("PROGRAM_ARGS",),
 )
 
-DEFAULT_ENV_OPTIONS = dict(
-    tools=[
+DEFAULT_ENV_OPTIONS = {
+    "tools": [
         "ar",
         "cc",
         "c++",
@@ -67,32 +69,32 @@ DEFAULT_ENV_OPTIONS = dict(
         "piointegration",
         "piomaxlen",
     ],
-    toolpath=[os.path.join(fs.get_source_dir(), "builder", "tools")],
-    variables=clivars,
+    "toolpath": [os.path.join(fs.get_source_dir(), "builder", "tools")],
+    "variables": clivars,
     # Propagating External Environment
-    ENV=os.environ,
-    UNIX_TIME=int(time()),
-    BUILD_DIR=os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
-    BUILD_SRC_DIR=os.path.join("$BUILD_DIR", "src"),
-    BUILD_TEST_DIR=os.path.join("$BUILD_DIR", "test"),
-    COMPILATIONDB_PATH=os.path.join("$PROJECT_DIR", "compile_commands.json"),
-    LIBPATH=["$BUILD_DIR"],
-    PROGNAME="program",
-    PROGPATH=os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
-    PROG_PATH="$PROGPATH",  # deprecated
-    PYTHONEXE=get_pythonexe_path(),
-)
+    "ENV": os.environ,
+    "UNIX_TIME": int(time()),
+    "BUILD_DIR": os.path.join("$PROJECT_BUILD_DIR", "$PIOENV"),
+    "BUILD_SRC_DIR": os.path.join("$BUILD_DIR", "src"),
+    "BUILD_TEST_DIR": os.path.join("$BUILD_DIR", "test"),
+    "COMPILATIONDB_PATH": os.path.join("$PROJECT_DIR", "compile_commands.json"),
+    "LIBPATH": ["$BUILD_DIR"],
+    "PROGNAME": "program",
+    "PROGPATH": os.path.join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
+    "PROG_PATH": "$PROGPATH",  # deprecated
+    "PYTHONEXE": get_pythonexe_path(),
+}
 
 # Declare command verbose messages
-command_strings = dict(
-    ARCOM="Archiving",
-    LINKCOM="Linking",
-    RANLIBCOM="Indexing",
-    ASCOM="Compiling",
-    ASPPCOM="Compiling",
-    CCCOM="Compiling",
-    CXXCOM="Compiling",
-)
+command_strings = {
+    "ARCOM": "Archiving",
+    "LINKCOM": "Linking",
+    "RANLIBCOM": "Indexing",
+    "ASCOM": "Compiling",
+    "ASPPCOM": "Compiling",
+    "CCCOM": "Compiling",
+    "CXXCOM": "Compiling",
+}
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     for name, value in command_strings.items():
         DEFAULT_ENV_OPTIONS["%sSTR" % name] = "%s $TARGET" % (value)
@@ -137,7 +139,7 @@ env.Replace(
 
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
-    click._compat.isatty = lambda stream: True
+    click._compat.isatty = lambda stream: True  # type: ignore
 
 if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
@@ -182,9 +184,7 @@ env.SConscript(env.GetExtraScripts("post"), exports="env")
 ##############################################################################
 
 # Checking program size
-if env.get("SIZETOOL") and not (
-    set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
-):
+if env.get("SIZETOOL") and not (    {"nobuild", "sizedata"} & set(COMMAND_LINE_TARGETS)):
     env.Depends("upload", "checkprogsize")
     # Replace platform's "size" target with our
     _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
@@ -219,12 +219,12 @@ if env.IsIntegrationDump():
     projenv = None
     try:
         Import("projenv")
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=bare-except
         projenv = env
-    data = projenv.DumpIntegrationData(env)
+    data = projenv.DumpIntegrationData(env)  # type: ignore
     # dump to file for the further reading by project.helpers.load_build_metadata
     with open(
-        projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),
+        projenv.subst(os.path.join("$BUILD_DIR", "idedata.json")),  # type: ignore
         mode="w",
         encoding="utf8",
     ) as fp:

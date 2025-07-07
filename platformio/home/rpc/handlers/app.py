@@ -35,7 +35,7 @@ class AppRPC(BaseRPCHandler):
         with app.State(
             app.resolve_state_path("core_dir", "homestate.json"), lock=True
         ) as state:
-            storage = state.get("storage", {})
+            storage = state.get("storage", {})  # type: ignore
 
             # base data
             caller_id = app.get_session_var("caller_id")
@@ -56,13 +56,11 @@ class AppRPC(BaseRPCHandler):
             storage["projectsDir"] = storage["coreSettings"]["projects_dir"]["value"]
 
             # skip non-existing recent projects
-            storage["recentProjects"] = list(
-                set(
-                    str(Path(p).resolve())
-                    for p in storage.get("recentProjects", [])
-                    if is_platformio_project(p)
-                )
-            )
+            storage["recentProjects"] = {
+                str(Path(p).resolve())
+                for p in storage.get("recentProjects", [])
+                if is_platformio_project(p)
+            }
 
             state["storage"] = storage
             state.modified = False  # skip saving extra fields
@@ -79,7 +77,7 @@ class AppRPC(BaseRPCHandler):
         ) as s:
             s.clear()
             s.update(state)
-            storage = s.get("storage", {})
+            storage = s.get("storage", {})  # type: ignore
             for k in AppRPC.IGNORE_STORAGE_KEYS:
                 if k in storage:
                     del storage[k]

@@ -1,9 +1,9 @@
-PlatformIO Core
-===============
+PlatformIO Fixed
+================
 
 .. image:: https://github.com/platformio/platformio-core/workflows/Core/badge.svg
     :target: https://docs.platformio.org/en/latest/core/index.html
-    :alt:  CI Build for PlatformIO Core
+    :alt:  CI Build for PlatformIO Fixed
 .. image:: https://github.com/platformio/platformio-core/workflows/Docs/badge.svg
     :target: https://docs.platformio.org?utm_source=github&utm_medium=core
     :alt:  CI Build for Docs
@@ -85,7 +85,7 @@ See `contributing guidelines <https://github.com/platformio/platformio/blob/deve
 Telemetry / Privacy Policy
 --------------------------
 
-Share minimal diagnostics and usage information to help us make PlatformIO better.
+Share minimal diagnostics and usage information to help us make PlatformIO Fixed better.
 It is enabled by default. For more information see:
 
 * `Telemetry Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-telemetry>`_

@@ -1,0 +1,11 @@
+
+#!/bin/bash
+
+# This script runs the linters on the project.
+
+# Run the linters.
+uv run ruff check --fix platformio
+
+uv run isort platformio
+
+uv run pyright platformio

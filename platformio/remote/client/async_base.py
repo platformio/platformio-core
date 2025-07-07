@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import click
-from twisted.spread import pb  # pylint: disable=import-error
+from twisted.spread import pb  # type: ignore
 
 from platformio.remote.client.base import RemoteClientBase
 
@@ -40,7 +40,7 @@ class AsyncClientBase(RemoteClientBase):
             self.acread_data(*value)
 
     def acread_data(self, agent_id, ac_id, agent_name=None):
-        d = self.agentpool.callRemote("acread", agent_id, ac_id)
+        d = self.agentpool.callRemote("acread", agent_id, ac_id)  # type: ignore
         d.addCallback(self.cb_acread_result, agent_id, ac_id, agent_name)
         d.addErrback(self.cb_global_error)
 
@@ -54,7 +54,7 @@ class AsyncClientBase(RemoteClientBase):
             self.acread_data(agent_id, ac_id, agent_name)
 
     def acclose(self, agent_id, ac_id):
-        d = self.agentpool.callRemote("acclose", agent_id, ac_id)
+        d = self.agentpool.callRemote("acclose", agent_id, ac_id)  # type: ignore
         d.addCallback(self.cb_acclose_result)
         d.addErrback(self.cb_global_error)
 

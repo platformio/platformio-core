@@ -79,7 +79,7 @@ class TestRunnerBase:
         )
 
     def get_test_port(self):
-        return self.options.test_port or self.project_config.get(
+        return self.options.test_port or self.project_config.get(  # type: ignore
             f"env:{self.test_suite.env_name}", "test_port"
         )
 
@@ -95,7 +95,7 @@ class TestRunnerBase:
             self.setup()
             for stage in ("building", "uploading", "testing"):
                 getattr(self, f"stage_{stage}")()
-                if self.options.verbose:
+                if self.options.verbose: # type: ignore
                     click.echo()
         except Exception as exc:  # pylint: disable=broad-except
             click.secho(str(exc), fg="red", err=True)
@@ -114,14 +114,14 @@ class TestRunnerBase:
         pass
 
     def stage_building(self):
-        if self.options.without_building:
+        if self.options.without_building: # type: ignore
             return None
         # run "building" once at the "uploading" stage for the embedded target
-        if not self.options.without_uploading and self.platform.is_embedded():
+        if not self.options.without_uploading and self.platform.is_embedded(): # type: ignore
             return None
         click.secho("Building...", bold=True)
         targets = ["__test"]
-        if not self.options.without_debugging:
+        if not self.options.without_debugging: # type: ignore
             targets.append("__debug")
         if self.platform.is_embedded():
             targets.append("checkprogsize")
@@ -135,17 +135,17 @@ class TestRunnerBase:
 
     def stage_uploading(self):
         is_embedded = self.platform.is_embedded()
-        if self.options.without_uploading or not is_embedded:
+        if self.options.without_uploading or not is_embedded: # type: ignore
             return None
         click.secho(
             "Building & Uploading..." if is_embedded else "Uploading...", bold=True
         )
         targets = ["upload"]
-        if self.options.without_building:
+        if self.options.without_building: # type: ignore
             targets.append("nobuild")
         else:
             targets.append("__test")
-        if not self.options.without_debugging:
+        if not self.options.without_debugging: # type: ignore
             targets.append("__debug")
         try:
             return self.run_project_targets(targets)
@@ -156,7 +156,7 @@ class TestRunnerBase:
             ) from exc
 
     def stage_testing(self):
-        if self.options.without_testing:
+        if self.options.without_testing: # type: ignore
             return None
         click.secho("Testing...", bold=True)
         test_port = self.get_test_port()
@@ -185,9 +185,9 @@ class TestRunnerBase:
         return self.cmd_ctx.invoke(
             run_cmd,
             project_conf=self.project_config.path,
-            upload_port=self.options.upload_port,
-            verbose=self.options.verbose > 2,
-            silent=self.options.verbose < 2,
+            upload_port=self.options.upload_port, # type: ignore
+            verbose=self.options.verbose > 2, # type: ignore
+            silent=self.options.verbose < 2, # type: ignore
             environment=[self.test_suite.env_name],
             disable_auto_clean="nobuild" in targets,
             target=targets,

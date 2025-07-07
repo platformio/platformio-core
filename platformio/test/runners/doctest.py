@@ -63,7 +63,7 @@ class DoctestTestCaseParser:
                 status=self._tmp_tc.status,
                 message=(self._tmp_tc.message or "").strip() or None,
                 source=self._tmp_tc.source,
-                stdout=self._tmp_tc.stdout.strip(),
+                stdout=self._tmp_tc.stdout.strip(),  # type: ignore
             )
 
         self._tmp_tc = TestCase("", TestStatus.PASSED, stdout="")
@@ -96,8 +96,8 @@ class DoctestTestCaseParser:
             index = line.find(": %s:" % token)
             if index == -1:
                 continue
-            self._tmp_tc.status = status
-            self._tmp_tc.message = line[index + len(token) + 3 :].strip() or None
+            self._tmp_tc.status = status  # type: ignore
+            self._tmp_tc.message = line[index + len(token) + 3 :].strip() or None  # type: ignore
 
 
 class DoctestTestRunner(TestRunnerBase):
@@ -108,13 +108,13 @@ class DoctestTestRunner(TestRunnerBase):
         self._tc_parser = DoctestTestCaseParser()
 
     def on_testing_line_output(self, line):
-        if self.options.verbose:
+        if self.options.verbose: # type: ignore
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
         if test_case:
             self.test_suite.add_case(test_case)
-            if not self.options.verbose:
+            if not self.options.verbose: # type: ignore
                 click.echo(test_case.humanize())
 
         if "[doctest] Status:" in line:

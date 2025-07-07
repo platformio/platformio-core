@@ -12,7 +12,7 @@ Release Notes
 
 .. _release_notes_6:
 
-PlatformIO Core 6
+PlatformIO Fixed 6
 -----------------
 
 Unlock the true potential of embedded software development with
@@ -123,7 +123,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Expanded the functionality of the |LIBRARYJSON| manifest by allowing the use of the underscore symbol in the `keywords <https://docs.platformio.org/en/latest/manifests/library-json/fields/keywords.html>`__ field
 * Optimized project integration templates to address the issue of long paths on Windows (`issue #4652 <https://github.com/platformio/platformio-core/issues/4652>`_)
 * Refactored |UNITTESTING| engine to resolve compiler warnings with "-Wpedantic" option (`pull #4671 <https://github.com/platformio/platformio-core/pull/4671>`_)
-* Eliminated erroneous warning regarding the use of obsolete PlatformIO Core when downgrading to the stable version (`issue #4664 <https://github.com/platformio/platformio-core/issues/4664>`_)
+* Eliminated erroneous warning regarding the use of obsolete PlatformIO Fixed when downgrading to the stable version (`issue #4664 <https://github.com/platformio/platformio-core/issues/4664>`_)
 * Updated the `pio project metadata <https://docs.platformio.org/en/latest/core/userguide/project/cmd_metadata.html>`__ command to return C/C++ flags as parsed Unix shell arguments when dumping project build metadata
 * Resolved a critical issue related to the usage of the ``-include`` flag within the `build_flags <https://docs.platformio.org/en/latest/projectconf/sections/env/options/build/build_flags.html>`__ option, specifically when employing dynamic variables (`issue #4682 <https://github.com/platformio/platformio-core/issues/4682>`_)
 * Removed PlatformIO IDE for Atom from the documentation as `Atom has been deprecated <https://github.blog/2022-06-08-sunsetting-atom/>`__
@@ -148,7 +148,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Resolved an issue where native tests would fail if a custom program name was specified (`issue #4546 <https://github.com/platformio/platformio-core/issues/4546>`_)
 * Resolved an issue where the PlatformIO |DEBUGGING| solution was not escaping the tool installation process into MI2 correctly (`issue #4565 <https://github.com/platformio/platformio-core/issues/4565>`_)
 * Resolved an issue where multiple targets were not executed sequentially (`issue #4604 <https://github.com/platformio/platformio-core/issues/4604>`_)
-* Resolved an issue where upgrading PlatformIO Core fails on Windows with Python 3.11 (`issue #4540 <https://github.com/platformio/platformio-core/issues/4540>`_)
+* Resolved an issue where upgrading PlatformIO Fixed fails on Windows with Python 3.11 (`issue #4540 <https://github.com/platformio/platformio-core/issues/4540>`_)
 
 6.1.6 (2023-01-23)
 ~~~~~~~~~~~~~~~~~~
@@ -167,7 +167,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 ~~~~~~~~~~~~~~~~~~
 
 * Added a new `enable_proxy_strict_ssl <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html>`__ setting to disable the proxy server certificate verification (`issue #4432 <https://github.com/platformio/platformio-core/issues/4432>`_)
-* Documented `PlatformIO Core Proxy Configuration <https://docs.platformio.org/en/latest/core/installation/proxy-configuration.html>`__
+* Documented `PlatformIO Fixed Proxy Configuration <https://docs.platformio.org/en/latest/core/installation/proxy-configuration.html>`__
 * Speeded up device port finder by avoiding loading board HWIDs from development platforms
 * Improved caching of build metadata in debug mode
 * Fixed an issue when `pio pkg install --storage-dir <https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html>`__ command requires PlatformIO project (`issue #4410 <https://github.com/platformio/platformio-core/issues/4410>`_)
@@ -270,7 +270,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.0.1 (2022-05-17)
 ~~~~~~~~~~~~~~~~~~
 
-* Improved support for the renamed configuration options (`issue #4270 <https://github.com/platformio/platformio-core/issues/4270>`_)
+* Improved support for the renamed configuration options (`issue #4270 <https://github.com/platformio/platformio-fixed/issues/4270>`_)
 * Fixed an issue when calling the built-in `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html#filters>`__ filters
 * Fixed an issue when using |INTERPOLATION| and merging str+int options (`issue #4271 <https://github.com/platformio/platformio-core/issues/4271>`_)
 
@@ -368,34 +368,34 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
 
 .. _release_notes_5:
 
-PlatformIO Core 5
+PlatformIO Fixed 5
 -----------------
 
-See `PlatformIO Core 5.0 history <https://github.com/platformio/platformio-core/blob/v5.2.5/HISTORY.rst>`__.
+See `PlatformIO Fixed 5.0 history <https://github.com/platformio/platformio-core/blob/v5.2.5/HISTORY.rst>`__.
 
 .. _release_notes_4:
 
-PlatformIO Core 4
+PlatformIO Fixed 4
 -----------------
 
-See `PlatformIO Core 4.0 history <https://github.com/platformio/platformio-core/blob/v4.3.4/HISTORY.rst>`__.
+See `PlatformIO Fixed 4.0 history <https://github.com/platformio/platformio-core/blob/v4.3.4/HISTORY.rst>`__.
 
-PlatformIO Core 3
+PlatformIO Fixed 3
 -----------------
 
-See `PlatformIO Core 3.0 history <https://github.com/platformio/platformio-core/blob/v3.6.7/HISTORY.rst>`__.
+See `PlatformIO Fixed 3.0 history <https://github.com/platformio/platformio-core/blob/v3.6.7/HISTORY.rst>`__.
 
-PlatformIO Core 2
+PlatformIO Fixed 2
 -----------------
 
-See `PlatformIO Core 2.0 history <https://github.com/platformio/platformio-core/blob/v2.11.2/HISTORY.rst>`__.
+See `PlatformIO Fixed 2.0 history <https://github.com/platformio/platformio-core/blob/v2.11.2/HISTORY.rst>`__.
 
-PlatformIO Core 1
+PlatformIO Fixed 1
 -----------------
 
-See `PlatformIO Core 1.0 history <https://github.com/platformio/platformio-core/blob/v1.5.0/HISTORY.rst>`__.
+See `PlatformIO Fixed 1.0 history <https://github.com/platformio/platformio-fixed/blob/v1.5.0/HISTORY.rst>`__.
 
-PlatformIO Core Preview
+PlatformIO Fixed Preview
 -----------------------
 
-See `PlatformIO Core Preview history <https://github.com/platformio/platformio-core/blob/v0.10.2/HISTORY.rst>`__.
+See `PlatformIO Fixed Preview history <https://github.com/platformio/platformio-fixed/blob/v0.10.2/HISTORY.rst>`__.

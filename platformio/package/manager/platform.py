@@ -104,10 +104,12 @@ class PlatformPackageManager(BasePackageManager):  # pylint: disable=too-many-an
             p.update_packages()
         return pkg
 
-    @util.memoized(expire="5s")
+    @util.memoized(expire="5s")  # type: ignore
     def get_installed_boards(self):
         boards = []
-        for pkg in self.get_installed():
+        installed = self.get_installed()
+        assert installed is not None
+        for pkg in installed:
             p = PlatformFactory.new(pkg)
             for config in p.get_boards().values():
                 board = config.get_brief_data()
@@ -155,13 +157,15 @@ def remove_unnecessary_platform_packages(dry_run=False):
     candidates = []
     required = set()
     core_packages = get_installed_core_packages()
-    for platform in PlatformPackageManager().get_installed():
+    installed = PlatformPackageManager().get_installed()
+    assert installed is not None
+    for platform in installed:
         p = PlatformFactory.new(platform)
         for pkg in p.get_installed_packages(with_optional_versions=True):
             required.add(pkg)
 
     pm = ToolPackageManager()
-    for pkg in pm.get_installed():
+    for pkg in pm.get_installed():  # type: ignore
         skip_conds = [
             pkg.metadata.spec.uri,
             os.path.isfile(os.path.join(pkg.path, ".piokeep")),

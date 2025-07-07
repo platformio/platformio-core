@@ -106,8 +106,8 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
                     click.echo(result["out"])
                     click.echo(result["err"])
 
-            for line in result["out"].split("\n"):
-                tokens = line.strip().split(" ", 2)
+            for line in result["out"].split("\n"):  # type: ignore
+                tokens = line.strip().split(" ", 2)  # type: ignore
                 if not tokens or tokens[0] != "#define":
                     continue
                 if len(tokens) > 2:

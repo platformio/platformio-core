@@ -20,7 +20,7 @@ import sys
 from shutil import copyfile
 from time import sleep
 
-from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # type: ignore
 from serial import Serial, SerialException
 
 from platformio import exception, fs
@@ -31,12 +31,12 @@ from platformio.proc import exec_command
 
 def FlushSerialBuffer(env, port):
     s = Serial(env.subst(port))
-    s.flushInput()
-    s.setDTR(False)
-    s.setRTS(False)
+    s.flushInput()  # type: ignore
+    s.setDTR(False)  # type: ignore
+    s.setRTS(False)  # type: ignore
     sleep(0.1)
-    s.setDTR(True)
-    s.setRTS(True)
+    s.setDTR(True)  # type: ignore
+    s.setRTS(True)  # type: ignore
     s.close()
 
 
@@ -45,9 +45,9 @@ def TouchSerialPort(env, port, baudrate):
     print("Forcing reset using %dbps open/close on port %s" % (baudrate, port))
     try:
         s = Serial(port=port, baudrate=baudrate)
-        s.setDTR(False)
+        s.setDTR(False)  # type: ignore
         s.close()
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=bare-except
         pass
     sleep(0.4)  # DO NOT REMOVE THAT (required by SAM-BA based boards)
 
@@ -59,7 +59,7 @@ def WaitForNewSerialPort(env, before):
     elapsed = 0
     before = [p["port"] for p in before]
     while elapsed < 5 and new_port is None:
-        now = [p["port"] for p in list_serial_ports()]
+        now = [p["port"] for p in list_serial_ports()]  # type: ignore
         for p in now:
             if p not in before:
                 new_port = p
@@ -114,7 +114,7 @@ def AutodetectUploadPort(*args, **kwargs):
                 board_config=env.BoardConfig() if "BOARD" in env else None,
                 upload_protocol=upload_protocol,
                 prefer_gdb_port="blackmagic" in upload_protocol,
-                verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)),
+                verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)),  # type: ignore
             ).find(initial_port)
         )
 
@@ -177,14 +177,14 @@ def CheckUploadSize(_, target, source, env):
         result = exec_command(env.subst(cmd), env=sysenv)
         if result["returncode"] != 0:
             return None
-        return result["out"].strip()
+        return result["out"].strip()  # type: ignore
 
     def _calculate_size(output, pattern):
         if not output or not pattern:
             return -1
         size = 0
         regexp = re.compile(pattern)
-        for line in output.split("\n"):
+        for line in output.split("\n"):  # type: ignore
             line = line.strip()
             if not line:
                 continue

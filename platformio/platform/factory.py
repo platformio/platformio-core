@@ -49,17 +49,17 @@ class PlatformFactory:
         platform_name = None
         if isinstance(pkg_or_spec, PackageItem):
             platform_dir = pkg_or_spec.path
-            platform_name = pkg_or_spec.metadata.name
+            platform_name = pkg_or_spec.metadata.name  # type: ignore
         elif isinstance(pkg_or_spec, (str, bytes)) and os.path.isdir(pkg_or_spec):
             platform_dir = pkg_or_spec
         else:
             pkg = PlatformPackageManager().get_package(pkg_or_spec)
             if pkg:
                 platform_dir = pkg.path
-                platform_name = pkg.metadata.name
+                platform_name = pkg.metadata.name  # type: ignore
 
         if not platform_dir or not os.path.isfile(
-            os.path.join(platform_dir, "platform.json")
+            os.path.join(platform_dir, "platform.json")  # type: ignore
         ):
             if autoinstall:
                 return cls.new(
@@ -70,15 +70,15 @@ class PlatformFactory:
             raise UnknownPlatform(pkg_or_spec)
 
         if not platform_name:
-            platform_name = fs.load_json(os.path.join(platform_dir, "platform.json"))[
+            platform_name = fs.load_json(os.path.join(platform_dir, "platform.json"))[  # type: ignore
                 "name"
             ]
 
         platform_cls = None
-        if os.path.isfile(os.path.join(platform_dir, "platform.py")):
+        if os.path.isfile(os.path.join(platform_dir, "platform.py")):  # type: ignore
             platform_cls = getattr(
                 cls.load_platform_module(
-                    platform_name, os.path.join(platform_dir, "platform.py")
+                    platform_name, os.path.join(platform_dir, "platform.py")  # type: ignore
                 ),
                 cls.get_clsname(platform_name),
             )
@@ -87,7 +87,7 @@ class PlatformFactory:
                 str(cls.get_clsname(platform_name)), (base.PlatformBase,), {}
             )
 
-        _instance = platform_cls(os.path.join(platform_dir, "platform.json"))
+        _instance = platform_cls(os.path.join(platform_dir, "platform.json"))  # type: ignore
         assert isinstance(_instance, base.PlatformBase)
         return _instance
 

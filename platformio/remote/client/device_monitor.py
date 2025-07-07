@@ -16,21 +16,21 @@ import os
 from fnmatch import fnmatch
 
 import click
-from twisted.internet import protocol, reactor, task  # pylint: disable=import-error
-from twisted.spread import pb  # pylint: disable=import-error
+from twisted.internet import protocol, reactor, task  # type: ignore
+from twisted.spread import pb  # type: ignore
 
 from platformio.remote.client.base import RemoteClientBase
 
 
 class SMBridgeProtocol(protocol.Protocol):
     def connectionMade(self):
-        self.factory.add_client(self)
+        self.factory.add_client(self)  # type: ignore
 
     def connectionLost(self, reason):  # pylint: disable=unused-argument
-        self.factory.remove_client(self)
+        self.factory.remove_client(self)  # type: ignore
 
     def dataReceived(self, data):
-        self.factory.send_to_server(data)
+        self.factory.send_to_server(data)  # type: ignore
 
 
 class SMBridgeFactory(protocol.ServerFactory):
@@ -87,7 +87,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
 
     def agent_pool_ready(self):
         d = task.deferLater(
-            reactor, 1, self.agentpool.callRemote, "cmd", self.agents, "device.list"
+            reactor, 1, self.agentpool.callRemote, "cmd", self.agents, "device.list" # type: ignore
         )
         d.addCallback(self._cb_device_list)
         d.addErrback(self.cb_global_error)
@@ -106,7 +106,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
                 devices.append((agent_name, item))
 
         if len(result) == 1 and self.cmd_options["port"]:
-            if set(["*", "?", "[", "]"]) & set(self.cmd_options["port"]):
+            if {"*", "?", "[", "]"} & set(self.cmd_options["port"]):
                 for agent, item in devices:
                     if fnmatch(item["port"], self.cmd_options["port"]):
                         return self.start_remote_monitor(agent, item["port"])
@@ -150,7 +150,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
                 host=agent, port=options["port"]
             )
         )
-        d = self.agentpool.callRemote("cmd", [agent], "device.monitor", options)
+        d = self.agentpool.callRemote("cmd", [agent], "device.monitor", options)  # type: ignore
         d.addCallback(self.cb_async_result)
         d.addErrback(self.cb_global_error)
 
@@ -170,9 +170,9 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
             return
 
         # start bridge
-        port = reactor.listenTCP(0, self._bridge_factory)
-        address = port.getHost()
-        self.log.debug("Serial Bridge is started on {address!r}", address=address)
+        port = reactor.listenTCP(0, self._bridge_factory)  # type: ignore
+        address = port.getHost()  # type: ignore
+        self.log.debug("Serial Bridge is started on {address!r}", address=address)  # type: ignore
         if "sock" in self.cmd_options:
             with open(
                 os.path.join(self.cmd_options["sock"], "sock"),
@@ -183,7 +183,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
 
     def client_terminal_stopped(self):
         try:
-            d = self.agentpool.callRemote("acclose", self._agent_id, self._ac_id)
+            d = self.agentpool.callRemote("acclose", self._agent_id, self._ac_id)  # type: ignore
             d.addCallback(lambda r: self.disconnect())
             d.addErrback(self.cb_global_error)
         except (AttributeError, pb.DeadReferenceError):
@@ -200,7 +200,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
             return
 
         try:
-            self._d_acread = self.agentpool.callRemote(
+            self._d_acread = self.agentpool.callRemote(  # type: ignore
                 "acread", self._agent_id, self._ac_id
             )
             self._d_acread.addCallback(self.cb_acread_result)
@@ -229,7 +229,7 @@ class DeviceMonitorClient(  # pylint: disable=too-many-instance-attributes
         data = self._acwrite_buffer
         self._acwrite_buffer = b""
         try:
-            d = self.agentpool.callRemote("acwrite", self._agent_id, self._ac_id, data)
+            d = self.agentpool.callRemote("acwrite", self._agent_id, self._ac_id, data)  # type: ignore
             d.addCallback(self.cb_acwrite_result)
             d.addErrback(self.cb_global_error)
         except (AttributeError, pb.DeadReferenceError):

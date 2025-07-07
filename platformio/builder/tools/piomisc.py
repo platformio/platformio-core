@@ -35,7 +35,7 @@ def GetCompilerType(env):  # pylint: disable=too-many-return-statements
         return None
     if result["returncode"] != 0:
         return None
-    output = "".join([result["out"], result["err"]]).lower()
+    output = "".join([result["out"], result["err"]]).lower()  # type: ignore
     if "clang version" in output:
         return "clang"
     if "gcc" in output:

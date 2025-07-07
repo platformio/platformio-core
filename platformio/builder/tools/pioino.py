@@ -102,7 +102,7 @@ class InoToCPPConverter:
         return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
 
     def process(self, contents):
-        out_file = re.sub(r"[\"\'\;]+", "", self._main_ino) + ".cpp"
+        out_file = re.sub(r"[\"\'\;]+", "", self._main_ino) + ".cpp"  # type: ignore
         assert self._gcc_preprocess(contents, out_file)
         contents = self.read_safe_contents(out_file)
         contents = self._join_multiline_strings(contents)
@@ -148,7 +148,7 @@ class InoToCPPConverter:
                 newlines[len(newlines) - 1] += line
                 stropen = False
                 newlines.append(
-                    '#line %d "%s"' % (linenum, self._main_ino.replace("\\", "/"))
+                    '#line %d "%s"' % (linenum, self._main_ino.replace("\\", "/"))  # type: ignore
                 )
                 continue
 
@@ -167,12 +167,9 @@ class InoToCPPConverter:
 
     def _parse_prototypes(self, contents):
         prototypes = []
-        reserved_keywords = set(["if", "else", "while"])
+        reserved_keywords = {"if", "else", "while"}
         for match in self.PROTOTYPE_RE.finditer(contents):
-            if (
-                set([match.group(2).strip(), match.group(3).strip()])
-                & reserved_keywords
-            ):
+            if ({match.group(2).strip(), match.group(3).strip()} & reserved_keywords):
                 continue
             prototypes.append(match)
         return prototypes
@@ -192,13 +189,13 @@ class InoToCPPConverter:
         prototypes = self._parse_prototypes(contents) or []
 
         # skip already declared prototypes
-        declared = set(m.group(1).strip() for m in prototypes if m.group(4) == ";")
+        declared = {m.group(1).strip() for m in prototypes if m.group(4) == ";"}
         prototypes = [m for m in prototypes if m.group(1).strip() not in declared]
 
         if not prototypes:
             return contents
 
-        prototype_names = set(m.group(3).strip() for m in prototypes)
+        prototype_names = {m.group(3).strip() for m in prototypes}
         split_pos = prototypes[0].start()
         match_ptrs = re.search(
             self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
@@ -215,7 +212,7 @@ class InoToCPPConverter:
             '#line %d "%s"'
             % (
                 self._get_total_lines(contents[:split_pos]),
-                self._main_ino.replace("\\", "/"),
+                self._main_ino.replace("\\", "/"),  # type: ignore
             )
         )
         result.append(contents[split_pos:].strip())
@@ -243,7 +240,7 @@ def _delete_file(path):
     try:
         if os.path.isfile(path):
             os.remove(path)
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=bare-except
         pass
 
 

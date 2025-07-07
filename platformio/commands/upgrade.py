@@ -124,7 +124,7 @@ def get_latest_version():
         if not str(VERSION[2]).isdigit():
             try:
                 return get_develop_latest_version()
-            except:  # pylint: disable=bare-except
+            except Exception:  # pylint: disable=broad-except
                 pass
         return get_pypi_latest_version()
     except Exception as exc:

@@ -43,17 +43,19 @@ class PackageManagerUpdateMixin:
 
         latest = None
         wanted = None
+        assert pkg.metadata.spec is not None
         if pkg.metadata.spec.external:
             latest = self._fetch_vcs_latest_version(pkg)
         else:
             try:
-                reg_pkg = self.fetch_registry_package(pkg.metadata.spec)
+                assert self.fetch_registry_package is not None  # type: ignore
+                reg_pkg = self.fetch_registry_package(pkg.metadata.spec)  # type: ignore
                 latest = (
-                    self.pick_best_registry_version(reg_pkg["versions"]) or {}
+                    self.pick_best_registry_version(reg_pkg["versions"]) or {}  # type: ignore
                 ).get("name")
                 if spec:
                     wanted = (
-                        self.pick_best_registry_version(reg_pkg["versions"], spec) or {}
+                        self.pick_best_registry_version(reg_pkg["versions"], spec) or {}  # type: ignore
                     ).get("name")
                     if not wanted:  # wrong library
                         latest = None
@@ -78,7 +80,7 @@ class PackageManagerUpdateMixin:
             return None
 
         return str(
-            self.build_metadata(
+            self.build_metadata(  # type: ignore
                 pkg.path, pkg.metadata.spec, vcs_revision=vcs_revision
             ).version
         )
@@ -89,44 +91,44 @@ class PackageManagerUpdateMixin:
         to_spec=None,
         skip_dependencies=False,
     ):
-        pkg = self.get_package(from_spec)
+        pkg = self.get_package(from_spec)  # type: ignore
         if not pkg or not pkg.metadata:
             raise UnknownPackageError(from_spec)
 
         outdated = self.outdated(pkg, to_spec)
         if not outdated.is_outdated(allow_incompatible=False):
-            self.log.debug(
+            self.log.debug(  # type: ignore
                 click.style(
                     "{name}@{version} is already up-to-date".format(
-                        **pkg.metadata.as_dict()
+                        **pkg.metadata.as_dict()  # type: ignore
                     ),
                     fg="yellow",
                 )
             )
             return pkg
 
-        self.log.info(
+        self.log.info(  # type: ignore
             "Updating %s @ %s"
-            % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version)
+            % (click.style(pkg.metadata.name, fg="cyan"), pkg.metadata.version)  # type: ignore
         )
         try:
-            self.lock()
+            self.lock()  # type: ignore
             return self._update(pkg, outdated, skip_dependencies)
         finally:
-            self.unlock()
+            self.unlock()  # type: ignore
 
     def _update(self, pkg, outdated, skip_dependencies=False):
         if pkg.metadata.spec.external:
-            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.uri)
+            vcs = VCSClientFactory.new(pkg.path, pkg.metadata.spec.uri)  # type: ignore
             assert vcs.update()
-            pkg.metadata.version = self._fetch_vcs_latest_version(pkg)
+            pkg.metadata.version = self._fetch_vcs_latest_version(pkg)  # type: ignore
             pkg.dump_meta()
             return pkg
 
         # uninstall existing version
-        self.uninstall(pkg, skip_dependencies=True)
+        self.uninstall(pkg, skip_dependencies=True)  # type: ignore
 
-        return self.install(
+        return self.install(  # type: ignore
             PackageSpec(
                 id=pkg.metadata.spec.id,
                 owner=pkg.metadata.spec.owner,

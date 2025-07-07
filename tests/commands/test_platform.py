@@ -99,7 +99,7 @@ def test_list_json_output(clirunner, validate_cliresult):
     assert isinstance(list_result, list)
     assert list_result
     platforms = [item["name"] for item in list_result]
-    assert set(["atmelavr", "espressif8266"]) == set(platforms)
+    assert {"atmelavr", "espressif8266"} == set(platforms)
 
 
 def test_list_raw_output(clirunner, validate_cliresult):

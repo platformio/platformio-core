@@ -52,7 +52,7 @@ set language auto
     @property
     def port(self):
         # pylint: disable=assignment-from-no-return
-        initial_port = DebugConfigBase.port.fget(self)
+        initial_port = DebugConfigBase.port.fget(self)  # type: ignore
         if initial_port and not is_pattern_port(initial_port):
             return initial_port
         port = SerialPortFinder(

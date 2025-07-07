@@ -113,7 +113,7 @@ def new_terminal(options):
     for ts in (term.tx_transformations, term.rx_transformations):
         for t in ts:
             try:
-                t.set_running_terminal(term)
+                t.set_running_terminal(term)  # type: ignore
             except AttributeError:
                 pass
     return term

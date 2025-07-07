@@ -191,3 +191,8 @@ def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
         ],
     )
     validate_cliresult(result)
+
+
+if __name__ == "__main__":
+    import pytest
+    pytest.main()

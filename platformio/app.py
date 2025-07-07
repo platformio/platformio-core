@@ -93,7 +93,7 @@ class State:
     def __enter__(self):
         try:
             self._lock_state_file()
-            if os.path.isfile(self.path):
+            if os.path.isfile(self.path):  # type: ignore
                 self._storage = fs.load_json(self.path)
             assert isinstance(self._storage, dict)
         except (
@@ -108,11 +108,11 @@ class State:
     def __exit__(self, type_, value, traceback):
         if self.modified:
             try:
-                with open(self.path, mode="w", encoding="utf8") as fp:
+                with open(self.path, mode="w", encoding="utf8") as fp:  # type: ignore
                     fp.write(json.dumps(self._storage))
             except IOError as exc:
                 raise exception.HomeDirPermissionsError(
-                    os.path.dirname(self.path)
+                    os.path.dirname(self.path)  # type: ignore
                 ) from exc
         self._unlock_state_file()
 
@@ -123,7 +123,7 @@ class State:
         try:
             self._lockfile.acquire()
         except IOError as exc:
-            raise exception.HomeDirPermissionsError(os.path.dirname(self.path)) from exc
+            raise exception.HomeDirPermissionsError(os.path.dirname(self.path)) from exc  # type: ignore
 
     def _unlock_state_file(self):
         if hasattr(self, "_lockfile") and self._lockfile:
@@ -185,7 +185,7 @@ def sanitize_setting(name, value):
 
 def get_state_item(name, default=None):
     with State() as state:
-        return state.get(name, default)
+        return state.get(name, default)  # type: ignore
 
 
 def set_state_item(name, value):
@@ -250,9 +250,9 @@ def get_cid():
         uid = os.getenv("GITPOD_GIT_USER_NAME")
     if not uid:
         uid = uuid.getnode()
-    cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())
+    cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())  # type: ignore
     cid = str(cid)
-    if IS_WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
+    if IS_WINDOWS or os.getuid() > 0:  # type: ignore
         set_state_item("cid", cid)
         set_state_item("created_at", int(time.time()))
     return cid
@@ -280,11 +280,11 @@ def get_user_agent():
 
 
 def get_host_id():
-    h = hashlib.sha1(hashlib_encode_data(get_cid()))
+    h = hashlib.sha1(hashlib_encode_data(get_cid())) # type: ignore
     try:
         username = getpass.getuser()
-        h.update(hashlib_encode_data(username))
-    except:  # pylint: disable=bare-except
+        h.update(hashlib_encode_data(username))  # type: ignore
+    except Exception:  # pylint: disable=bare-except
         pass
     return h.hexdigest()
 

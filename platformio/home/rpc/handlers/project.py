@@ -84,17 +84,17 @@ class ProjectRPC(BaseRPCHandler):
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig()
             data["envs"] = config.envs()
-            data["description"] = config.get("platformio", "description")
-            data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))
+            data["description"] = config.get("platformio", "description")  # type: ignore
+            data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))  # type: ignore
 
             libdeps_dir = config.get("platformio", "libdeps_dir")
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
-                data["envLibdepsDirs"].append(os.path.join(libdeps_dir, section[4:]))
+                data["envLibdepsDirs"].append(os.path.join(libdeps_dir, section[4:]))  # type: ignore
                 if config.has_option(section, "board"):
                     data["boards"].append(config.get(section, "board"))
-                data["libExtraDirs"].extend(config.get(section, "lib_extra_dirs", []))
+                data["libExtraDirs"].extend(config.get(section, "lib_extra_dirs", []))  # type: ignore
 
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
@@ -154,7 +154,7 @@ class ProjectRPC(BaseRPCHandler):
     def get_project_examples():
         result = []
         pm = PlatformPackageManager()
-        for pkg in pm.get_installed():
+        for pkg in pm.get_installed():  # type: ignore
             examples_dir = os.path.join(pkg.path, "examples")
             if not os.path.isdir(examples_dir):
                 continue
@@ -247,9 +247,9 @@ class ProjectRPC(BaseRPCHandler):
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get("platformio", "src_dir")
-            if os.path.isdir(src_dir):
+            if os.path.isdir(src_dir):  # type: ignore
                 fs.rmtree(src_dir)
-            shutil.copytree(arduino_project_dir, src_dir, symlinks=True)
+            shutil.copytree(arduino_project_dir, src_dir, symlinks=True)  # type: ignore
         return project_dir
 
     @staticmethod
@@ -289,7 +289,7 @@ class ProjectRPC(BaseRPCHandler):
             args.extend(["--ide", ide])
 
         if configuration.get("example"):
-            await self.factory.notify_clients(
+            await self.factory.notify_clients(  # type: ignore
                 method=options.get("stdoutNotificationMethod"),
                 params=["Copying example files...\n"],
                 actor="frontend",
@@ -298,7 +298,7 @@ class ProjectRPC(BaseRPCHandler):
         else:
             args.extend(self._pre_init_empty(configuration))
 
-        return await self.factory.manager.dispatcher["core.exec"](args, options=options)
+        return await self.factory.manager.dispatcher["core.exec"](args, options=options)  # type: ignore
 
     @staticmethod
     def _pre_init_empty(configuration):
@@ -334,7 +334,7 @@ class ProjectRPC(BaseRPCHandler):
             if not p.parent.is_dir():
                 p.parent.mkdir(parents=True)
             p.write_text(
-                await self.factory.manager.dispatcher["os.request_content"](
+                await self.factory.manager.dispatcher["os.request_content"](  # type: ignore
                     item["url"]
                 ),
                 encoding="utf-8",
@@ -352,7 +352,7 @@ class ProjectRPC(BaseRPCHandler):
 
             # frameworks
             frameworks = []
-            for name in config.get(f"env:{env}", "framework", []):
+            for name in config.get(f"env:{env}", "framework", []):  # type: ignore
                 if name not in platform.frameworks:
                     continue
                 f_pkg_name = platform.frameworks[name].get("package")
@@ -363,28 +363,28 @@ class ProjectRPC(BaseRPCHandler):
                     continue
                 f_manifest = platform.pm.load_manifest(f_pkg)
                 frameworks.append(
-                    dict(
-                        name=name,
-                        title=f_manifest.get("title"),
-                        version=str(f_pkg.metadata.version),
-                    )
+                    {
+                        "name": name,
+                        "title": f_manifest.get("title"),
+                        "version": str(f_pkg.metadata.version),
+                    }
                 )
 
-            return dict(
-                platform=dict(
-                    ownername=(
-                        platform_pkg.metadata.spec.owner
-                        if platform_pkg.metadata.spec
+            return {
+                "platform": {
+                    "ownername": (
+                        platform_pkg.metadata.spec.owner  # type: ignore
+                        if platform_pkg.metadata.spec  # type: ignore
                         else None
                     ),
-                    name=platform.name,
-                    title=platform.title,
-                    version=str(platform_pkg.metadata.version),
-                ),
-                board=(
-                    platform.board_config(board_id).get_brief_data()
+                    "name": platform.name,
+                    "title": platform.title,
+                    "version": str(platform_pkg.metadata.version),  # type: ignore
+                },
+                "board": (
+                    platform.board_config(board_id).get_brief_data()  # type: ignore
                     if board_id
                     else None
                 ),
-                frameworks=frameworks or None,
-            )
+                "frameworks": frameworks or None,
+            }

@@ -46,7 +46,7 @@ class ClangtidyCheckTool(CheckToolBase):
         elif category == "warning":
             severity = DefectItem.SEVERITY_MEDIUM
 
-        return DefectItem(severity, category, message, file_, line, column, defect_id)
+        return DefectItem(severity, category, message, file_, line, column, defect_id)  # type: ignore
 
     @staticmethod
     def is_check_successful(cmd_result):
@@ -55,7 +55,7 @@ class ClangtidyCheckTool(CheckToolBase):
         return cmd_result["returncode"] < 2
 
     def configure_command(self):
-        tool_path = join(self.get_tool_dir("tool-clangtidy"), "clang-tidy")
+        tool_path = join(self.get_tool_dir("tool-clangtidy"), "clang-tidy")  # type: ignore
 
         cmd = [tool_path, "--quiet"]
         flags = self.get_flags("clangtidy")
@@ -74,7 +74,7 @@ class ClangtidyCheckTool(CheckToolBase):
 
         cmd.extend(flags + src_files + ["--"])
         cmd.extend(
-            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines["c++"]]
+            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines["c++"]]  # type: ignore
         )
 
         includes = []

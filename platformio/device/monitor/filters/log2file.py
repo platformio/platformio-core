@@ -20,7 +20,7 @@ from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class LogToFile(DeviceMonitorFilterBase):
-    NAME = "log2file"
+    NAME = "log2file"  # type: ignore
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,6 +42,6 @@ class LogToFile(DeviceMonitorFilterBase):
             self._log_fp.close()
 
     def rx(self, text):
-        self._log_fp.write(text)
-        self._log_fp.flush()
+        self._log_fp.write(text)  # type: ignore
+        self._log_fp.flush()  # type: ignore
         return text

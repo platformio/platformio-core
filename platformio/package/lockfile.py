@@ -57,7 +57,7 @@ class LockFile:
             if time() - os.path.getmtime(self._lock_path) > 10:
                 try:
                     os.remove(self._lock_path)
-                except:  # pylint: disable=bare-except
+                except Exception:  # pylint: disable=bare-except
                     pass
             else:
                 raise LockFileExists
@@ -67,10 +67,10 @@ class LockFile:
         )
         try:
             if LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_FCNTL:
-                fcntl.flock(self._fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(self._fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)  # type: ignore
             elif LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_MSVCRT:
                 msvcrt.locking(  # pylint: disable=used-before-assignment
-                    self._fp.fileno(), msvcrt.LK_NBLCK, 1
+                    self._fp.fileno(), msvcrt.LK_NBLCK, 1  # type: ignore
                 )
         except (BlockingIOError, IOError) as exc:
             self._fp.close()
@@ -82,9 +82,9 @@ class LockFile:
         if not self._fp:
             return
         if LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_FCNTL:
-            fcntl.flock(self._fp.fileno(), fcntl.LOCK_UN)
+            fcntl.flock(self._fp.fileno(), fcntl.LOCK_UN)  # type: ignore
         elif LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_MSVCRT:
-            msvcrt.locking(self._fp.fileno(), msvcrt.LK_UNLCK, 1)
+            msvcrt.locking(self._fp.fileno(), msvcrt.LK_UNLCK, 1)  # type: ignore
         self._fp.close()
         self._fp = None
 
@@ -104,7 +104,7 @@ class LockFile:
         if os.path.exists(self._lock_path):
             try:
                 os.remove(self._lock_path)
-            except:  # pylint: disable=bare-except
+            except Exception:  # pylint: disable=bare-except
                 pass
 
     def __enter__(self):

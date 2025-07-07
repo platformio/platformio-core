@@ -57,7 +57,7 @@ def parse_udev_rules_hwids(path):
 def is_pattern_port(port):
     if not port:
         return False
-    return set(["*", "?", "[", "]"]) & set(port)
+    return {"*", "?", "[", "]"} & set(port)
 
 
 def find_mbed_disk(initial_port):
@@ -74,7 +74,7 @@ def find_mbed_disk(initial_port):
         mbed_pages = [os.path.join(item["path"], n) for n in ("mbed.htm", "mbed.html")]
         if any(os.path.isfile(p) for p in mbed_pages):
             return item["path"]
-        if item["name"] and any(l in item["name"].lower() for l in msdlabels):
+        if item["name"] and any(label in item["name"].lower() for label in msdlabels):
             return item["path"]
     return None
 
@@ -83,7 +83,7 @@ def is_serial_port_ready(port, timeout=1):
     try:
         serial.Serial(port, timeout=timeout).close()
         return True
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=broad-except
         pass
     return False
 
@@ -114,8 +114,8 @@ class SerialPortFinder:
     @staticmethod
     def match_serial_port(pattern):
         for item in list_serial_ports():
-            if fnmatch(item["port"], pattern):
-                return item["port"]
+            if fnmatch(item["port"], pattern):  # type: ignore
+                return item["port"]  # type: ignore
         return None
 
     @staticmethod
@@ -151,10 +151,10 @@ class SerialPortFinder:
         # pick the best PID:VID USB device
         port = best_port = None
         for item in list_serial_ports():
-            if self.ensure_ready and not is_serial_port_ready(item["port"]):
+            if self.ensure_ready and not is_serial_port_ready(item["port"]):  # type: ignore
                 continue
-            port = item["port"]
-            if "VID:PID" in item["hwid"]:
+            port = item["port"]  # type: ignore
+            if "VID:PID" in item["hwid"]:  # type: ignore
                 best_port = port
         return best_port or port
 
@@ -184,7 +184,7 @@ class SerialPortFinder:
     def _find_board_device(self):
         hwids = [
             self.normalize_board_hwid(hwid)
-            for hwid in self.board_config.get("build.hwids", [])
+            for hwid in self.board_config.get("build.hwids", [])  # type: ignore
         ]
         try:
 
@@ -203,7 +203,7 @@ class SerialPortFinder:
             click.secho(
                 "TimeoutError: Could not automatically find serial port "
                 "for the `%s` board based on the declared HWIDs=%s"
-                % (self.board_config.get("name", "unknown"), hwids),
+                % (self.board_config.get("name", "unknown"), hwids),  # type: ignore
                 fg="yellow",
                 err=True,
             )
@@ -222,7 +222,7 @@ class SerialPortFinder:
         def _fetch_hwids_from_platforms():
             """load from installed dev-platforms"""
             result = []
-            for platform in PlatformPackageManager().get_installed():
+            for platform in PlatformPackageManager().get_installed():  # type: ignore
                 p = PlatformFactory.new(platform)
                 for board_config in p.get_boards().values():
                     for board_hwid in board_config.get("build.hwids", []):

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# This script cleans the project directory of temporary and build files.
+
+set -e
+
+echo "Cleaning project..."
+
+# Remove virtual environment
+rm -rf .venv
+
+# Remove build artifacts
+rm -rf build/
+rm -rf dist/
+rm -rf .tox/
+rm -rf *.egg-info/
+rm -rf platformio.egg-info/
+
+# Remove pytest cache
+rm -rf .pytest_cache/
+
+# Remove pycache directories and pyc files
+find . -type d -name "__pycache__" -exec rm -rf {} +
+find . -type f -name "*.pyc" -delete
+
+echo "Clean complete."

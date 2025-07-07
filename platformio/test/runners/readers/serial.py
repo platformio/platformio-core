@@ -49,12 +49,12 @@ class SerialTestOutputReader:
             return
 
         if not self.test_runner.options.no_reset:
-            ser.flushInput()
-            ser.setDTR(False)
-            ser.setRTS(False)
+            ser.flushInput()  # type: ignore
+            ser.setDTR(False)  # type: ignore
+            ser.setRTS(False)  # type: ignore
             sleep(0.1)
-            ser.setDTR(True)
-            ser.setRTS(True)
+            ser.setDTR(True)  # type: ignore
+            ser.setRTS(True)  # type: ignore
             sleep(0.1)
 
         while not self.test_runner.test_suite.is_finished():

@@ -77,7 +77,7 @@ def get_default_projects_dir():
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
         ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
         docs_dir = buf.value
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=bare-except
         if not IS_MACOS:
             try:
                 docs_dir = (
@@ -92,7 +92,7 @@ def get_default_projects_dir():
 
 def compute_project_checksum(config):
     # rebuild when PIO Core version changes
-    checksum = sha1(hashlib_encode_data(__version__))
+    checksum = sha1(hashlib_encode_data(__version__))  # type: ignore
 
     # configuration file state
     config_data = config.to_json()
@@ -104,7 +104,7 @@ def compute_project_checksum(config):
             config_data,
             flags=re.I,
         )
-    checksum.update(hashlib_encode_data(config_data))
+    checksum.update(hashlib_encode_data(config_data))  # type: ignore
 
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
@@ -126,7 +126,7 @@ def compute_project_checksum(config):
         chunks_to_str = ",".join(sorted(chunks))
         if IS_WINDOWS:  # case insensitive OS
             chunks_to_str = chunks_to_str.lower()
-        checksum.update(hashlib_encode_data(chunks_to_str))
+        checksum.update(hashlib_encode_data(chunks_to_str))  # type: ignore
 
     return checksum.hexdigest()
 
@@ -180,7 +180,7 @@ def _load_build_metadata(project_dir, env_names, build_type=None):
     if result.exit_code != 0 and not isinstance(
         result.exception, exception.ReturnErrorCode
     ):
-        raise result.exception
+        raise result.exception  # type: ignore
     if '"includes":' not in result.output:
         raise exception.UserSideException(result.output)
     return _get_cached_build_metadata(env_names)

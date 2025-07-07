@@ -20,33 +20,12 @@ import locale
 import os
 import shlex
 import sys
+from asyncio import create_task as aio_create_task
+from asyncio import get_running_loop as aio_get_running_loop
+from asyncio import to_thread as aio_to_thread
+from shlex import join as shlex_join
 
 from platformio.exception import UserSideException
-
-if sys.version_info >= (3, 7):
-    from asyncio import create_task as aio_create_task
-    from asyncio import get_running_loop as aio_get_running_loop
-else:
-    from asyncio import ensure_future as aio_create_task
-    from asyncio import get_event_loop as aio_get_running_loop
-
-
-if sys.version_info >= (3, 8):
-    from shlex import join as shlex_join
-else:
-
-    def shlex_join(split_command):
-        return " ".join(shlex.quote(arg) for arg in split_command)
-
-
-if sys.version_info >= (3, 9):
-    from asyncio import to_thread as aio_to_thread
-else:
-    try:
-        from starlette.concurrency import run_in_threadpool as aio_to_thread
-    except ImportError:
-        pass
-
 
 PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
 PY36 = sys.version_info[0:2] == (3, 6)
@@ -62,12 +41,7 @@ def is_bytes(x):
 
 
 def isascii(text):
-    if sys.version_info >= (3, 7):
-        return text.isascii()
-    for c in text or "":
-        if ord(c) > 127:
-            return False
-    return True
+    return text.isascii()
 
 
 def is_terminal():
@@ -95,7 +69,9 @@ def hashlib_encode_data(data):
 
 def load_python_module(name, pathname):
     spec = importlib.util.spec_from_file_location(name, pathname)
+    assert spec is not None
     module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
     spec.loader.exec_module(module)
     return module
 
@@ -146,3 +122,20 @@ def is_proxy_set(socks=False):
             continue
         return True
     return False
+
+
+__all__ = [
+    "aio_create_task",
+    "aio_get_running_loop",
+    "aio_to_thread",
+    "shlex_join",
+    "is_bytes",
+    "isascii",
+    "is_terminal",
+    "ci_strings_are_equal",
+    "hashlib_encode_data",
+    "load_python_module",
+    "get_filesystem_encoding",
+    "get_locale_encoding",
+    "get_object_members",
+]

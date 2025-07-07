@@ -33,8 +33,8 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         self._tmp_output_file = self._generate_tmp_file_path() + ".pvs"
         self._tmp_cfg_file = self._generate_tmp_file_path() + ".cfg"
         self._tmp_cmd_file = self._generate_tmp_file_path() + ".cmd"
-        self.tool_path = os.path.join(
-            self.get_tool_dir("tool-pvs-studio"),
+        self.tool_path = os.path.join(  # type: ignore
+            self.get_tool_dir("tool-pvs-studio"),  # type: ignore
             "x64" if IS_WINDOWS else "bin",
             "pvs-studio",
         )
@@ -74,8 +74,8 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
                 self._on_defect_callback(defect)
 
     def _demangle_report(self, output_file):
-        converter_tool = os.path.join(
-            self.get_tool_dir("tool-pvs-studio"),
+        converter_tool = os.path.join(  # type: ignore
+            self.get_tool_dir("tool-pvs-studio"),  # type: ignore
             "HtmlGenerator" if IS_WINDOWS else os.path.join("bin", "plog-converter"),
         )
 
@@ -111,24 +111,24 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
         try:
             defects_data = fromstring(report)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             click.echo("Error: Couldn't decode generated report!")
             self._bad_input = True
             return []
 
         for table in defects_data.iter("PVS-Studio_Analysis_Log"):
-            message = table.find("Message").text
-            category = table.find("ErrorType").text
-            line = table.find("Line").text
-            file_ = table.find("File").text
-            defect_id = table.find("ErrorCode").text
-            cwe = table.find("CWECode")
+            message = table.find("Message").text  # type: ignore
+            category = table.find("ErrorType").text  # type: ignore
+            line = table.find("Line").text  # type: ignore
+            file_ = table.find("File").text  # type: ignore
+            defect_id = table.find("ErrorCode").text  # type: ignore
+            cwe = table.find("CWECode")  # type: ignore
             cwe_id = None
             if cwe is not None:
-                cwe_id = cwe.text.lower().replace("cwe-", "")
-            misra = table.find("MISRA")
+                cwe_id = cwe.text.lower().replace("cwe-", "")  # type: ignore
+            misra = table.find("MISRA")  # type: ignore
             if misra is not None:
-                message += " [%s]" % misra.text
+                message += " [%s]" % misra.text  # type: ignore
 
             severity = DefectItem.SEVERITY_LOW
             if category == "error":
@@ -138,7 +138,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
             defects.append(
                 DefectItem(
-                    severity, category, message, file_, line, id=defect_id, cwe=cwe_id
+                    severity, category, message, file_, line, id=defect_id, cwe=cwe_id  # type: ignore
                 )
             )
 
@@ -179,7 +179,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
     def _generate_tmp_file_path(self):
         # pylint: disable=protected-access
-        return os.path.join(self._tmp_dir, next(tempfile._get_candidate_names()))
+        return os.path.join(self._tmp_dir, next(tempfile._get_candidate_names()))  # type: ignore
 
     def _prepare_preprocessed_file(self, src_file):
         if os.path.isfile(self._tmp_preprocessed_file):

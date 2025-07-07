@@ -269,9 +269,7 @@ def test_install_lib_depndencies(isolated_pio_core, tmpdir_factory):
     lm.install("file://%s" % str(src_dir))
     installed = lm.get_installed()
     assert len(installed) == 4
-    assert set(["external-repo", "ArduinoJson", "lib-with-deps", "OneWire"]) == set(
-        p.metadata.name for p in installed
-    )
+    assert {"external-repo", "ArduinoJson", "lib-with-deps", "OneWire"} == {p.metadata.name for p in installed}
 
 
 def test_install_force(isolated_pio_core, tmpdir_factory):
@@ -511,9 +509,7 @@ def test_get_installed(isolated_pio_core, tmpdir_factory):
 
     installed = pm.get_installed()
     assert len(installed) == 4
-    assert set(["pkg-via-vcs", "foo", "check-system"]) == set(
-        p.metadata.name for p in installed
-    )
+    assert {"pkg-via-vcs", "foo", "check-system"} == {p.metadata.name for p in installed}
     assert str(pm.get_package("foo").metadata.version) == "3.6.0"
     assert str(pm.get_package("check-system").metadata.version) == "3.0.0"
 

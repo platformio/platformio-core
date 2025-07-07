@@ -15,9 +15,9 @@
 import os
 import sys
 
-from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
-from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # type: ignore
+from SCons.Script import COMMAND_LINE_TARGETS  # type: ignore
+from SCons.Script import DefaultEnvironment  # type: ignore
 
 from platformio import fs, util
 from platformio.compat import IS_MACOS, IS_WINDOWS
@@ -158,9 +158,9 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         if (
             int(ARGUMENTS.get("PIOVERBOSE", 0))
             and pkg_metadata
-            and pkg_metadata.spec.external
+            and pkg_metadata.spec.external  # type: ignore
         ):
-            data.append("(%s)" % pkg_metadata.spec.uri)
+            data.append("(%s)" % pkg_metadata.spec.uri)  # type: ignore
         if board_config:
             data.extend([">", board_config.get("name")])
         return data
@@ -194,7 +194,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             "DEBUG:",
             "Current",
             "(%s)"
-            % board_config.get_debug_tool_name(env.GetProjectOption("debug_tool")),
+            % board_config.get_debug_tool_name(env.GetProjectOption("debug_tool")),  # type: ignore
         ]
         onboard = []
         external = []

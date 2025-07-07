@@ -46,3 +46,8 @@ def test_warning_line(clirunner, validate_cliresult):
     )
     validate_cliresult(result)
     assert 'main.ino:75:2: warning: #warning "Line 75"' in result.output
+
+
+if __name__ == "__main__":
+    import pytest
+    pytest.main()

@@ -26,17 +26,15 @@ class RegistryClient(HTTPClient):
 
     @staticmethod
     def allowed_private_packages():
-        private_permissions = set(
-            [
-                "service.registry.publish-private-tool",
-                "service.registry.publish-private-platform",
-                "service.registry.publish-private-library",
-            ]
-        )
+        private_permissions = {
+            "service.registry.publish-private-tool",
+            "service.registry.publish-private-platform",
+            "service.registry.publish-private-library",
+        }
         try:
             info = AccountClient().get_account_info() or {}
             for item in info.get("packages", []):
-                if set(item.keys()) & private_permissions:
+                if set(item.keys()) & private_permissions:  # type: ignore
                     return True
         except AccountError:
             pass
@@ -129,9 +127,9 @@ class RegistryClient(HTTPClient):
                     search_query.append('%s:"%s"' % (name[:-1], value))
         if query:
             search_query.append(query)
-        params = dict(query=" ".join(search_query))
+        params = {"query": " ".join(search_query)}
         if page:
-            params["page"] = int(page)
+            params["page"] = int(page)  # type: ignore
         if sort:
             params["sort"] = sort
         return self.fetch_json_data(
@@ -154,7 +152,9 @@ class RegistryClient(HTTPClient):
                     name=name.lower(),
                     extra_path=extra_path or "",
                 ),
-                params=dict(version=version) if version else None,
+                params={
+                    "version": version
+                } if version else None,
                 x_cache_valid="1h",
                 x_with_authorization=self.allowed_private_packages(),
             )

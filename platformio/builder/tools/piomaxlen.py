@@ -16,9 +16,9 @@ import hashlib
 import os
 import re
 
-from SCons.Platform import TempFileMunge  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
-from SCons.Subst import quote_spaces  # pylint: disable=import-error
+from SCons.Platform import TempFileMunge  # type: ignore
+from SCons.Script import COMMAND_LINE_TARGETS  # type: ignore
+from SCons.Subst import quote_spaces  # type: ignore
 
 from platformio.compat import IS_WINDOWS, hashlib_encode_data
 
@@ -76,14 +76,14 @@ def exists(env):
 def generate(env):
     if not exists(env):
         return env
-    kwargs = dict(
-        _long_sources_hook=long_sources_hook,
-        TEMPFILE=TempFileMunge,
-        MAXLINELENGTH=MAX_LINE_LENGTH,
-        TEMPFILEARGESCFUNC=tempfile_arg_esc_func,
-        TEMPFILESUFFIX=".tmp",
-        TEMPFILEDIR="$BUILD_DIR",
-    )
+    kwargs = {
+        "_long_sources_hook": long_sources_hook,
+        "TEMPFILE": TempFileMunge,
+        "MAXLINELENGTH": MAX_LINE_LENGTH,
+        "TEMPFILEARGESCFUNC": tempfile_arg_esc_func,
+        "TEMPFILESUFFIX": ".tmp",
+        "TEMPFILEDIR": "$BUILD_DIR",
+    }
 
     for name in ("LINKCOM", "ASCOM", "ASPPCOM", "CCCOM", "CXXCOM"):
         kwargs[name] = "${TEMPFILE('%s','$%sSTR')}" % (env.get(name), name)

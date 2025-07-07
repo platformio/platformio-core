@@ -47,7 +47,7 @@ def package_exec_cmd(obj, package, call, args):
 
     click.echo(
         "Using %s package"
-        % click.style("%s@%s" % (pkg.metadata.name, pkg.metadata.version), fg="cyan")
+        % click.style("%s@%s" % (pkg.metadata.name, pkg.metadata.version), fg="cyan")  # type: ignore
     )
 
     inject_pkg_to_environ(pkg)
@@ -61,7 +61,7 @@ def package_exec_cmd(obj, package, call, args):
 
     result = None
     try:
-        run_options = dict(shell=call is not None, env=os.environ)
+        run_options = {"shell": call is not None, "env": os.environ}
         force_click_stream = (obj or {}).get("force_click_stream")
         if force_click_stream:
             run_options.update(stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -81,7 +81,7 @@ def find_pkg_by_executable(executable):
     exes = [executable]
     if IS_WINDOWS and not executable.endswith(".exe"):
         exes.append(f"{executable}.exe")
-    for pkg in ToolPackageManager().get_installed():
+    for pkg in ToolPackageManager().get_installed():  # type: ignore
         for exe in exes:
             if os.path.exists(os.path.join(pkg.path, exe)) or os.path.exists(
                 os.path.join(pkg.path, "bin", exe)
@@ -105,5 +105,5 @@ def inject_pkg_to_environ(pkg):
     lib_path_key = "DYLD_LIBRARY_PATH" if IS_MACOS else "LD_LIBRARY_PATH"
     lib_paths = [lib_dir]
     if os.environ.get(lib_path_key):
-        lib_paths.append(os.environ.get(lib_path_key))
+        lib_paths.append(os.environ.get(lib_path_key))  # type: ignore
     os.environ[lib_path_key] = os.pathsep.join(lib_paths)

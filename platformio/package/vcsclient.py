@@ -78,7 +78,7 @@ class VCSClientBase:
 
     @property
     def storage_dir(self):
-        return os.path.join(self.src_dir, "." + self.command)
+        return os.path.join(self.src_dir, "." + self.command)  # type: ignore
 
     def export(self):
         raise NotImplementedError
@@ -116,7 +116,7 @@ class VCSClientBase:
             kwargs["cwd"] = self.src_dir
         result = proc.exec_command(args, **kwargs)
         if result["returncode"] == 0:
-            return result["out"].strip()
+            return result["out"].strip()  # type: ignore
         raise VCSBaseException(
             "VCS: Could not receive an output from `%s` command (%s)" % (args, result)
         )
@@ -139,7 +139,7 @@ class GitClient(VCSClientBase):
             result = proc.exec_command([cls.command, "--exec-path"])
             if result["returncode"] != 0:
                 return False
-            path = result["out"].strip()
+            path = result["out"].strip()  # type: ignore
             if path:
                 proc.append_env_path("PATH", path)
                 return True
@@ -232,7 +232,7 @@ class HgClient(VCSClientBase):
         args = ["clone"]
         if self.tag:
             args.extend(["--updaterev", self.tag])
-        args.extend([self.remote_url, self.src_dir])
+        args.extend([self.remote_url, self.src_dir]) # type: ignore
         return self.run_cmd(args)
 
     def update(self):
@@ -255,7 +255,7 @@ class SvnClient(VCSClientBase):
         args = ["checkout"]
         if self.tag:
             args.extend(["--revision", self.tag])
-        args.extend([self.remote_url, self.src_dir])
+        args.extend([self.remote_url, self.src_dir])  # type: ignore
         return self.run_cmd(args)
 
     def update(self):

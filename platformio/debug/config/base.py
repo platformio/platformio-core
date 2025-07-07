@@ -144,7 +144,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
     @property
     def server_ready_pattern(self):
         return self.env_options.get(
-            "debug_server_ready_pattern", (self.server or {}).get("ready_pattern")
+            "debug_server_ready_pattern", (self.server or {}).get("ready_pattern")  # type: ignore
         )
 
     def _load_build_data(self):
@@ -192,10 +192,10 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                 self.platform.install_package(server_package)
                 server_package_dir = self.platform.get_package_dir(server_package)
             result.update(
-                dict(
-                    cwd=server_package_dir if server_package else None,
-                    executable=result.get("executable"),
-                    arguments=[
+                {
+                    "cwd": server_package_dir if server_package else None,
+                    "executable": result.get("executable"),
+                    "arguments": [
                         (
                             a.replace("$PACKAGE_DIR", server_package_dir)
                             if server_package_dir
@@ -203,7 +203,7 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                         )
                         for a in result.get("arguments", [])
                     ],
-                )
+                }
             )
         return self.reveal_patterns(result) if result else None
 
@@ -245,10 +245,10 @@ class DebugConfigBase:  # pylint: disable=too-many-instance-attributes
                 if isinstance(value, string_types):
                     source[key] = _replace(value)
                 elif isinstance(value, (list, dict)) and recursive:
-                    source[key] = self.reveal_patterns(value, patterns)
+                    source[key] = self.reveal_patterns(value, patterns)  # type: ignore
 
         data = json.dumps(source)
         if any(("$" + key) in data for key in patterns):
-            source = self.reveal_patterns(source, patterns)
+            source = self.reveal_patterns(source, patterns)  # type: ignore
 
         return source

@@ -26,7 +26,7 @@ class DeviceListClient(RemoteClientBase):
         self.json_output = json_output
 
     def agent_pool_ready(self):
-        d = self.agentpool.callRemote("cmd", self.agents, "device.list")
+        d = self.agentpool.callRemote("cmd", self.agents, "device.list")  # type: ignore
         d.addCallback(self._cbResult)
         d.addErrback(self.cb_global_error)
 

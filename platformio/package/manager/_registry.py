@@ -36,7 +36,7 @@ class PackageManagerRegistryMixin:
             if not packages:
                 raise UnknownPackageError(spec.humanize())
             if len(packages) > 1:
-                self.print_multi_package_issue(self.log.warning, packages, spec)
+                self.print_multi_package_issue(self.log.warning, packages, spec)  # type: ignore
             package, version = self.find_best_registry_version(packages, spec)
 
         if not package or not version:
@@ -48,7 +48,7 @@ class PackageManagerRegistryMixin:
 
         for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
             try:
-                return self.install_from_uri(
+                return self.install_from_uri(  # type: ignore
                     url,
                     PackageSpec(
                         owner=package["owner"]["username"],
@@ -58,10 +58,10 @@ class PackageManagerRegistryMixin:
                     checksum or pkgfile["checksum"]["sha256"],
                 )
             except Exception as exc:  # pylint: disable=broad-except
-                self.log.warning(
+                self.log.warning(  # type: ignore
                     click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
                 )
-                self.log.warning(
+                self.log.warning(  # type: ignore
                     click.style("Looking for another mirror...", fg="yellow")
                 )
 
@@ -78,8 +78,8 @@ class PackageManagerRegistryMixin:
         if spec.id:
             qualifiers["ids"] = str(spec.id)
         else:
-            qualifiers["types"] = self.pkg_type
-            qualifiers["names"] = spec.name.lower()
+            qualifiers["types"] = self.pkg_type  # type: ignore
+            qualifiers["names"] = spec.name.lower()  # type: ignore
             if spec.owner:
                 qualifiers["owners"] = spec.owner.lower()
         return self.get_registry_client_instance().list_packages(qualifiers=qualifiers)[
@@ -91,27 +91,27 @@ class PackageManagerRegistryMixin:
         result = None
         regclient = self.get_registry_client_instance()
         if spec.owner and spec.name:
-            result = regclient.get_package(self.pkg_type, spec.owner, spec.name)
+            result = regclient.get_package(self.pkg_type, spec.owner, spec.name)  # type: ignore
         if not result and (spec.id or (spec.name and not spec.owner)):
             packages = self.search_registry_packages(spec)
             if packages:
                 result = regclient.get_package(
-                    self.pkg_type, packages[0]["owner"]["username"], packages[0]["name"]
+                    self.pkg_type, packages[0]["owner"]["username"], packages[0]["name"]  # type: ignore
                 )
         if not result:
             raise UnknownPackageError(spec.humanize())
         return result
 
     def reveal_registry_package_id(self, spec):
-        spec = self.ensure_spec(spec)
+        spec = self.ensure_spec(spec)  # type: ignore
         if spec.id:
             return spec.id
         packages = self.search_registry_packages(spec)
         if not packages:
             raise UnknownPackageError(spec.humanize())
         if len(packages) > 1:
-            self.print_multi_package_issue(self.log.warning, packages, spec)
-            self.log.info("")
+            self.print_multi_package_issue(self.log.warning, packages, spec)  # type: ignore
+            self.log.info("")  # type: ignore
         return packages[0]["id"]
 
     @staticmethod
@@ -171,7 +171,7 @@ class PackageManagerRegistryMixin:
             if spec and spec.requirements and semver not in spec.requirements:
                 continue
             if not any(
-                self.is_system_compatible(f.get("system"), custom_system=custom_system)
+                self.is_system_compatible(f.get("system"), custom_system=custom_system)  # type: ignore
                 for f in version["files"]
             ):
                 continue
@@ -190,8 +190,8 @@ class PackageManagerRegistryMixin:
 
     def pick_compatible_pkg_file(self, version_files, custom_system=None):
         for item in version_files:
-            if self.is_system_compatible(
-                item.get("system"), custom_system=custom_system
+            if self.is_system_compatible(  # type: ignore
+                item.get("system"), custom_system=custom_system  # type: ignore
             ):
                 return item
         return None

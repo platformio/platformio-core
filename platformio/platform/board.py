@@ -30,7 +30,7 @@ class PlatformBoardConfig:
             self._manifest = fs.load_json(manifest_path)
         except InvalidJSONFile as exc:
             raise InvalidBoardManifest(manifest_path) from exc
-        if not set(["name", "url", "vendor"]) <= set(self._manifest):
+        if not {"name", "url", "vendor"} <= set(self._manifest):
             raise UserSideException(
                 "Please specify name, url and vendor fields for " + manifest_path
             )
@@ -125,7 +125,7 @@ class PlatformBoardConfig:
                 return tool_name
             raise DebugInvalidOptionsError(
                 "Unknown debug tool `%s`. Please use one of `%s` or `custom`"
-                % (tool_name, ", ".join(sorted(list(debug_tools))))
+                % (tool_name, ", ".join(sorted(debug_tools)))
             )
 
         # automatically select best tool
@@ -137,7 +137,7 @@ class PlatformBoardConfig:
                 data["onboard"].append(key)
             data["external"].append(key)
 
-        for key, value in data.items():
+        for _key, value in data.items():
             if not value:
                 continue
             return sorted(value)[0]

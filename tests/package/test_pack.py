@@ -40,9 +40,7 @@ def test_base(tmpdir_factory):
     with fs.cd(str(pkg_dir)):
         p.pack()
     with tarfile.open(os.path.join(str(pkg_dir), "foo-1.0.0.tar.gz"), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            [".gitignore", "include/main.h", "library.json", "main.cpp"]
-        )
+        assert set(tar.getnames()) == {".gitignore", "include/main.h", "library.json", "main.cpp"}
 
 
 def test_filters(tmpdir_factory):
@@ -57,42 +55,32 @@ def test_filters(tmpdir_factory):
 
     # test include with remap of root
     pkg_dir.join("library.json").write(
-        json.dumps(dict(name="bar", version="1.2.3", export={"include": "src"}))
+        json.dumps({"name": "bar", "version": "1.2.3", "export": {"include": "src"}})
     )
     p = PackagePacker(str(pkg_dir))
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            ["util/helpers.cpp", "main.cpp", "library.json"]
-        )
+        assert set(tar.getnames()) == {"util/helpers.cpp", "main.cpp", "library.json"}
     os.unlink(str(src_dir.join("library.json")))
 
     # test include "src" and "include"
     pkg_dir.join("library.json").write(
-        json.dumps(
-            dict(name="bar", version="1.2.3", export={"include": ["src", "include"]})
-        )
+        json.dumps({"name": "bar", "version": "1.2.3", "export": {"include": ["src", "include"]}})
     )
     p = PackagePacker(str(pkg_dir))
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            ["include/main.h", "library.json", "src/main.cpp", "src/util/helpers.cpp"]
-        )
+        assert set(tar.getnames()) == {"include/main.h", "library.json", "src/main.cpp", "src/util/helpers.cpp"}
 
     # test include & exclude
     pkg_dir.join("library.json").write(
-        json.dumps(
-            dict(
-                name="bar",
-                version="1.2.3",
-                export={"include": ["src", "include"], "exclude": ["*/*.h"]},
-            )
-        )
+        json.dumps({
+            "name": "bar",
+            "version": "1.2.3",
+            "export": {"include": ["src", "include"], "exclude": ["*/*.h"]},
+        })
     )
     p = PackagePacker(str(pkg_dir))
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            ["library.json", "src/main.cpp", "src/util/helpers.cpp"]
-        )
+        assert set(tar.getnames()) == {"library.json", "src/main.cpp", "src/util/helpers.cpp"}
 
 
 def test_gitgnore_filters(tmpdir_factory):
@@ -126,9 +114,7 @@ LICENSE
     with fs.cd(str(pkg_dir)):
         p.pack()
     with tarfile.open(os.path.join(str(pkg_dir), "foo-1.0.0.tar.gz"), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            ["library.json", "LICENSE", ".gitignore", "gi_keep_file"]
-        )
+        assert set(tar.getnames()) == {"library.json", "LICENSE", ".gitignore", "gi_keep_file"}
 
 
 def test_symlinks(tmpdir_factory):
@@ -149,9 +135,7 @@ def test_symlinks(tmpdir_factory):
     p = PackagePacker(str(tarball))
     assert p.pack(str(pkg_dir)).endswith("bar-2.0.0.tar.gz")
     with tarfile.open(os.path.join(str(pkg_dir), "bar-2.0.0.tar.gz"), "r:gz") as tar:
-        assert set(tar.getnames()) == set(
-            ["include/main.h", "library.json", "src/main.cpp", "src/main.h"]
-        )
+        assert set(tar.getnames()) == {"include/main.h", "library.json", "src/main.cpp", "src/main.h"}
         m = tar.getmember("src/main.h")
         assert m.issym()
 
@@ -164,7 +148,7 @@ def test_source_root(tmpdir_factory):
     root_dir.join("library.json").write('{"name": "bar", "version": "2.0.0"}')
     p = PackagePacker(str(pkg_dir))
     with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
-        assert set(tar.getnames()) == set(["library.json", "src/main.cpp"])
+        assert set(tar.getnames()) == {"library.json", "src/main.cpp"}
 
 
 def test_manifest_uri(tmpdir_factory):
@@ -185,4 +169,4 @@ def test_manifest_uri(tmpdir_factory):
     p = PackagePacker(str(pkg_dir), manifest_uri="file:%s" % manifest_path)
     p.pack(str(pkg_dir))
     with tarfile.open(os.path.join(str(pkg_dir), "bar-2.0.0.tar.gz"), "r:gz") as tar:
-        assert set(tar.getnames()) == set(["library.json", "include/bar.h"])
+        assert set(tar.getnames()) == {"library.json", "include/bar.h"}

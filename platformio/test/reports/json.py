@@ -47,62 +47,62 @@ class JsonTestReport(TestReportBase):
         return True
 
     def to_json(self):
-        result = dict(
-            version="1.0",
-            project_dir=self.test_result.project_dir,
-            duration=self.test_result.duration,
-            testcase_nums=self.test_result.case_nums,
-            error_nums=self.test_result.get_status_nums(TestStatus.ERRORED),
-            failure_nums=self.test_result.get_status_nums(TestStatus.FAILED),
-            skipped_nums=self.test_result.get_status_nums(TestStatus.SKIPPED),
-            test_suites=[],
-        )
+        result = {
+            "version": "1.0",
+            "project_dir": self.test_result.project_dir,
+            "duration": self.test_result.duration,
+            "testcase_nums": self.test_result.case_nums,
+            "error_nums": self.test_result.get_status_nums(TestStatus.ERRORED),
+            "failure_nums": self.test_result.get_status_nums(TestStatus.FAILED),
+            "skipped_nums": self.test_result.get_status_nums(TestStatus.SKIPPED),
+            "test_suites": [],
+        }
         for test_suite in self.test_result.suites:
             result["test_suites"].append(self.test_suite_to_json(test_suite))
         return result
 
     def test_suite_to_json(self, test_suite):
-        result = dict(
-            env_name=test_suite.env_name,
-            test_name=test_suite.test_name,
-            test_dir=test_suite.test_dir,
-            status=test_suite.status.name,
-            duration=test_suite.duration,
-            timestamp=(
+        result = {
+            "env_name": test_suite.env_name,
+            "test_name": test_suite.test_name,
+            "test_dir": test_suite.test_dir,
+            "status": test_suite.status.name,
+            "duration": test_suite.duration,
+            "timestamp": (
                 datetime.datetime.fromtimestamp(test_suite.timestamp).strftime(
                     "%Y-%m-%dT%H:%M:%S"
                 )
                 if test_suite.timestamp
                 else None
             ),
-            testcase_nums=len(test_suite.cases),
-            error_nums=test_suite.get_status_nums(TestStatus.ERRORED),
-            failure_nums=test_suite.get_status_nums(TestStatus.FAILED),
-            skipped_nums=test_suite.get_status_nums(TestStatus.SKIPPED),
-            test_cases=[],
-        )
+            "testcase_nums": len(test_suite.cases),
+            "error_nums": test_suite.get_status_nums(TestStatus.ERRORED),
+            "failure_nums": test_suite.get_status_nums(TestStatus.FAILED),
+            "skipped_nums": test_suite.get_status_nums(TestStatus.SKIPPED),
+            "test_cases": [],
+        }
         for test_case in test_suite.cases:
             result["test_cases"].append(self.test_case_to_json(test_case))
         return result
 
     @staticmethod
     def test_case_to_json(test_case):
-        result = dict(
-            name=test_case.name,
-            status=test_case.status.name,
-            message=test_case.message,
-            stdout=test_case.stdout,
-            duration=test_case.duration,
-            exception=None,
-            source=None,
-        )
+        result = {
+            "name": test_case.name,
+            "status": test_case.status.name,
+            "message": test_case.message,
+            "stdout": test_case.stdout,
+            "duration": test_case.duration,
+            "exception": None,
+            "source": None,
+        }
         if test_case.exception:
             result["exception"] = "%s: %s" % (
                 test_case.exception.__class__.__name__,
                 test_case.exception,
             )
         if test_case.source:
-            result["source"] = dict(
-                file=test_case.source.filename, line=test_case.source.line
-            )
+            result["source"] = {
+                "file": test_case.source.filename, "line": test_case.source.line
+            }
         return result

@@ -110,29 +110,29 @@ extern "C"
 $framework_config_code
     """
 
-    UNITY_FRAMEWORK_CONFIG = dict(
-        native=dict(
-            code="""
+    UNITY_FRAMEWORK_CONFIG = {
+        "native": {
+            "code": """
 #include <stdio.h>
 void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
         """,
-            language="c",
-        ),
-        arduino=dict(
-            code="""
+            "language": "c",
+        },
+        "arduino": {
+            "code": """
 #include <Arduino.h>
 void unityOutputStart(unsigned long baudrate) { Serial.begin(baudrate); }
 void unityOutputChar(unsigned int c) { Serial.write(c); }
 void unityOutputFlush(void) { Serial.flush(); }
 void unityOutputComplete(void) { Serial.end(); }
         """,
-            language="cpp",
-        ),
-        mbed=dict(
-            code="""
+            "language": "cpp",
+        },
+        "mbed": {
+            "code": """
 #include <mbed.h>
 #if MBED_MAJOR_VERSION == 6
 UnbufferedSerial pc(USBTX, USBRX);
@@ -150,39 +150,39 @@ void unityOutputChar(unsigned int c) {
 void unityOutputFlush(void) { }
 void unityOutputComplete(void) { }
         """,
-            language="cpp",
-        ),
-        espidf=dict(
-            code="""
+            "language": "cpp",
+        },
+        "espidf": {
+            "code": """
 #include <stdio.h>
 void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { putchar(c); }
 void unityOutputFlush(void) { fflush(stdout); }
 void unityOutputComplete(void) { }
         """,
-            language="c",
-        ),
-        zephyr=dict(
-            code="""
+            "language": "c",
+        },
+        "zephyr": {
+            "code": """
 #include <sys/printk.h>
 void unityOutputStart(unsigned long baudrate) { (void) baudrate; }
 void unityOutputChar(unsigned int c) { printk("%c", c); }
 void unityOutputFlush(void) { }
 void unityOutputComplete(void) { }
         """,
-            language="c",
-        ),
-        legacy_custom_transport=dict(
-            code="""
+            "language": "c",
+        },
+        "legacy_custom_transport": {
+            "code": """
 #include <unittest_transport.h>
 void unityOutputStart(unsigned long baudrate) { unittest_uart_begin(); }
 void unityOutputChar(unsigned int c) { unittest_uart_putchar(c); }
 void unityOutputFlush(void) { unittest_uart_flush(); }
 void unityOutputComplete(void) { unittest_uart_end(); }
         """,
-            language="cpp",
-        ),
-    )
+            "language": "cpp",
+        },
+    }
 
     def get_unity_framework_config(self):
         if not self.platform.is_embedded():
@@ -260,7 +260,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
             )
 
     def on_testing_line_output(self, line):
-        if self.options.verbose:
+        if self.options.verbose: # type: ignore
             click.echo(line, nl=False)
         line = strip_ansi_codes(line or "").strip()
         if not line:
@@ -269,7 +269,7 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         test_case = self.parse_test_case(line)
         if test_case:
             self.test_suite.add_case(test_case)
-            if not self.options.verbose:
+            if not self.options.verbose: # type: ignore
                 click.echo(test_case.humanize())
 
         if all(s in line for s in ("Tests", "Failures", "Ignored")):
@@ -288,11 +288,11 @@ void unityOutputComplete(void) { unittest_uart_end(); }
         source = None
         if "source_file" in data:
             source = TestCaseSource(
-                filename=data["source_file"], line=int(data.get("source_line"))
+                filename=data["source_file"], line=int(data.get("source_line")) # type: ignore
             )
         return TestCase(
-            name=data.get("name").strip(),
-            status=TestStatus.from_string(data.get("status")),
+            name=data.get("name").strip(),  # type: ignore
+            status=TestStatus.from_string(data.get("status")),  # type: ignore
             message=(data.get("message") or "").strip() or None,
             stdout=line,
             source=source,

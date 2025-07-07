@@ -16,7 +16,7 @@ from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class SendOnEnter(DeviceMonitorFilterBase):
-    NAME = "send_on_enter"
+    NAME = "send_on_enter"  # type: ignore
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

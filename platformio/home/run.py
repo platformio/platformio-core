@@ -24,7 +24,7 @@ from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 from starlette.status import HTTP_403_FORBIDDEN
 
-from platformio.compat import aio_get_running_loop
+from platformio.compat import aio_get_running_loop  # type: ignore
 from platformio.exception import PlatformioException
 from platformio.home.rpc.handlers.account import AccountRPC
 from platformio.home.rpc.handlers.app import AppRPC
@@ -63,7 +63,7 @@ async def protected_page(_):
 
 def run_server(host, port, no_open, shutdown_timeout, home_url):
     contrib_dir = get_core_package_dir("contrib-piohome")
-    if not os.path.isdir(contrib_dir):
+    if not os.path.isdir(contrib_dir):  # type: ignore
         raise PlatformioException("Invalid path to PIO Home Contrib")
 
     ws_rpc_factory = WebSocketJSONRPCServerFactory(shutdown_timeout)

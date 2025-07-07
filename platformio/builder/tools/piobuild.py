@@ -16,12 +16,14 @@ import fnmatch
 import os
 import sys
 
-from SCons import Builder, Util  # pylint: disable=import-error
-from SCons.Node import FS  # pylint: disable=import-error
-from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
-from SCons.Script import AlwaysBuild  # pylint: disable=import-error
-from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
-from SCons.Script import SConscript  # pylint: disable=import-error
+from SCons import Builder, Util  # type: ignore
+from SCons.Node import FS  # type: ignore
+from SCons.Script import (  # type: ignore
+    COMMAND_LINE_TARGETS,
+    AlwaysBuild,
+    DefaultEnvironment,
+    SConscript,
+)
 
 from platformio import __version__, fs
 from platformio.compat import IS_MACOS, string_types
@@ -46,11 +48,7 @@ def scons_patched_match_splitext(path, suffixes=None):
 
 def GetBuildType(env):
     modes = []
-    if (
-        set(["__debug", "sizedata"])  # sizedata = for memory inspection
-        & set(COMMAND_LINE_TARGETS)
-        or env.GetProjectOption("build_type") == "debug"
-    ):
+    if {"__debug", "sizedata"} & set(COMMAND_LINE_TARGETS) or env.GetProjectOption("build_type") == "debug":
         modes.append("debug")
     if "__test" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "test":
         modes.append("test")
@@ -221,9 +219,9 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
                 result[k][i] = os.path.abspath(p)
 
     # fix relative LIBs
-    for i, l in enumerate(result.get("LIBS", [])):
-        if isinstance(l, FS.File):
-            result["LIBS"][i] = os.path.abspath(l.get_path())
+    for i, _l in enumerate(result.get("LIBS", [])):
+        if isinstance(_l, FS.File):
+            result["LIBS"][i] = os.path.abspath(_l.get_path())
 
     # fix relative path for "-include"
     for i, f in enumerate(result.get("CCFLAGS", [])):

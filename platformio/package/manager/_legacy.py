@@ -38,24 +38,24 @@ class PackageManagerLegacyMixin:
             )
 
         # fall back to a package manifest
-        manifest = self.load_manifest(pkg_dir)
+        manifest = self.load_manifest(pkg_dir)  # type: ignore
         return PackageSpec(name=manifest.get("name"))
 
     def legacy_load_manifest(self, pkg):
         if not isinstance(pkg, PackageItem):
             assert os.path.isdir(pkg)
             pkg = PackageItem(pkg)
-        manifest = self.load_manifest(pkg)
+        manifest = self.load_manifest(pkg)  # type: ignore
         manifest["__pkg_dir"] = pkg.path
         for key in ("name", "version"):
             if not manifest.get(key):
                 manifest[key] = str(getattr(pkg.metadata, key))
-        if pkg.metadata and pkg.metadata.spec and pkg.metadata.spec.external:
+        if pkg.metadata and pkg.metadata.spec and pkg.metadata.spec.external:  # type: ignore
             manifest["__src_url"] = pkg.metadata.spec.uri
-            manifest["version"] = str(pkg.metadata.version)
-        if pkg.metadata and pkg.metadata.spec.owner:
-            manifest["ownername"] = pkg.metadata.spec.owner
+            manifest["version"] = str(pkg.metadata.version)  # type: ignore
+        if pkg.metadata and pkg.metadata.spec.owner:  # type: ignore
+            manifest["ownername"] = pkg.metadata.spec.owner  # type: ignore
         return manifest
 
     def legacy_get_installed(self):
-        return [self.legacy_load_manifest(pkg) for pkg in self.get_installed()]
+        return [self.legacy_load_manifest(pkg) for pkg in self.get_installed()]  # type: ignore

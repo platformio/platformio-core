@@ -46,10 +46,10 @@ def project_metadata_cmd(project_dir, environments, json_output, json_output_pat
 
     if not json_output:
         install_project_dependencies(
-            options=dict(
-                project_dir=project_dir,
-                environments=environments,
-            )
+            options={
+                "project_dir": project_dir,
+                "environments": environments,
+            }
         )
         click.echo()
 
@@ -64,6 +64,7 @@ def project_metadata_cmd(project_dir, environments, json_output, json_output_pat
             click.echo(json.dumps(build_metadata))
         return
 
+    assert build_metadata is not None
     for envname, metadata in build_metadata.items():
         click.echo("Environment: " + click.style(envname, fg="cyan", bold=True))
         click.echo("=" * (13 + len(envname)))

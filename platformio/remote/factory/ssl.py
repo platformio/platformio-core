@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import certifi
-from OpenSSL import SSL  # pylint: disable=import-error
-from twisted.internet import ssl  # pylint: disable=import-error
+from OpenSSL import SSL  # type: ignore
+from twisted.internet import ssl  # type: ignore
 
 
 class SSLContextFactory(ssl.ClientContextFactory):

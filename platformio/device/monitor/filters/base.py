@@ -71,7 +71,7 @@ def register_filters(platform=None, options=None):
         )
     # load package filters
     pm = ToolPackageManager()
-    for pkg in pm.get_installed():
+    for pkg in pm.get_installed():  # type: ignore
         load_monitor_filters(
             os.path.join(pkg.path, "monitor"), prefix="filter_", options=options
         )
@@ -95,7 +95,7 @@ def load_monitor_filter(path, options=None):
     name = os.path.basename(path)
     name = name[: name.find(".")]
     module = load_python_module("platformio.device.monitor.filters.%s" % name, path)
-    for cls in get_object_members(module).values():
+    for cls in get_object_members(module).values():  # type: ignore
         if (
             not inspect.isclass(cls)
             or not issubclass(cls, DeviceMonitorFilterBase)
@@ -103,5 +103,5 @@ def load_monitor_filter(path, options=None):
         ):
             continue
         obj = cls(options)
-        miniterm.TRANSFORMATIONS[obj.NAME] = obj
+        miniterm.TRANSFORMATIONS[obj.NAME] = obj  # type: ignore
     return True

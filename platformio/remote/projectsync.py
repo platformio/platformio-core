@@ -17,7 +17,7 @@ import tarfile
 from binascii import crc32
 from os.path import getmtime, getsize, isdir, isfile, join
 
-from twisted.python import constants  # pylint: disable=import-error
+import constantly as constants
 
 from platformio.compat import hashlib_encode_data
 
@@ -63,7 +63,7 @@ class ProjectSync:
         if not isfile(path):
             return
         index_hash = "%s-%s-%s" % (relpath, getmtime(path), getsize(path))
-        index = crc32(hashlib_encode_data(index_hash))
+        index = crc32(hashlib_encode_data(index_hash))  # type: ignore
         self._db[index] = (path, relpath)
 
     def get_dbindex(self):
@@ -97,7 +97,7 @@ class ProjectSync:
     def compress_items(self, fileobj, dbindex, max_size):
         compressed = []
         total_size = 0
-        tar_opts = dict(fileobj=fileobj, mode="w:gz", bufsize=0, dereference=True)
+        tar_opts = {"fileobj": fileobj, "mode": "w:gz", "bufsize": 0, "dereference": True}
         with tarfile.open(**tar_opts) as tgz:
             for index in dbindex:
                 compressed.append(index)

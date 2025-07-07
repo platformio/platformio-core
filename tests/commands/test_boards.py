@@ -33,7 +33,7 @@ def test_board_raw_output(clirunner, validate_cliresult):
 
 
 def test_board_options(clirunner, validate_cliresult):
-    required_opts = set(["fcpu", "frameworks", "id", "mcu", "name", "platform"])
+    required_opts = {"fcpu", "frameworks", "id", "mcu", "name", "platform"}
 
     # fetch available platforms
     result = clirunner.invoke(cmd_platform_search, ["--json-output"])

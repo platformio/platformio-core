@@ -120,7 +120,7 @@ def ensure_udev_rules():
                 result.add(line)
         return result
 
-    if "linux" not in get_systype():
+    if "linux" not in get_systype():  # type: ignore
         return None
     installed_rules = [
         "/etc/udev/rules.d/99-platformio-udev.rules",

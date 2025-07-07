@@ -35,7 +35,7 @@ class PlatformRunMixin:
     def encode_scons_arg(value):
         if isinstance(value, (list, tuple, dict)):
             value = json.dumps(value)
-        return base64.urlsafe_b64encode(hashlib_encode_data(value)).decode()
+        return base64.urlsafe_b64encode(hashlib_encode_data(value)).decode()  # type: ignore
 
     @staticmethod
     def decode_scons_arg(data):
@@ -50,17 +50,17 @@ class PlatformRunMixin:
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
-        self.ensure_engine_compatible()
+        self.ensure_engine_compatible()  # type: ignore
 
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
 
         if "build_script" not in variables:
-            variables["build_script"] = self.get_build_script()
+            variables["build_script"] = self.get_build_script()  # type: ignore
         if not os.path.isfile(variables["build_script"]):
             raise BuildScriptNotFound(variables["build_script"])
 
-        telemetry.log_platform_run(self, self.config, variables["pioenv"], targets)
+        telemetry.log_platform_run(self, self.config, variables["pioenv"], targets)  # type: ignore
         result = self._run_scons(variables, targets, jobs)
 
         assert "returncode" in result
@@ -71,7 +71,7 @@ class PlatformRunMixin:
         scons_dir = get_core_package_dir("tool-scons")
         args = [
             proc.get_pythonexe_path(),
-            os.path.join(scons_dir, "scons.py"),
+            os.path.join(scons_dir, "scons.py"),  # type: ignore
             "-Q",
             "--warn=no-no-parallel-support",
             "--jobs",
@@ -81,7 +81,7 @@ class PlatformRunMixin:
         ]
         args.append("PIOVERBOSE=%d" % int(self.verbose))
         # pylint: disable=protected-access
-        args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))
+        args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))  # type: ignore
         # encode and append variables
         for key, value in variables.items():
             args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
@@ -103,7 +103,7 @@ class PlatformRunMixin:
                 args, stdout=sys.stdout, stderr=sys.stderr, stdin=sys.stdin
             )
 
-        if click._compat.isatty(sys.stdout):
+        if click._compat.isatty(sys.stdout):  # type: ignore
 
             def _write_and_flush(stream, data):
                 try:

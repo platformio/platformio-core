@@ -17,7 +17,7 @@ from pathlib import Path
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
-from platformio.compat import aio_get_running_loop
+from platformio.compat import aio_get_running_loop  # type: ignore
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 

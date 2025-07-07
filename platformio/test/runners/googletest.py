@@ -55,7 +55,7 @@ class GoogletestTestCaseParser:
             status=TestStatus.from_string(status),
             message=message,
             source=source,
-            stdout=self._tmp_tc.stdout.strip(),
+            stdout=self._tmp_tc.stdout.strip(),  # type: ignore
         )
         self._tmp_tc = None
         return test_case
@@ -96,13 +96,13 @@ class GoogletestTestRunner(TestRunnerBase):
         os.environ["GTEST_COLOR"] = "no"  # disable ANSI symbols
 
     def on_testing_line_output(self, line):
-        if self.options.verbose:
+        if self.options.verbose: # type: ignore
             click.echo(line, nl=False)
 
         test_case = self._tc_parser.parse(line)
         if test_case:
             self.test_suite.add_case(test_case)
-            if not self.options.verbose:
+            if not self.options.verbose: # type: ignore
                 click.echo(test_case.humanize())
 
         if "Global test environment tear-down" in line:

@@ -32,11 +32,11 @@ class PackageManagerDownloadMixin:
         request_hash = hashlib.new("sha1")
         for arg in args:
             request_hash.update(compat.hashlib_encode_data(arg))
-        dl_path = os.path.join(self.get_download_dir(), request_hash.hexdigest())
+        dl_path = os.path.join(self.get_download_dir(), request_hash.hexdigest())  # type: ignore
         return dl_path
 
     def get_download_usagedb_path(self):
-        return os.path.join(self.get_download_dir(), "usage.db")
+        return os.path.join(self.get_download_dir(), "usage.db")  # type: ignore
 
     def set_download_utime(self, path, utime=None):
         with app.State(self.get_download_usagedb_path(), lock=True) as state:
@@ -50,19 +50,19 @@ class PackageManagerDownloadMixin:
                 if state[fname] > (time.time() - self.DOWNLOAD_CACHE_EXPIRE):
                     continue
                 del state[fname]
-                dl_path = os.path.join(self.get_download_dir(), fname)
+                dl_path = os.path.join(self.get_download_dir(), fname)  # type: ignore
                 if os.path.isfile(dl_path):
                     os.remove(dl_path)
 
     def download(self, url, checksum=None):
-        silent = not self.log.isEnabledFor(logging.INFO)
+        silent = not self.log.isEnabledFor(logging.INFO)  # type: ignore
         dl_path = self.compute_download_path(url, checksum or "")
         if os.path.isfile(dl_path):
             self.set_download_utime(dl_path)
             return dl_path
 
         with_progress = not app.is_disabled_progressbar()
-        tmp_fd, tmp_path = tempfile.mkstemp(dir=self.get_download_dir())
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=self.get_download_dir())  # type: ignore
         try:
             with LockFile(dl_path):
                 try:
@@ -79,7 +79,7 @@ class PackageManagerDownloadMixin:
                         except IOError:
                             raise_error = True
                     if raise_error:
-                        self.log.error(
+                        self.log.error(  # type: ignore
                             click.style(
                                 "Error: Please read https://bit.ly/package-manager-ioerror",
                                 fg="red",
@@ -87,14 +87,14 @@ class PackageManagerDownloadMixin:
                         )
                         raise exc
             if checksum:
-                fd.verify(checksum)
+                fd.verify(checksum)  # type: ignore
             os.close(tmp_fd)
-            os.rename(tmp_path, dl_path)
+            os.rename(tmp_path, dl_path)  # type: ignore
         finally:
             if os.path.isfile(tmp_path):
                 os.close(tmp_fd)
                 os.remove(tmp_path)
 
         assert os.path.isfile(dl_path)
-        self.set_download_utime(dl_path)
+        self.set_download_utime(dl_path)  # type: ignore
         return dl_path

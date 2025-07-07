@@ -71,7 +71,7 @@ def is_completion_code_installed(shell, path):
 
 
 def install_completion_code(shell, path):
-    if shell == ShellType.BASH and get_bash_version() < (4, 4):
+    if shell == ShellType.BASH and get_bash_version() < (4, 4):  # type: ignore
         raise click.ClickException("The minimal supported Bash version is 4.4")
     if is_completion_code_installed(shell, path):
         return None
@@ -81,7 +81,7 @@ def install_completion_code(shell, path):
             fp.write("\n\n# Begin: PlatformIO Core completion support\n")
         fp.write(get_completion_code(shell))
         if append:
-            fp.write("\n# End: PlatformIO Core completion support\n\n")
+            fp.write("\n# End: PlatformIO Fixed completion support\n\n")
     return True
 
 

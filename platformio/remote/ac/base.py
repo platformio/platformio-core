@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.internet import defer  # pylint: disable=import-error
-from twisted.spread import pb  # pylint: disable=import-error
+from twisted.internet import defer  # type: ignore
+from twisted.spread import pb  # type: ignore
 
 
 class AsyncCommandBase:
@@ -48,7 +48,7 @@ class AsyncCommandBase:
         raise NotImplementedError
 
     def stop(self):
-        self.transport.loseConnection()  # pylint: disable=no-member
+        self.transport.loseConnection()  # type: ignore
 
     def _ac_ended(self):
         if self.on_end_callback:
@@ -82,7 +82,7 @@ class AsyncCommandBase:
         return None
 
     def ac_write(self, data):
-        self.transport.write(data)  # pylint: disable=no-member
+        self.transport.write(data)  # type: ignore
         return len(data)
 
     def ac_close(self):

@@ -18,7 +18,7 @@ from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class Hexlify(DeviceMonitorFilterBase):
-    NAME = "hexlify"
+    NAME = "hexlify"  # type: ignore
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,7 +32,7 @@ class Hexlify(DeviceMonitorFilterBase):
 
     def rx(self, text):
         result = ""
-        for c in serial.iterbytes(text):
+        for c in serial.iterbytes(text):  # type: ignore
             if (self._counter % 16) == 0:
                 result += "\n{:04X} | ".format(self._counter)
             asciicode = ord(c)

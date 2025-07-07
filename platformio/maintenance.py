@@ -110,9 +110,9 @@ class Upgrader:
             app.set_state_item(
                 "created_at",
                 int(
-                    state_stat.st_birthtime
+                    state_stat.st_birthtime  # type: ignore
                     if hasattr(state_stat, "st_birthtime")
-                    else state_stat.st_ctime
+                    else state_stat.st_ctime  # type: ignore
                 ),
             )
         return True

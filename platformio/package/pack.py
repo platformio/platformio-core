@@ -33,7 +33,7 @@ from platformio.package.unpack import FileUnpacker
 
 
 class PackagePacker:
-    INCLUDE_DEFAULT = list(ManifestFileType.items().values()) + [
+    INCLUDE_DEFAULT = list(ManifestFileType.items().values()) + [  # type: ignore
         "README",
         "README.md",
         "README.rst",
@@ -166,9 +166,9 @@ class PackagePacker:
             self.manifest_parser = ManifestParserFactory.new_from_dir(src)
             manifest = ManifestSchema().load_manifest(self.manifest_parser.as_dict())
             filename = self.get_archive_name(
-                manifest["name"],
-                manifest["version"],
-                manifest["system"][0] if "system" in manifest else None,
+                manifest["name"],  # type: ignore
+                manifest["version"],  # type: ignore
+                manifest["system"][0] if "system" in manifest else None,  # type: ignore
             )
 
             if not dst:
@@ -188,7 +188,7 @@ class PackagePacker:
                 else ManifestParserFactory.new_from_url(self.manifest_uri)
             )
             manifest = ManifestSchema().load_manifest(mp.as_dict())
-            include = manifest.get("export", {}).get("include", [])
+            include = manifest.get("export", {}).get("include", [])  # type: ignore
             if len(include) == 1:
                 if not os.path.isdir(os.path.join(src, include[0])):
                     raise PackageException(
@@ -204,8 +204,8 @@ class PackagePacker:
         return src
 
     def create_tarball(self, src, dst, manifest):
-        include = manifest.get("export", {}).get("include")
-        exclude = manifest.get("export", {}).get("exclude")
+        include = manifest.get("export", {}).get("include")  # type: ignore
+        exclude = manifest.get("export", {}).get("exclude")  # type: ignore
         # remap root
         if (
             include

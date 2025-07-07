@@ -18,7 +18,7 @@ from platformio.device.monitor.filters.base import DeviceMonitorFilterBase
 
 
 class Timestamp(DeviceMonitorFilterBase):
-    NAME = "time"
+    NAME = "time"  # type: ignore
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

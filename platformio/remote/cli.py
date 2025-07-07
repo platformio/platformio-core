@@ -46,8 +46,8 @@ def cli(ctx, agent):
     # inject twisted dependencies
     contrib_dir = get_core_package_dir("contrib-pioremote")
     if contrib_dir not in sys.path:
-        addsitedir(contrib_dir)
-        sys.path.insert(0, contrib_dir)
+        addsitedir(contrib_dir)  # type: ignore
+        sys.path.insert(0, contrib_dir)  # type: ignore
 
 
 @cli.group("agent", short_help="Start a new agent or list active")
@@ -91,7 +91,7 @@ def remote_agent_list():
 def remote_update(agents, only_check, dry_run):
     from platformio.remote.client.update_core import UpdateCoreClient
 
-    UpdateCoreClient("update", agents, dict(only_check=only_check or dry_run)).connect()
+    UpdateCoreClient("update", agents, {"only_check": only_check or dry_run}).connect()
 
 
 @cli.command("run", short_help="Process project environments remotely")
@@ -127,16 +127,16 @@ def remote_run(  # pylint: disable=too-many-positional-arguments
     cr = RunOrTestClient(
         "run",
         agents,
-        dict(
-            environment=environment,
-            target=target,
-            upload_port=upload_port,
-            project_dir=project_dir,
-            disable_auto_clean=disable_auto_clean,
-            force_remote=force_remote,
-            silent=silent,
-            verbose=verbose,
-        ),
+        {
+            "environment": environment,
+            "target": target,
+            "upload_port": upload_port,
+            "project_dir": project_dir,
+            "disable_auto_clean": disable_auto_clean,
+            "force_remote": force_remote,
+            "silent": silent,
+            "verbose": verbose,
+        },
     )
     if force_remote:
         return cr.connect()
@@ -145,7 +145,7 @@ def remote_run(  # pylint: disable=too-many-positional-arguments
     local_targets = []
     if "clean" in target:
         local_targets = ["clean"]
-    elif set(["buildfs", "uploadfs", "uploadfsota"]) & set(target):
+    elif {"buildfs", "uploadfs", "uploadfsota"} & set(target):
         local_targets = ["buildfs"]
     else:
         local_targets = ["checkprogsize", "buildprog"]
@@ -217,18 +217,18 @@ def remote_test(  # pylint: disable=redefined-builtin,too-many-positional-argume
     cr = RunOrTestClient(
         "test",
         agents,
-        dict(
-            environment=environment,
-            filter=filter,
-            ignore=ignore,
-            upload_port=upload_port,
-            test_port=test_port,
-            project_dir=project_dir,
-            force_remote=force_remote,
-            without_building=without_building,
-            without_uploading=without_uploading,
-            verbose=verbose,
-        ),
+        {
+            "environment": environment,
+            "filter": filter,
+            "ignore": ignore,
+            "upload_port": upload_port,
+            "test_port": test_port,
+            "project_dir": project_dir,
+            "force_remote": force_remote,
+            "without_building": without_building,
+            "without_uploading": without_uploading,
+            "verbose": verbose,
+        },
     )
     if force_remote:
         return cr.connect()

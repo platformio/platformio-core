@@ -18,15 +18,15 @@ from platformio.package.meta import PackageSpec
 class PlatformPackagesMixin:
     def get_package_spec(self, name, version=None):
         return PackageSpec(
-            owner=self.packages[name].get("owner"),
+            owner=self.packages[name].get("owner"),  # type: ignore
             name=name,
-            requirements=version or self.packages[name].get("version"),
+            requirements=version or self.packages[name].get("version"),  # type: ignore
         )
 
     def get_package(self, name, spec=None):
         if not name:
             return None
-        return self.pm.get_package(spec or self.get_package_spec(name))
+        return self.pm.get_package(spec or self.get_package_spec(name))  # type: ignore
 
     def get_package_dir(self, name):
         pkg = self.get_package(name)
@@ -38,7 +38,7 @@ class PlatformPackagesMixin:
 
     def get_installed_packages(self, with_optional=True, with_optional_versions=False):
         result = []
-        for name, options in dict(sorted(self.packages.items())).items():
+        for name, options in dict(sorted(self.packages.items())).items():  # type: ignore
             if not with_optional and options.get("optional"):
                 continue
             versions = [options.get("version")]
@@ -54,7 +54,7 @@ class PlatformPackagesMixin:
 
     def dump_used_packages(self):
         result = []
-        for name, options in self.packages.items():
+        for name, options in self.packages.items():  # type: ignore
             if options.get("optional"):
                 continue
             pkg = self.get_package(name)
@@ -67,26 +67,27 @@ class PlatformPackagesMixin:
         return result
 
     def install_package(self, name, spec=None, force=False):
-        return self.pm.install(spec or self.get_package_spec(name), force=force)
+        return self.pm.install(spec or self.get_package_spec(name), force=force)  # type: ignore
 
     def install_required_packages(self, force=False):
-        for name, options in self.packages.items():
+        assert self.pm is not None  # type: ignore
+        for name, options in self.packages.items():  # type: ignore
             if options.get("optional"):
                 continue
             self.install_package(name, force=force)
 
     def uninstall_packages(self):
-        for pkg in self.get_installed_packages():
-            self.pm.uninstall(pkg)
+        for pkg in self.get_installed_packages():  # type: ignore
+            self.pm.uninstall(pkg)  # type: ignore
 
     def update_packages(self):
-        for pkg in self.get_installed_packages():
-            self.pm.update(pkg, to_spec=self.get_package_spec(pkg.metadata.name))
+        for pkg in self.get_installed_packages():  # type: ignore
+            self.pm.update(pkg, to_spec=self.get_package_spec(pkg.metadata.name))  # type: ignore
 
     def are_outdated_packages(self):
-        for pkg in self.get_installed_packages():
-            if self.pm.outdated(
-                pkg, self.get_package_spec(pkg.metadata.name)
+        for pkg in self.get_installed_packages():  # type: ignore
+            if self.pm.outdated(  # type: ignore
+                pkg, self.get_package_spec(pkg.metadata.name)  # type: ignore
             ).is_outdated(allow_incompatible=False):
                 return True
         return False

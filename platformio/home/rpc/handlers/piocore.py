@@ -24,10 +24,10 @@ import click
 from ajsonrpc.core import JSONRPC20DispatchException
 
 from platformio import __main__, __version__, app, fs, proc, util
+from platformio.compat import aio_create_task  # type: ignore
+from platformio.compat import aio_get_running_loop  # type: ignore
 from platformio.compat import (
     IS_WINDOWS,
-    aio_create_task,
-    aio_get_running_loop,
     aio_to_thread,
     get_locale_encoding,
     is_bytes,
@@ -96,7 +96,7 @@ class MultiThreadingStdStream:
         return result
 
 
-@util.memoized(expire="60s")
+@util.memoized(expire="60s")  # type: ignore
 def get_core_fullpath():
     return proc.where_is_program("platformio" + (".exe" if IS_WINDOWS else ""))
 
@@ -119,7 +119,7 @@ class PIOCoreRPC(BaseRPCHandler):
             get_core_fullpath(),
             *args,
             stdin=None,
-            **options.get("spawn", {}),
+            **options.get("spawn", {}),  # type: ignore
         )
         await exit_future
         transport.close()
@@ -134,7 +134,7 @@ class PIOCoreRPC(BaseRPCHandler):
         if not notification_method:
             return
         aio_create_task(
-            self.factory.notify_clients(
+            self.factory.notify_clients(  # type: ignore
                 method=notification_method,
                 params=[data],
                 actor="frontend",
@@ -145,10 +145,10 @@ class PIOCoreRPC(BaseRPCHandler):
     def setup_multithreading_std_streams():
         if isinstance(sys.stdout, MultiThreadingStdStream):
             return
-        PIOCoreRPC.thread_stdout = MultiThreadingStdStream(sys.stdout)
-        PIOCoreRPC.thread_stderr = MultiThreadingStdStream(sys.stderr)
-        sys.stdout = PIOCoreRPC.thread_stdout
-        sys.stderr = PIOCoreRPC.thread_stderr
+        PIOCoreRPC.thread_stdout = MultiThreadingStdStream(sys.stdout)  # type: ignore
+        PIOCoreRPC.thread_stderr = MultiThreadingStdStream(sys.stderr)  # type: ignore
+        sys.stdout = PIOCoreRPC.thread_stdout  # type: ignore
+        sys.stderr = PIOCoreRPC.thread_stderr  # type: ignore
 
     @staticmethod
     async def call(args, options=None):
@@ -192,8 +192,8 @@ class PIOCoreRPC(BaseRPCHandler):
             with fs.cd(cwd):
                 exit_code = __main__.main(["-c"] + args)
             return (
-                PIOCoreRPC.thread_stdout.get_value_and_reset(),
-                PIOCoreRPC.thread_stderr.get_value_and_reset(),
+                PIOCoreRPC.thread_stdout.get_value_and_reset(),  # type: ignore
+                PIOCoreRPC.thread_stderr.get_value_and_reset(),  # type: ignore
                 exit_code,
             )
 

@@ -1,6 +1,6 @@
 lint:
-	pylint --rcfile=./.pylintrc ./tests
-	pylint --rcfile=./.pylintrc ./platformio
+	ruff check ./tests
+	ruff check ./platformio
 
 isort:
 	isort ./platformio

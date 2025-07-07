@@ -14,5 +14,8 @@
 
 # pylint: disable=unused-import
 from platformio.device.monitor.filters.base import (
-    DeviceMonitorFilterBase as DeviceMonitorFilter,
+    DeviceMonitorFilterBase as DeviceMonitorFilterBase,
 )
+
+# Re-export
+DeviceMonitorFilter = DeviceMonitorFilterBase

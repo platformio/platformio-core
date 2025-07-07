@@ -30,7 +30,7 @@ from platformio.registry.client import RegistryClient
     "-t",
     "--type",
     "pkg_type",
-    type=click.Choice(list(PackageType.items().values())),
+    type=click.Choice(list(PackageType.items().values())),  # type: ignore
     help="Package type",
 )
 def package_show_cmd(spec, pkg_type):

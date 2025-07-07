@@ -34,7 +34,7 @@ class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
     STDOUT = sys.stdout
 
     def write(self, text):
-        self.STDOUT.write(escape_gdbmi_stream("~", text))
+        self.STDOUT.write(escape_gdbmi_stream("~", text))  # type: ignore
         self.STDOUT.flush()
 
 

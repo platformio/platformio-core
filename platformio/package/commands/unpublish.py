@@ -25,7 +25,7 @@ from platformio.registry.client import RegistryClient
 )
 @click.option(
     "--type",
-    type=click.Choice(list(PackageType.items().values())),
+    type=click.Choice(list(PackageType.items().values())),  # type: ignore
     default="library",
     help="Package type, default is set to `library`",
 )

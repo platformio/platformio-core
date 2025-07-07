@@ -24,9 +24,9 @@ from platformio.compat import IS_CYGWIN, ensure_python3
 
 
 @click.command(
-    cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
+    cls=PlatformioCLI, context_settings={"help_option_names": ["-h", "--help"]}
 )
-@click.version_option(__version__, prog_name="PlatformIO Core")
+@click.version_option(__version__, prog_name="PlatformIO Fixed")
 @click.option("--force", "-f", is_flag=True, help="DEPRECATED", hidden=True)
 @click.option("--caller", "-c", help="Caller ID (service)")
 @click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
@@ -41,7 +41,7 @@ def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
             == "true"
         ):
             # pylint: disable=protected-access
-            click._compat.isatty = lambda stream: False
+            click._compat.isatty = lambda stream: False  # type: ignore
         elif (
             str(
                 os.getenv("PLATFORMIO_FORCE_ANSI", os.getenv("PLATFORMIO_FORCE_COLOR"))
@@ -49,8 +49,8 @@ def cli(ctx, force, caller, no_ansi):  # pylint: disable=unused-argument
             == "true"
         ):
             # pylint: disable=protected-access
-            click._compat.isatty = lambda stream: True
-    except:  # pylint: disable=bare-except
+            click._compat.isatty = lambda stream: True  # type: ignore
+    except Exception:  # pylint: disable=bare-except
         pass
 
     maintenance.on_cmd_start(ctx, caller)
@@ -124,7 +124,7 @@ An unexpected error occurred. Further steps:
   https://docs.platformio.org/page/faq/index.html
 
 * Report this problem to the developers
-  https://github.com/platformio/platformio-core/issues
+  https://github.com/platformio/platformio-fixed/issues
 
 ============================================================
 """

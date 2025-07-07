@@ -864,16 +864,14 @@ def test_broken_schemas():
     with pytest.raises(
         ManifestValidationError, match=("Invalid semantic versioning format")
     ) as exc_info:
-        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+        ManifestSchema().load_manifest({"name": "MyPackage", "version": "broken_version"})
     assert exc_info.value.valid_data == {"name": "MyPackage"}
 
     # invalid StrictList
     with pytest.raises(
         ManifestValidationError, match=("Invalid manifest fields.+keywords")
     ) as exc_info:
-        ManifestSchema().load_manifest(
-            dict(name="MyPackage", version="1.0.0", keywords=["kw1", "*^[]"])
-        )
+        ManifestSchema().load_manifest({"name": "MyPackage", "version": "1.0.0", "keywords": ["kw1", "*^[]"]})
     assert list(exc_info.value.messages.keys()) == ["keywords"]
     assert exc_info.value.valid_data["keywords"] == ["kw1"]
 
@@ -881,25 +879,23 @@ def test_broken_schemas():
     with pytest.raises(
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
-        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+        ManifestSchema().load_manifest({"name": "MyPackage", "version": "broken_version"})
     # version with leading zeros
     with pytest.raises(
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
-        ManifestSchema().load_manifest(dict(name="MyPackage", version="01.02.00"))
+        ManifestSchema().load_manifest({"name": "MyPackage", "version": "01.02.00"})
 
     # broken value for Nested
     with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):
-        ManifestSchema().load_manifest(
-            dict(
-                name="MyPackage",
-                description="MyDescription",
-                keywords=["a", "b"],
-                authors=["should be dict here"],
-                version="1.2.3",
-            )
-        )
+        ManifestSchema().load_manifest({
+            "name": "MyPackage",
+            "description": "MyDescription",
+            "keywords": ["a", "b"],
+            "authors": ["should be dict here"],
+            "version": "1.2.3",
+        })
 
     # invalid package name
     with pytest.raises(ManifestValidationError, match="are not allowed"):
-        ManifestSchema().load_manifest(dict(name="C/C++ :library", version="1.2.3"))
+        ManifestSchema().load_manifest({"name": "C/C++ :library", "version": "1.2.3"})

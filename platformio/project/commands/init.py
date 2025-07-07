@@ -104,11 +104,11 @@ def project_init_cmd(  # pylint: disable=too-many-positional-arguments
         # resolve project dependencies
         if not no_install_dependencies and (environment or boards):
             install_project_dependencies(
-                options=dict(
-                    project_dir=project_dir,
-                    environments=[environment] if environment else [],
-                    silent=silent,
-                )
+                options={
+                    "project_dir": project_dir,
+                    "environments": [environment] if environment else [],
+                    "silent": silent,
+                }
             )
 
         if environment and sample_code:

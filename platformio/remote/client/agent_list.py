@@ -21,6 +21,7 @@ from platformio.remote.client.base import RemoteClientBase
 
 class AgentListClient(RemoteClientBase):
     def agent_pool_ready(self):
+        assert self.agentpool is not None
         d = self.agentpool.callRemote("list", True)
         d.addCallback(self._cbResult)
         d.addErrback(self.cb_global_error)

@@ -26,7 +26,6 @@ from platformio import fs  # noqa: E402
 from platformio.package.manager.platform import PlatformPackageManager  # noqa: E402
 from platformio.platform.factory import PlatformFactory  # noqa: E402
 
-
 RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -98,7 +97,7 @@ def install_platforms():
     page = 1
     pm = PlatformPackageManager()
     while True:
-        result = REGCLIENT.list_packages(qualifiers=dict(types=["platform"]), page=page)
+        result = REGCLIENT.list_packages(qualifiers={"types": ["platform"]}, page=page)
         for item in result["items"]:
             spec = "%s/%s" % (item["owner"]["username"], item["name"])
             skip_conds = [
@@ -123,11 +122,11 @@ def get_frameworks():
             if name in items:
                 continue
             if name in STATIC_FRAMEWORK_DATA:
-                items[name] = dict(
-                    name=name,
-                    title=STATIC_FRAMEWORK_DATA[name]["title"],
-                    description=STATIC_FRAMEWORK_DATA[name]["description"],
-                )
+                items[name] = {
+                    "name": name,
+                    "title": STATIC_FRAMEWORK_DATA[name]["title"],
+                    "description": STATIC_FRAMEWORK_DATA[name]["description"],
+                }
                 continue
             title = options.get("title") or name.title()
             description = options.get("description")
@@ -139,7 +138,7 @@ def get_frameworks():
                 )
                 title = regdata["title"] or title
                 description = regdata["description"]
-            items[name] = dict(name=name, title=title, description=description)
+            items[name] = {"name": name, "title": title, "description": description}
     return sorted(items.values(), key=lambda item: item["name"])
 
 
@@ -167,7 +166,7 @@ def generate_boards_table(boards, skip_columns=None):
     )
 
     # add header
-    for name, template in columns:
+    for name, _template in columns:
         if skip_columns and name in skip_columns:
             continue
         prefix = "    * - " if name == "Name" else "      - "
@@ -183,22 +182,22 @@ def generate_boards_table(boards, skip_columns=None):
         elif data.get("debug"):
             debug = "External"
 
-        variables = dict(
-            id=data["id"],
-            name=data["name"],
-            platform=data["platform"],
-            debug=debug,
-            mcu=data["mcu"].upper(),
-            f_cpu=int(data["fcpu"] / 1000000.0),
-            ram=fs.humanize_file_size(data["ram"]),
-            rom=fs.humanize_file_size(data["rom"]),
-        )
+        variables = {
+            "id": data["id"],
+            "name": data["name"],
+            "platform": data["platform"],
+            "debug": debug,
+            "mcu": data["mcu"].upper(),
+            "f_cpu": int(data["fcpu"] / 1000000.0),
+            "ram": fs.humanize_file_size(data["ram"]),
+            "rom": fs.humanize_file_size(data["rom"]),
+        }
 
-        for name, template in columns:
+        for name, _template in columns:
             if skip_columns and name in skip_columns:
                 continue
             prefix = "    * - " if name == "Name" else "      - "
-            lines.append(prefix + template.format(**variables))
+            lines.append(prefix + _template.format(**variables))
 
     if lines:
         lines.append("")
@@ -774,22 +773,22 @@ def update_embedded_board(rst_path, board):
         board_manifest_url = board_manifest_url[:-4]
     board_manifest_url += "/blob/master/boards/%s.json" % board["id"]
 
-    variables = dict(
-        id=board["id"],
-        name=board["name"],
-        platform=board["platform"],
-        platform_description=platform.description,
-        url=campaign_url(board["url"]),
-        mcu=board_config.get("build", {}).get("mcu", ""),
-        mcu_upper=board["mcu"].upper(),
-        f_cpu=board["fcpu"],
-        f_cpu_mhz=int(int(board["fcpu"]) / 1000000),
-        ram=fs.humanize_file_size(board["ram"]),
-        rom=fs.humanize_file_size(board["rom"]),
-        vendor=board["vendor"],
-        board_manifest_url=board_manifest_url,
-        upload_protocol=board_config.get("upload.protocol", ""),
-    )
+    variables = {
+        "id": board["id"],
+        "name": board["name"],
+        "platform": board["platform"],
+        "platform_description": platform.description,
+        "url": campaign_url(board["url"]),
+        "mcu": board_config.get("build", {}).get("mcu", ""),
+        "mcu_upper": board["mcu"].upper(),
+        "f_cpu": board["fcpu"],
+        "f_cpu_mhz": int(int(board["fcpu"]) / 1000000),
+        "ram": fs.humanize_file_size(board["ram"]),
+        "rom": fs.humanize_file_size(board["rom"]),
+        "vendor": board["vendor"],
+        "board_manifest_url": board_manifest_url,
+        "upload_protocol": board_config.get("upload.protocol", ""),
+    }
 
     lines = [RST_COPYRIGHT]
     lines.append(".. _board_{platform}_{id}:".format(**variables))

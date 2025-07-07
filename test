@@ -1,0 +1,6 @@
+
+#!/bin/bash
+
+# This script runs the linters on the project.
+
+uv run pytest -v -k "not skip_ci" tests --ignore tests/test_examples.py  --durations=0 

@@ -46,11 +46,11 @@ class EnvironmentProcessor:
         self.options = config.items(env=name, as_dict=True)
 
     def get_build_variables(self):
-        variables = dict(
-            pioenv=self.name,
-            project_config=self.config.path,
-            program_args=self.program_args,
-        )
+        variables = {
+            "pioenv": self.name,
+            "project_config": self.config.path,
+            "program_args": self.program_args,
+        }
 
         if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
             variables["piotest_running_name"] = self.cmd_ctx.meta[

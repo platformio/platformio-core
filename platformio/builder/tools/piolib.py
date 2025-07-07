@@ -22,9 +22,8 @@ import re
 import sys
 
 import click
-import SCons.Scanner  # pylint: disable=import-error
-from SCons.Script import ARGUMENTS  # pylint: disable=import-error
-from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+import SCons.Scanner  # type: ignore
+from SCons.Script import ARGUMENTS, DefaultEnvironment  # type: ignore
 
 from platformio import exception, fs
 from platformio.builder.tools import piobuild
@@ -45,7 +44,9 @@ from platformio.project.options import ProjectOptions
 
 class LibBuilderFactory:
     @staticmethod
-    def new(env, path, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
+    def new(env, path, verbose=None):
+        if verbose is None:
+            verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
         clsname = "UnknownLibBuilder"
         if os.path.isfile(os.path.join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
@@ -256,7 +257,7 @@ class LibBuilderBase:
 
     @staticmethod
     def validate_ldf_mode(mode):
-        ldf_modes = ProjectOptions["env.lib_ldf_mode"].type.choices
+        ldf_modes = ProjectOptions["env.lib_ldf_mode"].type.choices  # type: ignore
         if isinstance(mode, string_types):
             mode = mode.strip().lower()
         if mode in ldf_modes:
@@ -273,7 +274,7 @@ class LibBuilderBase:
 
     @staticmethod
     def validate_compat_mode(mode):
-        compat_modes = ProjectOptions["env.lib_compat_mode"].type.choices
+        compat_modes = ProjectOptions["env.lib_compat_mode"].type.choices  # type: ignore
         if isinstance(mode, string_types):
             mode = mode.strip().lower()
         if mode in compat_modes:
@@ -560,8 +561,8 @@ class ArduinoLibBuilder(LibBuilderBase):
     def src_filter(self):
         src_dir = os.path.join(self.path, "src")
         if os.path.isdir(src_dir):
-            # pylint: disable=no-member
-            src_filter = LibBuilderBase.src_filter.fget(self)
+            # type: ignore
+            src_filter = LibBuilderBase.src_filter.fget(self) # type: ignore
             for root, _, files in os.walk(src_dir, followlinks=True):
                 found = False
                 for fname in files:
@@ -595,15 +596,15 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
-        # pylint: disable=no-member
+        # type: ignore
         if not self._manifest.get("dependencies"):
-            return LibBuilderBase.lib_ldf_mode.fget(self)
+            return LibBuilderBase.lib_ldf_mode.fget(self) # type: ignore
         missing = object()
         global_value = self.env.GetProjectConfig().getraw(
             "env:" + self.env["PIOENV"], "lib_ldf_mode", missing
         )
         if global_value != missing:
-            return LibBuilderBase.lib_ldf_mode.fget(self)
+            return LibBuilderBase.lib_ldf_mode.fget(self) # type: ignore
         # automatically enable C++ Preprocessing in runtime
         # (Arduino IDE has this behavior)
         return "chain+"
@@ -621,7 +622,7 @@ class ArduinoLibBuilder(LibBuilderBase):
     @property
     def build_flags(self):
         ldflags = [
-            LibBuilderBase.build_flags.fget(self),  # pylint: disable=no-member
+            LibBuilderBase.build_flags.fget(self),  # type: ignore
             self._manifest.get("ldflags"),
         ]
         if self._manifest.get("precompiled") in ("true", "full"):
@@ -648,7 +649,7 @@ class MbedLibBuilder(LibBuilderBase):
     def src_dir(self):
         if os.path.isdir(os.path.join(self.path, "source")):
             return os.path.join(self.path, "source")
-        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
+        return LibBuilderBase.src_dir.fget(self)  # type: ignore
 
     def get_include_dirs(self):
         include_dirs = super().get_include_dirs()
@@ -710,7 +711,7 @@ class MbedLibBuilder(LibBuilderBase):
         value = None
         if "=" in macro:
             name, value = macro.split("=", 1)
-        return dict(name=name, value=value)
+        return {"name": name, "value": value}
 
     def _mbed_lib_conf_parse_macros(self, mbed_lib_path):
         macros = {}
@@ -726,9 +727,9 @@ class MbedLibBuilder(LibBuilderBase):
         for key, options in manifest.get("config", {}).items():
             if "value" not in options:
                 continue
-            macros[key] = dict(
-                name=options.get("macro_name"), value=options.get("value")
-            )
+            macros[key] = {
+                "name": options.get("macro_name"), "value": options.get("value")
+            }
 
         # overrode items per target
         for target, options in manifest.get("target_overrides", {}).items():
@@ -795,8 +796,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return os.path.abspath(self._manifest.get("build").get("includeDir"))
-        return LibBuilderBase.include_dir.fget(self)  # pylint: disable=no-member
+                return os.path.abspath(self._manifest.get("build").get("includeDir"))  # type: ignore
+        return LibBuilderBase.include_dir.fget(self)  # type: ignore
 
     def get_include_dirs(self):
         include_dirs = super().get_include_dirs()
@@ -822,37 +823,37 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
             with fs.cd(self.path):
-                return os.path.abspath(self._manifest.get("build").get("srcDir"))
-        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
+                return os.path.abspath(self._manifest.get("build").get("srcDir"))  # type: ignore
+        return LibBuilderBase.src_dir.fget(self)  # type: ignore
 
     @property
     def src_filter(self):
-        # pylint: disable=no-member
+        # type: ignore
         if "srcFilter" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("srcFilter")
+            return self._manifest.get("build").get("srcFilter")  # type: ignore
         if self.env["SRC_FILTER"]:
             return self.env["SRC_FILTER"]
         if self._has_arduino_manifest():
-            return ArduinoLibBuilder.src_filter.fget(self)
-        return LibBuilderBase.src_filter.fget(self)
+            return ArduinoLibBuilder.src_filter.fget(self)  # type: ignore
+        return LibBuilderBase.src_filter.fget(self)  # type: ignore
 
     @property
     def build_flags(self):
         if "flags" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("flags")
-        return LibBuilderBase.build_flags.fget(self)  # pylint: disable=no-member
+            return self._manifest.get("build").get("flags")  # type: ignore
+        return LibBuilderBase.build_flags.fget(self)  # type: ignore
 
     @property
     def build_unflags(self):
         if "unflags" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("unflags")
-        return LibBuilderBase.build_unflags.fget(self)  # pylint: disable=no-member
+            return self._manifest.get("build").get("unflags")  # type: ignore
+        return LibBuilderBase.build_unflags.fget(self)  # type: ignore
 
     @property
     def extra_script(self):
         if "extraScript" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("extraScript")
-        return LibBuilderBase.extra_script.fget(self)  # pylint: disable=no-member
+            return self._manifest.get("build").get("extraScript")  # type: ignore
+        return LibBuilderBase.extra_script.fget(self)  # type: ignore
 
     @property
     def lib_archive(self):
@@ -864,26 +865,26 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self.env.GetProjectConfig().get(
                 "env:" + self.env["PIOENV"], "lib_archive"
             )
-        # pylint: disable=no-member
+        # type: ignore
         return self._manifest.get("build", {}).get(
-            "libArchive", LibBuilderBase.lib_archive.fget(self)
+            "libArchive", LibBuilderBase.lib_archive.fget(self)  # type: ignore
         )
 
     @property
     def lib_ldf_mode(self):
-        # pylint: disable=no-member
+        # type: ignore
         return self.validate_ldf_mode(
             self._manifest.get("build", {}).get(
-                "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)
+                "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)  # type: ignore
             )
         )
 
     @property
     def lib_compat_mode(self):
-        # pylint: disable=no-member
+        # type: ignore
         return self.validate_compat_mode(
             self._manifest.get("build", {}).get(
-                "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
+                "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self) # type: ignore
             )
         )
 
@@ -908,7 +909,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         super().__init__(env, *args, **kwargs)
         self.env["SRC_FILTER"] = project_src_filter
         if export_projenv:
-            env.Export(dict(projenv=self.env))
+            env.Export({"projenv": self.env})
 
     def __contains__(self, child_path):
         for root_path in (self.include_dir, self.src_dir, self.test_dir):
@@ -949,7 +950,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
-        mode = LibBuilderBase.lib_ldf_mode.fget(self)  # pylint: disable=no-member
+        mode = LibBuilderBase.lib_ldf_mode.fget(self)  # type: ignore
         if not mode.startswith("chain"):
             return mode
         # parse all project files
@@ -957,13 +958,13 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
-        # pylint: disable=no-member
-        return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)
+        # type: ignore
+        return self.env.get("SRC_FILTER") or LibBuilderBase.src_filter.fget(self)  # type: ignore
 
     @property
     def build_flags(self):
-        # pylint: disable=no-member
-        return self.env.get("SRC_BUILD_FLAGS") or LibBuilderBase.build_flags.fget(self)
+        # type: ignore
+        return self.env.get("SRC_BUILD_FLAGS") or LibBuilderBase.build_flags.fget(self)  # type: ignore
 
     @property
     def dependencies(self):
@@ -1067,7 +1068,9 @@ def GetLibSourceDirs(env):
     ]
 
 
-def IsCompatibleLibBuilder(env, lb, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
+def IsCompatibleLibBuilder(env, lb, verbose=None):
+    if verbose is None:
+        verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
     compat_mode = lb.lib_compat_mode
     if lb.name in env.GetProjectOption("lib_ignore", []):
         if verbose:
@@ -1180,8 +1183,8 @@ def ConfigureProjectLibBuilder(env):
                 click.echo(
                     " (License: %s, " % (_get_lib_license(pkg) or "Unknown"), nl=False
                 )
-                if pkg.metadata and pkg.metadata.spec.external:
-                    click.echo("URI: %s, " % pkg.metadata.spec.uri, nl=False)
+                if pkg.metadata and pkg.metadata.spec.external:  # type: ignore
+                    click.echo("URI: %s, " % pkg.metadata.spec.uri, nl=False)  # type: ignore
                 click.echo("Path: %s" % lb.path, nl=False)
                 click.echo(")", nl=False)
             click.echo("")
@@ -1193,7 +1196,7 @@ def ConfigureProjectLibBuilder(env):
     if "test" in env["BUILD_TYPE"]:
         project.env.ConfigureTestTarget()
 
-    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # pylint: disable=no-member
+    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)  # type: ignore
 
     click.echo("LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf")
     click.echo(

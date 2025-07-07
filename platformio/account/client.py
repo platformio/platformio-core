@@ -88,7 +88,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     def login(self, username, password):
         try:
             self.fetch_authentication_token()
-        except:  # pylint:disable=bare-except
+        except Exception:  # pylint:disable=bare-except
             pass
         else:
             raise AccountAlreadyAuthorized(
@@ -106,7 +106,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     def login_with_code(self, client_id, code, redirect_uri):
         try:
             self.fetch_authentication_token()
-        except:  # pylint:disable=bare-except
+        except Exception:  # pylint:disable=bare-except
             pass
         else:
             raise AccountAlreadyAuthorized(
@@ -147,7 +147,7 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         try:
             self.fetch_authentication_token()
-        except:  # pylint:disable=bare-except
+        except Exception:  # pylint:disable=bare-except
             pass
         else:
             raise AccountAlreadyAuthorized(
@@ -218,18 +218,18 @@ class AccountClient(HTTPClient):  # pylint:disable=too-many-public-methods
             "/v1/summary",
             x_with_authorization=True,
         )
-        account["summary"] = dict(
-            profile=result.get("profile"),
-            packages=result.get("packages"),
-            subscriptions=result.get("subscriptions"),
-            user_id=result.get("user_id"),
-            expire_at=int(time.time()) + self.SUMMARY_CACHE_TTL,
-        )
+        account["summary"] = {
+            "profile": result.get("profile"),
+            "packages": result.get("packages"),
+            "subscriptions": result.get("subscriptions"),
+            "user_id": result.get("user_id"),
+            "expire_at": int(time.time()) + self.SUMMARY_CACHE_TTL,
+        }
         app.set_state_item("account", account)
         return result
 
     def get_logged_username(self):
-        return self.get_account_info(offline=True).get("profile").get("username")
+        return self.get_account_info(offline=True).get("profile").get("username")  # type: ignore
 
     def destroy_account(self):
         return self.fetch_json_data(

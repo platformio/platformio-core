@@ -51,16 +51,16 @@ class ConfigOption:  # pylint: disable=too-many-instance-attributes,too-many-pos
         self.validate = validate
 
     def as_dict(self):
-        result = dict(
-            scope=self.scope,
-            group=self.group,
-            name=self.name,
-            description=self.description,
-            type="string",
-            multiple=self.multiple,
-            sysenvvar=self.sysenvvar,
-            default=self.default() if callable(self.default) else self.default,
-        )
+        result = {
+            "scope": self.scope,
+            "group": self.group,
+            "name": self.name,
+            "description": self.description,
+            "type": "string",
+            "multiple": self.multiple,
+            "sysenvvar": self.sysenvvar,
+            "default": self.default() if callable(self.default) else self.default,
+        }
         if isinstance(self.type, click.ParamType):
             result["type"] = self.type.name
         if isinstance(self.type, (click.IntRange, click.FloatRange)):

@@ -1,0 +1,108 @@
+
+[project]
+name = "platformio"
+version = "6.2.0"
+description = "A professional collaborative platform for embedded development"
+readme = "README.rst"
+authors = [{ name = "PlatformIO", email = "contact@platformio.org" }]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: C",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Compilers",
+]
+keywords = [
+    "iot",
+    "embedded",
+    "arduino",
+    "mbed",
+    "esp8266",
+    "esp32",
+    "fpga",
+    "firmware",
+    "continuous-integration",
+    "cloud-ide",
+    "avr",
+    "arm",
+    "ide",
+    "unit-testing",
+    "hardware",
+    "verilog",
+    "microcontroller",
+    "debug",
+]
+dependencies = [
+    "bottle == 0.13.*",
+    "click >=8.0.4, <8.1.8",
+    "colorama",
+    "marshmallow == 3.*",
+    "pyelftools >=0.27, <1",
+    "pyserial == 3.5.*",
+    "requests[socks] == 2.*",
+    "semantic_version == 2.10.*",
+    "tabulate == 0.*",
+    "ajsonrpc == 1.2.*",
+    "starlette >=0.19, <0.47",
+    "uvicorn >=0.16, <0.35",
+    "wsproto == 1.*",
+    'chardet >= 3.0.2,<6; platform_system == "Darwin" and "arm" in platform_machine',
+    "urllib3<2",
+    "twisted>=25.5.0",
+    "pyopenssl>=25.1.0",
+    "service-identity>=24.2.0",
+    "constantly>=23.10.4",
+]
+
+[project.urls]
+Homepage = "https://platformio.org"
+Documentation = "https://docs.platformio.org"
+Repository = "https://github.com/platformio/platformio-core"
+
+[project.scripts]
+platformio = "platformio.__main__:main"
+pio = "platformio.__main__:main"
+piodebuggdb = "platformio.__main__:debug_gdb_main"
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "isort",
+    "pyright",
+    "pytest",
+    "pytest-xdist",
+    "codespell",
+    "jsondiff",
+]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "C", "B"]
+ignore = ["E501", "C901", "F401", "C414"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 88
+
+[tool.pyright]
+include = ["platformio", "tests"]
+exclude = ["**/node_modules", "**/__pycache__"]
+typeCheckingMode = "basic"
+pythonVersion = "3.6"
+reportMissingImports = true
+reportMissingTypeStubs = false

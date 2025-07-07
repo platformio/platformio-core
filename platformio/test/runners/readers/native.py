@@ -18,9 +18,9 @@ import signal
 import subprocess
 import time
 
+from platformio.compat import aio_get_running_loop  # type: ignore
 from platformio.compat import (
     IS_WINDOWS,
-    aio_get_running_loop,
     get_filesystem_encoding,
     get_locale_encoding,
 )

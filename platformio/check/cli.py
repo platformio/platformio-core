@@ -48,7 +48,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
 @click.option("-f", "--src-filters", multiple=True)
 @click.option("--flags", multiple=True)
 @click.option(
-    "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())
+    "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())  # type: ignore
 )
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
@@ -56,7 +56,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
 @click.option(
     "--fail-on-defect",
     multiple=True,
-    type=click.Choice(DefectItem.SEVERITY_LABELS.values()),
+    type=click.Choice(DefectItem.SEVERITY_LABELS.values()),  # type: ignore
 )
 @click.option("--skip-packages", is_flag=True)
 def cli(  # pylint: disable=too-many-positional-arguments
@@ -127,19 +127,19 @@ def cli(  # pylint: disable=too-many-positional-arguments
                 )
             )
 
-            tool_options = dict(
-                verbose=verbose,
-                silent=silent,
-                src_filters=env_src_filters,
-                flags=flags or env_options.get("check_flags"),
-                severity=(
+            tool_options = {
+                "verbose": verbose,
+                "silent": silent,
+                "src_filters": env_src_filters,
+                "flags": flags or env_options.get("check_flags"),
+                "severity": (
                     [DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                     if silent
                     else severity or config.get("env:" + envname, "check_severity")
                 ),
-                skip_packages=skip_packages or env_options.get("check_skip_packages"),
-                platform_packages=env_options.get("platform_packages"),
-            )
+                "skip_packages": skip_packages or env_options.get("check_skip_packages"),
+                "platform_packages": env_options.get("platform_packages"),
+            }
 
             for tool in config.get("env:" + envname, "check_tool"):
                 if skipenv:
@@ -266,7 +266,7 @@ def print_defects_stats(results):
 
     component_stats = {}
     for r in results:
-        for k, v in r.get("stats", {}).items():
+        for k, _v in r.get("stats", {}).items():
             if not component_stats.get(k):
                 component_stats[k] = Counter()
             component_stats[k].update(r["stats"][k])
@@ -281,7 +281,7 @@ def print_defects_stats(results):
         tool_defect = [v.get(s, 0) for s in severity_labels]
         tabular_data.append([k] + tool_defect)
 
-    total = ["Total"] + [sum(d) for d in list(zip(*tabular_data))[1:]]
+    total = ["Total"] + [sum(d) for d in list(zip(*tabular_data, strict=False))[1:]]  # type: ignore
     tabular_data.sort()
     tabular_data.append([])  # Empty line as delimiter
     tabular_data.append(total)
@@ -333,7 +333,7 @@ def print_check_summary(results, verbose=False):
                 for s in ("Environment", "Tool", "Status", "Duration")
             ],
         ),
-        err=failed_nums,
+        err=failed_nums,  # type: ignore
     )
 
     util.print_labeled_bar(
@@ -343,6 +343,6 @@ def print_check_summary(results, verbose=False):
             succeeded_nums,
             util.humanize_duration_time(duration),
         ),
-        is_error=failed_nums,
+        is_error=failed_nums,  # type: ignore
         fg="red" if failed_nums else "green",
     )

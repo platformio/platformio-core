@@ -10,8 +10,8 @@ To this end, we support only the following versions:
 | 6.1.x   | :white_check_mark: |
 | < 6.1   | :x:                |
 
-Unsupported versions of the PlatformIO Core may have known vulnerabilities or security issues that could compromise the security of our organization's systems and data. 
-Therefore, it is important that all developers use only supported versions of the PlatformIO Core.
+Unsupported versions of the PlatformIO Fixed may have known vulnerabilities or security issues that could compromise the security of our organization's systems and data.
+Therefore, it is important that all developers use only supported versions of the PlatformIO Fixed.
 
 ## Reporting a Vulnerability
 

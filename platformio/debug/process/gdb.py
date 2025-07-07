@@ -17,7 +17,7 @@ import signal
 import time
 
 from platformio import telemetry
-from platformio.compat import aio_get_running_loop, is_bytes
+from platformio.compat import aio_get_running_loop, is_bytes  # type: ignore
 from platformio.debug import helpers
 from platformio.debug.exception import DebugInitError
 from platformio.debug.process.client import DebugClientProcess
@@ -122,8 +122,8 @@ class GDBClientProcess(DebugClientProcess):
         if b"-gdb-exit" in data or data.strip() in (b"q", b"quit"):
             # Allow terminating via SIGINT/CTRL+C
             signal.signal(signal.SIGINT, signal.default_int_handler)
-            self.transport.get_pipe_transport(0).write(b"pio_reset_run_target\n")
-        self.transport.get_pipe_transport(0).write(data)
+            self.transport.get_pipe_transport(0).write(b"pio_reset_run_target\n")  # type: ignore
+        self.transport.get_pipe_transport(0).write(data)  # type: ignore
 
     def stdout_data_received(self, data):
         super().stdout_data_received(data)
@@ -136,7 +136,7 @@ class GDBClientProcess(DebugClientProcess):
     def console_log(self, msg):
         if helpers.is_gdbmi_mode():
             msg = helpers.escape_gdbmi_stream("~", msg)
-        self.stdout_data_received(msg if is_bytes(msg) else msg.encode())
+        self.stdout_data_received(msg if is_bytes(msg) else msg.encode())  # type: ignore
 
     def _auto_exec_continue(self):
         auto_exec_delay = 0.5  # in seconds
@@ -155,11 +155,11 @@ class GDBClientProcess(DebugClientProcess):
             "PlatformIO: More configuration options -> https://bit.ly/pio-debug\n"
         )
         if self.debug_config.platform.is_embedded():
-            self.transport.get_pipe_transport(0).write(
+            self.transport.get_pipe_transport(0).write(  # type: ignore
                 b"0-exec-continue\n" if helpers.is_gdbmi_mode() else b"continue\n"
             )
         else:
-            self.transport.get_pipe_transport(0).write(
+            self.transport.get_pipe_transport(0).write(  # type: ignore
                 b"0-exec-run\n" if helpers.is_gdbmi_mode() else b"run\n"
             )
         self._target_is_running = True
@@ -178,4 +178,4 @@ class GDBClientProcess(DebugClientProcess):
         telemetry.log_debug_exception(
             DebugInitError(self._errors_buffer.decode()), self.debug_config
         )
-        self.transport.close()
+        self.transport.close()  # type: ignore

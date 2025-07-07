@@ -31,7 +31,7 @@ class PlatformRPC(BaseRPCHandler):
                 )
             }
 
-        search_result = await self.factory.manager.dispatcher["registry.call_client"](
+        search_result = await self.factory.manager.dispatcher["registry.call_client"](  # type: ignore
             method="list_packages",
             query=search_query,
             qualifiers={
@@ -72,7 +72,7 @@ class PlatformRPC(BaseRPCHandler):
 
         items = []
         pm = PlatformPackageManager()
-        for pkg in pm.get_installed():
+        for pkg in pm.get_installed():  # type: ignore
             p = PlatformFactory.new(pkg)
             if search_query and not _matchSearchQuery(p):
                 continue
@@ -91,7 +91,7 @@ class PlatformRPC(BaseRPCHandler):
     async def fetch_boards(self, platform_spec):
         spec = PackageSpec(platform_spec)
         if spec.owner:
-            return await self.factory.manager.dispatcher["registry.call_client"](
+            return await self.factory.manager.dispatcher["registry.call_client"](  # type: ignore
                 method="get_package",
                 typex="platform",
                 owner=spec.owner,
@@ -111,7 +111,7 @@ class PlatformRPC(BaseRPCHandler):
     async def fetch_examples(self, platform_spec):
         spec = PackageSpec(platform_spec)
         if spec.owner:
-            return await self.factory.manager.dispatcher["registry.call_client"](
+            return await self.factory.manager.dispatcher["registry.call_client"](  # type: ignore
                 method="get_package",
                 typex="platform",
                 owner=spec.owner,

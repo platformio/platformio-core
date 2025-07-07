@@ -16,14 +16,14 @@ from datetime import datetime
 from time import time
 
 import click
-from twisted.internet import defer, endpoints, reactor  # pylint: disable=import-error
-from twisted.logger import ILogObserver  # pylint: disable=import-error
-from twisted.logger import Logger  # pylint: disable=import-error
-from twisted.logger import LogLevel  # pylint: disable=import-error
-from twisted.logger import formatEvent  # pylint: disable=import-error
-from twisted.python import failure  # pylint: disable=import-error
-from twisted.spread import pb  # pylint: disable=import-error
-from zope.interface import provider  # pylint: disable=import-error
+from twisted.internet import defer, endpoints, reactor  # type: ignore
+from twisted.logger import ILogObserver  # type: ignore
+from twisted.logger import Logger  # type: ignore
+from twisted.logger import LogLevel  # type: ignore
+from twisted.logger import formatEvent  # type: ignore
+from twisted.python import failure  # type: ignore
+from twisted.spread import pb  # type: ignore
+from zope.interface import provider  # type: ignore
 
 from platformio import __pioremote_endpoint__, __version__, app, exception, maintenance
 from platformio.remote.factory.client import RemoteClientFactory
@@ -39,7 +39,7 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
 
     def __init__(self):
         self.log_level = LogLevel.warn
-        self.log = Logger(namespace="remote", observer=self._log_observer)
+        self.log = Logger(namespace="remote", observer=self._log_observer)  # type: ignore
         self.id = app.get_host_id()
         self.name = app.get_host_name()
         self.join_options = {"corever": __version__}
@@ -78,21 +78,21 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
         proto = proto[0]
 
         factory = RemoteClientFactory()
-        factory.remote_client = self
-        factory.sslContextFactory = None
+        factory.remote_client = self  # type: ignore
+        factory.sslContextFactory = None  # type: ignore
         if proto == "ssl":
-            factory.sslContextFactory = SSLContextFactory(options["host"])
-            reactor.connectSSL(
+            factory.sslContextFactory = SSLContextFactory(options["host"])  # type: ignore
+            reactor.connectSSL( # type: ignore
                 options["host"],
                 int(options["port"]),
                 factory,
-                factory.sslContextFactory,
+                factory.sslContextFactory,  # type: ignore
             )
         elif proto == "tcp":
-            reactor.connectTCP(options["host"], int(options["port"]), factory)
+            reactor.connectTCP(options["host"], int(options["port"]), factory)  # type: ignore
         else:
             raise exception.PlatformioException("Unknown PIO Remote Cloud protocol")
-        reactor.run()
+        reactor.run() # type: ignore
 
         if self._exit_code != 0:
             raise exception.ReturnErrorCode(self._exit_code)
@@ -130,12 +130,12 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
     def restart_ping(self, reset_counter=True):
         # stop previous ping callers
         self.stop_ping(reset_counter)
-        self._ping_caller = reactor.callLater(self.PING_DELAY, self._do_ping)
+        self._ping_caller = reactor.callLater(self.PING_DELAY, self._do_ping) # type: ignore
 
     def _do_ping(self):
         self._ping_counter += 1
         self._ping_id = int(time())
-        d = self.perspective.callRemote("service", "ping", {"id": self._ping_id})
+        d = self.perspective.callRemote("service", "ping", {"id": self._ping_id})  # type: ignore
         d.addCallback(self._cb_pong)
         d.addErrback(self._cb_pong)
 
@@ -153,7 +153,7 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
             return
         if self._ping_counter >= self.PING_MAX_FAILURES:
             self.stop_ping()
-            self.perspective.broker.transport.loseConnection()
+            self.perspective.broker.transport.loseConnection()  # type: ignore
         else:
             self.restart_ping(reset_counter=False)
 
@@ -164,9 +164,9 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
         self.stop_ping()
         if exit_code is not None:
             self._exit_code = exit_code
-        if reactor.running and not self._reactor_stopped:
+        if reactor.running and not self._reactor_stopped:  # type: ignore
             self._reactor_stopped = True
-            reactor.stop()
+            reactor.stop()  # type: ignore
 
     def cb_disconnected(self, _):
         self.stop_ping()

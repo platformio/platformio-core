@@ -49,26 +49,20 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         with open(
             os.path.join(root_dir, "library.json"), mode="w", encoding="utf8"
         ) as fp:
-            json.dump(
-                dict(
-                    name=spec.name,
-                    version=self.generate_rand_version(),
-                ),
-                fp,
-                indent=2,
-            )
+            json.dump({
+                "name": spec.name,
+                "version": self.generate_rand_version(),
+            }, fp)
 
         return root_dir
 
     @staticmethod
     def find_library_root(path):
-        root_dir_signs = set(["include", "Include", "inc", "Inc", "src", "Src"])
-        root_file_signs = set(
-            [
-                "conanfile.py",  # Conan-based library
-                "CMakeLists.txt",  # CMake-based library
-            ]
-        )
+        root_dir_signs = {"include", "Include", "inc", "Inc", "src", "Src"}
+        root_file_signs = {
+            "conanfile.py",  # Conan-based library
+            "CMakeLists.txt",  # CMake-based library
+        }
         for root, dirs, files in os.walk(path):
             if not files and len(dirs) == 1:
                 continue
@@ -92,7 +86,7 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         return None
 
     @staticmethod
-    @util.memoized(expire="60s")
+    @util.memoized(expire="60s")  # type: ignore
     def get_builtin_libs(storage_names=None):
         # pylint: disable=import-outside-toplevel
         from platformio.package.manager.platform import PlatformPackageManager
@@ -100,7 +94,7 @@ class LibraryPackageManager(BasePackageManager):  # pylint: disable=too-many-anc
         items = []
         storage_names = storage_names or []
         pm = PlatformPackageManager()
-        for pkg in pm.get_installed():
+        for pkg in pm.get_installed():  # type: ignore
             p = PlatformFactory.new(pkg)
             for storage in p.get_lib_storages():
                 if storage_names and storage["name"] not in storage_names:

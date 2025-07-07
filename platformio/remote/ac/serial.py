@@ -14,8 +14,8 @@
 
 from time import sleep
 
-from twisted.internet import protocol, reactor  # pylint: disable=import-error
-from twisted.internet.serialport import SerialPort  # pylint: disable=import-error
+from twisted.internet import protocol, reactor  # type: ignore
+from twisted.internet.serialport import SerialPort  # type: ignore
 
 from platformio.remote.ac.base import AsyncCommandBase
 
@@ -37,17 +37,17 @@ class SerialPortAsyncCmd(protocol.Protocol, AsyncCommandBase):
     def connectionMade(self):
         self.reset_device()
         if self.options.get("rts", None) is not None:
-            self.transport.setRTS(self.options.get("rts"))
+            self.transport.setRTS(self.options.get("rts"))  # type: ignore
         if self.options.get("dtr", None) is not None:
-            self.transport.setDTR(self.options.get("dtr"))
+            self.transport.setDTR(self.options.get("dtr"))  # type: ignore
 
     def reset_device(self):
-        self.transport.flushInput()
-        self.transport.setDTR(False)
-        self.transport.setRTS(False)
+        self.transport.flushInput()  # type: ignore
+        self.transport.setDTR(False)  # type: ignore
+        self.transport.setRTS(False)  # type: ignore
         sleep(0.1)
-        self.transport.setDTR(True)
-        self.transport.setRTS(True)
+        self.transport.setDTR(True)  # type: ignore
+        self.transport.setRTS(True)  # type: ignore
         sleep(0.1)
 
     def dataReceived(self, data):

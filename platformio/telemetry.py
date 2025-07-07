@@ -24,7 +24,7 @@ from collections import deque
 
 import requests
 
-from platformio import __title__, __version__, app, exception, fs, util
+from platformio import app, exception, fs, util
 from platformio.cli import PlatformioCLI
 from platformio.debug.config.base import DebugConfigBase
 from platformio.http import HTTPSession
@@ -143,7 +143,7 @@ class TelemetryLogger:
             # skip Bad Request
             if exc.response.status_code >= 400 and exc.response.status_code < 500:
                 return True
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             pass
         self._http_offline = True
         return False
@@ -182,7 +182,7 @@ def log_command(ctx):
         "path_args": PlatformioCLI.reveal_cmd_path_args(ctx),
     }
     if is_ci():
-        params["ci_actor"] = resolve_ci_actor() or "Unknown"
+        params["ci_actor"] = resolve_ci_actor() or "Unknown" # type: ignore
     log_event("cmd_run", params)
 
 
@@ -289,10 +289,10 @@ def log_debug_exception(exc, debug_config: DebugConfigBase):
     # cleanup sensitive information, such as paths
     description = fs.to_unix_path(str(exc))
     description = re.sub(
-        r'(^|\s+|")(?:[a-z]\:)?((/[^"/]+)+)(\s+|"|$)',
-        lambda m: " %s " % os.path.join(*m.group(2).split("/")[-2:]),
-        description,
-        re.I | re.M,
+        pattern=r'(^|\s+|")(?:[a-z]\:)?((/[^"/]+)+)(\s+|"|$)',
+        repl=lambda m: " %s " % os.path.join(*m.group(2).split("/")[-2:]),
+        string=description,
+        count=re.I | re.M,
     )
     params = {
         "name": exc.__class__.__name__,
@@ -331,7 +331,7 @@ def load_postponed_events():
     if not os.path.isfile(state_path):
         return []
     with app.State(state_path) as state:
-        return state.get("events", [])
+        return state.get("events", [])  # type: ignore
 
 
 def save_postponed_events(events):
@@ -340,7 +340,7 @@ def save_postponed_events(events):
         try:
             if os.path.isfile(state_path):
                 os.remove(state_path)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             pass
         return None
     with app.State(state_path, lock=True) as state:
@@ -369,7 +369,7 @@ def process_postponed_logs():
     save_postponed_events([])  # clean
     telemetry = TelemetryLogger()
     for event in events:
-        if set(["name", "params", "timestamp"]) <= set(event.keys()):
+        if {"name", "params", "timestamp"} <= set(event.keys()):
             telemetry.log_event(
                 event["name"],
                 event["params"],

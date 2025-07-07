@@ -50,7 +50,7 @@ class OutdatedCandidate:
     def is_outdated(self):
         if not self.outdated:
             self.check()
-        return self.outdated.is_outdated(allow_incompatible=self.pm.pkg_type != "tool")
+        return self.outdated.is_outdated(allow_incompatible=self.pm.pkg_type != "tool")  # type: ignore
 
 
 @click.command("outdated", short_help="Check for outdated packages")
@@ -176,7 +176,7 @@ def find_platform_candidates(config, environments):
         pkg = pm.get_package(spec)
         if not pkg:
             continue
-        result.append(dict(env=env, pm=pm, pkg=pkg, spec=spec))
+        result.append({"env": env, "pm": pm, "pkg": pkg, "spec": spec})
     return result
 
 
@@ -185,12 +185,12 @@ def find_platform_dependency_candidates(env):
     p = PlatformFactory.from_env(env)
     for pkg in p.get_installed_packages():
         result.append(
-            dict(
-                env=env,
-                pm=p.pm,
-                pkg=pkg,
-                spec=p.get_package_spec(pkg.metadata.name),
-            )
+            {
+                "env": env,
+                "pm": p.pm,
+                "pkg": pkg,
+                "spec": p.get_package_spec(pkg.metadata.name),
+            }
         )
     return sorted(result, key=lambda item: item["pkg"].metadata.name)
 
@@ -212,5 +212,5 @@ def find_library_candidates(config, environments):
             pkg = pm.get_package(spec)
             if not pkg:
                 continue
-            result.append(dict(env=env, pm=pm, pkg=pkg, spec=spec))
+            result.append({"env": env, "pm": pm, "pkg": pkg, "spec": spec})
     return sorted(result, key=lambda item: item["pkg"].metadata.name)

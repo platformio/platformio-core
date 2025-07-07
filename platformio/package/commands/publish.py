@@ -38,7 +38,7 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
     try:
         datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
     except ValueError as exc:
-        raise click.BadParameter(exc)
+        raise click.BadParameter(exc) from exc  # type: ignore
     return value
 
 
@@ -57,7 +57,7 @@ def validate_datetime(ctx, param, value):  # pylint: disable=unused-argument
 @click.option(
     "--type",
     "typex",
-    type=click.Choice(list(PackageType.items().values())),
+    type=click.Choice(list(PackageType.items().values())),  # type: ignore
     help="Custom package type",
 )
 @click.option(
@@ -95,7 +95,7 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments,too-many-position
         and PackageType.from_archive(package)
     )
     archive_path = None
-    with tempfile.TemporaryDirectory() as tmp_dir:  # pylint: disable=no-member
+    with tempfile.TemporaryDirectory() as tmp_dir:  # type: ignore
         # publish .tar.gz instantly without repacking
         if do_not_pack:
             archive_path = package
@@ -108,8 +108,8 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments,too-many-position
         manifest = ManifestSchema().load_manifest(
             ManifestParserFactory.new_from_archive(archive_path).as_dict()
         )
-        name = manifest.get("name")
-        version = manifest.get("version")
+        name = manifest.get("name")  # type: ignore
+        version = manifest.get("version")  # type: ignore
         data = [
             ("Type:", typex),
             ("Owner:", owner),
@@ -117,15 +117,15 @@ def package_publish_cmd(  # pylint: disable=too-many-arguments,too-many-position
             ("Version:", version),
             ("Size:", fs.humanize_file_size(os.path.getsize(archive_path))),
         ]
-        if manifest.get("system"):
-            data.insert(len(data) - 1, ("System:", ", ".join(manifest.get("system"))))
+        if manifest.get("system"):  # type: ignore
+            data.insert(len(data) - 1, ("System:", ", ".join(manifest.get("system"))))  # type: ignore
         click.echo(tabulate(data, tablefmt="plain"))
 
         # check files containing non-ascii chars
         check_archive_file_names(archive_path)
 
         # look for duplicates
-        check_package_duplicates(owner, typex, name, version, manifest.get("system"))
+        check_package_duplicates(owner, typex, name, version, manifest.get("system"))  # type: ignore
 
         if not no_interactive:
             click.confirm(
@@ -171,7 +171,7 @@ def check_package_duplicates(
     found = False
     items = (
         RegistryClient()
-        .list_packages(qualifiers=dict(types=[type], names=[name]))
+        .list_packages(qualifiers={"types": [type], "names": [name]})
         .get("items")
     )
     if not items:

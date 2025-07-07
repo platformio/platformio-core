@@ -62,17 +62,17 @@ class FileDownloader:
         return self._destination
 
     def get_lmtime(self):
-        return self._http_response.headers.get("last-modified")
+        return self._http_response.headers.get("last-modified")  # type: ignore
 
     def get_size(self):
-        if "content-length" not in self._http_response.headers:
+        if "content-length" not in self._http_response.headers:  # type: ignore
             return -1
-        return int(self._http_response.headers["content-length"])
+        return int(self._http_response.headers["content-length"])  # type: ignore
 
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
         file_size = self.get_size()
-        itercontent = self._http_response.iter_content(
+        itercontent = self._http_response.iter_content(  # type: ignore
             chunk_size=io.DEFAULT_BUFFER_SIZE
         )
         try:
@@ -104,15 +104,15 @@ class FileDownloader:
                         iterable=itercontent,
                         label=label,
                         update_min_steps=min(
-                            256 * 1024, file_size / 100
+                            256 * 1024, file_size // 100
                         ),  # every 256Kb or less
                     ) as pb:
                         for chunk in pb:
                             pb.update(len(chunk))
                             fp.write(chunk)
         finally:
-            self._http_response.close()
-            self._http_session.close()
+            self._http_response.close()  # type: ignore
+            self._http_session.close()  # type: ignore
 
         if self.get_lmtime():
             self._preserve_filemtime(self.get_lmtime())
@@ -156,10 +156,10 @@ class FileDownloader:
         return True
 
     def _preserve_filemtime(self, lmdate):
-        lmtime = mktime(parsedate(lmdate))
+        lmtime = mktime(parsedate(lmdate))  # type: ignore
         fs.change_filemtime(self._destination, lmtime)
 
     def __del__(self):
-        self._http_session.close()
+        self._http_session.close()  # type: ignore
         if self._http_response:
-            self._http_response.close()
+            self._http_response.close()  # type: ignore

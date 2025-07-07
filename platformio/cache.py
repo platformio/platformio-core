@@ -144,7 +144,7 @@ class ContentCache:
         self._lockfile = LockFile(self.cache_dir)
         try:
             self._lockfile.acquire()
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             return False
 
         return True

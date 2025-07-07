@@ -27,8 +27,6 @@ from platformio import __version__
 
 # pylint: disable=unused-import
 from platformio.device.list.util import list_serial_ports as get_serial_ports
-from platformio.fs import cd, load_json
-from platformio.proc import exec_command
 
 # pylint: enable=unused-import
 
@@ -57,7 +55,7 @@ class memoized:
                 self.cache[key] = (time.time(), func(*args, **kwargs))
             return self.cache[key][1]
 
-        wrapper.reset = self._reset
+        wrapper.reset = self._reset  # type: ignore
         return wrapper
 
     def _reset(self):
@@ -212,4 +210,4 @@ def humanize_duration_time(duration):
 
 def strip_ansi_codes(text):
     # pylint: disable=protected-access
-    return click._compat.strip_ansi(text)
+    return click._compat.strip_ansi(text) # type: ignore

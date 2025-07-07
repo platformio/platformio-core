@@ -50,7 +50,7 @@ class ProjectConfigBase:
         "PROJECT_HASH": lambda: "%s-%s"
         % (
             os.path.basename(os.getcwd()),
-            hashlib.sha1(hashlib_encode_data(os.getcwd())).hexdigest()[:10],
+            hashlib.sha1(hashlib_encode_data(os.getcwd())).hexdigest()[:10],  # type: ignore
         ),
         "UNIX_TIME": lambda: str(int(time.time())),
     }
@@ -108,6 +108,7 @@ class ProjectConfigBase:
             return
         self._parsed.append(path)
         try:
+            assert self._parser is not None
             self._parser.read(path, "utf-8")
         except configparser.Error as exc:
             raise exception.InvalidProjectConfError(path, str(exc)) from exc
@@ -116,7 +117,7 @@ class ProjectConfigBase:
             return
 
         # load extra configs
-        for pattern in self.get("platformio", "extra_configs", []):
+        for pattern in self.get("platformio", "extra_configs", []):  # type: ignore
             if pattern.startswith("~"):
                 pattern = fs.expanduser(pattern)
             for item in glob.glob(pattern, recursive=True):
@@ -126,13 +127,13 @@ class ProjectConfigBase:
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
-                renamed_options.update({name: option.name for name in option.oldnames})
+                renamed_options.update(dict.fromkeys(option.oldnames, option.name))
 
-        for section in self._parser.sections():
+        for section in self._parser.sections():  # type: ignore
             scope = self.get_section_scope(section)
             if scope not in ("platformio", "env"):
                 continue
-            for option in self._parser.options(section):
+            for option in self._parser.options(section):  # type: ignore
                 if option in renamed_options:
                     self.warnings.append(
                         "`%s` configuration option in section [%s] is "
@@ -175,6 +176,7 @@ class ProjectConfigBase:
         while extends_queue:
             section = extends_queue.pop()
             extends_done.append(section)
+            assert self._parser is not None
             if not self._parser.has_section(section):
                 continue
             for option in self._parser.options(section):
@@ -188,10 +190,10 @@ class ProjectConfigBase:
         result = []
         assert section or env
         if not section:
-            section = "env:" + env
+            section = "env:" + str(env)
 
         if not self.expand_interpolations:
-            return self._parser.options(section)
+            return self._parser.options(section)  # type: ignore
 
         for _, option in self.walk_options(section):
             if option not in result:
@@ -208,6 +210,7 @@ class ProjectConfigBase:
         return result
 
     def has_option(self, section, option):
+        assert self._parser is not None
         if self._parser.has_option(section, option):
             return True
         return option in self.options(section)
@@ -215,7 +218,7 @@ class ProjectConfigBase:
     def items(self, section=None, env=None, as_dict=False):
         assert section or env
         if not section:
-            section = "env:" + env
+            section = "env:" + str(env)
         if as_dict:
             return {
                 option: self.get(section, option) for option in self.options(section)
@@ -234,7 +237,7 @@ class ProjectConfigBase:
         # start multi-line value from a new line
         if "\n" in value and not value.startswith("\n"):
             value = "\n" + value
-        self._parser.set(section, option, value)
+        self._parser.set(section, option, value)  # type: ignore
 
     def resolve_renamed_option(self, section, old_name):
         scope = self.get_section_scope(section)
@@ -270,13 +273,14 @@ class ProjectConfigBase:
                     or _option in (option_meta.oldnames or [])
                 )
             ):
-                return self._parser.get(_section, _option)
+                return self._parser.get(_section, _option)  # type: ignore
         return MISSING
 
     def getraw(
         self, section, option, default=MISSING
     ):  # pylint: disable=too-many-branches
         if not self.expand_interpolations:
+            assert self._parser is not None
             return self._parser.get(section, option)
 
         option_meta = self.find_option_meta(section, option)
@@ -284,6 +288,7 @@ class ProjectConfigBase:
 
         if not option_meta:
             if value == MISSING:
+                assert self._parser is not None
                 value = (
                     default if default != MISSING else self._parser.get(section, option)
                 )
@@ -299,7 +304,7 @@ class ProjectConfigBase:
             if envvar_value and option_meta.multiple:
                 if value == MISSING:
                     value = ""
-                value += ("\n" if value else "") + envvar_value
+                value += ("\n" if value else "") + envvar_value  # type: ignore
             elif envvar_value:
                 value = envvar_value
 
@@ -313,7 +318,7 @@ class ProjectConfigBase:
         return self._expand_interpolations(section, option, value)
 
     def _expand_interpolations(self, section, option, value):
-        if not value or not isinstance(value, string_types) or not "$" in value:
+        if not value or not isinstance(value, string_types) or "$" not in value:
             return value
 
         # legacy support for variables delclared without "${}"
@@ -337,7 +342,7 @@ class ProjectConfigBase:
         if not all(["${" in value, "}" in value]):
             return value
         return self.VARTPL_RE.sub(
-            lambda match: self._re_interpolation_handler(section, option, match), value
+            lambda match: self._re_interpolation_handler(section, option, match), value  # type: ignore
         )
 
     def _re_interpolation_handler(self, parent_section, parent_option, match):
@@ -383,7 +388,7 @@ class ProjectConfigBase:
         try:
             value = self.getraw(section, option, default)
         except configparser.Error as exc:
-            raise exception.InvalidProjectConfError(self.path, str(exc))
+            raise exception.InvalidProjectConfError(self.path, str(exc)) from exc
 
         option_meta = self.find_option_meta(section, option)
         if not option_meta:
@@ -401,7 +406,7 @@ class ProjectConfigBase:
             raise exception.ProjectOptionValueError(
                 "%s for `%s` option in the `%s` section (%s)"
                 % (exc.format_message(), option, section, option_meta.description)
-            )
+            ) from exc
 
     @staticmethod
     def cast_to(value, to_type):
@@ -415,7 +420,7 @@ class ProjectConfigBase:
         return items if isinstance(value, (list, tuple)) else items[0]
 
     def envs(self):
-        return [s[4:] for s in self._parser.sections() if s.startswith("env:")]
+        return [s[4:] for s in self._parser.sections() if s.startswith("env:")] # type: ignore
 
     def default_envs(self):
         return self.get("platformio", "default_envs", [])
@@ -436,7 +441,7 @@ class ProjectConfigBase:
         # check envs
         if not known_envs:
             raise exception.ProjectEnvsNotAvailableError()
-        unknown_envs = set(list(envs or []) + self.default_envs()) - known_envs
+        unknown_envs = set(list(envs or []) + self.default_envs()) - known_envs  # type: ignore
         if unknown_envs:
             raise exception.UnknownEnvNamesError(
                 ", ".join(unknown_envs), ", ".join(known_envs)
@@ -471,7 +476,7 @@ class ProjectConfigLintMixin:
         errors = []
         warnings = []
         try:
-            config = cls.get_instance(path)
+            config = cls.get_instance(path)  # type: ignore
             config.validate(silent=True)
             warnings = config.warnings  # in case "as_tuple" fails
             config.as_tuple()
@@ -486,7 +491,7 @@ class ProjectConfigLintMixin:
                     item[attr] = getattr(exc, attr)
 
             if item["type"] == "ParsingError" and hasattr(exc, "errors"):
-                for lineno, line in getattr(exc, "errors"):
+                for lineno, line in exc.errors:  # type: ignore
                     errors.append(
                         {
                             "type": item["type"],
@@ -507,7 +512,7 @@ class ProjectConfigDirsMixin:
         PlatformIO IDE for Atom depends on platformio-node-helpers@~7.2.0
         PIO Home 3.0 Project Inspection depends on it
         """
-        return self.get("platformio", f"{name}_dir")
+        return self.get("platformio", f"{name}_dir")  # type: ignore
 
 
 class ProjectConfig(ProjectConfigBase, ProjectConfigLintMixin, ProjectConfigDirsMixin):

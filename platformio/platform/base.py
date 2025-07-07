@@ -237,4 +237,4 @@ class PlatformBase(  # pylint: disable=too-many-instance-attributes,too-many-pub
                     continue
                 storages[libcore_dir] = "%s-core-%s" % (opts["package"], item)
 
-        return [dict(name=name, path=path) for path, name in storages.items()]
+        return [{"name": name, "path": path} for path, name in storages.items()]

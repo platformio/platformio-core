@@ -15,7 +15,7 @@
 VERSION = (6, 1, "19a2")
 __version__ = ".".join([str(s) for s in VERSION])
 
-__title__ = "platformio"
+__title__ = "platformio-fixed"
 __description__ = (
     "Your Gateway to Embedded Software Development Excellence. "
     "Unlock the true potential of embedded software development "

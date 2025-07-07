@@ -46,7 +46,7 @@ def get_core_package_dir(name, spec=None, auto_install=True):
         return None
     assert pm.install(spec)
     remove_unnecessary_core_packages()
-    return pm.get_package(spec).path
+    return pm.get_package(spec).path  # type: ignore
 
 
 def update_core_packages():
@@ -71,10 +71,10 @@ def remove_unnecessary_core_packages(dry_run=False):
         pkg = pm.get_package(spec)
         if not pkg:
             continue
-        # pylint: disable=no-member
-        best_pkg_versions[pkg.metadata.name] = pkg.metadata.version
+        # type: ignore
+        best_pkg_versions[pkg.metadata.name] = pkg.metadata.version  # type: ignore
 
-    for pkg in pm.get_installed():
+    for pkg in pm.get_installed():  # type: ignore
         skip_conds = [
             os.path.isfile(os.path.join(pkg.path, ".piokeep")),
             pkg.metadata.spec.owner != "platformio",

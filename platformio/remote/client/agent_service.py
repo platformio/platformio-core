@@ -14,8 +14,8 @@
 
 import os
 
-from twisted.logger import LogLevel  # pylint: disable=import-error
-from twisted.spread import pb  # pylint: disable=import-error
+from twisted.logger import LogLevel  # type: ignore
+from twisted.spread import pb  # type: ignore
 
 from platformio import proc
 from platformio.device.list.util import list_serial_ports
@@ -38,8 +38,8 @@ class RemoteAgentService(RemoteClientBase):
             os.makedirs(self.working_dir)
         if name:
             self.name = str(name)[:50]
-        self.join_options.update(
-            {"agent": True, "share": [s.lower().strip()[:50] for s in share]}
+        self.join_options.update( # type: ignore
+            {"agent": True, "share": [s.lower().strip()[:50] for s in share]} # type: ignore
         )
 
         self._acs = {}
@@ -90,8 +90,8 @@ class RemoteAgentService(RemoteClientBase):
     def _process_cmd_device_monitor(self, options):
         if not options["port"]:
             for item in list_serial_ports():
-                if "VID:PID" in item["hwid"]:
-                    options["port"] = item["port"]
+                if "VID:PID" in item["hwid"]:  # type: ignore
+                    options["port"] = item["port"]  # type: ignore
                     break
 
         # terminate opened monitors

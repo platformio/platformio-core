@@ -41,7 +41,7 @@ def list_test_suites(project_config, environments, filters, ignores):
     for env_name in project_config.envs():
         for test_name in test_names:
             # filter and ignore patterns
-            patterns = dict(filter=list(filters), ignore=list(ignores))
+            patterns = {"filter": list(filters), "ignore": list(ignores)}
             for key, value in patterns.items():
                 if value:  # overridden from CLI
                     continue

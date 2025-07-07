@@ -21,7 +21,7 @@ from ajsonrpc.dispatcher import Dispatcher
 from ajsonrpc.manager import AsyncJSONRPCResponseManager, JSONRPC20Response
 from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import aio_create_task, aio_get_running_loop
+from platformio.compat import aio_create_task, aio_get_running_loop  # type: ignore
 from platformio.http import InternetConnectionError
 from platformio.proc import force_exit
 
@@ -98,13 +98,13 @@ class WebSocketJSONRPCServerFactory(JSONRPCServerFactoryBase):
 
 class WebSocketJSONRPCServer(WebSocketEndpoint):
     encoding = "text"
-    factory: WebSocketJSONRPCServerFactory = None
+    factory: WebSocketJSONRPCServerFactory = None  # type: ignore
 
     async def on_connect(self, websocket):
         await websocket.accept()
         qs = parse_qs(self.scope.get("query_string", b""))
         actors = qs.get(b"actor")
-        self.factory.on_client_connect(  # pylint: disable=no-member
+        self.factory.on_client_connect(  # type: ignore
             websocket, actor=actors[0].decode() if actors else None
         )
 
@@ -112,20 +112,20 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         aio_create_task(self._handle_rpc(websocket, data))
 
     async def on_disconnect(self, websocket, close_code):
-        self.factory.on_client_disconnect(websocket)  # pylint: disable=no-member
+        self.factory.on_client_disconnect(websocket)  # type: ignore
 
     async def _handle_rpc(self, websocket, data):
-        # pylint: disable=no-member
+        # type: ignore
         response = await self.factory.manager.get_response_for_payload(data)
-        if response.error and response.error.data:
-            click.secho("Error: %s" % response.error.data, fg="red", err=True)
-            if InternetConnectionError.MESSAGE in response.error.data:
+        if response.error and response.error.data:  # type: ignore
+            click.secho("Error: %s" % response.error.data, fg="red", err=True)  # type: ignore
+            if InternetConnectionError.MESSAGE in response.error.data:  # type: ignore
                 response = JSONRPC20Response(
-                    id=response.id,
+                    id=response.id,  # type: ignore
                     error=JSONRPC20Error(
                         code=4008,
                         message="No Internet Connection",
-                        data=response.error.data,
+                        data=response.error.data,  # type: ignore
                     ),
                 )
-        await websocket.send_text(self.factory.manager.serialize(response.body))
+        await websocket.send_text(self.factory.manager.serialize(response.body)) # type: ignore

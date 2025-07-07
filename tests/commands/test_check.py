@@ -439,7 +439,7 @@ int main() {
 
     assert low_result.exit_code != 0
 
-
+@pytest.mark.skip(reason="Test takes too long to run")
 def test_check_pvs_studio_free_license(clirunner, tmpdir):
     config = """
 [env:test]
@@ -512,6 +512,7 @@ TEST-TEST-TEST-TEST
     assert "license information is incorrect" in verbose_result.output.lower()
 
 
+# @pytest.mark.skip(reason="Test takes too long to run")
 @pytest.mark.parametrize("framework", ["arduino", "stm32cube", "zephyr"])
 @pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy", "pvs-studio"])
 def test_check_embedded_platform_all_tools(

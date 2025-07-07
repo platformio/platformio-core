@@ -50,10 +50,10 @@ def _get_symbol_locations(env, elf_path, addrs):
         return {}
     cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path]
     result = _run_tool(cmd, env, addrs)
-    locations = [line for line in result["out"].split("\n") if line]
+    locations = [line for line in result["out"].split("\n") if line]  # type: ignore
     assert len(addrs) == len(locations)
 
-    return dict(zip(addrs, [loc.strip() for loc in locations]))
+    return dict(zip(addrs, [loc.strip() for loc in locations], strict=False))  # type: ignore
 
 
 def _get_demangled_names(env, mangled_names):
@@ -62,13 +62,13 @@ def _get_demangled_names(env, mangled_names):
     result = _run_tool(
         [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names
     )
-    demangled_names = [line for line in result["out"].split("\n") if line]
+    demangled_names = [line for line in result["out"].split("\n") if line]  # type: ignore
     assert len(mangled_names) == len(demangled_names)
 
     return dict(
         zip(
             mangled_names,
-            [dn.strip().replace("::__FUNCTION__", "") for dn in demangled_names],
+            [dn.strip().replace("::__FUNCTION__", "") for dn in demangled_names], strict=False,  # type: ignore
         )
     )
 

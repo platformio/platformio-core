@@ -18,10 +18,10 @@ import subprocess
 import sys
 import time
 
+from platformio.compat import aio_create_task  # type: ignore
+from platformio.compat import aio_get_running_loop  # type: ignore
 from platformio.compat import (
     IS_WINDOWS,
-    aio_create_task,
-    aio_get_running_loop,
     get_locale_encoding,
 )
 
@@ -150,5 +150,5 @@ class DebugBaseProcess:
         try:
             self.transport.kill()
             self.transport.close()
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             pass

@@ -29,7 +29,7 @@ from platformio.util import memoized
 
 class BaseSchema(Schema):
     class Meta:
-        unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
+        unknown = marshmallow.EXCLUDE  # type: ignore
 
     def load_manifest(self, data):
         return self.load(data)
@@ -62,7 +62,7 @@ class StrictListField(fields.List):
             return super()._deserialize(value, attr, data, **kwargs)
         except ValidationError as exc:
             if exc.data:
-                exc.data = [item for item in exc.data if item is not None]
+                exc.data = [item for item in exc.data if item is not None]  # type: ignore
             raise exc
 
 
@@ -113,8 +113,8 @@ class DependencySchema(StrictSchema):
 
 
 class ExportSchema(BaseSchema):
-    include = StrictListField(fields.Str)
-    exclude = StrictListField(fields.Str)
+    include = StrictListField(fields.Str)  # type: ignore
+    exclude = StrictListField(fields.Str)  # type: ignore
 
 
 class ExampleSchema(StrictSchema):
@@ -129,7 +129,7 @@ class ExampleSchema(StrictSchema):
         ],
     )
     base = fields.Str(required=True)
-    files = StrictListField(fields.Str, required=True)
+    files = StrictListField(fields.Str, required=True)  # type: ignore
 
 
 # Fields
@@ -170,12 +170,12 @@ class ManifestSchema(BaseSchema):
     dependencies = fields.Nested(DependencySchema, many=True)
     scripts = fields.Dict(
         keys=fields.Str(validate=validate.OneOf(["postinstall", "preuninstall"])),
-        values=ScriptField(),
+        values=ScriptField(),  # type: ignore
     )
 
     # library.json
     export = fields.Nested(ExportSchema)
-    examples = fields.Nested(ExampleSchema, many=True)
+    examples = fields.Nested(ExampleSchema, many=True)  # type: ignore
     downloadUrl = fields.Url(validate=validate.Length(min=1, max=255))
 
     keywords = StrictListField(
@@ -256,7 +256,7 @@ class ManifestSchema(BaseSchema):
             raise ValidationError(
                 "Could not load SPDX licenses for validation"
             ) from exc
-        known_ids = set(item.get("licenseId") for item in spdx.get("licenses", []))
+        known_ids = {item.get("licenseId") for item in spdx.get("licenses", [])}
         if value in known_ids:
             return True
         # parse license expression
@@ -274,7 +274,7 @@ class ManifestSchema(BaseSchema):
         )
 
     @staticmethod
-    @memoized(expire="1h")
+    @memoized(expire="1h")  # type: ignore
     def load_spdx_licenses():
         version = "3.26.0"
         spdx_data_url = (

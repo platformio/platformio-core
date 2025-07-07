@@ -234,9 +234,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update", "--dry-run", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(
-        ["Adafruit PN532", "AsyncMqttClient", "AsyncTCP", "ESPAsyncTCP", "NeoPixelBus"]
-    ) == set(lib["name"] for lib in output)
+    assert {"Adafruit PN532", "AsyncMqttClient", "AsyncTCP", "ESPAsyncTCP", "NeoPixelBus"} == {lib["name"] for lib in output}
 
 
 def test_global_lib_update(clirunner, validate_cliresult):
@@ -332,14 +330,12 @@ def test_lib_builtin(clirunner, validate_cliresult):
 def test_lib_stats(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])
     validate_cliresult(result)
-    assert set(
-        [
-            "dlweek",
-            "added",
-            "updated",
-            "topkeywords",
-            "dlmonth",
-            "dlday",
-            "lastkeywords",
-        ]
-    ) == set(json.loads(result.output).keys())
+    assert {
+        "dlweek",
+        "added",
+        "updated",
+        "topkeywords",
+        "dlmonth",
+        "dlday",
+        "lastkeywords",
+    } == set(json.loads(result.output).keys())

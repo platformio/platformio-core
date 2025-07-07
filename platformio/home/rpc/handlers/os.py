@@ -63,9 +63,9 @@ class OSRPC(BaseRPCHandler):
             cls._http_session = HTTPAsyncSession()
 
         if data:
-            r = await cls._http_session.post(url, data=data, headers=headers)
+            r = await cls._http_session.post(url, data=data, headers=headers)  # type: ignore
         else:
-            r = await cls._http_session.get(url, headers=headers)
+            r = await cls._http_session.get(url, headers=headers)  # type: ignore
 
         r.raise_for_status()
         result = r.text

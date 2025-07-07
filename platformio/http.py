@@ -51,7 +51,7 @@ class HTTPSession(requests.Session):
         super().__init__(*args, **kwargs)
         self.headers.update({"User-Agent": app.get_user_agent()})
         try:
-            self.verify = app.get_setting("enable_proxy_strict_ssl")
+            self.verify = app.get_setting("enable_proxy_strict_ssl")  # type: ignore
         except PlatformioException:
             self.verify = True
 
@@ -109,7 +109,7 @@ class HTTPClient:
             return
         try:
             self._session.close()
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             pass
         self._session = None
 
@@ -187,7 +187,7 @@ class HTTPClient:
 #
 
 
-@util.memoized(expire="10s")
+@util.memoized(expire="10s")  # type: ignore
 def _internet_on():
     timeout = 2
     use_proxy = is_proxy_set()
@@ -202,7 +202,7 @@ def _internet_on():
             s = socket.create_connection((host, 80))
             s.close()
             return True
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             pass
 
     # falling back to HTTPs, issue #4980

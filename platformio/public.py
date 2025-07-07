@@ -27,3 +27,24 @@ from platformio.test.runners.doctest import DoctestTestRunner
 from platformio.test.runners.googletest import GoogletestTestRunner
 from platformio.test.runners.unity import UnityTestRunner
 from platformio.util import get_systype
+
+
+__all__ = [
+    "list_logical_devices",
+    "list_serial_ports",
+    "DeviceMonitorFilterBase",
+    "to_unix_path",
+    "PlatformBase",
+    "ProjectConfig",
+    "get_project_watch_lib_dirs",
+    "load_build_metadata",
+    "get_config_options_schema",
+    "TestCase",
+    "TestCaseSource",
+    "TestStatus",
+    "TestRunnerBase",
+    "DoctestTestRunner",
+    "GoogletestTestRunner",
+    "UnityTestRunner",
+    "get_systype",
+]
