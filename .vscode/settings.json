@@ -2,5 +2,8 @@
     "cSpell.words": [
         "CMSIS",
         "regdata"
+    ],
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "develop"
     ]
 }
