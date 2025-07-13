@@ -1,6 +1,13 @@
 {
     "configurations": [
         {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "type": "cmake",
             "request": "launch",
             "name": "Debug portfile(s)",
