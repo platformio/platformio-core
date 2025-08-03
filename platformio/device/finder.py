@@ -133,6 +133,10 @@ class SerialPortFinder:
 
     def find(self, initial_port=None):
         if initial_port:
+            # Treat any URL (contains '://') as a literal port
+            if "://" in initial_port:
+                return initial_port
+            # Otherwise fall back to existing wildcard logic
             if not is_pattern_port(initial_port):
                 return initial_port
             return self.match_serial_port(initial_port)
