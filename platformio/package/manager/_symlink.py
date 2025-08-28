@@ -18,6 +18,7 @@ import os
 from platformio import fs
 from platformio.package.exception import PackageException
 from platformio.package.meta import PackageItem, PackageSpec
+from platformio.project.config import ProjectConfig
 
 
 class PackageManagerSymlinkMixin:
@@ -25,15 +26,43 @@ class PackageManagerSymlinkMixin:
     def is_symlink(path):
         return path and path.endswith(".pio-link") and os.path.isfile(path)
 
+    # -------- helper: normalize "symlink://..." into an absolute, real path --------
+    @staticmethod
+    def _normalize_symlink_target(uri, cwd_for_rel=None):
+        """
+        Turn a symlink:// URI (which may contain a relative path like ../foo)
+        into an absolute, real (symlinks-resolved) filesystem path.
+
+        If cwd_for_rel is provided, relative paths are resolved against it.
+        Otherwise, resolve against the current project's directory.
+        """
+        prefix = "symlink://"
+        target = uri[len(prefix):] if uri.startswith(prefix) else uri
+
+        # Determine a base directory to resolve relative targets
+        base_dir = cwd_for_rel
+        if not base_dir:
+            try:
+                base_dir = ProjectConfig.get_instance().get("platformio", "project_dir")
+            except Exception:
+                base_dir = os.getcwd()
+
+        # If target is relative, join to the base (project) dir
+        if not os.path.isabs(target):
+            target = os.path.join(base_dir, target)
+
+        # Canonicalize: absolute + follow symlinks
+        return os.path.realpath(os.path.abspath(target))
+
     @classmethod
     def resolve_symlink(cls, path):
         assert cls.is_symlink(path)
         data = fs.load_json(path)
         spec = PackageSpec(**data["spec"])
         assert spec.symlink
-        pkg_dir = spec.uri[10:]
-        if not os.path.isabs(pkg_dir):
-            pkg_dir = os.path.normpath(os.path.join(data["cwd"], pkg_dir))
+
+        pkg_dir = cls._normalize_symlink_target(spec.uri, cwd_for_rel=data.get("cwd"))
+
         return (pkg_dir if os.path.isdir(pkg_dir) else None, spec)
 
     def get_symlinked_package(self, path):
@@ -47,17 +76,24 @@ class PackageManagerSymlinkMixin:
 
     def install_symlink(self, spec):
         assert spec.symlink
-        pkg_dir = spec.uri[10:]
+
+        pkg_dir = self._normalize_symlink_target(spec.uri)
+
         if not os.path.isdir(pkg_dir):
             raise PackageException(
-                f"Can not create a symbolic link for `{pkg_dir}`, not a directory"
+                "Symlink target does not exist or is not a directory: %s" % pkg_dir
             )
-        link_path = os.path.join(
-            self.package_dir,
-            "%s.pio-link" % (spec.name or os.path.basename(os.path.abspath(pkg_dir))),
-        )
+
+        link_name = spec.name or os.path.basename(os.path.abspath(pkg_dir))
+        link_path = os.path.join(self.package_dir, f"{link_name}.pio-link")
+
+        # Persist absolute target in the stored spec so later reads don't depend on CWD
+        spec_dict = spec.as_dict()
+        spec_dict["uri"] = f"symlink://{pkg_dir}"
+
         with open(link_path, mode="w", encoding="utf-8") as fp:
-            json.dump(dict(cwd=os.getcwd(), spec=spec.as_dict()), fp)
+            json.dump(dict(cwd=os.getcwd(), spec=spec_dict), fp)
+
         return self.get_symlinked_package(link_path)
 
     def uninstall_symlink(self, spec):
@@ -67,5 +103,5 @@ class PackageManagerSymlinkMixin:
             if not self.is_symlink(path):
                 continue
             pkg = self.get_symlinked_package(path)
-            if pkg.metadata.spec.uri == spec.uri:
+            if pkg and pkg.metadata and pkg.metadata.spec.uri == spec.uri:
                 os.remove(path)
