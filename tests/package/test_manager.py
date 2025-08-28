@@ -652,3 +652,32 @@ def test_update_without_metadata(isolated_pio_core, tmpdir_factory):
     new_pkg = lm.update(pkg)
     assert len(lm.get_installed()) == 4
     assert new_pkg.metadata.spec.owner == "heman"
+
+def test_install_symlink_relative_parent(tmp_path):
+    # project layout
+    project_dir = tmp_path / "proj"
+    lib_root = tmp_path / "common_libs" / "DemoLibSymlink"
+    (lib_root / "src").mkdir(parents=True)
+    (lib_root / "library.json").write_text('{"name":"DemoLibSymlink","version":"1.0.0"}')
+
+    # storage dir like .pio/libdeps/<env>
+    storage_dir = project_dir / ".pio" / "libdeps" / "env"
+    storage_dir.mkdir(parents=True)
+
+    # prepare LibraryPackageManager
+    from platformio.package.manager.library import LibraryPackageManager
+    from platformio.project.config import ProjectConfig
+    lm = LibraryPackageManager(str(storage_dir))
+
+    # make ProjectConfig point to our project
+    cfg = ProjectConfig.get_instance()
+    cfg.enable_warnings = False
+    cfg.set("platformio", "project_dir", str(project_dir))
+
+    # relative spec (this reproduces the original issue)
+    spec = "DemoLibSymlink=symlink://../common_libs/DemoLibSymlink"
+
+    # install and assert it resolves to the real absolute path
+    pkg = lm.install_from_uri(spec.split("=", 1)[1], spec)
+    import os
+    assert os.path.realpath(pkg.path) == os.path.realpath(str(lib_root))
