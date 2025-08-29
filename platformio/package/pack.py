@@ -49,6 +49,7 @@ class PackagePacker:
         "__*",
         ".DS_Store",
         ".vscode",
+        "**/.vscode/",
         ".cache",
         "**/.cache",
         "**/__pycache__",
