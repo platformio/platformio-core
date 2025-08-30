@@ -63,6 +63,15 @@ DEFAULT_SETTINGS = {
         "description": "Verify the proxy server certificate against the list of supplied CAs",
         "value": True,
     },
+    "registry_mirror": {
+        "description": (
+            "Preferred base URL (mirror) for package downloads. "
+            "If set (or overridden by PLATFORMIO_REGISTRY_MIRROR), "
+            "PlatformIO will try this URL first and fall back to the default registry."
+        ),
+        "value": "",
+        "type": "str",
+    },
 }
 
 SESSION_VARS = {
@@ -211,6 +220,14 @@ def get_setting(name):
 
     return DEFAULT_SETTINGS[name]["value"]
 
+def get_registry_mirror():
+    mirror = os.environ.get("PLATFORMIO_REGISTRY_MIRROR") or get_setting("registry_mirror") or ""
+    mirror = mirror.strip()
+    if not mirror:
+        return ""
+    if not (mirror.startswith("http://") or mirror.startswith("https://")):
+        mirror = "https://" + mirror
+    return mirror.rstrip("/")
 
 def set_setting(name, value):
     with State(lock=True) as state:

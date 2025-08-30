@@ -23,7 +23,28 @@ import click
 from platformio import app, compat, util
 from platformio.package.download import FileDownloader
 from platformio.package.lockfile import LockFile
+from platformio import app  
 
+def _apply_user_mirror(url, filename=None):
+    """
+    If user configured a preferred mirror (env PLATFORMIO_REGISTRY_MIRROR
+    or setting registry_mirror), rewrite ONLY when we have a filename.
+    """
+    try:
+        mirror = app.get_registry_mirror()
+    except Exception:
+        mirror = ""
+    if not mirror:
+        return url
+
+    mirror = mirror.rstrip("/")
+
+    # Only rewrite if caller gave us an explicit artifact filename.
+    # Without it, return the original URL to avoid 404s.
+    if not filename:
+        return url
+
+    return mirror + "/" + str(filename).lstrip("/")
 
 class PackageManagerDownloadMixin:
     DOWNLOAD_CACHE_EXPIRE = 86400 * 30  # keep package in a local cache for 1 month
@@ -55,6 +76,10 @@ class PackageManagerDownloadMixin:
                     os.remove(dl_path)
 
     def download(self, url, checksum=None):
+        # APPLY MIRROR FIX
+        url = _apply_user_mirror(url)
+       
+
         silent = not self.log.isEnabledFor(logging.INFO)
         dl_path = self.compute_download_path(url, checksum or "")
         if os.path.isfile(dl_path):

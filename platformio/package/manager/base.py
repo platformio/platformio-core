@@ -16,6 +16,7 @@ import logging
 import os
 import subprocess
 from datetime import datetime
+from platformio import app
 
 import click
 import semantic_version
@@ -42,6 +43,27 @@ from platformio.package.meta import (
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
+def _prepend_user_mirror(candidates, filename=None):
+    """
+    If user configured a preferred mirror (env PLATFORMIO_REGISTRY_MIRROR
+    or setting registry_mirror), prepend it to the candidates list.
+    """
+    mirror = ""
+    try:
+        mirror = app.get_registry_mirror()  # defined in app.py
+    except Exception:
+        pass
+
+    if not mirror:
+        return candidates
+
+    mirror_url = mirror.rstrip("/")
+    if filename:
+        mirror_url = mirror_url + "/" + str(filename).lstrip("/")
+
+    if mirror_url not in candidates:
+        return [mirror_url] + list(candidates)
+    return candidates
 
 class ClickLoggingHandler(logging.Handler):
     def emit(self, record):

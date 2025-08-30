@@ -16,6 +16,8 @@ import time
 
 import click
 
+import os
+from platformio import app
 from platformio.package.exception import UnknownPackageError
 from platformio.package.meta import PackageSpec
 from platformio.package.version import cast_version_to_semver
@@ -45,8 +47,37 @@ class PackageManagerRegistryMixin:
         pkgfile = self.pick_compatible_pkg_file(version["files"]) if version else None
         if not pkgfile:
             raise UnknownPackageError(spec.humanize())
+        
+        download_url = pkgfile["download_url"]
 
-        for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
+        # Try a user-configured mirror first (env PLATFORMIO_REGISTRY_MIRROR or setting registry_mirror)
+        try:
+            user_mirror = app.get_registry_mirror()
+        except Exception:
+            user_mirror = ""
+        if user_mirror:
+            filename = os.path.basename(download_url)
+            mirror_url = user_mirror.rstrip("/") + "/" + filename.lstrip("/")
+            try:
+                return self.install_from_uri(
+                    mirror_url,
+                    PackageSpec(
+                        owner=package["owner"]["username"],
+                        id=package["id"],
+                        name=package["name"],
+                    ),
+                    pkgfile.get("checksum") or pkgfile["checksum"]["sha256"],
+                )
+            except Exception as exc:  # pylint: disable=broad-except
+                self.log.warning(
+                    click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
+                )
+                self.log.warning(
+                    click.style("Looking for another mirror...", fg="yellow")
+                )
+
+        # original behavior: try registry-provided mirrors / primary
+        for url, checksum in RegistryFileMirrorIterator(download_url):
             try:
                 return self.install_from_uri(
                     url,
