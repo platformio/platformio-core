@@ -77,7 +77,7 @@ def BuildProgram(env):
 
     # PIO_FRAMEWORK_APPEND_OBJS can be set by the framework to add additional objects (and static libraries)
     # into the link command for the application.
-    program_objects = env["PIOBUILDFILES"] + env["PIO_FRAMEWORK_APPEND_OBJS"]
+    program_objects = env["PIOBUILDFILES"] + env["PIO_EXTRA_APP_OBJS"]
     program = env.Program(env.subst("$PROGPATH"), program_objects)
     env.Replace(PIOMAINPROG=program)
 
