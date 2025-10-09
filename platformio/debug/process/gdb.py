@@ -165,6 +165,15 @@ class GDBClientProcess(DebugClientProcess):
         self._target_is_running = True
 
     def stderr_data_received(self, data):
+        if helpers.is_gdbmi_mode():
+            if is_bytes(data):
+                data = data.decode()
+            data = data.strip()
+            if data:
+                self.stdout_data_received(
+                    helpers.escape_gdbmi_stream("&", data + "\n")
+                )
+            return
         super().stderr_data_received(data)
         self._handle_error(data)
 
