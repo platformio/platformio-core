@@ -11,12 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import json
 import os
 import sys
 from time import time
-
 import click
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
@@ -27,14 +25,11 @@ from SCons.Script import Default  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
-
 from platformio import app, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
-
 AllowSubstExceptions(NameError)
-
 # append CLI arguments to build environment
 clivars = Variables(None)
 clivars.AddVariables(
@@ -45,7 +40,6 @@ clivars.AddVariables(
     ("UPLOAD_PORT",),
     ("PROGRAM_ARGS",),
 )
-
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar",
@@ -82,7 +76,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PROG_PATH="$PROGPATH",  # deprecated
     PYTHONEXE=get_pythonexe_path(),
 )
-
 # Declare command verbose messages
 command_strings = dict(
     ARCOM="Archiving",
@@ -96,10 +89,8 @@ command_strings = dict(
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     for name, value in command_strings.items():
         DEFAULT_ENV_OPTIONS["%sSTR" % name] = "%s $TARGET" % (value)
-
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 env.SConscriptChdir(False)
-
 # Load variables from CLI
 env.Replace(
     **{
@@ -108,11 +99,9 @@ env.Replace(
         if key in env
     }
 )
-
 # Setup project optional directories
 config = env.GetProjectConfig()
 app.set_session_var("custom_project_conf", config.path)
-
 env.Replace(
     PROJECT_DIR=get_project_dir(),
     PROJECT_CORE_DIR=config.get("platformio", "core_dir"),
@@ -134,53 +123,58 @@ env.Replace(
         config.get("platformio", "globallib_dir"),
     ],
 )
-
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
-
 if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
         os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
-
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
-if not os.path.isdir(env.subst("$BUILD_DIR")):
-    os.makedirs(env.subst("$BUILD_DIR"))
-
 # Dynamically load dependent tools
-if "compiledb" in COMMAND_LINE_TARGETS:
+if "compiledb" or "compiledbtc" in COMMAND_LINE_TARGETS:
     env.Tool("compilation_db")
 
+if not os.path.isdir(env.subst("$BUILD_DIR")):
+
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -195,6 +195,9 @@
+  
+    os.makedirs(env.subst("$BUILD_DIR"))
 env.LoadProjectOptions()
 env.LoadPioPlatform()
-
 env.SConsignFile(
     os.path.join(
         "$BUILD_CACHE_DIR" if env.subst("$BUILD_CACHE_DIR") else "$BUILD_DIR",
         ".sconsign%d%d" % (sys.version_info[0], sys.version_info[1]),
     )
 )
-
 env.SConscript(env.GetExtraScripts("pre"), exports="env")
-
 if env.IsCleanTarget():
     env.CleanProject(fullclean=int(ARGUMENTS.get("FULLCLEAN", 0)))
     env.Exit(0)
-
 env.SConscript("$BUILD_SCRIPT")
-
 if "UPLOAD_FLAGS" in env:
     env.Prepend(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 if env.GetProjectOption("upload_command"):
     env.Replace(UPLOADCMD=env.GetProjectOption("upload_command"))
-
 env.SConscript(env.GetExtraScripts("post"), exports="env")
-
 ##############################################################################
-
 # Checking program size
 if env.get("SIZETOOL") and not (
     set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
@@ -191,30 +185,38 @@ if env.get("SIZETOOL") and not (
     Default(None)
     Default(_new_targets)
     Default("checkprogsize")
-
 if "compiledb" in COMMAND_LINE_TARGETS:
     env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
+
+if "compiledbtc" in COMMAND_LINE_TARGETS:
+    env.Alias("compiledbtc", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
 env.AddPreAction(
     "upload",
+
+    
+          
+            
+    
+
+          
+          Expand Down
+    
+    
+  
     env.VerboseAction(
         lambda source, target, env: env.PrintUploadInfo(),
         "Configuring upload protocol...",
     ),
 )
-
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
-
 env.ProcessDelayedActions()
-
 ##############################################################################
-
 if "envdump" in COMMAND_LINE_TARGETS:
     click.echo(env.Dump())
     env.Exit(0)
-
 if env.IsIntegrationDump():
     projenv = None
     try:
@@ -231,7 +233,6 @@ if env.IsIntegrationDump():
         json.dump(data, fp)
     click.echo("\n%s\n" % json.dumps(data))  # pylint: disable=undefined-variable
     env.Exit(0)
-
 if "sizedata" in COMMAND_LINE_TARGETS:
     AlwaysBuild(
         env.Alias(
@@ -240,9 +241,7 @@ if "sizedata" in COMMAND_LINE_TARGETS:
             env.VerboseAction(env.DumpSizeData, "Generating memory usage report..."),
         )
     )
-
     Default("sizedata")
-
 # issue #4604: process targets sequentially
 for index, target in enumerate(
     [t for t in COMMAND_LINE_TARGETS if not t.startswith("__")][1:]
