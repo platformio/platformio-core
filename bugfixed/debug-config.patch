@@ -1,0 +1,15 @@
+--- a/platformio/debug/config.py
++++ b/platformio/debug/config.py
+@@ -123,6 +123,13 @@ def get_gdb_init_script(debug_options, env_options):
+             script.append(cmd)
+
+     if tool == "blackmagic":
++        # If SRST and target power control are enabled
++        if "connect_srst enable" in debug_init_cmds and "tpwr enable" in debug_init_cmds:
++            script.append("monitor connect_srst enable")
++            script.append("monitor tpwr enable")
++        # If only SRST is enabled
++        elif "connect_srst enable" in debug_init_cmds:
++            script.append("monitor connect_srst enable")
++        # Basic BlackMagic configuration or only target power
+         script.append('target extended-remote %s' % port)

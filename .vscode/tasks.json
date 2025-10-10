@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "test-blackmagic-debug",
+			"type": "shell",
+			"command": "pio project init --board genericSTM32F103ZE",
+			"group": "test"
+		}
+	]
+}

@@ -33,7 +33,8 @@ define pio_reset_run_target
     pio_reset_halt_target
 end
 
-target extended-remote $DEBUG_PORT
+target extended-remote $_PORT
+$_MONITOR_CMDS
 monitor swdp_scan
 attach 1
 set mem inaccessible-by-default off
@@ -49,23 +50,83 @@ end
 set language auto
 """
 
+    def _parse_port_config(self, port_string):
+        """Parse port configuration string into port and optional commands.
+        
+        Format: port_path [cmd1] [cmd2] ...
+        Supported commands: connect_srst, tpwr
+        """
+        if not port_string:
+            return None, []
+
+        parts = port_string.split()
+        port = parts[0]
+        commands = parts[1:] if len(parts) > 1 else []
+        
+        valid_commands = ["connect_srst", "tpwr"]
+        monitor_cmds = []
+        
+        for cmd in commands:
+            if cmd not in valid_commands:
+                continue
+            if cmd == "connect_srst":
+                monitor_cmds.append("monitor connect_srst enable")
+            elif cmd == "tpwr":
+                monitor_cmds.append("monitor tpwr enable")
+        
+        return port, monitor_cmds
+
     @property
     def port(self):
         # pylint: disable=assignment-from-no-return
         initial_port = DebugConfigBase.port.fget(self)
-        if initial_port and not is_pattern_port(initial_port):
-            return initial_port
-        port = SerialPortFinder(
+        if not initial_port:
+            raise DebugInvalidOptionsError(
+                "Please specify `debug_port` for the working environment"
+            )
+
+        port, monitor_cmds = self._parse_port_config(initial_port)
+        
+        if not is_pattern_port(port):
+            self._port = port
+            self._monitor_cmds = monitor_cmds
+            return port
+            
+        found_port = SerialPortFinder(
             board_config=self.board_config,
             upload_protocol=self.tool_name,
             prefer_gdb_port=True,
-        ).find(initial_port)
-        if port:
-            return port
+        ).find(port)
+        
+        if found_port:
+            self._port = found_port
+            self._monitor_cmds = monitor_cmds
+            return found_port
+            
         raise DebugInvalidOptionsError(
-            "Please specify `debug_port` for the working environment"
+            "Please specify a valid `debug_port` for the working environment"
         )
 
     @port.setter
     def port(self, value):
         self._port = value
+        
+    def get_init_script(self):
+        """Override to insert monitor commands before scan."""
+        script = self.GDB_INIT_SCRIPT
+        script = script.replace("$_PORT", self._port)
+        
+        monitor_cmds = getattr(self, "_monitor_cmds", [])
+        script = script.replace("$_MONITOR_CMDS", "\n".join(monitor_cmds))
+        
+        # Handle the standard replacements
+        script = script.replace(
+            "$LOAD_CMDS",
+            "load" if self.prog_path else ""
+        )
+        script = script.replace(
+            "$INIT_BREAK",
+            "break main" if self.init_break else ""
+        )
+        
+        return script
