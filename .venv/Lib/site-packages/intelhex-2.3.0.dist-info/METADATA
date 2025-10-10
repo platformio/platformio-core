@@ -1,0 +1,83 @@
+Metadata-Version: 2.1
+Name: intelhex
+Version: 2.3.0
+Summary: Python library for Intel HEX files manipulations
+Home-page: https://github.com/python-intelhex/intelhex
+Author: Alexander Belchenko
+Author-email: alexander.belchenko@gmail.com
+Maintainer: Bert van Hall
+Maintainer-email: bert.vanhall@gmx.de
+License: BSD
+Keywords: Intel HEX hex2bin HEX8
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+
+Python IntelHex library
+***********************
+
+Introduction
+------------
+The Intel HEX file format is widely used in microprocessors and microcontrollers 
+area (embedded systems etc) as the de facto standard 
+for representation of code to be programmed into microelectronic devices.
+
+This work implements an ``intelhex`` Python library to read, write, 
+create from scratch and manipulate data from Intel HEX file format.
+
+The distribution package also includes several convenience Python scripts,
+including "classic" ``hex2bin`` and ``bin2hex`` converters and more, 
+those based on the library itself. Check the docs to know more.
+
+License
+-------
+The code is distributed under BSD license,
+see `LICENSE.txt <https://github.com/python-intelhex/intelhex/blob/master/LICENSE.txt>`_.
+
+In short: you can use IntelHex library in your project without *any*
+restrictions.
+
+Supported Python versions
+-------------------------
+IntelHex library supports Python 3 (3.5 or later) only. The 2.2.1 release was
+the last one which has been checked against Python 2.7 and Python 3 until 3.5.
+
+Install
+-------
+Install using ``pip`` (recommended, no separate download required)::
+
+    pip install intelhex
+
+Download
+--------
+* https://pypi.org/project/IntelHex/
+* https://github.com/python-intelhex/intelhex/releases
+
+Source code, bug reports, patches
+---------------------------------
+IntelHex on GitHub:
+
+https://github.com/python-intelhex/intelhex
+
+User manual
+-----------
+User manual for IntelHex is available in the sources ``docs/manual/`` directory.
+You can browse User Manual online:
+
+https://readthedocs.org/projects/python-intelhex/
+
+Changelog
+---------
+See `NEWS.rst <https://github.com/python-intelhex/intelhex/blob/master/NEWS.rst>`_
+
+

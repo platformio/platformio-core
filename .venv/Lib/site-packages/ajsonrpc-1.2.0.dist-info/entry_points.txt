@@ -1,0 +1,3 @@
+[console_scripts]
+async-json-rpc-server = ajsonrpc.scripts.server:main
+

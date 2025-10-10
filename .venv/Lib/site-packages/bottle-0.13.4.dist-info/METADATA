@@ -1,0 +1,41 @@
+Metadata-Version: 2.4
+Name: bottle
+Version: 0.13.4
+Summary: Fast and simple WSGI-framework for small web-applications.
+Home-page: http://bottlepy.org/
+Author: Marcel Hellkamp
+Author-email: marc@gsites.de
+License: MIT
+Project-URL: Source, https://github.com/bottlepy/bottle
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries
+Classifier: Topic :: Internet :: WWW/HTTP :: HTTP Servers
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Application
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Server
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license
+Dynamic: license-file
+Dynamic: platform
+Dynamic: project-url
+Dynamic: summary
