@@ -116,13 +116,39 @@ def ConfigureDebugTarget(env):
     ]
 
     if optimization_flags:
+        def _normalize_assembler_debug_flag(flag):
+            """Normalize debug flags for assembler.
+
+            Some toolchains (notably older GNU "as" used in arm-none-eabi toolchains)
+            don't understand debug level suffixes like "-g2" or "-ggdb2". The
+            assembler accepts generic "-g" (and "-ggdb"). Convert common
+            variants to safe equivalents before passing them to ASFLAGS.
+            """
+            if not flag or not flag.startswith("-g"):
+                return None
+            # plain -g
+            if flag == "-g":
+                return "-g"
+            # -g2, -g3, etc. -> -g
+            if len(flag) >= 3 and flag[1] == "g" and flag[2].isdigit():
+                return "-g"
+            # -ggdb2, -ggdb3, etc. -> -ggdb
+            if flag.startswith("-ggdb"):
+                return "-ggdb"
+            # keep gdwarf and other explicit -g* options
+            if flag.startswith("-gdwarf"):
+                return flag
+            # unknown/unsafe flag - skip it for assembler
+            return None
+
+        asflags = []
+        for f in optimization_flags:
+            nf = _normalize_assembler_debug_flag(f)
+            if nf:
+                asflags.append(nf)
+
         env.AppendUnique(
-            ASFLAGS=[
-                # skip -O flags for assembler
-                f
-                for f in optimization_flags
-                if f.startswith("-g")
-            ],
+            ASFLAGS=asflags,
             LINKFLAGS=optimization_flags,
         )
 

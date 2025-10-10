@@ -4,6 +4,44 @@
      def stderr_data_received(self, data):
          super().stderr_data_received(data)
          self._handle_error(data)
+                if helpers.is_gdbmi_mode():
+                        if is_bytes(data):
+                                data = data.decode()
+                        data = data.strip()
+                        if data:
+                                self.stdout_data_received(
+                                        helpers.escape_gdbmi_stream("&", data + "\n")
+                                )
+                        return
+                super().stderr_data_received(data)
+                self._handle_error(data)
+
+---
+Description: Fix for assembler debug flags causing failures with arm-none-eabi-as
+
+Problem:
+When building in debug mode PlatformIO default `debug_build_flags` include
+`-g2` and `-ggdb2`. These flags are appropriate for the C compiler but older
+versions of `arm-none-eabi-as` reject `-g2` causing assembler to fail with
+"unknown option `-g2'" when assembly sources (e.g., startup *.s files) are
+compiled.
+
+Fix:
+Normalize debug flags that are forwarded to the assembler in
+`platformio/builder/tools/piomisc.py` so that numeric debug levels are
+converted to safe equivalents supported by `as` (e.g. `-g2` -> `-g`,
+`-ggdb2` -> `-ggdb`). Keep other `-g` variants like `-gdwarf*` intact.
+
+Files changed:
+- platformio/builder/tools/piomisc.py: convert assembler debug flags to safe
+    equivalents before appending to `ASFLAGS`.
+
+Rationale and testing:
+- This prevents `arm-none-eabi-as` from receiving unsupported flags while
+    retaining full debug information for the compiler and linker.
+- To test: run `pio debug -v` on an STM32Cube based project that includes
+    assembly startup files. The assembler invocation should not include `-g2` or
+    `-ggdb2` anymore; instead it should have `-g` or `-ggdb` where appropriate.
 +        if helpers.is_gdbmi_mode():
 +            if is_bytes(data):
 +                data = data.decode()
