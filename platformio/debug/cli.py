@@ -167,7 +167,13 @@ def _configure(
 
 
 def _run(project_dir, debug_config, client_extra_args):
-    loop = asyncio.ProactorEventLoop() if IS_WINDOWS else asyncio.get_event_loop()
+    if IS_WINDOWS:
+        loop = asyncio.ProactorEventLoop()
+    else:
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
     client = GDBClientProcess(project_dir, debug_config)
