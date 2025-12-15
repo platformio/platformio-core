@@ -15,6 +15,16 @@ jobs:
       PIO_INSTALL_DEVPLATFORM_NAMES: "aceinna_imu,atmelavr,atmelmegaavr,atmelsam,espressif32,espressif8266,nordicnrf52,raspberrypi,ststm32,teensy"
 
     steps:
+      - name: Free Disk Space
+        uses: endersonmenezes/free-disk-space@v3
+        with:
+          remove_android: true
+          remove_dotnet: true
+          remove_haskell: true
+          # Faster cleanup
+          remove_packages_one_command: true
+          rm_cmd: "rmz"
+
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
