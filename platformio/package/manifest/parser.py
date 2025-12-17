@@ -207,6 +207,23 @@ class BaseManifestParser:
         return (name.strip(), email.strip() if email else None)
 
     @staticmethod
+    def skip_header_comments(contents):
+        index = 0
+        length = len(contents)
+        while index < length:
+            if contents[index].isspace():
+                # Skip whitespace
+                index += 1
+            elif contents[index] in ("#", "/"):
+                # Skip comments with # or //
+                index = contents.find("\n", index) + 1
+                if index == 0:
+                    index = length
+            else:
+                break
+        return contents[index:]
+
+    @staticmethod
     def normalize_repository(data):
         url = (data.get("repository") or {}).get("url")
         if not url or "://" not in url:
@@ -317,7 +334,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.LIBRARY_JSON
 
     def parse(self, contents):
-        data = json.loads(contents)
+        data = json.loads(self.skip_header_comments(contents))
         data = self._process_renamed_fields(data)
 
         # normalize Union[str, list] fields
@@ -417,7 +434,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.MODULE_JSON
 
     def parse(self, contents):
-        data = json.loads(contents)
+        data = json.loads(self.skip_header_comments(contents))
         data["frameworks"] = ["mbed"]
         data["platforms"] = ["*"]
         data["export"] = {"exclude": ["tests", "test", "*.doxyfile", "*.pdf"]}
@@ -648,7 +665,7 @@ class PlatformJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.PLATFORM_JSON
 
     def parse(self, contents):
-        data = json.loads(contents)
+        data = json.loads(self.skip_header_comments(contents))
         if "keywords" in data:
             data["keywords"] = self.str_to_list(
                 data["keywords"], sep=",", lowercase=True, unique=True
@@ -681,7 +698,7 @@ class PackageJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.PACKAGE_JSON
 
     def parse(self, contents):
-        data = json.loads(contents)
+        data = json.loads(self.skip_header_comments(contents))
         if "keywords" in data:
             data["keywords"] = self.str_to_list(
                 data["keywords"], sep=",", lowercase=True, unique=True

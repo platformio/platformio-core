@@ -27,6 +27,7 @@ from platformio.package.manifest.schema import ManifestSchema, ManifestValidatio
 def test_library_json_parser():
     contents = """
 {
+    # Manifest for TestPackage
     "name": "TestPackage",
     "keywords": "kw1, KW2, kw3, KW2, kw 4, kw_5, kw-6",
     "headers": "include1.h, Include2.hpp",
