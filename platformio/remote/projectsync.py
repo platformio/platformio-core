@@ -17,7 +17,11 @@ import tarfile
 from binascii import crc32
 from os.path import getmtime, getsize, isdir, isfile, join
 
-from twisted.python import constants  # pylint: disable=import-error
+try:
+    from twisted.python import constants  # pylint: disable=import-error
+except ImportError:
+    # https://docs.twisted.org/en/twisted-16.5.0/core/howto/constants.html
+    import constantly as constants  # pylint: disable=import-error
 
 from platformio.compat import hashlib_encode_data
 
