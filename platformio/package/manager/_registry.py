@@ -16,8 +16,8 @@ import time
 
 import click
 
-from platformio.package.exception import UnknownPackageError
-from platformio.package.meta import PackageSpec
+from platformio.package.exception import IncompatiblePackageError, UnknownPackageError
+from platformio.package.meta import PackageSpec, PackageType
 from platformio.package.version import cast_version_to_semver
 from platformio.registry.client import RegistryClient
 from platformio.registry.mirror import RegistryFileMirrorIterator
@@ -44,6 +44,10 @@ class PackageManagerRegistryMixin:
 
         pkgfile = self.pick_compatible_pkg_file(version["files"]) if version else None
         if not pkgfile:
+            if self.pkg_type == PackageType.TOOL:
+                from platformio import util
+
+                raise IncompatiblePackageError(spec.humanize(), util.get_systype())
             raise UnknownPackageError(spec.humanize())
 
         for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):

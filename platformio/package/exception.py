@@ -54,6 +54,13 @@ class UnknownPackageError(PackageException):
     MESSAGE = "Could not find the package with '{0}' requirements"
 
 
+class IncompatiblePackageError(UnknownPackageError):
+    MESSAGE = (
+        "Could not find a version of the package with '{0}' requirements "
+        "compatible with the '{1}' system"
+    )
+
+
 class NotGlobalLibDir(PackageException):
     MESSAGE = (
         "The `{0}` is not a PlatformIO project.\n\n"
