@@ -90,7 +90,7 @@ class CheckToolBase:  # pylint: disable=too-many-instance-attributes
         def _extract_defines(language, includes_file):
             build_flags = self.cxx_flags if language == "c++" else self.cc_flags
             defines = []
-            cmd = "echo | %s -x %s %s %s -dM -E -" % (
+            cmd = 'echo | "%s" -x %s %s %s -dM -E -' % (
                 self.cc_path,
                 language,
                 " ".join(
