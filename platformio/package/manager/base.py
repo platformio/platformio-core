@@ -335,7 +335,11 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
         os.environ["PIO_PYTHON_EXE"] = get_pythonexe_path()
         with fs.cd(pkg.path):
             if os.path.isfile(cmd[0]) and cmd[0].endswith(".py"):
-                cmd = [os.environ["PIO_PYTHON_EXE"]] + cmd
+                python_exe = os.environ["PIO_PYTHON_EXE"]
+                # Quote the path if it contains spaces (Windows compatibility)
+                if " " in python_exe:
+                    python_exe = f'"{python_exe}"'
+                    cmd = [python_exe] + cmd
             subprocess.run(
                 " ".join(cmd) if shell else cmd,
                 cwd=pkg.path,
