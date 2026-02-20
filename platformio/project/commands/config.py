@@ -32,16 +32,21 @@ from platformio.project.helpers import is_platformio_project
 )
 @click.option("--lint", is_flag=True)
 @click.option("--json-output", is_flag=True)
-def project_config_cmd(project_dir, lint, json_output):
+@click.option(
+    "--show-source",
+    is_flag=True,
+    help="Show the config file where each option is defined.",
+)
+def project_config_cmd(project_dir, lint, json_output, show_source):
     if not is_platformio_project(project_dir):
         raise NotPlatformIOProjectError(project_dir)
     with fs.cd(project_dir):
         if lint:
             return lint_configuration(json_output)
-        return print_configuration(json_output)
+        return print_configuration(json_output, show_source)
 
 
-def print_configuration(json_output=False):
+def print_configuration(json_output=False, show_source=False):
     config = ProjectConfig.get_instance()
     if json_output:
         return click.echo(config.to_json())
@@ -51,15 +56,15 @@ def print_configuration(json_output=False):
     for section, options in config.as_tuple():
         click.secho(section, fg="cyan")
         click.echo("-" * len(section))
-        click.echo(
-            tabulate(
-                [
-                    (name, "=", "\n".join(value) if isinstance(value, list) else value)
-                    for name, value in options
-                ],
-                tablefmt="plain",
-            )
-        )
+        rows = []
+        for name, value in options:
+            display_value = "\n".join(value) if isinstance(value, list) else value
+            row = [name, "=", display_value]
+            if show_source:
+                source = config.get_source(section, name)
+                row.append("; from " + os.path.basename(source) if source else "")
+            rows.append(row)
+        click.echo(tabulate(rows, tablefmt="plain"))
         click.echo()
     return None
 
