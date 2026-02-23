@@ -84,7 +84,7 @@ class HTTPSessionIterator:
             total=5,
             backoff_factor=1,  # [0, 2, 4, 8, 16] secs
             # method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
-            status_forcelist=[413, 429, 500, 502, 503, 504],
+            status_forcelist=[413, 500, 502, 503, 504],
         )
 
     def __iter__(self):  # pylint: disable=non-iterator-returned

@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 from platformio import __registry_mirror_hosts__
 from platformio.cache import ContentCache
+from platformio.exception import UserSideException
 from platformio.http import HTTPClient
 from platformio.registry.client import RegistryClient
 
@@ -61,6 +62,11 @@ class RegistryFileMirrorIterator:
                 ),
                 x_with_authorization=RegistryClient.allowed_private_packages(),
             )
+            if response.status_code == 429:
+                raise UserSideException(
+                    "Download limit exceeded. Try again in 24 hours. "
+                    "If this persists, contact <contact@platformio.org>"
+                )
             stop_conditions = [
                 response.status_code not in (302, 307),
                 not response.headers.get("Location"),
