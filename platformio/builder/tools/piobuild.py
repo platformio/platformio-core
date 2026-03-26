@@ -176,7 +176,9 @@ def ProcessProjectDeps(env):
             env.Exit(1)
 
     if "test" not in env["BUILD_TYPE"] or env.GetProjectOption("test_build_src"):
-        plb.env.BuildSources(
+        src_env = plb.env.Clone()
+        src_env.ProcessFlags(src_env.get("BUILD_SRC_FLAGS"))
+        src_env.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
 
