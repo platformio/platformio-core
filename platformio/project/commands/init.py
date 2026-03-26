@@ -17,6 +17,7 @@
 
 import json
 import os
+import shutil
 
 import click
 
@@ -45,12 +46,27 @@ def validate_boards(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
+def validate_template_dir(ctx, param, value):  # pylint: disable=unused-argument
+    if not value:
+        return value
+    value = os.path.abspath(os.path.normpath(value))
+    if not os.access(value, os.R_OK):
+        raise click.BadParameter("`%s` is not readable" % value)
+    return value
+
+
 @click.command("init", short_help="Initialize a project or update existing")
 @click.option(
     "--project-dir",
     "-d",
     default=os.getcwd,
     type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True),
+)
+@click.option(
+    "--template-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True),
+    callback=validate_template_dir,
+    help="Copy files from this directory into a new project",
 )
 @click.option(
     "-b", "--board", "boards", multiple=True, metavar="ID", callback=validate_boards
@@ -70,6 +86,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=unused-argument
 @click.option("-s", "--silent", is_flag=True)
 def project_init_cmd(  # pylint: disable=too-many-positional-arguments
     project_dir,
+    template_dir,
     boards,
     ide,
     environment,
@@ -80,11 +97,12 @@ def project_init_cmd(  # pylint: disable=too-many-positional-arguments
     silent,
 ):
     project_dir = os.path.abspath(project_dir)
+    template_dir = validate_template_dir(None, None, template_dir)
     is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
         if not silent:
             print_header(project_dir)
-        init_base_project(project_dir)
+        init_base_project(project_dir, template_dir=template_dir)
 
     with fs.cd(project_dir):
         if environment:
@@ -153,7 +171,7 @@ def print_footer(is_new_project):
     )
 
 
-def init_base_project(project_dir):
+def init_base_project(project_dir, template_dir=None):
     with fs.cd(project_dir):
         config = ProjectConfig()
         config.save()
@@ -169,6 +187,23 @@ def init_base_project(project_dir):
             os.makedirs(path)
             if cb:
                 cb(path)
+        if template_dir:
+            copy_project_template(template_dir, project_dir)
+
+
+def copy_project_template(template_dir, project_dir):
+    for root, dirs, files in os.walk(template_dir):
+        relpath = os.path.relpath(root, template_dir)
+        dst_root = project_dir if relpath == "." else os.path.join(project_dir, relpath)
+        os.makedirs(dst_root, exist_ok=True)
+        for dname in dirs:
+            os.makedirs(os.path.join(dst_root, dname), exist_ok=True)
+        for fname in files:
+            src_file = os.path.join(root, fname)
+            dst_file = os.path.join(dst_root, fname)
+            if os.path.exists(dst_file):
+                continue
+            shutil.copy2(src_file, dst_file)
 
 
 def init_include_readme(include_dir):
