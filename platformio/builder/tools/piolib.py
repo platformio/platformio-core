@@ -120,6 +120,16 @@ class LibBuilderBase:
 
     _INCLUDE_DIRS_CACHE = None
 
+    def get_conditional_scanner_cpppath(self):
+        cpppath = []
+        for item in self.envorigin.get("CPPPATH", []) + self.env.get("CPPPATH", []):
+            if item not in cpppath:
+                cpppath.append(item)
+        for item in self.get_include_dirs():
+            if item not in cpppath:
+                cpppath.append(item)
+        return cpppath
+
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
         self.envorigin = env.Clone()
