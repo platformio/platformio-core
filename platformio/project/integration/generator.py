@@ -64,6 +64,10 @@ class ProjectGenerator:
             ]
         )
 
+    def get_project_files_basename(self):
+        basename = os.path.basename(os.path.abspath(self.project_dir))
+        return basename or os.path.basename(os.getcwd())
+
     @staticmethod
     def filter_includes(includes_map, ignore_scopes=None, to_unix_path=True):
         ignore_scopes = ignore_scopes or []
@@ -85,6 +89,7 @@ class ProjectGenerator:
             "project_name": self.config.get(
                 "platformio", "name", os.path.basename(self.project_dir)
             ),
+            "project_files_basename": self.get_project_files_basename(),
             "project_dir": self.project_dir,
             "forced_env_name": self.forced_env_name,
             "default_debug_env_name": get_default_debug_env(self.config),
@@ -161,6 +166,10 @@ class ProjectGenerator:
                 if not os.path.isdir(dst_dir):
                     os.makedirs(dst_dir)
             file_name = os.path.basename(tpl_path)[:-4]
+            if file_name == "platformio" or file_name.startswith("platformio."):
+                file_name = file_name.replace(
+                    "platformio", self.get_project_files_basename(), 1
+                )
             contents = self._render_tpl(tpl_path, tpl_vars)
             self._merge_contents(os.path.join(dst_dir, file_name), contents)
 
