@@ -20,12 +20,12 @@ import click
 
 from platformio import fs
 from platformio.package.exception import UnknownPackageError
-from platformio.package.version import SemanticVersionError
 from platformio.package.manager.core import get_core_package_dir
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageCompatibility, PackageSpec
+from platformio.package.version import SemanticVersionError
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
