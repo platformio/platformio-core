@@ -20,6 +20,7 @@ import click
 
 from platformio import fs
 from platformio.package.exception import UnknownPackageError
+from platformio.package.version import SemanticVersionError
 from platformio.package.manager.core import get_core_package_dir
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
@@ -282,7 +283,7 @@ def _uninstall_project_unused_libdeps(lm, lib_deps):
         for spec in set(prev_lib_deps) - set(lib_deps):
             try:
                 lm.uninstall(spec)
-            except UnknownPackageError:
+            except (UnknownPackageError, SemanticVersionError):
                 pass
     if not storage_dir.is_dir():
         storage_dir.mkdir(parents=True)
