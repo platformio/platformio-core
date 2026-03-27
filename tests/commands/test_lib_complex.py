@@ -23,7 +23,7 @@ from platformio.package.exception import UnknownPackageError
 from platformio.util import strip_ansi_codes
 
 PlatformioCLI.leftover_args = ["--json-output"]  # hook for click
-ARDUINO_JSON_VERSION = "6.21.5"
+ARDUINO_JSON_VERSION = "6.21.6"
 
 
 def test_search(clirunner, validate_cliresult):
