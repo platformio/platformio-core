@@ -19,6 +19,11 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
+6.1.20 (2026-??-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
+
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
 
