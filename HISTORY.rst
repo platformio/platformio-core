@@ -22,7 +22,8 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.1.20 (2026-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
-* Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
+* Resolved an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
+* Resolved an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
