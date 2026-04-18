@@ -180,9 +180,12 @@ class ProjectConfigBase:
             for option in self._parser.options(section):
                 yield (section, option)
             if self._parser.has_option(section, "extends"):
-                extends_queue.extend(
-                    self.parse_multi_values(self._parser.get(section, "extends"))
-                )
+                for ext_section in self.parse_multi_values(
+                    self._parser.get(section, "extends")
+                ):
+                    # Prevent circular dependencies
+                    if ext_section not in extends_done and ext_section not in extends_queue:
+                        extends_queue.append(ext_section)
 
     def options(self, section=None, env=None):
         result = []

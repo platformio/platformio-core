@@ -189,17 +189,14 @@ def print_suite_header(test_suite):
 
 def print_suite_footer(test_suite):
     is_error = test_suite.status in (TestStatus.FAILED, TestStatus.ERRORED)
+    status_color = "red" if is_error else test_suite.status.to_ansi_color()
     util.print_labeled_bar(
         "%s [%s] Took %.2f seconds"
         % (
             click.style(
                 "%s:%s" % (test_suite.env_name, test_suite.test_name), bold=True
             ),
-            (
-                click.style(test_suite.status.name, fg="red", bold=True)
-                if is_error
-                else click.style("PASSED", fg="green", bold=True)
-            ),
+            click.style(test_suite.status.name, fg=status_color, bold=True),
             test_suite.duration,
         ),
         is_error=is_error,
