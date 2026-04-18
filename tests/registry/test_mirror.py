@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+from typing import Any
 
 import pytest
 
@@ -24,52 +25,54 @@ from platformio.registry.mirror import RegistryFileMirrorIterator
 class _FakeContentCache:
     """In memory stand in for ContentCache used by the iterator tests."""
 
-    _store: dict = {}
+    _store: dict[str, str] = {}
 
-    def __init__(self, _namespace=None):
+    def __init__(self, _namespace: str | None = None) -> None:
         pass
 
-    def __enter__(self):
+    def __enter__(self) -> "_FakeContentCache":
         return self
 
-    def __exit__(self, *_exc):
+    def __exit__(self, *_exc: Any) -> bool:
         return False
 
-    def get(self, key):
+    def get(self, key: str) -> str | None:
         return type(self)._store.get(key)
 
-    def set(self, key, data, _valid):
+    def set(self, key: str, data: str, _valid: str) -> None:
         type(self)._store[key] = data
 
     @staticmethod
-    def key_from_args(*args):
+    def key_from_args(*args: Any) -> str:
         return ContentCache.key_from_args(*args)
 
 
 class _FakeResponse:
-    def __init__(self, status_code, headers):
+    def __init__(self, status_code: int, headers: dict[str, str]) -> None:
         self.status_code = status_code
         self.headers = headers
 
 
 class _FakeHTTPClient:
-    def __init__(self, responses):
+    def __init__(self, responses: list[_FakeResponse]) -> None:
         self._responses = list(responses)
-        self.requests = []
+        self.requests: list[tuple[str, str, dict[str, Any]]] = []
 
-    def send_request(self, method, path, **kwargs):
+    def send_request(self, method: str, path: str, **kwargs: Any) -> _FakeResponse:
         self.requests.append((method, path, kwargs))
         return self._responses.pop(0)
 
 
 @pytest.fixture
-def fake_cache(monkeypatch):
+def fake_cache(monkeypatch: pytest.MonkeyPatch) -> type[_FakeContentCache]:
     _FakeContentCache._store = {}
     monkeypatch.setattr(mirror, "ContentCache", _FakeContentCache)
     return _FakeContentCache
 
 
-def _install_fake_http(monkeypatch, responses):
+def _install_fake_http(
+    monkeypatch: pytest.MonkeyPatch, responses: list[_FakeResponse]
+) -> _FakeHTTPClient:
     http_client = _FakeHTTPClient(responses)
     monkeypatch.setattr(
         RegistryFileMirrorIterator, "get_http_client", lambda _self: http_client
@@ -77,7 +80,9 @@ def _install_fake_http(monkeypatch, responses):
     return http_client
 
 
-def test_cache_hit_advances_visited_mirrors(fake_cache, monkeypatch):
+def test_cache_hit_advances_visited_mirrors(
+    fake_cache: type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
     # A cached mirror must be recorded as visited on the cache hit path,
     # otherwise the next iteration would recompute the same cache key and
     # replay the same redirect forever when the mirror keeps failing.
@@ -113,7 +118,9 @@ def test_cache_hit_advances_visited_mirrors(fake_cache, monkeypatch):
     assert http_client.requests[-1][2]["params"] == {"bypass": "mirror-a"}
 
 
-def test_cache_entry_without_mirror_header_falls_through(fake_cache, monkeypatch):
+def test_cache_entry_without_mirror_header_falls_through(
+    fake_cache: type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
     # Entries written before X-PIO-Mirror was cached lack the field; the
     # iterator must treat them as unusable and request a fresh redirect so
     # the fix self heals existing caches.
@@ -143,7 +150,9 @@ def test_cache_entry_without_mirror_header_falls_through(fake_cache, monkeypatch
     assert next(iterator) == ("https://mirror-b.example.com/tool.tar.gz", "bbb")
 
 
-def test_head_response_caches_mirror_header(fake_cache, monkeypatch):
+def test_head_response_caches_mirror_header(
+    fake_cache: type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
     # The iterator must persist X-PIO-Mirror so later runs can tell whether
     # the cached redirect still names a mirror that has not been tried.
     url = "https://dl.example.com/packages/tool.tar.gz"
