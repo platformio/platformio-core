@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=protected-access,redefined-outer-name
+
 import json
 from typing import Any, Dict, List, Optional, Tuple, Type
 
@@ -173,8 +175,6 @@ def test_head_response_caches_mirror_header(
     iterator = RegistryFileMirrorIterator(url)
     next(iterator)
 
-    cached = json.loads(
-        fake_cache._store[ContentCache.key_from_args("head", url, [])]
-    )
+    cached = json.loads(fake_cache._store[ContentCache.key_from_args("head", url, [])])
     assert cached["X-PIO-Mirror"] == "mirror-a"
     assert cached["Location"] == "https://mirror-a.example.com/tool.tar.gz"
