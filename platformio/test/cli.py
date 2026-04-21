@@ -195,10 +195,8 @@ def print_suite_footer(test_suite):
             click.style(
                 "%s:%s" % (test_suite.env_name, test_suite.test_name), bold=True
             ),
-            (
-                click.style(test_suite.status.name, fg="red", bold=True)
-                if is_error
-                else click.style("PASSED", fg="green", bold=True)
+            click.style(
+                test_suite.status.name, fg=test_suite.status.to_ansi_color(), bold=True
             ),
             test_suite.duration,
         ),
