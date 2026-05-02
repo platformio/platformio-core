@@ -14,6 +14,8 @@
 
 import os
 from urllib.parse import urlparse
+import contextlib
+import contextvars
 
 import click
 import uvicorn
@@ -86,18 +88,29 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
     if path != "/":
         routes.append(Route("/", protected_page))
 
+    no_open_var.set(no_open)
+    home_url_var.set(home_url)
+
     uvicorn.run(
         Starlette(
             middleware=[Middleware(ShutdownMiddleware)],
             routes=routes,
-            on_startup=[
-                lambda: click.echo(
-                    "PIO Home has been started. Press Ctrl+C to shutdown."
-                ),
-                lambda: None if no_open else click.launch(home_url),
-            ],
+            lifespan=lifespan,
         ),
         host=host,
         port=port,
         log_level="warning",
     )
+
+
+no_open_var = contextvars.ContextVar('no_open')
+home_url_var = contextvars.ContextVar('home_url')
+
+@contextlib.asynccontextmanager
+async def lifespan(app):
+    no_open = no_open_var.get()
+    home_url = home_url_var.get()
+    click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
+    if not no_open:
+        click.launch(home_url)
+    yield
