@@ -24,9 +24,9 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 
 * Dropped support for Python 3.6, requiring Python 3.7 or newer to run PlatformIO Core
 * Added a new ``-p, --port`` option to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-p>`__ command, allowing users to set both ``upload_port`` and ``monitor_port`` simultaneously for a more streamlined workflow (`pull #5429 <https://github.com/platformio/platformio-core/pull/5429>`_)
+* Added an option to `disable the 99-platformio-udev.rules <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html#disable_udev_rules_check>`__ check, providing greater flexibility in environments where system-level udev configuration is not required (`pull #5204 <https://github.com/platformio/platformio-core/pull/5204>`_)
 * Introduced the `PLATFORMIO_DISABLE_UPGRADE_CHECK <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_DISABLE_UPGRADE_CHECK>`__ environment variable, allowing users to disable upgrade availability checks when needed (`pull #5428 <https://github.com/platformio/platformio-core/pull/5428>`_)
-* Updated ``99-platformio-udev.rules`` to add support for Espressif devices with USB VID:PID 303a:4001, improving device detection and access on Linux systems (`issue #5445 <https://github.com/platformio/platformio-core/issues/5445>`_)
-* Fixed an issue that could cause an infinite retry loop when a cached package mirror redirect repeatedly failed (`pull #5435 <https://github.com/platformio/platformio-core/pull/5435>`_).
+* Fixed an issue that could cause an infinite retry loop when a cached package mirror redirect repeatedly failed (`pull #5435 <https://github.com/platformio/platformio-core/pull/5435>`_)
 * Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
 * Fixed an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
 * Fixed an issue with floating-point precision in duration formatting that caused incorrect millisecond reporting (`issue #5424 <https://github.com/platformio/platformio-core/issues/5424>`_)

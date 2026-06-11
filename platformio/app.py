@@ -69,7 +69,7 @@ DEFAULT_SETTINGS = {
 if "linux" in get_systype():
     DEFAULT_SETTINGS["disable_udev_rules_check"] = {
         "description": "Disable udev rules check",
-        "value": False
+        "value": False,
     }
 
 SESSION_VARS = {
