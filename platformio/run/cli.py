@@ -45,7 +45,9 @@ DEFAULT_JOB_NUMS = int(os.getenv("PLATFORMIO_RUN_JOBS", SYSTEM_CPU_COUNT))
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
 @click.option("--monitor-port")
-@click.option("-p", "--port", default=None, help="Shortcut: set both upload-port and monitor-port")
+@click.option(
+    "-p", "--port", default=None, help="Shortcut: set both upload-port and monitor-port"
+)
 @click.option(
     "-d",
     "--project-dir",
