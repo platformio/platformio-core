@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import os
 from urllib.parse import urlparse
 
@@ -24,7 +25,6 @@ from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 from starlette.status import HTTP_403_FORBIDDEN
 
-from platformio.compat import aio_get_running_loop
 from platformio.exception import PlatformioException
 from platformio.home.rpc.handlers.account import AccountRPC
 from platformio.home.rpc.handlers.app import AppRPC
@@ -51,7 +51,7 @@ class ShutdownMiddleware:
 
 
 async def shutdown_server(_=None):
-    aio_get_running_loop().call_later(0.5, force_exit)
+    asyncio.get_running_loop().call_later(0.5, force_exit)
     return PlainTextResponse("Server has been shutdown!")
 
 

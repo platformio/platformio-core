@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import json
 import time
 
 from platformio.cache import ContentCache
-from platformio.compat import aio_create_task
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.home.rpc.handlers.os import OSRPC
 
@@ -31,7 +31,7 @@ class MiscRPC(BaseRPCHandler):
                 cache_data = json.loads(cache_data)
                 # automatically update cache in background every 12 hours
                 if cache_data["time"] < (time.time() - (3600 * 12)):
-                    aio_create_task(
+                    asyncio.create_task(
                         self._preload_latest_tweets(data_url, cache_key, cache_valid)
                     )
                 return cache_data["result"]

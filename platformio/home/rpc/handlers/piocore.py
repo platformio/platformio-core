@@ -26,8 +26,6 @@ from ajsonrpc.core import JSONRPC20DispatchException
 from platformio import __main__, __version__, app, fs, proc, util
 from platformio.compat import (
     IS_WINDOWS,
-    aio_create_task,
-    aio_get_running_loop,
     aio_to_thread,
     get_locale_encoding,
     is_bytes,
@@ -107,7 +105,7 @@ class PIOCoreRPC(BaseRPCHandler):
         return __version__
 
     async def exec(self, args, options=None):
-        loop = aio_get_running_loop()
+        loop = asyncio.get_running_loop()
         exit_future = loop.create_future()
         data_callback = functools.partial(
             self._on_exec_data_received, exec_options=options
@@ -133,7 +131,7 @@ class PIOCoreRPC(BaseRPCHandler):
         notification_method = exec_options.get(f"{pipe}NotificationMethod")
         if not notification_method:
             return
-        aio_create_task(
+        asyncio.create_task(
             self.factory.notify_clients(
                 method=notification_method,
                 params=[data],

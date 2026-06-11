@@ -19,9 +19,10 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.1.20 (2026-??-??)
+6.2.0 (2026-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Dropped support for Python 3.6, requiring Python 3.7 or newer to run PlatformIO Core
 * Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
 * Fixed an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
 * Fixed an issue with floating-point precision in duration formatting that caused incorrect millisecond reporting (`issue #5424 <https://github.com/platformio/platformio-core/issues/5424>`_)

@@ -20,7 +20,6 @@ import time
 
 from platformio.compat import (
     IS_WINDOWS,
-    aio_get_running_loop,
     get_filesystem_encoding,
     get_locale_encoding,
 )
@@ -43,7 +42,7 @@ class ProgramProcessProtocol(asyncio.SubprocessProtocol):
             data = data.decode("latin-1")
         self.test_runner.on_testing_data_output(data)
         if self.test_runner.test_suite.is_finished():
-            self._exit_timer = aio_get_running_loop().call_later(
+            self._exit_timer = asyncio.get_running_loop().call_later(
                 EXITING_TIMEOUT, self._stop_testing
             )
 

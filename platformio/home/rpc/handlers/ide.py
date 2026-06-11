@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import time
 from pathlib import Path
 
 from ajsonrpc.core import JSONRPC20DispatchException
 
-from platformio.compat import aio_get_running_loop
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 
 
@@ -29,7 +29,7 @@ class IDERPC(BaseRPCHandler):
         self._cmd_queue = {}
 
     async def listen_commands(self):
-        f = aio_get_running_loop().create_future()
+        f = asyncio.get_running_loop().create_future()
         self._ide_queue.append(f)
         self._process_commands()
         return await f
@@ -40,11 +40,11 @@ class IDERPC(BaseRPCHandler):
             "method": command,
             "params": params,
             "time": time.time(),
-            "future": aio_get_running_loop().create_future(),
+            "future": asyncio.get_running_loop().create_future(),
         }
         self._process_commands()
         # in case if IDE agent has not been started
-        aio_get_running_loop().call_later(
+        asyncio.get_running_loop().call_later(
             self.COMMAND_TIMEOUT + 0.1, self._process_commands
         )
         return await self._cmd_queue[cmd_id]["future"]

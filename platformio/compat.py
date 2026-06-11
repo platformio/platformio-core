@@ -23,14 +23,6 @@ import sys
 
 from platformio.exception import UserSideException
 
-if sys.version_info >= (3, 7):
-    from asyncio import create_task as aio_create_task
-    from asyncio import get_running_loop as aio_get_running_loop
-else:
-    from asyncio import ensure_future as aio_create_task
-    from asyncio import get_event_loop as aio_get_running_loop
-
-
 if sys.version_info >= (3, 8):
     from shlex import join as shlex_join
 else:
@@ -49,7 +41,6 @@ else:
 
 
 PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
-PY36 = sys.version_info[0:2] == (3, 6)
 IS_CYGWIN = sys.platform.startswith("cygwin")
 IS_WINDOWS = WINDOWS = sys.platform.startswith("win")
 IS_MACOS = sys.platform.startswith("darwin")
@@ -59,15 +50,6 @@ string_types = (str,)
 
 def is_bytes(x):
     return isinstance(x, (bytes, memoryview, bytearray))
-
-
-def isascii(text):
-    if sys.version_info >= (3, 7):
-        return text.isascii()
-    for c in text or "":
-        if ord(c) > 127:
-            return False
-    return True
 
 
 def is_terminal():
@@ -120,11 +102,11 @@ def get_object_members(obj, ignore_private=True):
 
 
 def ensure_python3(raise_exception=True):
-    compatible = sys.version_info >= (3, 6)
+    compatible = sys.version_info >= (3, 7)
     if not raise_exception or compatible:
         return compatible
     raise UserSideException(
-        "Python 3.6 or later is required for this operation. \n"
+        "Python 3.7 or later is required for this operation. \n"
         "Please check a migration guide:\n"
         "https://docs.platformio.org/en/latest/core/migration.html"
         "#drop-support-for-python-2-and-3-5"
