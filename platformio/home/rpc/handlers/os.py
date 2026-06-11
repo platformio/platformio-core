@@ -18,9 +18,11 @@ import os
 import shutil
 from functools import cmp_to_key
 
+import click
+
 from platformio import fs
 from platformio.cache import ContentCache
-from platformio.compat import aio_to_thread, click_launch
+from platformio.compat import aio_to_thread
 from platformio.device.list.util import list_logical_devices
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.http import HTTPSession, ensure_internet_on
@@ -82,15 +84,15 @@ class OSRPC(BaseRPCHandler):
 
     @staticmethod
     def open_url(url):
-        return click_launch(url)
+        return click.launch(url)
 
     @staticmethod
     def reveal_file(path):
-        return click_launch(path, locate=True)
+        return click.launch(path, locate=True)
 
     @staticmethod
     def open_file(path):
-        return click_launch(path)
+        return click.launch(path)
 
     @staticmethod
     def call_path_module_func(name, args, **kwargs):
