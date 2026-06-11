@@ -42,6 +42,9 @@ def on_cmd_end():
     if PlatformioCLI.in_silence():
         return
 
+    if os.environ.get("PLATFORMIO_DISABLE_UPGRADE_CHECK"):
+        return
+
     try:
         check_platformio_upgrade()
         check_prune_system()
