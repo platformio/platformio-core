@@ -24,7 +24,7 @@ import sys
 
 import click
 
-from platformio import app, exception
+from platformio import exception
 from platformio.compat import IS_WINDOWS
 
 
@@ -108,7 +108,9 @@ def get_platformio_udev_rules_path():
 
 
 def ensure_udev_rules():
-    from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    from platformio import app
+    from platformio.util import get_systype
 
     def _rules_to_set(rules_path):
         result = set()
