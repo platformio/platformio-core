@@ -111,7 +111,6 @@ def upgrade_pip_dependencies(verbose):
             "pip",
             "install",
             "--upgrade",
-            "pip",
             *get_pip_dependencies(),
         ],
         check=True,
