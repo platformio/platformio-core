@@ -32,6 +32,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
 * Fixed an issue with floating-point precision in duration formatting that caused incorrect millisecond reporting (`issue #5424 <https://github.com/platformio/platformio-core/issues/5424>`_)
 * Fixed an issue where the test suite status was incorrectly hardcoded as PASSED (`issue #5183 <https://github.com/platformio/platformio-core/issues/5183>`_)
+* Fixed an issue where using a relative path with the ``-d, --project-dir`` option caused `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ to fail with a "FileNotFoundError" (`pull #5470 <https://github.com/platformio/platformio-core/pull/5470>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
