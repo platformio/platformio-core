@@ -21,6 +21,7 @@ from platformio import fs, util
 from platformio.debug.helpers import get_default_debug_env
 from platformio.proc import where_is_program
 from platformio.project.helpers import load_build_metadata
+from platformio.project.integration import jsonc
 
 
 class ProjectGenerator:
@@ -169,9 +170,48 @@ class ProjectGenerator:
         with open(tpl_path, "r", encoding="utf8") as fp:
             return bottle.template(fp.read(), **tpl_vars)
 
-    @staticmethod
-    def _merge_contents(dst_path, contents):
-        if os.path.basename(dst_path) == ".gitignore" and os.path.isfile(dst_path):
+    # File name -> {JSONC key: [required values]}. For these files an existing
+    # user file is updated in place (missing entries are inserted) instead of
+    # being regenerated, so the user's comments, ordering, and formatting are
+    # preserved.
+    IN_PLACE_MERGE_RULES = {
+        "extensions.json": {
+            "recommendations": ["platformio.platformio-ide"],
+            "unwantedRecommendations": ["ms-vscode.cpptools-extension-pack"],
+        }
+    }
+
+    @classmethod
+    def _merge_contents(cls, dst_path, contents):
+        file_name = os.path.basename(dst_path)
+        if file_name == ".gitignore" and os.path.isfile(dst_path):
             return
+        merge_rules = cls.IN_PLACE_MERGE_RULES.get(file_name)
+        if merge_rules and os.path.isfile(dst_path):
+            if cls._merge_jsonc_in_place(dst_path, merge_rules):
+                return
         with open(dst_path, "w", encoding="utf8") as fp:
             fp.write(contents)
+
+    @staticmethod
+    def _merge_jsonc_in_place(dst_path, merge_rules):
+        """Ensure the required entries exist in an existing JSONC file without
+        touching the user's comments, ordering, or formatting. Only rewrites
+        the file when something was actually inserted. Returns ``True`` when the
+        existing file was handled (and must not be regenerated), ``False`` when
+        it could not be parsed and should fall back to regeneration."""
+        with open(dst_path, "r", encoding="utf8") as fp:
+            original = fp.read()
+        try:
+            updated = original
+            changed = False
+            for key, values in merge_rules.items():
+                updated, key_changed = jsonc.ensure_array_items(updated, key, values)
+                changed = changed or key_changed
+        except ValueError:
+            # Not parseable as JSONC; let the caller regenerate from template.
+            return False
+        if changed:
+            with open(dst_path, "w", encoding="utf8") as fp:
+                fp.write(updated)
+        return True

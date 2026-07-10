@@ -14,6 +14,7 @@
 
 import json
 import os
+import re
 
 from platformio import fs
 from platformio.commands.boards import cli as cmd_boards
@@ -127,6 +128,79 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
             "framework-arduino-avr"
             in tmpdir.join(".vscode").join("c_cpp_properties.json").read()
         )
+
+
+def test_init_ide_vscode_preserves_extensions_json(
+    clirunner, validate_cliresult, tmpdir
+):
+    with tmpdir.as_cwd():
+        result = clirunner.invoke(
+            project_init_cmd,
+            ["--ide", "vscode", "-b", "uno", "--no-install-dependencies"],
+        )
+        validate_cliresult(result)
+        extensions_json = tmpdir.join(".vscode").join("extensions.json")
+        assert "platformio.platformio-ide" in extensions_json.read()
+
+        # Customize the generated file the way a user would: reorder entries,
+        # add a recommendation, and add both a leading and an inline comment.
+        customized = """{
+    // Recommended for our team
+    "recommendations": [
+        "esbenp.prettier-vscode", // team formatter
+        "platformio.platformio-ide"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cpptools-extension-pack"
+    ]
+}
+"""
+        extensions_json.write(customized)
+
+        # Re-run init (as an index rebuild would). The file must be left exactly
+        # as the user wrote it because all required entries are already present.
+        result = clirunner.invoke(
+            project_init_cmd,
+            ["--ide", "vscode", "-b", "uno", "--no-install-dependencies"],
+        )
+        validate_cliresult(result)
+        assert extensions_json.read() == customized
+
+
+def test_init_ide_vscode_inserts_missing_recommendation(
+    clirunner, validate_cliresult, tmpdir
+):
+    with tmpdir.as_cwd():
+        # Pre-seed a user-authored file WITHOUT the PlatformIO recommendation
+        # and containing an inline comment (which the previous implementation
+        # could not parse, silently dropping the user's entry).
+        vscode_dir = tmpdir.mkdir(".vscode")
+        preexisting = """{
+    "recommendations": [
+        "esbenp.prettier-vscode" // team formatter
+    ]
+}
+"""
+        vscode_dir.join("extensions.json").write(preexisting)
+
+        result = clirunner.invoke(
+            project_init_cmd,
+            ["--ide", "vscode", "-b", "uno", "--no-install-dependencies"],
+        )
+        validate_cliresult(result)
+
+        contents = vscode_dir.join("extensions.json").read()
+        # The user's entry and comment survive...
+        assert "esbenp.prettier-vscode" in contents
+        assert "// team formatter" in contents
+        # ...and PlatformIO's recommendation was inserted in place.
+        data = json.loads(
+            re.sub(r"//.*", "", contents)  # strip line comments for assertion
+        )
+        assert data["recommendations"] == [
+            "esbenp.prettier-vscode",
+            "platformio.platformio-ide",
+        ]
 
 
 def test_init_ide_eclipse(clirunner, validate_cliresult):
