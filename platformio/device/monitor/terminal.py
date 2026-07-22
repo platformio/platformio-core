@@ -23,9 +23,37 @@ from serial.tools import miniterm
 from platformio.exception import UserSideException
 
 
+class NonInteractiveConsole(miniterm.ConsoleBase):
+    # `miniterm.Console` unconditionally calls `termios.tcgetattr(stdin)` to
+    # switch the terminal into raw mode, which fails with
+    # "Inappropriate ioctl for device" when stdin isn't a real TTY (e.g. it's
+    # a pipe). Reading single bytes directly from stdin needs no raw mode:
+    # there's no interactive terminal to reconfigure, and plain reads are
+    # exactly what a piped byte stream provides.
+    def __init__(self, exit_character):
+        super().__init__()
+        self.exit_character = exit_character
+
+    def getkey(self):
+        char = sys.stdin.read(1)
+        # EOF on the pipe: report it as the exit character so `writer()`
+        # stops instead of spinning on an empty read forever.
+        return char if char else self.exit_character
+
+
 class Terminal(miniterm.Miniterm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        # `Miniterm.__init__` unconditionally instantiates `miniterm.Console`,
+        # which fails immediately (before this method can react) if stdin
+        # isn't a real TTY. Swap in our TTY-less console *before* calling it
+        # so the crashing constructor never runs in that case.
+        original_console_cls = miniterm.Console
+        if not sys.stdin.isatty():
+            miniterm.Console = lambda: NonInteractiveConsole(chr(0x1D))
+        try:
+            super().__init__(*args, **kwargs)
+        finally:
+            miniterm.Console = original_console_cls
         self.pio_unexpected_exception = None
 
     def reader(self):
