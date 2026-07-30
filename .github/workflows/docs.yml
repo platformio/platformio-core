@@ -72,9 +72,9 @@ jobs:
         id: get-destination-dir
         run: |
           if [[ ${{ env.RELEASE_BUILD }} == true ]]; then
-            echo "::set-output name=dst_dir::stable"
+            echo "dst_dir=stable" >> "$GITHUB_OUTPUT"
           else
-            echo "::set-output name=dst_dir::latest"
+            echo "dst_dir=latest" >> "$GITHUB_OUTPUT"
           fi
       - name: Checkout latest Docs
         continue-on-error: true
