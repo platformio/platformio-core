@@ -90,6 +90,17 @@ def get_locale_encoding():
     return locale.getpreferredencoding()
 
 
+def stdout_encodes(text):
+    encoding = getattr(sys.stdout, "encoding", None)
+    if not encoding:
+        return False
+    try:
+        text.encode(encoding)
+    except (UnicodeEncodeError, LookupError):
+        return False
+    return True
+
+
 def get_object_members(obj, ignore_private=True):
     members = inspect.getmembers(obj, lambda a: not inspect.isroutine(a))
     if not ignore_private:
