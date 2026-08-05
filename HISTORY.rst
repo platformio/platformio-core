@@ -29,6 +29,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Increased the maximum length of dependency version specifications to support long package URLs in project manifests (`issue #5459 <https://github.com/platformio/platformio-core/issues/5459>`_)
 * Fixed an issue that could cause an infinite retry loop when a cached package mirror redirect repeatedly failed (`pull #5435 <https://github.com/platformio/platformio-core/pull/5435>`_)
 * Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
+* Fixed an issue where |DEBUGGING| builds passed unsupported GCC debugging flags such as ``-g2`` to the ``as`` assembler, causing a fatal "unknown option" error (`issue #5005 <https://github.com/platformio/platformio-core/issues/5005>`_)
 * Fixed an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
 * Fixed an issue with floating-point precision in duration formatting that caused incorrect millisecond reporting (`issue #5424 <https://github.com/platformio/platformio-core/issues/5424>`_)
 * Fixed an issue where the test suite status was incorrectly hardcoded as PASSED (`issue #5183 <https://github.com/platformio/platformio-core/issues/5183>`_)

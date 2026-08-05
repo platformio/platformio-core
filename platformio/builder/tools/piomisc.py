@@ -116,15 +116,12 @@ def ConfigureDebugTarget(env):
     ]
 
     if optimization_flags:
-        env.AppendUnique(
-            ASFLAGS=[
-                # skip -O flags for assembler
-                f
-                for f in optimization_flags
-                if f.startswith("-g")
-            ],
-            LINKFLAGS=optimization_flags,
-        )
+        env.AppendUnique(LINKFLAGS=optimization_flags)
+
+    if any(f.startswith("-g") for f in optimization_flags):
+        # issue #5005: pass the plain `-g` flag to the assembler which
+        # does not support GCC debugging levels such as `-g2` or `-ggdb2`
+        env.AppendUnique(ASFLAGS=["-g"])
 
 
 def GetExtraScripts(env, scope):
