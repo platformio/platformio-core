@@ -20,7 +20,10 @@ import pytest
 
 from platformio import fs
 from platformio.dependencies import get_core_dependencies
-from platformio.package.commands.install import package_install_cmd
+from platformio.package.commands.install import (
+    _uninstall_project_unused_libdeps,
+    package_install_cmd,
+)
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -48,6 +51,22 @@ def pkgs_to_specs(pkgs):
         PackageSpec(name=pkg.metadata.name, requirements=pkg.metadata.version)
         for pkg in pkgs
     ]
+
+
+def test_project_libdeps_integrity_is_sorted(tmp_path):
+    storage_dir = tmp_path / "libdeps"
+    lm = LibraryPackageManager(str(storage_dir))
+    lib_deps = [
+        "https://github.com/thomasfredericks/Bounce2"
+        "#d744e0690f5b5d403f2847014fa1b16c72da9970",
+        "solarcaratuva/boost-preprocessor@^1.77.0",
+    ]
+
+    _uninstall_project_unused_libdeps(lm, lib_deps)
+
+    assert (storage_dir / "integrity.dat").read_text(encoding="utf-8") == "\n".join(
+        sorted(lib_deps)
+    )
 
 
 def test_global_packages(

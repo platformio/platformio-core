@@ -287,7 +287,7 @@ def _uninstall_project_unused_libdeps(lm, lib_deps):
                 pass
     if not storage_dir.is_dir():
         storage_dir.mkdir(parents=True)
-    integrity_dat.write_text("\n".join(lib_deps), encoding="utf-8")
+    integrity_dat.write_text("\n".join(sorted(lib_deps)), encoding="utf-8")
 
 
 def _install_project_private_library_deps(private_pkg, private_lm, env_lm, options):
