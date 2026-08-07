@@ -109,15 +109,17 @@ def ConfigureDebugTarget(env):
         and not env.GetProjectOptions(as_dict=True).get("debug_build_flags")
         else env.GetProjectOption("debug_build_flags")
     )
-
     env.MergeFlags(debug_flags)
+
     optimization_flags = [
         f for f in debug_flags.get("CCFLAGS", []) if f.startswith(("-O", "-g"))
     ]
-
     if optimization_flags:
         env.AppendUnique(
-            ASFLAGS=[
+            ASFLAGS=(
+                ["-g"] if any(f.startswith("-g") for f in optimization_flags) else []
+            ),
+            ASPPFLAGS=[
                 # skip -O flags for assembler
                 f
                 for f in optimization_flags

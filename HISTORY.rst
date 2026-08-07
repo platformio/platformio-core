@@ -34,6 +34,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed an issue where the test suite status was incorrectly hardcoded as PASSED (`issue #5183 <https://github.com/platformio/platformio-core/issues/5183>`_)
 * Fixed an issue where using a relative path with the ``-d, --project-dir`` option caused `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ to fail with a "FileNotFoundError" (`pull #5470 <https://github.com/platformio/platformio-core/pull/5470>`_)
 * Fixed compatibility with ``pipx``- and ``uvx``-managed environments by ensuring the required ``pip`` dependency is available when installing Python-based tool packages (`issue #5305 <https://github.com/platformio/platformio-core/issues/5305>`_)
+* Fixed an issue where debug flags with level specifications (such as ``-g2``) were passed to the standalone assembler, causing fatal compilation errors on ``.s`` files (`issue #5005 <https://github.com/platformio/platformio-core/issues/5005>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
