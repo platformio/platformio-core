@@ -73,10 +73,17 @@ def set_caller(caller=None):
     if not caller:
         if os.getenv("CODESPACES"):
             caller = "codespaces"
-        elif os.getenv("VSCODE_PID") or os.getenv("VSCODE_NLS_CONFIG"):
-            caller = "vscode"
+        elif os.getenv("CURSOR_EXTENSION_HOST_ROLE") or "Cursor" in os.getenv(
+            "GIT_ASKPASS", ""
+        ):
+            caller = "cursor"
+        elif os.getenv("EMBEDR_CLI_ROOT"):
+            caller = "embedr"
         elif os.getenv("GITPOD_WORKSPACE_ID") or os.getenv("GITPOD_WORKSPACE_URL"):
             caller = "gitpod"
+        elif os.getenv("VSCODE_GIT_IPC_HANDLE"):
+            caller = "vscode"
+
     if caller:
         app.set_session_var("caller_id", caller)
 
