@@ -14,7 +14,7 @@ codespell:
 	codespell --skip "./build,./docs/_build" -L "AtLeast,TRE,ans,dout,homestate,ser"
 
 test:
-	pytest --verbose --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
+	pytest --verbose -n 6 --dist=loadscope tests --ignore tests/test_examples.py
 
 before-commit: codespell isort format lint
 
