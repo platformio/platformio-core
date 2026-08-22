@@ -15,7 +15,6 @@
 from platformio import exception
 from platformio.check.tools.clangtidy import ClangtidyCheckTool
 from platformio.check.tools.cppcheck import CppcheckCheckTool
-from platformio.check.tools.pvsstudio import PvsStudioCheckTool
 
 
 class CheckToolFactory:
@@ -26,8 +25,6 @@ class CheckToolFactory:
             cls = CppcheckCheckTool
         elif tool == "clangtidy":
             cls = ClangtidyCheckTool
-        elif tool == "pvs-studio":
-            cls = PvsStudioCheckTool
         else:
             raise exception.PlatformioException("Unknown check tool `%s`" % tool)
         return cls(project_dir, config, envname, options)

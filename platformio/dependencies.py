@@ -22,7 +22,6 @@ def get_core_dependencies():
         "tool-scons": "~4.41100.0",
         "tool-cppcheck": "~1.21100.0",
         "tool-clangtidy": "~1.150005.0",
-        "tool-pvs-studio": "~7.18.0",
     }
 
 

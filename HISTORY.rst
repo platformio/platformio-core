@@ -23,6 +23,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 ~~~~~~~~~~~~~~~~~~~
 
 * Dropped support for Python 3.6, requiring Python 3.7 or newer to run PlatformIO Core
+* Removed support for static code analysis via PVS-Studio following its deprecation by the vendor (`pull #5360 <https://github.com/platformio/platformio-core/pull/5360>`_)
 * Added a new ``-p, --port`` option to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-p>`__ command, allowing users to set both ``upload_port`` and ``monitor_port`` simultaneously for a more streamlined workflow (`pull #5429 <https://github.com/platformio/platformio-core/pull/5429>`_)
 * Added an option to `disable the 99-platformio-udev.rules <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html#disable_udev_rules_check>`__ check, providing greater flexibility in environments where system-level udev configuration is not required (`pull #5204 <https://github.com/platformio/platformio-core/pull/5204>`_)
 * Introduced the `PLATFORMIO_DISABLE_UPGRADE_CHECK <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_DISABLE_UPGRADE_CHECK>`__ environment variable, allowing users to disable upgrade availability checks when needed (`pull #5428 <https://github.com/platformio/platformio-core/pull/5428>`_)
@@ -360,7 +361,6 @@ Please check the `Migration guide from 5.x to 6.0 <https://docs.platformio.org/e
   - Updated analysis tools:
 
     * `Cppcheck <https://docs.platformio.org/en/latest/plus/check-tools/cppcheck.html>`__ v2.7 with various checker improvements and fixed false positives
-    * `PVS-Studio <https://docs.platformio.org/en/latest/plus/check-tools/pvs-studio.html>`__ v7.18 with improved and updated semantic analysis system
 
   - Added support for the custom `Clang-Tidy <https://docs.platformio.org/en/latest/plus/check-tools/clang-tidy.html>`__ configuration file (`issue #4186 <https://github.com/platformio/platformio-core/issues/4186>`_)
   - Added ability to override a tool version using the `platform_packages <https://docs.platformio.org/en/latest/projectconf/section_env_platform.html#platform-packages>`__ option (`issue #3798 <https://github.com/platformio/platformio-core/issues/3798>`_)

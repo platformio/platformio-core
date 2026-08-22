@@ -617,7 +617,7 @@ ProjectOptions = OrderedDict(
                 group="check",
                 name="check_tool",
                 description="A list of check tools used for analysis",
-                type=click.Choice(["cppcheck", "clangtidy", "pvs-studio"]),
+                type=click.Choice(["cppcheck", "clangtidy"]),
                 multiple=True,
                 default=["cppcheck"],
             ),
