@@ -49,8 +49,13 @@ class BaseArchiver:
     def resolve_path(path):
         return os.path.realpath(os.path.abspath(path))
 
-    def is_bad_path(self, path, base):
-        return not self.resolve_path(os.path.join(base, path)).startswith(base)
+def is_bad_path(self, path, base):
+    base = self.resolve_path(base)
+    target = self.resolve_path(os.path.join(base, path))
+    try:
+        return os.path.commonpath([base, target]) != base
+    except ValueError:
+        return True
 
     def extract_item(self, item, dest_dir):
         self._afo.extract(item, dest_dir)
