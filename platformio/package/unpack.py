@@ -45,6 +45,18 @@ class BaseArchiver:
     def is_link(self, item):
         raise NotImplementedError()
 
+    @staticmethod
+    def resolve_path(path):
+        return os.path.realpath(os.path.abspath(path))
+
+    def is_bad_path(self, path, base):
+        base = self.resolve_path(base)
+        target = self.resolve_path(os.path.join(base, path))
+        try:
+            return os.path.commonpath([base, target]) != base
+        except ValueError:
+            return True
+
     def extract_item(self, item, dest_dir):
         self._afo.extract(item, dest_dir)
         self.after_extract(item, dest_dir)
@@ -69,13 +81,6 @@ class TARArchiver(BaseArchiver):
     @staticmethod
     def is_link(item):  # pylint: disable=arguments-differ
         return item.islnk() or item.issym()
-
-    @staticmethod
-    def resolve_path(path):
-        return os.path.realpath(os.path.abspath(path))
-
-    def is_bad_path(self, path, base):
-        return not self.resolve_path(os.path.join(base, path)).startswith(base)
 
     def is_bad_link(self, item, base):
         return not self.resolve_path(
@@ -128,6 +133,16 @@ class ZIPArchiver(BaseArchiver):
 
     def get_item_filename(self, item):
         return item.filename
+
+    def extract_item(self, item, dest_dir):
+        dest_dir = self.resolve_path(dest_dir)
+        if self.is_bad_path(item.filename, dest_dir):
+            return click.secho(
+                "Blocked insecure item `%s` from ZIP archive" % item.filename,
+                fg="red",
+                err=True,
+            )
+        return super().extract_item(item, dest_dir)
 
     def after_extract(self, item, dest_dir):
         self.preserve_permissions(item, dest_dir)
