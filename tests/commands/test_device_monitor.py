@@ -13,10 +13,16 @@
 # limitations under the License.
 
 import os
+import sys
+from unittest.mock import MagicMock
+
+import pytest
 
 from platformio import fs
 from platformio.device.finder import SerialPortFinder
 from platformio.device.monitor.command import device_monitor_cmd
+from platformio.device.monitor.terminal import new_terminal
+from platformio.exception import UserSideException
 
 
 def _patch_monitor_internals(monkeypatch, on_register_filters):
@@ -97,3 +103,17 @@ def test_absolute_project_dir_passthrough(
     validate_cliresult(result)
 
     assert captured["project_dir"] == os.path.realpath(str(tmpdir))
+
+
+def test_new_terminal_rejects_non_tty_stdin(monkeypatch):
+    # Regression test for https://github.com/platformio/platformio-core/issues/5113
+    # `pio device monitor` used to crash with a raw termios traceback
+    # ("Inappropriate ioctl for device") whenever stdin was piped instead of
+    # a real terminal, e.g. `echo "" | pio device monitor`. It should fail
+    # with a clear, actionable error instead.
+    fake_stdin = MagicMock()
+    fake_stdin.isatty.return_value = False
+    monkeypatch.setattr(sys, "stdin", fake_stdin)
+
+    with pytest.raises(UserSideException, match="interactive terminal"):
+        new_terminal({})
