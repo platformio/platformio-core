@@ -29,6 +29,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Introduced the `PLATFORMIO_DISABLE_UPGRADE_CHECK <https://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_DISABLE_UPGRADE_CHECK>`__ environment variable, allowing users to disable upgrade availability checks when needed (`pull #5428 <https://github.com/platformio/platformio-core/pull/5428>`_)
 * Upgraded the build engine to the latest version of SCons (4.11.0) to improve build performance, reliability, and compatibility with other tools and systems (`release notes <https://github.com/SCons/scons/releases/tag/4.11.0>`__)
 * Increased the maximum length of dependency version specifications to support long package URLs in project manifests (`issue #5459 <https://github.com/platformio/platformio-core/issues/5459>`_)
+* Handled Windows path length limitations during package extraction by raising a descriptive error with instructions to `enable long paths <https://docs.platformio.org/en/latest/faq/troubleshooting.html#package-manager>`__ when a "FileNotFoundError" occurs (`issue #5500 <https://github.com/platformio/platformio-core/issues/5500>`_)
 * Fixed an issue that could cause an infinite retry loop when a cached package mirror redirect repeatedly failed (`pull #5435 <https://github.com/platformio/platformio-core/pull/5435>`_)
 * Fixed an issue where the library integrity metadata was not invalidated after correcting invalid version requirements (`issue #5232 <https://github.com/platformio/platformio-core/issues/5232>`_)
 * Fixed an issue where |UNITTESTING| failed on Windows due to improper handling of ``Serial.end()`` (`issue #5359 <https://github.com/platformio/platformio-core/issues/5359>`_)
@@ -38,7 +39,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed compatibility with ``pipx``- and ``uvx``-managed environments by ensuring the required ``pip`` dependency is available when installing Python-based tool packages (`issue #5305 <https://github.com/platformio/platformio-core/issues/5305>`_)
 * Fixed an issue where debug flags with level specifications (such as ``-g2``) were passed to the standalone assembler, causing fatal compilation errors on ``.s`` files (`issue #5005 <https://github.com/platformio/platformio-core/issues/5005>`_)
 * Fixed a security vulnerability where ZIP archives containing relative path traversal entries (e.g., ``../``) could alter permissions or timestamps of files outside the destination directory (`pull #5499 <https://github.com/platformio/platformio-core/pull/5499>`_)
-* Handled Windows path length limitations during package extraction by raising a descriptive error with instructions to `enable long paths <https://docs.platformio.org/en/latest/faq/troubleshooting.html#package-manager>`__ when a "FileNotFoundError" occurs (`issue #5500 <https://github.com/platformio/platformio-core/issues/5500>`_)
+* Fixed an unhandled ``termios`` exception when running `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ with redirected or non-TTY ``stdin``, replacing the traceback with a clear user error (`pull #5503 <https://github.com/platformio/platformio-core/pull/5503>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
