@@ -99,7 +99,7 @@ def start_terminal(options):
 
 
 def new_terminal(options):
-    if hasattr(sys.stdin, "isatty") and not sys.stdin.isatty():
+    if not (hasattr(sys.stdin, "isatty") and sys.stdin.isatty()):
         raise UserSideException(
             "`pio device monitor` requires an interactive terminal on stdin "
             "and cannot run with piped or redirected input. If you're "
