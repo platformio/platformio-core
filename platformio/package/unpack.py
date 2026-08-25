@@ -21,14 +21,22 @@ from zipfile import ZipFile
 import click
 
 from platformio import fs
-from platformio.compat import is_terminal
+from platformio.compat import IS_WINDOWS, is_terminal
 from platformio.package.exception import PackageException
+
+
+class WindowsLongPathError(PackageException):
+    MESSAGE = (
+        "Failed to extract '{0}' to '{1}'. "
+        "The destination path exceeds Windows length limits. "
+        "Enable long paths: https://bit.ly/faq-pkg-manager"
+    )
 
 
 class ExtractArchiveItemError(PackageException):
     MESSAGE = (
-        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
-        "tool or check this solution -> https://bit.ly/faq-package-manager"
+        "Failed to extract '{0}' to '{1}'. "
+        "Try to disable antivirus tool or check this solution -> https://bit.ly/faq-pkg-manager"
     )
 
 
@@ -57,8 +65,14 @@ class BaseArchiver:
         except ValueError:
             return True
 
-    def extract_item(self, item, dest_dir):
-        self._afo.extract(item, dest_dir)
+    def extract_item(self, item, dest_dir, **kwargs):
+        try:
+            self._afo.extract(item, dest_dir, **kwargs)
+        except FileNotFoundError as exc:
+            src_path = self.get_item_filename(item)
+            if IS_WINDOWS and (len(src_path) + len(dest_dir) > 260):
+                raise WindowsLongPathError(src_path, dest_dir) from exc
+            raise exc
         self.after_extract(item, dest_dir)
 
     def after_extract(self, item, dest_dir):
@@ -87,10 +101,9 @@ class TARArchiver(BaseArchiver):
             os.path.join(os.path.join(base, os.path.dirname(item.name)), item.linkname)
         ).startswith(base)
 
-    def extract_item(self, item, dest_dir):
+    def extract_item(self, item, dest_dir, **kwargs):
         if sys.version_info >= (3, 12):
-            self._afo.extract(item, dest_dir, filter="data")
-            return self.after_extract(item, dest_dir)
+            return super().extract_item(item, dest_dir, filter="data")
 
         # apply custom security logic
         dest_dir = self.resolve_path(dest_dir)
@@ -134,7 +147,7 @@ class ZIPArchiver(BaseArchiver):
     def get_item_filename(self, item):
         return item.filename
 
-    def extract_item(self, item, dest_dir):
+    def extract_item(self, item, dest_dir, **kwargs):
         dest_dir = self.resolve_path(dest_dir)
         if self.is_bad_path(item.filename, dest_dir):
             return click.secho(
@@ -142,7 +155,7 @@ class ZIPArchiver(BaseArchiver):
                 fg="red",
                 err=True,
             )
-        return super().extract_item(item, dest_dir)
+        return super().extract_item(item, dest_dir, **kwargs)
 
     def after_extract(self, item, dest_dir):
         self.preserve_permissions(item, dest_dir)

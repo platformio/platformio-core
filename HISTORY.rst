@@ -38,6 +38,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed compatibility with ``pipx``- and ``uvx``-managed environments by ensuring the required ``pip`` dependency is available when installing Python-based tool packages (`issue #5305 <https://github.com/platformio/platformio-core/issues/5305>`_)
 * Fixed an issue where debug flags with level specifications (such as ``-g2``) were passed to the standalone assembler, causing fatal compilation errors on ``.s`` files (`issue #5005 <https://github.com/platformio/platformio-core/issues/5005>`_)
 * Fixed a security vulnerability where ZIP archives containing relative path traversal entries (e.g., ``../``) could alter permissions or timestamps of files outside the destination directory (`pull #5499 <https://github.com/platformio/platformio-core/pull/5499>`_)
+* Handled Windows path length limitations during package extraction by raising a descriptive error with instructions to `enable long paths <https://docs.platformio.org/en/latest/faq/troubleshooting.html#package-manager>`__ when a "FileNotFoundError" occurs (`issue #5500 <https://github.com/platformio/platformio-core/issues/5500>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
