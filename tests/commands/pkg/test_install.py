@@ -440,7 +440,7 @@ def test_custom_project_libraries(
         )
         assert pkgs_to_specs(lm.get_installed()) == [
             PackageSpec("ArduinoJson@5.13.4"),
-            PackageSpec("Nanopb@0.4.91"),
+            PackageSpec("Nanopb@0.4.92"),
         ]
         assert config.get("env:devkit", "lib_deps") == [
             "bblanchon/ArduinoJson@^5",
