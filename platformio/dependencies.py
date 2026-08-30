@@ -31,7 +31,7 @@ def get_pip_dependencies():
         "bottle == 0.13.*",
         "click >=8.0.4, <8.6, !=8.3",  # click 9.0 removes 'protected_args' attribute
         "colorama",
-        "marshmallow == 3.*",
+        "marshmallow >=3, <5",
         "pyelftools >=0.27, <1",
         "pyserial == 3.5.*",  # keep in sync "device/monitor/terminal.py"
         "requests%s == 2.*" % ("[socks]" if is_proxy_set(socks=True) else ""),
