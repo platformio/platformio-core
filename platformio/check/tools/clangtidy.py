@@ -46,7 +46,14 @@ class ClangtidyCheckTool(CheckToolBase):
         elif category == "warning":
             severity = DefectItem.SEVERITY_MEDIUM
 
-        return DefectItem(severity, category, message, file_, line, column, defect_id)
+        if defect_id == "clang-diagnostic-error":
+            # Internal ClangTidy error that should be displayed to the user
+            # in verbose mode but not treated as a defect.
+            return raw_line
+
+        return DefectItem(
+            severity, category, message, file_, line, column, defect_id
+        )
 
     @staticmethod
     def is_check_successful(cmd_result):
