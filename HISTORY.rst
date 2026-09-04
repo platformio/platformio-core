@@ -19,7 +19,7 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
-6.2.0 (2026-??-??)
+6.2.0 (2026-09-??)
 ~~~~~~~~~~~~~~~~~~~
 
 * Dropped support for Python 3.6, requiring Python 3.7 or newer to run PlatformIO Core
@@ -41,6 +41,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed a security vulnerability where ZIP archives containing relative path traversal entries (e.g., ``../``) could alter permissions or timestamps of files outside the destination directory (`pull #5499 <https://github.com/platformio/platformio-core/pull/5499>`_)
 * Fixed an unhandled ``termios`` exception when running `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ with redirected or non-TTY ``stdin``, replacing the traceback with a clear user error (`pull #5503 <https://github.com/platformio/platformio-core/pull/5503>`_)
 * Fixed an issue with improper static analysis report if project is analyzed in verbose mode (`issue #4943 <https://github.com/platformio/platformio-core/issues/4943>`_)
+* Fixed an issue where the test framework library was unintentionally removed from the project dependencies when building a project outside of testing mode (`issue #5388 <https://github.com/platformio/platformio-core/issues/5388>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~

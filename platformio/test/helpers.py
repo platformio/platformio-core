@@ -23,21 +23,19 @@ def list_test_names(project_config):
     test_dir = project_config.get("platformio", "test_dir")
     if not os.path.isdir(test_dir):
         raise TestDirNotExistsError(test_dir)
-    names = []
+    result = []
     for root, _, __ in os.walk(test_dir, followlinks=True):
         if not os.path.basename(root).startswith("test_"):
             continue
-        names.append(os.path.relpath(root, test_dir).replace("\\", "/"))
-    if not names:
-        names = ["*"]
-    return names
+        result.append(os.path.relpath(root, test_dir).replace("\\", "/"))
+    return result
 
 
 def list_test_suites(project_config, environments, filters, ignores):
     result = []
     test_dir = project_config.get("platformio", "test_dir")
     default_envs = project_config.default_envs()
-    test_names = list_test_names(project_config)
+    test_names = list_test_names(project_config) or ["*"]
     for env_name in project_config.envs():
         for test_name in test_names:
             # filter and ignore patterns
