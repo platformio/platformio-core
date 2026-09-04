@@ -51,9 +51,7 @@ class ClangtidyCheckTool(CheckToolBase):
             # in verbose mode but not treated as a defect.
             return raw_line
 
-        return DefectItem(
-            severity, category, message, file_, line, column, defect_id
-        )
+        return DefectItem(severity, category, message, file_, line, column, defect_id)
 
     @staticmethod
     def is_check_successful(cmd_result):

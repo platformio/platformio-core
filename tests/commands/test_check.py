@@ -758,9 +758,7 @@ def test_check_result_identical_in_verbose_mode(
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
     defects_count = count_defects(result.output)
 
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--verbose"]
-    )
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "--verbose"])
     verbose_defects_count = count_defects(result.output)
 
     assert defects_count == verbose_defects_count
