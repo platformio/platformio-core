@@ -218,16 +218,27 @@ def CheckUploadSize(_, target, source, env):
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
         print(output)
 
+    memory_exceeded = False
+    ram_free = ARGUMENTS.get("RAMFREE", 0)
     if data_max_size and data_size > data_max_size:
+        memory_exceeded = True
         sys.stderr.write(
-            "Warning! The data size (%d bytes) is greater "
-            "than maximum allowed (%s bytes)\n" % (data_size, data_max_size)
+            "Error: Pre-allocated RAM usage (%d bytes) is greater "
+            "than RAM available (%d bytes)\n" % (data_size, data_max_size)
+        )
+    elif ramfree and data_max_size and data_size + ram_free > data_max_size:
+        memory_exceeded = True
+        sys.stderr.write(
+            "Error: Pre-allocated RAM usage (%d bytes of %d total bytes) results in "
+            "less RAM remaining than minimum required (%d bytes)\n" % (data_size, data_max_size, ram_free)
         )
     if program_size > program_max_size:
+        memory_exceeded = True
         sys.stderr.write(
-            "Error: The program size (%d bytes) is greater "
-            "than maximum allowed (%s bytes)\n" % (program_size, program_max_size)
+            "Error: Flash usage (%d bytes) is greater "
+            "than Flash available (%d bytes)\n" % (program_size, program_max_size)
         )
+    if memory_exceeded:
         env.Exit(1)
 
 
