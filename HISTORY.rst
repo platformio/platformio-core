@@ -40,6 +40,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed an issue where debug flags with level specifications (such as ``-g2``) were passed to the standalone assembler, causing fatal compilation errors on ``.s`` files (`issue #5005 <https://github.com/platformio/platformio-core/issues/5005>`_)
 * Fixed a security vulnerability where ZIP archives containing relative path traversal entries (e.g., ``../``) could alter permissions or timestamps of files outside the destination directory (`pull #5499 <https://github.com/platformio/platformio-core/pull/5499>`_)
 * Fixed an unhandled ``termios`` exception when running `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ with redirected or non-TTY ``stdin``, replacing the traceback with a clear user error (`pull #5503 <https://github.com/platformio/platformio-core/pull/5503>`_)
+* Fixed an issue with improper static analysis report if project is analyzed in verbose mode (`issue #4943 <https://github.com/platformio/platformio-core/issues/4943>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~

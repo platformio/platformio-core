@@ -744,3 +744,25 @@ src_dir = {external_src_dir}
 
     assert result.exit_code == 0
     assert errors + warnings + style == EXPECTED_DEFECTS
+
+
+@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy"])
+def test_check_result_identical_in_verbose_mode(
+    clirunner, validate_cliresult, tmpdir_factory, check_tool
+):
+    config = DEFAULT_CONFIG + f"\ncheck_tool = {check_tool}"
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    defects_count = count_defects(result.output)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--verbose"]
+    )
+    verbose_defects_count = count_defects(result.output)
+
+    assert defects_count == verbose_defects_count
+
+    validate_cliresult(result)
