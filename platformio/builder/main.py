@@ -26,6 +26,7 @@ from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import Default  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
+from SCons.Script import SetOption  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import app, fs
@@ -34,6 +35,13 @@ from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
 
 AllowSubstExceptions(NameError)
+
+# SCons normally reuses stored content signatures for files older than its
+# max-drift window when their size and modification time are unchanged. A VCS
+# checkout can replace a source file while preserving both values, which makes
+# the previous object look current. Always calculate dependency signatures from
+# the actual contents so incremental builds cannot mix source states.
+SetOption("max_drift", -1)
 
 # append CLI arguments to build environment
 clivars = Variables(None)
