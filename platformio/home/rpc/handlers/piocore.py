@@ -26,7 +26,6 @@ from ajsonrpc.core import JSONRPC20DispatchException
 from platformio import __main__, __version__, app, fs, proc, util
 from platformio.compat import (
     IS_WINDOWS,
-    aio_to_thread,
     get_locale_encoding,
     is_bytes,
 )
@@ -175,7 +174,7 @@ class PIOCoreRPC(BaseRPCHandler):
 
     @staticmethod
     async def _call_subprocess(args, options):
-        result = await aio_to_thread(
+        result = await asyncio.to_thread(
             proc.exec_command,
             [get_core_fullpath()] + args,
             cwd=options.get("cwd") or os.getcwd(),
@@ -195,7 +194,7 @@ class PIOCoreRPC(BaseRPCHandler):
                 exit_code,
             )
 
-        return await aio_to_thread(
+        return await asyncio.to_thread(
             _thread_safe_call, args=args, cwd=options.get("cwd") or os.getcwd()
         )
 

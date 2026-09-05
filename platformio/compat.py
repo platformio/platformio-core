@@ -18,27 +18,9 @@ import importlib.util
 import inspect
 import locale
 import os
-import shlex
 import sys
 
 from platformio.exception import UserSideException
-
-if sys.version_info >= (3, 8):
-    from shlex import join as shlex_join
-else:
-
-    def shlex_join(split_command):
-        return " ".join(shlex.quote(arg) for arg in split_command)
-
-
-if sys.version_info >= (3, 9):
-    from asyncio import to_thread as aio_to_thread
-else:
-    try:
-        from starlette.concurrency import run_in_threadpool as aio_to_thread
-    except ImportError:
-        pass
-
 
 PY2 = sys.version_info[0] == 2  # DO NOT REMOVE IT. ESP8266/ESP32 depend on it
 IS_CYGWIN = sys.platform.startswith("cygwin")
@@ -102,14 +84,13 @@ def get_object_members(obj, ignore_private=True):
 
 
 def ensure_python3(raise_exception=True):
-    compatible = sys.version_info >= (3, 7)
+    compatible = sys.version_info >= (3, 9)
     if not raise_exception or compatible:
         return compatible
     raise UserSideException(
-        "Python 3.7 or later is required for this operation. \n"
-        "Please check a migration guide:\n"
-        "https://docs.platformio.org/en/latest/core/migration.html"
-        "#drop-support-for-python-2-and-3-5"
+        "Python 3.9 or later is required for this operation. \n"
+        "Please check system requirements:\n"
+        "https://docs.platformio.org/en/latest/core/installation/requirements.html"
     )
 
 

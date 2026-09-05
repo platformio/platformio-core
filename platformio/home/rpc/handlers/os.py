@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import glob
 import io
 import os
@@ -22,7 +23,6 @@ import click
 
 from platformio import fs
 from platformio.cache import ContentCache
-from platformio.compat import aio_to_thread
 from platformio.device.list.util import list_logical_devices
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.http import HTTPSession, ensure_internet_on
@@ -33,7 +33,7 @@ class HTTPAsyncSession(HTTPSession):
         self, *args, **kwargs
     ):
         func = super().request
-        return await aio_to_thread(func, *args, **kwargs)
+        return await asyncio.to_thread(func, *args, **kwargs)
 
 
 class OSRPC(BaseRPCHandler):

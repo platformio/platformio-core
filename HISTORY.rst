@@ -22,7 +22,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.2.0 (2026-09-??)
 ~~~~~~~~~~~~~~~~~~~
 
-* Dropped support for Python 3.6, requiring Python 3.7 or newer to run PlatformIO Core
+* Dropped support for Python 3.6, 3.7 and 3.8, requiring Python 3.9 or newer to run PlatformIO Core (`issue #5414 <https://github.com/platformio/platformio-core/issues/5414>`_)
 * Removed support for static code analysis via PVS-Studio following its deprecation by the vendor (`pull #5360 <https://github.com/platformio/platformio-core/pull/5360>`_)
 * Added a new ``-p, --port`` option to the `pio run <https://docs.platformio.org/en/latest/core/userguide/cmd_run.html#cmdoption-pio-run-p>`__ command, allowing users to set both ``upload_port`` and ``monitor_port`` simultaneously for a more streamlined workflow (`pull #5429 <https://github.com/platformio/platformio-core/pull/5429>`_)
 * Added an option to `disable the 99-platformio-udev.rules <https://docs.platformio.org/en/latest/core/userguide/cmd_settings.html#disable_udev_rules_check>`__ check, providing greater flexibility in environments where system-level udev configuration is not required (`pull #5204 <https://github.com/platformio/platformio-core/pull/5204>`_)

@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import os.path
 
-from platformio.compat import aio_to_thread
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manifest.parser import ManifestParserFactory
@@ -26,7 +26,7 @@ class PlatformRPC(BaseRPCHandler):
     async def fetch_platforms(self, search_query=None, page=0, force_installed=False):
         if force_installed:
             return {
-                "items": await aio_to_thread(
+                "items": await asyncio.to_thread(
                     self._load_installed_platforms, search_query
                 )
             }
@@ -98,7 +98,7 @@ class PlatformRPC(BaseRPCHandler):
                 name=spec.name,
                 extra_path="/boards",
             )
-        return await aio_to_thread(self._load_installed_boards, spec)
+        return await asyncio.to_thread(self._load_installed_boards, spec)
 
     @staticmethod
     def _load_installed_boards(platform_spec):
@@ -118,7 +118,7 @@ class PlatformRPC(BaseRPCHandler):
                 name=spec.name,
                 extra_path="/examples",
             )
-        return await aio_to_thread(self._load_installed_examples, spec)
+        return await asyncio.to_thread(self._load_installed_examples, spec)
 
     @staticmethod
     def _load_installed_examples(platform_spec):

@@ -20,6 +20,7 @@ import click
 import serial
 from serial.tools import miniterm
 
+from platformio.compat import is_terminal
 from platformio.exception import UserSideException
 
 
@@ -99,13 +100,14 @@ def start_terminal(options):
 
 
 def new_terminal(options):
-    if not (hasattr(sys.stdin, "isatty") and sys.stdin.isatty()):
+    if not is_terminal():
         raise UserSideException(
             "`pio device monitor` requires an interactive terminal on stdin "
             "and cannot run with piped or redirected input. If you're "
             "scripting device I/O, talk to the serial port directly instead "
             "(e.g., with pyserial) rather than through `pio device monitor`."
         )
+
     term = Terminal(
         new_serial_instance(options),
         echo=options["echo"],
