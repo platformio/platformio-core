@@ -42,6 +42,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Fixed an unhandled ``termios`` exception when running `pio device monitor <https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html>`__ with redirected or non-TTY ``stdin``, replacing the traceback with a clear user error (`pull #5503 <https://github.com/platformio/platformio-core/pull/5503>`_)
 * Fixed an issue with improper static analysis report if project is analyzed in verbose mode (`issue #4943 <https://github.com/platformio/platformio-core/issues/4943>`_)
 * Fixed an issue where the test framework library was unintentionally removed from the project dependencies when building a project outside of testing mode (`issue #5388 <https://github.com/platformio/platformio-core/issues/5388>`_)
+* Fixed an issue where relative header paths provided via ``-include`` build flags were not resolved to absolute paths in ``c_cpp_properties.json``, causing IntelliSense errors (`issue #5449 <https://github.com/platformio/platformio-core/issues/5449>`_)
 
 6.1.19 (2026-02-04)
 ~~~~~~~~~~~~~~~~~~~
