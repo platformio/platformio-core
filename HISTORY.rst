@@ -19,8 +19,11 @@ Unlock the true potential of embedded software development with
 PlatformIO's collaborative ecosystem, embracing declarative principles,
 test-driven methodologies, and modern toolchains for unrivaled success.
 
+6.2.1 (2026-??-??)
+~~~~~~~~~~~~~~~~~~
+
 6.2.0 (2026-09-05)
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 * Dropped support for Python 3.6, 3.7 and 3.8, requiring Python 3.9 or newer to run PlatformIO Core (`issue #5414 <https://github.com/platformio/platformio-core/issues/5414>`_)
 * Removed support for static code analysis via PVS-Studio following its deprecation by the vendor (`pull #5360 <https://github.com/platformio/platformio-core/pull/5360>`_)

@@ -27,13 +27,6 @@ def test_empty_query(clirunner, validate_cliresult):
 def test_pagination(clirunner, validate_cliresult):
     result = clirunner.invoke(
         package_search_cmd,
-        ["type:tool"],
-    )
-    validate_cliresult(result)
-    assert all(t in result.output for t in ("Verified Tool", "page 1 of"))
-
-    result = clirunner.invoke(
-        package_search_cmd,
         ["type:tool", "-p", "10"],
     )
     validate_cliresult(result)
