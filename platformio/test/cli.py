@@ -156,7 +156,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
             print_suite_footer(test_suite)
 
     stdout_report = TestReportFactory.new("stdout", test_result)
-    stdout_report.generate(verbose=verbose or list_tests)
+    stdout_report.generate(verbose=int(verbose) > 1 or list_tests)
 
     for output_format, output_path in [
         ("json", subprocess.STDOUT if json_output else None),
