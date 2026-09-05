@@ -49,6 +49,9 @@
 %       return os.path.join(path, inc)
 %     end
 %   end
+%   if os.path.exists(inc):
+%       return os.path.abspath(inc)
+%   end
 %   return inc
 % end
 %

@@ -88,7 +88,7 @@ class RepositorySchema(StrictSchema):
 class DependencySchema(StrictSchema):
     owner = fields.Str(validate=validate.Length(min=1, max=100))
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
-    version = fields.Str(validate=validate.Length(min=1, max=100))
+    version = fields.Str(validate=validate.Length(min=1, max=255))
     authors = StrictListField(fields.Str(validate=validate.Length(min=1, max=50)))
     platforms = StrictListField(
         fields.Str(
@@ -231,8 +231,11 @@ class ManifestSchema(BaseSchema):
         )
     )
 
+    # Marshmallow 4 passes a `data_key` kwarg to field validators, Marshmallow 3
+    # does not. `**_` keeps these validators compatible with both.
+
     @validates("version")
-    def validate_version(self, value):
+    def validate_version(self, value, **_):
         try:
             value = str(value)
             assert "." in value
@@ -249,7 +252,7 @@ class ManifestSchema(BaseSchema):
             ) from exc
 
     @validates("license")
-    def validate_license(self, value):
+    def validate_license(self, value, **_):
         try:
             spdx = self.load_spdx_licenses()
         except requests.exceptions.RequestException as exc:
@@ -276,7 +279,7 @@ class ManifestSchema(BaseSchema):
     @staticmethod
     @memoized(expire="1h")
     def load_spdx_licenses():
-        version = "3.27.0"
+        version = "3.28.0"
         spdx_data_url = (
             "https://raw.githubusercontent.com/spdx/license-list-data/"
             f"v{version}/json/licenses.json"

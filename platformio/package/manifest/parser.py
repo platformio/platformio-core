@@ -405,6 +405,11 @@ class LibraryJsonManifestParser(BaseManifestParser):
                         if k not in ("platforms", "frameworks", "authors"):
                             continue
                         raw[i][k] = util.items_to_list(v)
+                    # handle user typo when `owner` is declared in `name` field
+                    if "owner" not in dependency and "/" in dependency.get("name", ""):
+                        owner, name = dependency["name"].split("/", 1)
+                        raw[i]["owner"] = owner
+                        raw[i]["name"] = name
                 else:
                     raw[i] = {"name": dependency}
             return raw

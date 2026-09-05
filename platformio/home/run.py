@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import os
+from contextlib import asynccontextmanager
 from urllib.parse import urlparse
 
 import click
@@ -24,7 +26,6 @@ from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 from starlette.status import HTTP_403_FORBIDDEN
 
-from platformio.compat import aio_get_running_loop
 from platformio.exception import PlatformioException
 from platformio.home.rpc.handlers.account import AccountRPC
 from platformio.home.rpc.handlers.app import AppRPC
@@ -51,7 +52,7 @@ class ShutdownMiddleware:
 
 
 async def shutdown_server(_=None):
-    aio_get_running_loop().call_later(0.5, force_exit)
+    asyncio.get_running_loop().call_later(0.5, force_exit)
     return PlainTextResponse("Server has been shutdown!")
 
 
@@ -86,16 +87,18 @@ def run_server(host, port, no_open, shutdown_timeout, home_url):
     if path != "/":
         routes.append(Route("/", protected_page))
 
+    @asynccontextmanager
+    async def app_lifespan(_):
+        click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
+        if not no_open:
+            click.launch(home_url)
+        yield
+
     uvicorn.run(
         Starlette(
             middleware=[Middleware(ShutdownMiddleware)],
             routes=routes,
-            on_startup=[
-                lambda: click.echo(
-                    "PIO Home has been started. Press Ctrl+C to shutdown."
-                ),
-                lambda: None if no_open else click.launch(home_url),
-            ],
+            lifespan=app_lifespan,
         ),
         host=host,
         port=port,

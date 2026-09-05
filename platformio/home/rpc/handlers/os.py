@@ -12,15 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import glob
 import io
 import os
 import shutil
 from functools import cmp_to_key
 
+import click
+
 from platformio import fs
 from platformio.cache import ContentCache
-from platformio.compat import aio_to_thread, click_launch
 from platformio.device.list.util import list_logical_devices
 from platformio.home.rpc.handlers.base import BaseRPCHandler
 from platformio.http import HTTPSession, ensure_internet_on
@@ -31,7 +33,7 @@ class HTTPAsyncSession(HTTPSession):
         self, *args, **kwargs
     ):
         func = super().request
-        return await aio_to_thread(func, *args, **kwargs)
+        return await asyncio.to_thread(func, *args, **kwargs)
 
 
 class OSRPC(BaseRPCHandler):
@@ -82,15 +84,15 @@ class OSRPC(BaseRPCHandler):
 
     @staticmethod
     def open_url(url):
-        return click_launch(url)
+        return click.launch(url)
 
     @staticmethod
     def reveal_file(path):
-        return click_launch(path, locate=True)
+        return click.launch(path, locate=True)
 
     @staticmethod
     def open_file(path):
-        return click_launch(path)
+        return click.launch(path)
 
     @staticmethod
     def call_path_module_func(name, args, **kwargs):

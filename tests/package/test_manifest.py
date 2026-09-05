@@ -86,7 +86,8 @@ def test_library_json_parser():
     "dependencies": [
         {"name": "deps1", "version": "1.0.0"},
         {"owner": "owner", "name": "deps2", "version": "1.0.0", "platforms": "*", "frameworks": "arduino, espidf"},
-        {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
+        {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]},
+        {"name": "owner/deps4", "version": "~0.3.0"}
     ]
 }
 """
@@ -112,6 +113,11 @@ def test_library_json_parser():
                     "name": "deps3",
                     "version": "1.0.0",
                     "platforms": ["ststm32", "sifive"],
+                },
+                {
+                    "owner": "owner",
+                    "name": "deps4",
+                    "version": "~0.3.0",
                 },
             ],
         },
@@ -337,7 +343,7 @@ def test_library_json_schema():
   ],
   "dependencies": [
     {"name": "deps1", "version": "1.0.0"},
-    {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino"},
+    {"name": "owner/deps2", "version": "1.0.0", "frameworks": "arduino"},
     {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
   ]
 }
@@ -387,8 +393,13 @@ def test_library_json_schema():
                 },
             ],
             "dependencies": [
-                {"name": "@owner/deps2", "version": "1.0.0", "frameworks": ["arduino"]},
                 {"name": "deps1", "version": "1.0.0"},
+                {
+                    "owner": "owner",
+                    "name": "deps2",
+                    "version": "1.0.0",
+                    "frameworks": ["arduino"],
+                },
                 {
                     "name": "deps3",
                     "version": "1.0.0",

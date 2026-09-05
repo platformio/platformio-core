@@ -1,3 +1,3 @@
-% from platformio.compat import shlex_join
+% import shlex
 %
-{{shlex_join(cc_flags).replace('-mlongcalls', '-mlong-calls')}}
+{{shlex.join(cc_flags).replace('-mlongcalls', '-mlong-calls')}}

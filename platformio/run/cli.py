@@ -46,6 +46,9 @@ DEFAULT_JOB_NUMS = int(os.getenv("PLATFORMIO_RUN_JOBS", SYSTEM_CPU_COUNT))
 @click.option("--upload-port")
 @click.option("--monitor-port")
 @click.option(
+    "-p", "--port", default=None, help="Shortcut: set both upload-port and monitor-port"
+)
+@click.option(
     "-d",
     "--project-dir",
     default=os.getcwd,
@@ -84,6 +87,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     target,
     upload_port,
     monitor_port,
+    port,
     project_dir,
     project_conf,
     jobs,
@@ -93,6 +97,10 @@ def cli(  # pylint: disable=too-many-positional-arguments
     silent,
     verbose,
 ):
+    if port:
+        upload_port = upload_port or port
+        monitor_port = monitor_port or port
+
     app.set_session_var("custom_project_conf", project_conf)
 
     # find project directory on upper level

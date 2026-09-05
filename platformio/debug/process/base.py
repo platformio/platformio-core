@@ -20,8 +20,6 @@ import time
 
 from platformio.compat import (
     IS_WINDOWS,
-    aio_create_task,
-    aio_get_running_loop,
     get_locale_encoding,
 )
 
@@ -72,7 +70,7 @@ class DebugBaseProcess:
         for pipe in ("stdin", "stdout", "stderr"):
             if pipe not in kwargs:
                 kwargs[pipe] = subprocess.PIPE
-        loop = aio_get_running_loop()
+        loop = asyncio.get_running_loop()
         await loop.subprocess_exec(
             lambda: DebugSubprocessProtocol(self), *args, **kwargs
         )
@@ -88,10 +86,10 @@ class DebugBaseProcess:
         self.transport = transport
 
     def connect_stdin_pipe(self):
-        self._stdin_read_task = aio_create_task(self._read_stdin_pipe())
+        self._stdin_read_task = asyncio.create_task(self._read_stdin_pipe())
 
     async def _read_stdin_pipe(self):
-        loop = aio_get_running_loop()
+        loop = asyncio.get_running_loop()
         if IS_WINDOWS:
             while True:
                 self.stdin_data_received(

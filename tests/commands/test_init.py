@@ -30,11 +30,11 @@ def validate_pioproject(pioproject_dir):
     )
 
 
-def test_init_default(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
+def test_init_default(clirunner, validate_cliresult, tmp_path):
+    with fs.cd(str(tmp_path)):
         result = clirunner.invoke(project_init_cmd)
         validate_cliresult(result)
-        validate_pioproject(os.getcwd())
+        validate_pioproject(str(tmp_path))
 
 
 def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
@@ -129,28 +129,28 @@ def test_init_ide_vscode(clirunner, validate_cliresult, tmpdir):
         )
 
 
-def test_init_ide_eclipse(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
+def test_init_ide_eclipse(clirunner, validate_cliresult, tmp_path):
+    with fs.cd(str(tmp_path)):
         result = clirunner.invoke(
             project_init_cmd,
             ["-b", "uno", "--ide", "eclipse", "--no-install-dependencies"],
         )
         validate_cliresult(result)
-        validate_pioproject(os.getcwd())
+        validate_pioproject(str(tmp_path))
         assert all(os.path.isfile(f) for f in (".cproject", ".project"))
 
 
-def test_init_special_board(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
+def test_init_special_board(clirunner, validate_cliresult, tmp_path):
+    with fs.cd(str(tmp_path)):
         result = clirunner.invoke(project_init_cmd, ["-b", "uno"])
         validate_cliresult(result)
-        validate_pioproject(os.getcwd())
+        validate_pioproject(str(tmp_path))
 
         result = clirunner.invoke(cmd_boards, ["Arduino Uno", "--json-output"])
         validate_cliresult(result)
         boards = json.loads(result.output)
 
-        config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
+        config = ProjectConfig(str(tmp_path / "platformio.ini"))
         config.validate()
 
         expected_result = dict(
@@ -164,8 +164,8 @@ def test_init_special_board(clirunner, validate_cliresult):
         )
 
 
-def test_init_enable_auto_uploading(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
+def test_init_enable_auto_uploading(clirunner, validate_cliresult, tmp_path):
+    with fs.cd(str(tmp_path)):
         result = clirunner.invoke(
             project_init_cmd,
             [
@@ -177,8 +177,8 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
             ],
         )
         validate_cliresult(result)
-        validate_pioproject(os.getcwd())
-        config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
+        validate_pioproject(str(tmp_path))
+        config = ProjectConfig(str(tmp_path / "platformio.ini"))
         config.validate()
         expected_result = dict(
             targets=["upload"], platform="atmelavr", board="uno", framework=["arduino"]
@@ -189,8 +189,8 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
         )
 
 
-def test_init_custom_framework(clirunner, validate_cliresult):
-    with clirunner.isolated_filesystem():
+def test_init_custom_framework(clirunner, validate_cliresult, tmp_path):
+    with fs.cd(str(tmp_path)):
         result = clirunner.invoke(
             project_init_cmd,
             [
@@ -202,8 +202,8 @@ def test_init_custom_framework(clirunner, validate_cliresult):
             ],
         )
         validate_cliresult(result)
-        validate_pioproject(os.getcwd())
-        config = ProjectConfig(os.path.join(os.getcwd(), "platformio.ini"))
+        validate_pioproject(str(tmp_path))
+        config = ProjectConfig(str(tmp_path / "platformio.ini"))
         config.validate()
         expected_result = dict(platform="teensy", board="teensy31", framework=["mbed"])
         assert config.has_section("env:teensy31")

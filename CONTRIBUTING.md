@@ -6,13 +6,13 @@ To get started, <a href="https://cla-assistant.io/platformio/platformio-core">si
 1. Fork the repository on GitHub
 2. Clone repository `git clone --recursive https://github.com/YourGithubUsername/platformio-core.git`
 3. Run `pip install tox`
-4. Go to the root of the PlatformIO Core project where `tox.ini` is located (``cd platformio-core``) and run `tox -e py39`.
-   You can replace `py39` with your own Python version. For example, `py311` means Python 3.11.
+4. Go to the root of the PlatformIO Core project where `tox.ini` is located (``cd platformio-core``) and run `tox -e py314`.
+   You can replace `py314` with your own Python version. For example, `py314` means Python 3.14.
 5. Activate current development environment:
 
-   * Windows: `.tox\py39\Scripts\activate`
-   * Bash/ZSH: `source .tox/py39/bin/activate`
-   * Fish: `source .tox/py39/bin/activate.fish`
+   * Windows: `.tox\py314\Scripts\activate`
+   * Bash/ZSH: `source .tox/py314/bin/activate`
+   * Fish: `source .tox/py314/bin/activate.fish`
 
 6. Make changes to code, documentation, etc.
 7. Lint source code `make before-commit`

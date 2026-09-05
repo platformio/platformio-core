@@ -26,6 +26,8 @@ from platformio.package.vcsclient import VCSClientFactory
 from platformio.project.config import ProjectConfig
 from platformio.registry.client import RegistryClient
 
+ARDUINO_JSON_VERSION = "6.21.6"
+
 
 def test_saving_deps(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory):
     regclient = RegistryClient()
@@ -198,7 +200,7 @@ def test_update(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory
     validate_cliresult(result)
     outdated = json.loads(result.stdout)
     assert outdated[0]["version"] == "6.18.5"
-    assert outdated[0]["versionWanted"] == "6.21.5"
+    assert outdated[0]["versionWanted"] == ARDUINO_JSON_VERSION
     assert semantic_version.Version(
         outdated[0]["versionLatest"]
     ) > semantic_version.Version("6.16.0")
@@ -213,7 +215,7 @@ def test_update(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory
     validate_cliresult(result)
     items = json.loads(result.stdout)
     assert len(items) == 2
-    assert items[0]["version"] == "6.21.5"
+    assert items[0]["version"] == ARDUINO_JSON_VERSION
     assert items[1]["version"] == "1.2.0"
 
     # Check incompatible
@@ -229,4 +231,4 @@ def test_update(clirunner, validate_cliresult, isolated_pio_core, tmpdir_factory
         cmd_lib, ["-d", str(storage_dir), "update", "ArduinoJson @ ^6"]
     )
     validate_cliresult(result)
-    assert "ArduinoJson@6.21.5 is already up-to-date" in result.stdout
+    assert f"ArduinoJson@{ARDUINO_JSON_VERSION} is already up-to-date" in result.stdout

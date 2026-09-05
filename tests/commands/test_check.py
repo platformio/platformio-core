@@ -61,12 +61,6 @@ int main() {
 }
 """
 
-
-PVS_STUDIO_FREE_LICENSE_HEADER = """
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-"""
-
 EXPECTED_ERRORS = 5
 EXPECTED_WARNINGS = 1
 EXPECTED_STYLE = 4
@@ -128,7 +122,7 @@ def test_check_tool_complex_defines_handled(
     project_dir = tmpdir_factory.mktemp("project_dir")
 
     project_dir.join("platformio.ini").write(DEFAULT_CONFIG + R"""
-check_tool = cppcheck, clangtidy, pvs-studio
+check_tool = cppcheck, clangtidy
 build_flags =
     -DEXTERNAL_INCLUDE_FILE=\"test.h\"
     "-DDEFINE_WITH_SPACE="Hello World!""
@@ -142,7 +136,7 @@ build_flags =
 #endif
 """)
 
-    src_dir.join("main.c").write(PVS_STUDIO_FREE_LICENSE_HEADER + """
+    src_dir.join("main.c").write("""
 #if !defined(EXTERNAL_INCLUDE_FILE)
 #error "EXTERNAL_INCLUDE_FILE is not declared!"
 #else
@@ -299,36 +293,33 @@ int main() {
 
 
 def test_check_individual_flags_passed(clirunner, validate_cliresult, tmpdir):
-    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy, pvs-studio"
+    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
     config += """\ncheck_flags =
     cppcheck: --std=c++11
     clangtidy: --fix-errors
-    pvs-studio: --analysis-mode=4
 """
 
     tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.cpp").write(
-        PVS_STUDIO_FREE_LICENSE_HEADER + TEST_CODE
-    )
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
     validate_cliresult(result)
 
-    clang_flags_found = cppcheck_flags_found = pvs_flags_found = False
+    clang_flags_found = cppcheck_flags_found = False
     for l in result.output.split("\n"):
         if "--fix" in l and "clang-tidy" in l and "--std=c++11" not in l:
             clang_flags_found = True
         elif "--std=c++11" in l and "cppcheck" in l and "--fix" not in l:
             cppcheck_flags_found = True
-        elif (
-            "--analysis-mode=4" in l and "pvs-studio" in l.lower() and "--fix" not in l
-        ):
-            pvs_flags_found = True
 
     assert clang_flags_found
     assert cppcheck_flags_found
-    assert pvs_flags_found
 
 
+@pytest.mark.skipif(
+    sys.version_info >= (3, 14),
+    reason="MISRA: DeprecationWarning: "
+    "codecs.open() is deprecated since Python 3.14",
+)
 def test_check_cppcheck_misra_addon(clirunner, validate_cliresult, tmpdir_factory):
     check_dir = tmpdir_factory.mktemp("project")
     check_dir.join("platformio.ini").write(DEFAULT_CONFIG)
@@ -418,75 +409,8 @@ int main() {
     assert low_result.exit_code != 0
 
 
-def test_check_pvs_studio_free_license(clirunner, tmpdir):
-    config = """
-[env:test]
-platform = teensy
-board = teensy35
-framework = arduino
-check_tool = pvs-studio
-"""
-
-    tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.c").write(PVS_STUDIO_FREE_LICENSE_HEADER + TEST_CODE)
-
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect=high", "-v"]
-    )
-
-    errors, warnings, style = count_defects(result.output)
-
-    assert result.exit_code != 0
-    assert errors != 0
-    assert warnings != 0
-    assert style == 0
-
-
-def test_check_pvs_studio_fails_without_license(clirunner, tmpdir):
-    config = DEFAULT_CONFIG + "\ncheck_tool = pvs-studio"
-
-    tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
-
-    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
-    verbose_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
-
-    assert default_result.exit_code != 0
-    assert "failed to perform check" in default_result.output.lower()
-
-    assert verbose_result.exit_code != 0
-    assert "license was not entered" in verbose_result.output.lower()
-
-
-@pytest.mark.skipif(
-    sys.platform != "win32",
-    reason="For some reason the error message is different on Windows",
-)
-def test_check_pvs_studio_fails_broken_license(clirunner, tmpdir):
-    config = DEFAULT_CONFIG + """
-check_tool = pvs-studio
-check_flags = --lic-file=./pvs-studio.lic
-"""
-
-    tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
-    tmpdir.join("pvs-studio.lic").write("""
-TEST
-TEST-TEST-TEST-TEST
-""")
-
-    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
-    verbose_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
-
-    assert default_result.exit_code != 0
-    assert "failed to perform check" in default_result.output.lower()
-
-    assert verbose_result.exit_code != 0
-    assert "license information is incorrect" in verbose_result.output.lower()
-
-
 @pytest.mark.parametrize("framework", ["arduino", "stm32cube", "zephyr"])
-@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy", "pvs-studio"])
+@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy"])
 def test_check_embedded_platform_all_tools(
     clirunner, validate_cliresult, tmpdir, framework, check_tool
 ):
@@ -497,7 +421,7 @@ board = nucleo_f401re
 framework = {framework}
 check_tool = {check_tool}
 """
-    tmpdir.mkdir("src").join("main.c").write(PVS_STUDIO_FREE_LICENSE_HEADER + """
+    tmpdir.mkdir("src").join("main.c").write("""
 #include <stdlib.h>
 
 void unused_function(int val){
@@ -578,7 +502,7 @@ int main() {}
     assert verbose_errors == errors == 1
 
 
-@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy", "pvs-studio"])
+@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy"])
 def test_check_handles_spaces_in_paths(
     clirunner, validate_cliresult, tmpdir_factory, check_tool
 ):
@@ -596,9 +520,7 @@ framework = arduino
 check_tool = {check_tool}
 """
     project_dir_with_spaces.join("platformio.ini").write(config)
-    project_dir_with_spaces.mkdir("src").join("main.cpp").write(
-        PVS_STUDIO_FREE_LICENSE_HEADER + TEST_CODE
-    )
+    project_dir_with_spaces.mkdir("src").join("main.cpp").write(TEST_CODE)
 
     result = clirunner.invoke(
         cmd_check, ["--project-dir", str(project_dir_with_spaces), "-v"]
@@ -607,9 +529,7 @@ check_tool = {check_tool}
     validate_cliresult(result)
 
     # Make sure toolchain defines were successfully extracted
-    if check_tool != "pvs-studio":
-        # PVS doesn't write defines to stdout
-        assert "__GNUC__" in result.output
+    assert "__GNUC__" in result.output
 
 
 #
@@ -824,3 +744,23 @@ src_dir = {external_src_dir}
 
     assert result.exit_code == 0
     assert errors + warnings + style == EXPECTED_DEFECTS
+
+
+@pytest.mark.parametrize("check_tool", ["cppcheck", "clangtidy"])
+def test_check_result_identical_in_verbose_mode(
+    clirunner, validate_cliresult, tmpdir_factory, check_tool
+):
+    config = DEFAULT_CONFIG + f"\ncheck_tool = {check_tool}"
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+    defects_count = count_defects(result.output)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "--verbose"])
+    verbose_defects_count = count_defects(result.output)
+
+    assert defects_count == verbose_defects_count
+
+    validate_cliresult(result)

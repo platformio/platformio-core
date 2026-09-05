@@ -35,7 +35,7 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=get_pip_dependencies(),
-    python_requires=">=3.6",
+    python_requires=">=3.9",
     packages=find_packages(include=["platformio", "platformio.*"]),
     package_data={
         "platformio": [

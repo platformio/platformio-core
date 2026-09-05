@@ -108,7 +108,9 @@ def get_platformio_udev_rules_path():
 
 
 def ensure_udev_rules():
-    from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    from platformio import app
+    from platformio.util import get_systype
 
     def _rules_to_set(rules_path):
         result = set()
@@ -120,8 +122,9 @@ def ensure_udev_rules():
                 result.add(line)
         return result
 
-    if "linux" not in get_systype():
+    if "linux" not in get_systype() or app.get_setting("disable_udev_rules_check"):
         return None
+
     installed_rules = [
         "/etc/udev/rules.d/99-platformio-udev.rules",
         "/lib/udev/rules.d/99-platformio-udev.rules",

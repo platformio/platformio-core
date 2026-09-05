@@ -14,7 +14,6 @@
 
 import datetime
 import functools
-import math
 import os
 import platform
 import re
@@ -201,13 +200,14 @@ def print_labeled_bar(label, is_error=False, fg=None, sep="="):
 def humanize_duration_time(duration):
     if duration is None:
         return duration
-    duration = duration * 1000
-    tokens = []
-    for multiplier in (3600000, 60000, 1000, 1):
-        fraction = math.floor(duration / multiplier)
-        tokens.append(int(round(duration) if multiplier == 1 else fraction))
-        duration -= fraction * multiplier
-    return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
+
+    milliseconds = int(round(duration * 1000))
+    # Extract components using divmod (returns quotient and remainder)
+    hours, remainder = divmod(milliseconds, 3600000)
+    minutes, remainder = divmod(remainder, 60000)
+    seconds, millis = divmod(remainder, 1000)
+
+    return "{:02d}:{:02d}:{:02d}.{:03d}".format(hours, minutes, seconds, millis)
 
 
 def strip_ansi_codes(text):

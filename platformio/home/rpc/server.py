@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 from urllib.parse import parse_qs
 
 import ajsonrpc.utils
@@ -21,7 +22,6 @@ from ajsonrpc.dispatcher import Dispatcher
 from ajsonrpc.manager import AsyncJSONRPCResponseManager, JSONRPC20Response
 from starlette.endpoints import WebSocketEndpoint
 
-from platformio.compat import aio_create_task, aio_get_running_loop
 from platformio.http import InternetConnectionError
 from platformio.proc import force_exit
 
@@ -76,7 +76,7 @@ class JSONRPCServerFactoryBase:
             click.echo("Automatically shutdown server on timeout")
             force_exit()
 
-        self.shutdown_timer = aio_get_running_loop().call_later(
+        self.shutdown_timer = asyncio.get_running_loop().call_later(
             self.shutdown_timeout, _auto_shutdown_server
         )
 
@@ -109,7 +109,7 @@ class WebSocketJSONRPCServer(WebSocketEndpoint):
         )
 
     async def on_receive(self, websocket, data):
-        aio_create_task(self._handle_rpc(websocket, data))
+        asyncio.create_task(self._handle_rpc(websocket, data))
 
     async def on_disconnect(self, websocket, close_code):
         self.factory.on_client_disconnect(websocket)  # pylint: disable=no-member

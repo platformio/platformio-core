@@ -156,7 +156,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
             print_suite_footer(test_suite)
 
     stdout_report = TestReportFactory.new("stdout", test_result)
-    stdout_report.generate(verbose=verbose or list_tests)
+    stdout_report.generate(verbose=int(verbose) > 1 or list_tests)
 
     for output_format, output_path in [
         ("json", subprocess.STDOUT if json_output else None),
@@ -195,10 +195,8 @@ def print_suite_footer(test_suite):
             click.style(
                 "%s:%s" % (test_suite.env_name, test_suite.test_name), bold=True
             ),
-            (
-                click.style(test_suite.status.name, fg="red", bold=True)
-                if is_error
-                else click.style("PASSED", fg="green", bold=True)
+            click.style(
+                test_suite.status.name, fg=test_suite.status.to_ansi_color(), bold=True
             ),
             test_suite.duration,
         ),

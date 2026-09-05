@@ -25,10 +25,12 @@ from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageCompatibility, PackageSpec
+from platformio.package.version import SemanticVersionError
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
+from platformio.test.helpers import TestDirNotExistsError, list_test_names
 from platformio.test.result import TestSuite
 from platformio.test.runners.factory import TestRunnerFactory
 
@@ -235,7 +237,16 @@ def _install_project_env_libraries(project_env, options):
         private_lm.set_log_level(logging.WARN)
 
     lib_deps = config.get(f"env:{project_env}", "lib_deps")
-    if "__test" in options.get("project_targets", []):
+
+    # check if the test framework should be installed
+    install_test_framework = False
+    try:
+        install_test_framework = "__test" in options.get(
+            "project_targets", []
+        ) or list_test_names(config)
+    except TestDirNotExistsError:
+        pass
+    if install_test_framework:
         test_runner = TestRunnerFactory.new(
             TestSuite(project_env, options.get("piotest_running_name", "*")), config
         )
@@ -282,7 +293,7 @@ def _uninstall_project_unused_libdeps(lm, lib_deps):
         for spec in set(prev_lib_deps) - set(lib_deps):
             try:
                 lm.uninstall(spec)
-            except UnknownPackageError:
+            except (UnknownPackageError, SemanticVersionError):
                 pass
     if not storage_dir.is_dir():
         storage_dir.mkdir(parents=True)

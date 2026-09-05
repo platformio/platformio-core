@@ -11,20 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from platformio import exception
-from platformio.check.tools.clangtidy import ClangtidyCheckTool
-from platformio.check.tools.cppcheck import CppcheckCheckTool
-
-
-class CheckToolFactory:
-    @staticmethod
-    def new(tool, project_dir, config, envname, options):
-        cls = None
-        if tool == "cppcheck":
-            cls = CppcheckCheckTool
-        elif tool == "clangtidy":
-            cls = ClangtidyCheckTool
-        else:
-            raise exception.PlatformioException("Unknown check tool `%s`" % tool)
-        return cls(project_dir, config, envname, options)

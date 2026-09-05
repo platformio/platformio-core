@@ -17,7 +17,7 @@ import socket
 
 import click
 
-from platformio.compat import IS_WINDOWS, click_launch
+from platformio.compat import IS_WINDOWS
 from platformio.home.run import run_server
 from platformio.package.manager.core import get_core_package_dir
 
@@ -86,7 +86,7 @@ def cli(port, host, no_open, shutdown_timeout, session_id):
             "PlatformIO Home server is already started in another process.", fg="yellow"
         )
         if not no_open:
-            click_launch(home_url)
+            click.launch(home_url)
         return
 
     run_server(

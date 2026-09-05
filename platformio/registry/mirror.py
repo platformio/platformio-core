@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 from platformio import __registry_mirror_hosts__
 from platformio.cache import ContentCache
+from platformio.exception import UserSideException
 from platformio.http import HTTPClient
 from platformio.registry.client import RegistryClient
 
@@ -42,10 +43,17 @@ class RegistryFileMirrorIterator:
             if result is not None:
                 try:
                     headers = json.loads(result)
-                    return (
-                        headers["Location"],
-                        headers["X-PIO-Content-SHA256"],
-                    )
+                    mirror = headers.get("X-PIO-Mirror")
+                    # Only use the cached entry if it identifies a mirror we
+                    # have not already tried. Without this, a cached redirect
+                    # to a failing mirror would be returned forever because
+                    # _visited_mirrors never advances on the cache-hit path.
+                    if mirror and mirror not in self._visited_mirrors:
+                        self._visited_mirrors.append(mirror)
+                        return (
+                            headers["Location"],
+                            headers["X-PIO-Content-SHA256"],
+                        )
                 except (ValueError, KeyError):
                     pass
 
@@ -61,6 +69,11 @@ class RegistryFileMirrorIterator:
                 ),
                 x_with_authorization=RegistryClient.allowed_private_packages(),
             )
+            if response.status_code == 429:
+                raise UserSideException(
+                    "Download limit exceeded. Try again in 24 hours. "
+                    "If this persists, contact <contact@platformio.org>"
+                )
             stop_conditions = [
                 response.status_code not in (302, 307),
                 not response.headers.get("Location"),
@@ -78,6 +91,7 @@ class RegistryFileMirrorIterator:
                         "X-PIO-Content-SHA256": response.headers.get(
                             "X-PIO-Content-SHA256"
                         ),
+                        "X-PIO-Mirror": response.headers.get("X-PIO-Mirror"),
                     }
                 ),
                 "1h",

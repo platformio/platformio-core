@@ -1,9 +1,9 @@
-% from platformio.compat import shlex_join
+% import shlex
 %
 {{ cc_path }}
 
-{{"%c"}} {{ shlex_join(cc_flags) }}
-{{"%cpp"}} {{ shlex_join(cxx_flags) }}
+{{"%c"}} {{ shlex.join(cc_flags) }}
+{{"%cpp"}} {{ shlex.join(cxx_flags) }}
 
 % for include in filter_includes(includes):
 -I{{ !include }}
