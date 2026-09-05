@@ -240,17 +240,51 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
 
     # Cancel any previous definition of name, either built in or
     # provided with a -U option // Issue #191
-    undefines = [
-        u
-        for u in env.get("CCFLAGS", [])
-        if isinstance(u, string_types) and u.startswith("-U")
-    ]
+    ccflags = env.get("CCFLAGS", [])
+    undefines = []
+
+    # Handle both "-UMACRO" and "-U MACRO" formats
+    i = 0
+    while i < len(ccflags):
+        item = ccflags[i]
+        if isinstance(item, string_types) and item.startswith("-U"):
+            if len(item) == 2:  # Just "-U" by itself
+                # Next item should be the macro name
+                if i + 1 < len(ccflags):
+                    macro_name = ccflags[i + 1]
+                    undefines.append(("-U", macro_name))
+                    i += 2  # Skip both "-U" and the macro name
+                    continue
+            else:  # "-UMACRONAME" format
+                macro_name = item[2:]
+                undefines.append(item)
+                i += 1
+                continue
+        i += 1
+
     if undefines:
         for undef in undefines:
-            env["CCFLAGS"].remove(undef)
-            if undef[2:] in env["CPPDEFINES"]:
-                env["CPPDEFINES"].remove(undef[2:])
-        env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
+            # Handle both formats
+            if isinstance(undef, tuple):
+                flag, macro_name = undef
+                env["CCFLAGS"].remove(flag)
+                env["CCFLAGS"].remove(macro_name)
+            else:
+                macro_name = undef[2:]
+                env["CCFLAGS"].remove(undef)
+
+            # Remove from CPPDEFINES if it exists
+            if macro_name in env["CPPDEFINES"]:
+                env["CPPDEFINES"].remove(macro_name)
+
+        # Build the -U flags string
+        undef_flags = []
+        for undef in undefines:
+            if isinstance(undef, tuple):
+                undef_flags.append(f"{undef[0]} {undef[1]}")
+            else:
+                undef_flags.append(undef)
+        env.Append(_CPPDEFFLAGS=" %s" % " ".join(undef_flags))
 
 
 def ProcessUnFlags(env, flags):
