@@ -22,6 +22,8 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.2.1 (2026-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for the `Neovim <https://docs.platformio.org/en/latest/integration/ide/neovim.html>`__ text editor
+
 6.2.0 (2026-09-05)
 ~~~~~~~~~~~~~~~~~~
 
