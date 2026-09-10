@@ -158,10 +158,19 @@ def is_ci():
 def is_container():
     if os.path.exists("/.dockerenv"):
         return True
-    if not os.path.isfile("/proc/1/cgroup"):
+
+    if not os.path.exists("/proc/1/cgroup"):
         return False
-    with open("/proc/1/cgroup", encoding="utf8") as fp:
-        return ":/docker/" in fp.read()
+
+    try:
+        with open("/proc/1/cgroup", encoding="utf8") as fp:
+            cgroup = fp.read()
+    except (OSError, PermissionError, UnicodeError):
+        return False
+
+    return any(
+        marker in cgroup for marker in ("docker", "containerd", "kubepods", "libpod")
+    )
 
 
 def get_pythonexe_path():
