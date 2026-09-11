@@ -61,8 +61,8 @@ int main() {
 }
 """
 
-EXPECTED_ERRORS = 5
-EXPECTED_WARNINGS = 1
+EXPECTED_ERRORS = 6
+EXPECTED_WARNINGS = 3
 EXPECTED_STYLE = 4
 EXPECTED_DEFECTS = EXPECTED_ERRORS + EXPECTED_WARNINGS + EXPECTED_STYLE
 
@@ -315,11 +315,11 @@ def test_check_individual_flags_passed(clirunner, validate_cliresult, tmpdir):
     assert cppcheck_flags_found
 
 
-@pytest.mark.skipif(
-    sys.version_info >= (3, 14),
-    reason="MISRA: DeprecationWarning: "
-    "codecs.open() is deprecated since Python 3.14",
-)
+# @pytest.mark.skipif(
+#     sys.version_info >= (3, 14),
+#     reason="MISRA: DeprecationWarning: "
+#     "codecs.open() is deprecated since Python 3.14",
+# )
 def test_check_cppcheck_misra_addon(clirunner, validate_cliresult, tmpdir_factory):
     check_dir = tmpdir_factory.mktemp("project")
     check_dir.join("platformio.ini").write(DEFAULT_CONFIG)
