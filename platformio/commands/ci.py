@@ -26,6 +26,15 @@ from platformio.project.config import ProjectConfig
 from platformio.run.cli import cli as cmd_run
 
 
+def split_ci_src_env(raw):
+    """Split ``PLATFORMIO_CI_SRC`` on the native path separator.
+
+    A literal ``:`` split treats a Windows drive letter as a delimiter, so
+    ``C:\\proj\\main.cpp`` becomes ``['C', '\\proj\\main.cpp']``.
+    """
+    return raw.split(os.pathsep)
+
+
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     invalid_path = None
     value = list(value)
@@ -77,7 +86,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments, to
     verbose,
 ):
     if not src and os.getenv("PLATFORMIO_CI_SRC"):
-        src = validate_path(ctx, None, os.getenv("PLATFORMIO_CI_SRC").split(":"))
+        src = validate_path(ctx, None, split_ci_src_env(os.getenv("PLATFORMIO_CI_SRC")))
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 

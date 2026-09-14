@@ -14,8 +14,19 @@
 
 from os.path import isfile, join
 
-from platformio.commands.ci import cli as cmd_ci
+from platformio.commands.ci import cli as cmd_ci, split_ci_src_env
 from platformio.package.commands.install import package_install_cmd
+
+
+def test_split_ci_src_env_keeps_windows_drive(monkeypatch):
+    monkeypatch.setattr("os.pathsep", ";")
+    assert split_ci_src_env(r"C:\proj\src\main.cpp") == [r"C:\proj\src\main.cpp"]
+    assert split_ci_src_env(r"C:\a.cpp;D:\b.cpp") == [r"C:\a.cpp", r"D:\b.cpp"]
+
+
+def test_split_ci_src_env_posix_colon(monkeypatch):
+    monkeypatch.setattr("os.pathsep", ":")
+    assert split_ci_src_env("/tmp/a.cpp:/tmp/b.cpp") == ["/tmp/a.cpp", "/tmp/b.cpp"]
 
 
 def test_ci_empty(clirunner):
