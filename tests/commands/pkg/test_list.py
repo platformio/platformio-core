@@ -14,8 +14,10 @@
 
 # pylint: disable=unused-argument
 
+import io
+
 from platformio.package.commands.install import package_install_cmd
-from platformio.package.commands.list import package_list_cmd
+from platformio.package.commands.list import get_tree_glyphs, package_list_cmd
 
 PROJECT_CONFIG_TPL = """
 [env]
@@ -135,3 +137,20 @@ def test_global_packages(clirunner, validate_cliresult, isolated_pio_core, tmp_p
     validate_cliresult(result)
     assert "DallasTemperature" in result.output
     assert "OneWire" in result.output
+
+
+def test_tree_glyphs(monkeypatch):
+    def with_encoding(encoding):
+        monkeypatch.setattr(
+            "sys.stdout", io.TextIOWrapper(io.BytesIO(), encoding=encoding)
+        )
+        return get_tree_glyphs()
+
+    assert with_encoding("utf-8") == ("│   ", "├──", "└──")
+
+    # a non-Unicode console must not blow up with UnicodeEncodeError
+    for encoding in ("cp1252", "ascii"):
+        glyphs = with_encoding(encoding)
+        assert glyphs == ("|   ", "|--", "`--")
+        for glyph in glyphs:
+            glyph.encode(encoding)
