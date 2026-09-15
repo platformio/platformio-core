@@ -77,7 +77,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments, to
     verbose,
 ):
     if not src and os.getenv("PLATFORMIO_CI_SRC"):
-        src = validate_path(ctx, None, os.getenv("PLATFORMIO_CI_SRC").split(":"))
+        src = validate_path(ctx, None, os.getenv("PLATFORMIO_CI_SRC").split(os.pathsep))
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 
