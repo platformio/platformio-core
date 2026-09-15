@@ -161,17 +161,17 @@ class ProjectGenerator:
                 if not os.path.isdir(dst_dir):
                     os.makedirs(dst_dir)
             file_name = os.path.basename(tpl_path)[:-4]
-            contents = self._render_tpl(tpl_path, tpl_vars)
-            self._merge_contents(os.path.join(dst_dir, file_name), contents)
+            is_optional = file_name.endswith(".optional")
+            if is_optional:
+                file_name = file_name[: -len(".optional")]
+            dst_path = os.path.join(dst_dir, file_name)
+            if is_optional and os.path.isfile(dst_path):
+                continue
+            contents = self.render_tpl(tpl_path, tpl_vars)
+            with open(dst_path, "w", encoding="utf8") as fp:
+                fp.write(contents)
 
     @staticmethod
-    def _render_tpl(tpl_path, tpl_vars):
+    def render_tpl(tpl_path, tpl_vars):
         with open(tpl_path, "r", encoding="utf8") as fp:
             return bottle.template(fp.read(), **tpl_vars)
-
-    @staticmethod
-    def _merge_contents(dst_path, contents):
-        if os.path.basename(dst_path) == ".gitignore" and os.path.isfile(dst_path):
-            return
-        with open(dst_path, "w", encoding="utf8") as fp:
-            fp.write(contents)
