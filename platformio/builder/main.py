@@ -205,7 +205,15 @@ env.AddPreAction(
 )
 
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
-AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
+if "compiledb" in COMMAND_LINE_TARGETS:
+    # `pio run -t compiledb -t __test` (issue #4934): "__test" is passed only
+    # to include test sources in the compilation database. Don't alias it to
+    # the default build targets — a full build would try to link every test
+    # suite (each with its own `main()`) into one program and fail, while
+    # compiledb generation itself never compiles or links anything.
+    env.Alias("__test", [])
+else:
+    AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 
 env.ProcessDelayedActions()
 
