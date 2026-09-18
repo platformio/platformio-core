@@ -78,6 +78,12 @@ def BuildProgram(env):
     program = env.Program(env.subst("$PROGPATH"), env["PIOBUILDFILES"])
     env.Replace(PIOMAINPROG=program)
 
+    # PIO_EXTRA_APP_SOURCE_DEPS can be set to cause all application objects to depend on the given path(s).
+    app_source_deps = env.get("PIO_EXTRA_APP_SOURCE_DEPS", [])
+    for dep in app_source_deps:
+        for prog_obj in env["PIOBUILDFILES"]:
+            env.Depends(prog_obj, dep)
+
     AlwaysBuild(
         env.Alias(
             "checkprogsize",
