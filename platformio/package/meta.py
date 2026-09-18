@@ -373,6 +373,10 @@ class PackageSpec:  # pylint: disable=too-many-instance-attributes
         if raw.count("/") != 1 or "@" in raw:
             return raw
         tokens = raw.split("/", 1)
+        # a scheme-like prefix (e.g. "symlink:../lib") is not a registry owner,
+        # leave it for the URI parser so an invalid path fails loudly
+        if ":" in tokens[0]:
+            return raw
         self.owner = tokens[0].strip()
         self.name = tokens[1].strip()
         return None

@@ -182,6 +182,11 @@ class PackageManagerInstallMixin:
                 _uri = uri[7:]
                 if os.path.isfile(_uri):
                     self.unpack(_uri, tmp_dir)
+                elif not os.path.isdir(_uri):
+                    raise PackageException(
+                        "Can not install package from `%s`, "
+                        "path does not exist" % _uri
+                    )
                 else:
                     fs.rmtree(tmp_dir)
                     shutil.copytree(_uri, tmp_dir, symlinks=True)

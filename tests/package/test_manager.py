@@ -26,6 +26,7 @@ import semantic_version
 from platformio import fs, util
 from platformio.package.exception import (
     MissingPackageManifestError,
+    PackageException,
     UnknownPackageError,
 )
 from platformio.package.manager.library import LibraryPackageManager
@@ -33,6 +34,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.package.pack import PackagePacker
+from platformio.package.vcsclient import VCSBaseException
 
 
 def test_download(isolated_pio_core):
@@ -192,6 +194,35 @@ version = 5.2.7
     assert ["local-lib-dir", "manifest-lib-name", "wifilib"] == [
         os.path.basename(pkg.path) for pkg in lm.get_installed()
     ]
+
+
+def test_install_from_invalid_local_path(isolated_pio_core, tmpdir_factory):
+    tmp_dir = tmpdir_factory.mktemp("tmp")
+    lm = LibraryPackageManager(str(tmpdir_factory.mktemp("storage")))
+    lm.set_log_level(logging.ERROR)
+
+    # missing "file://" path should not crash with FileNotFoundError
+    missing_dir = tmp_dir.join("does-not-exist")
+    with pytest.raises(PackageException, match="path does not exist"):
+        lm.install(PackageSpec("file://%s" % missing_dir))
+    with pytest.raises(PackageException, match="not a directory"):
+        lm.install(PackageSpec("symlink://%s" % missing_dir))
+
+    # dependencies with an invalid local path (e.g. "symlink:../lib" instead of
+    # "symlink://../lib") must fail loudly instead of being silently skipped
+    src_dir = tmp_dir.join("lib-with-bad-deps").mkdir()
+    src_dir.mkdir("src").join("main.cpp").write("")
+    src_dir.join("library.json").write("""
+{
+  "name": "lib-with-bad-deps",
+  "version": "1.0.0",
+  "dependencies": {
+    "nonexistent-lib": "symlink:../does-not-exist"
+  }
+}
+""")
+    with pytest.raises(VCSBaseException, match="Unknown repository type"):
+        lm.install(PackageSpec("file://%s" % src_dir))
 
 
 def test_install_from_registry(isolated_pio_core, tmpdir_factory):

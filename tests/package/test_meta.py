@@ -105,6 +105,24 @@ def test_spec_local_urls(tmpdir_factory):
     )
 
 
+def test_spec_invalid_local_urls():
+    # a scheme-like prefix with a single "/" must not be parsed as owner/name
+    # (issue #4901), it is passed on as a URI so the installer rejects it
+    for raw in ("symlink:../some-lib", "file:../some-lib"):
+        spec = PackageSpec(raw)
+        assert spec.owner is None
+        assert spec.uri == raw
+        assert spec.external
+        # as a dependency requirement (library.json "dependencies")
+        spec = PackageSpec(name="some-dep", requirements=raw)
+        assert spec.owner is None
+        assert spec.name == "some-dep"
+        assert spec.uri == raw
+    # regular owner/name specs are not affected
+    assert PackageSpec("owner/name").owner == "owner"
+    assert PackageSpec("owner/name").name == "name"
+
+
 def test_spec_external_urls():
     assert PackageSpec(
         "https://github.com/platformio/platformio-core/archive/develop.zip"
