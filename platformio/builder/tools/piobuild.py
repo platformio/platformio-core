@@ -14,6 +14,7 @@
 
 import fnmatch
 import os
+import re
 import sys
 
 from SCons import Builder, Util  # pylint: disable=import-error
@@ -193,6 +194,11 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
         flags = [flags]
     result = {}
     for raw in flags:
+        # Normalize a "-U" undefine that is separated from its macro name by
+        # whitespace (e.g. "-U NAME") into the attached form ("-UNAME").
+        # Otherwise SCons' ParseFlags treats the bare "-U" as a flag and the
+        # macro name as a library file, producing an invalid "-U" // Issue #5237
+        raw = re.sub(r"(^|\s)-U\s+([^\s-]\S*)", r"\1-U\2", str(raw))
         for key, value in env.ParseFlags(str(raw)).items():
             if key not in result:
                 result[key] = []
