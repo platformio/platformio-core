@@ -14,6 +14,7 @@
 
 import fnmatch
 import os
+import re
 import sys
 
 from SCons import Builder, Util  # pylint: disable=import-error
@@ -193,7 +194,13 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
         flags = [flags]
     result = {}
     for raw in flags:
-        for key, value in env.ParseFlags(str(raw)).items():
+        raw = str(raw)
+
+        # issue #5237: Undefines in build_flags don't work if there's a space after -U
+        if "-U " in raw:
+            raw = re.sub(r"(^|\s)-U\s+((?!-)\S+)", r"\1-U\2", raw)
+
+        for key, value in env.ParseFlags(raw).items():
             if key not in result:
                 result[key] = []
             result[key].extend(value)

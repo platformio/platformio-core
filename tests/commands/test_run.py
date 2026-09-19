@@ -197,6 +197,37 @@ int main() {
     assert str(tmpdir) not in build_output
 
 
+def test_undefine_macros(clirunner, validate_cliresult, tmpdir):
+    tmpdir.join("platformio.ini").write("""
+[env:native]
+platform = native
+build_flags =
+    -D FOO -DBAR
+    -DBAZ
+    -UFOO "-U BAR"
+    -U BAZ
+""")
+
+    tmpdir.mkdir("src").join("main.c").write("""
+#ifdef FOO
+#error "FOO should not be defined"
+#endif
+
+#ifdef BAR
+#error "BAR should not be defined"
+#endif
+
+#ifdef BAZ
+#error "BAZ should not be defined"
+#endif
+int main() {
+}
+""")
+
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(tmpdir)])
+    validate_cliresult(result)
+
+
 def test_debug_default_build_flags(clirunner, validate_cliresult, tmpdir):
     tmpdir.join("platformio.ini").write("""
 [env:native]
