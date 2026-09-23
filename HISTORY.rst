@@ -26,6 +26,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 * Preserved custom formatting, comments, and settings in ``.vscode/extensions.json`` during project IDE initialization instead of unconditionally overwriting the file (`issue #5473 <https://github.com/platformio/platformio-core/issues/5473>`_)
 * Fixed path parsing in `pio ci <https://docs.platformio.org/en/latest/core/userguide/cmd_ci.html>`__ on Windows by using OS-native path separators for the ``PLATFORMIO_CI_SRC`` environment variable (`pull #5514 <https://github.com/platformio/platformio-core/pull/5514>`_)
 * Fixed an issue where undefine flags with spaces (e.g., ``-U MACRO``) in ``build_flags`` were parsed incorrectly, passing only a bare ``-U`` to the compiler (`issue #5237 <https://github.com/platformio/platformio-core/issues/5237>`_)
+* Fixed an issue where a legacy ``$PROJECT_HASH`` variable at the start of an option value was not expanded when the value also ended with a ``$`` character (`issue #5520 <https://github.com/platformio/platformio-core/issues/5520>`_)
 
 6.2.0 (2026-09-05)
 ~~~~~~~~~~~~~~~~~~
