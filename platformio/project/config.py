@@ -323,7 +323,7 @@ class ProjectConfigBase:
             stop = True
             for name in legacy_vars:
                 x = value.find(f"${name}")
-                if x < 0 or value[x - 1] == "$":
+                if x < 0 or (x > 0 and value[x - 1] == "$"):
                     continue
                 value = "%s${%s}%s" % (value[:x], name, value[x + len(name) + 1 :])
                 stop = False

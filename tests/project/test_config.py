@@ -672,6 +672,23 @@ test_testing_command =
     assert testing_command[5] == '${UPLOAD_PORT and "-p "+UPLOAD_PORT}'
 
 
+def test_legacy_variable_at_value_start(tmp_path: Path):
+    # A legacy (brace-less) $PROJECT_HASH at the start of a value must be expanded
+    # even when the value ends with "$". The escaped-variable guard used to read the
+    # last character (value[-1]) for a match at index 0 and wrongly skip expansion.
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text("""
+[env:myenv]
+build_flags = $PROJECT_HASH-$
+""")
+    with fs.cd(str(tmp_path)):
+        config = ProjectConfig(str(project_conf))
+        value = config.get("env:myenv", "build_flags")[0]
+    assert "$PROJECT_HASH" not in value
+    assert value.startswith(os.path.basename(str(tmp_path)) + "-")
+    assert value.endswith("-$")
+
+
 def test_extends_order(tmp_path: Path):
     project_conf = tmp_path / "platformio.ini"
     project_conf.write_text("""
