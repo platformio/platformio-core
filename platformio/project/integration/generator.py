@@ -104,6 +104,31 @@ class ProjectGenerator:
         # build data
         tpl_vars.update(load_build_metadata(self.project_dir, self.env_name) or {})
 
+        # The VSCode launch template uses the default debug environment when
+        # no environment is forced. Keep its executable and toolchain paths in
+        # sync with that environment instead of mixing them with the default
+        # build environment's metadata.
+        debug_env_name = tpl_vars["default_debug_env_name"]
+        if (
+            self.ide == "vscode"
+            and not self.forced_env_name
+            and debug_env_name != self.env_name
+        ):
+            debug_build_data = load_build_metadata(
+                self.project_dir, debug_env_name, build_type="debug"
+            )
+            if debug_build_data and all(
+                key in debug_build_data for key in ("prog_path", "cc_path")
+            ):
+                tpl_vars["prog_path"] = debug_build_data["prog_path"]
+                tpl_vars["cc_path"] = debug_build_data["cc_path"]
+            else:
+                # If debug metadata cannot be generated (for example, before
+                # the selected platform is installed), use the environment
+                # whose metadata is available and keep the launch entry
+                # internally consistent.
+                tpl_vars["default_debug_env_name"] = self.env_name
+
         with fs.cd(self.project_dir):
             tpl_vars.update(
                 {
