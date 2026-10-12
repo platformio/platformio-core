@@ -48,11 +48,6 @@ def get_pip_dependencies():
     ]
 
     extra = []
-    # issue #4702; Broken "requests/charset_normalizer" on macOS ARM
-    extra.append(
-        'chardet >= 3.0.2,<6; platform_system == "Darwin" and "arm" in platform_machine'
-    )
-
     # issue 4614: urllib3 v2.0 only supports OpenSSL 1.1.1+
     try:
         import ssl  # pylint: disable=import-outside-toplevel
