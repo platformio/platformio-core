@@ -14,6 +14,8 @@
 
 import os
 
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+
 from platformio.builder.tools import piobuild
 from platformio.test.result import TestSuite
 from platformio.test.runners.factory import TestRunnerFactory
@@ -25,6 +27,23 @@ def ConfigureTestTarget(env):
         PIOTEST_SRC_FILTER=[f"+<*.{ext}>" for ext in piobuild.SRC_BUILD_EXT],
     )
     env.Prepend(CPPPATH=["$PROJECT_TEST_DIR"])
+
+    if "PIOTEST_RUNNING_NAME" not in env and "compiledb" in COMMAND_LINE_TARGETS:
+        # A compilation database is being generated without a specific test
+        # suite selected (`pio run -t compiledb -t __test`, issue #4934).
+        # The default filter above only matches sources directly in the test
+        # dir, so nested `test_*/` suites — the documented layout — would
+        # produce "Nothing to build". Include every test suite recursively:
+        # unlike a real test build, compiledb never links, so the multiple
+        # `main()` definitions across suites are not a problem.
+        env.Append(PIOTEST_SRC_FILTER=[f"+<test_*{os.path.sep}>"])
+        test_dir = env.subst("$PROJECT_TEST_DIR")
+        if os.path.isdir(test_dir):
+            for item in sorted(os.listdir(test_dir)):
+                if item.startswith("test_") and os.path.isdir(
+                    os.path.join(test_dir, item)
+                ):
+                    env.Prepend(CPPPATH=[os.path.join("$PROJECT_TEST_DIR", item)])
 
     if "PIOTEST_RUNNING_NAME" in env:
         test_name = env["PIOTEST_RUNNING_NAME"]
