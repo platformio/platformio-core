@@ -18,6 +18,7 @@ from typing import List
 import click
 
 from platformio import fs
+from platformio.compat import stdout_encodes
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -25,6 +26,14 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+
+
+def get_tree_glyphs():
+    """Return (indent, tee, elbow), falling back to ASCII when the output
+    stream cannot encode the box-drawing characters."""
+    if stdout_encodes("│├└─"):
+        return ("│   ", "├──", "└──")
+    return ("|   ", "|--", "`--")
 
 
 @click.command("list", short_help="List installed packages")
@@ -96,11 +105,12 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
         printed_pkgs.append(pkg.path)
         pm.memcache_set("__printed_pkgs", printed_pkgs)
 
+        indent, tee, elbow = get_tree_glyphs()
         click.echo(
             "%s%s %s"
             % (
-                "│   " * level,
-                "├──" if index < len(candidates) - 1 else "└──",
+                indent * level,
+                tee if index < len(candidates) - 1 else elbow,
                 humanize_package(
                     pkg,
                     spec=spec,
