@@ -21,6 +21,7 @@ import click
 from platformio import __version__
 from platformio.test.reports.base import TestReportBase
 from platformio.test.result import TestStatus
+import xml.dom.minidom as minidom
 
 
 class JunitTestReport(TestReportBase):
@@ -36,10 +37,17 @@ class JunitTestReport(TestReportBase):
             )
 
         with open(output_path, mode="wb") as fp:
-            self.build_xml_tree().write(fp, encoding="utf8")
+            xml_tree = self.build_xml_tree()
+            xml_str = ET.tostring(xml_tree.getroot(), encoding="utf8", method="xml")
+            pretty_xml_str = self.prettify_xml(xml_str)
+            fp.write(pretty_xml_str.encode("utf8"))
 
         if verbose:
             click.secho(f"Saved JUnit report to the {output_path}", fg="green")
+
+    def prettify_xml(self, xml_str):
+        parsed_xml = minidom.parseString(xml_str)
+        return parsed_xml.toprettyxml(indent="\t")
 
     def build_xml_tree(self):
         root = ET.Element("testsuites")
