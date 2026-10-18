@@ -94,6 +94,7 @@ class ProjectConfigBase:
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
+        self._source_map = {}
         self._parser = configparser.ConfigParser(inline_comment_prefixes=("#", ";"))
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
@@ -112,6 +113,8 @@ class ProjectConfigBase:
         except configparser.Error as exc:
             raise exception.InvalidProjectConfError(path, str(exc)) from exc
 
+        self._update_source_map(path)
+
         if not parse_extra:
             return
 
@@ -121,6 +124,29 @@ class ProjectConfigBase:
                 pattern = fs.expanduser(pattern)
             for item in glob.glob(pattern, recursive=True):
                 self.read(item)
+
+    def _update_source_map(self, path):
+        """Record which file defines each (section, option) pair.
+
+        Independently parses the file to discover its sections and options.
+        Later files override earlier ones, matching configparser's merge
+        semantics.
+        """
+        file_parser = configparser.ConfigParser(inline_comment_prefixes=("#", ";"))
+        try:
+            file_parser.read(path, "utf-8")
+        except configparser.Error:
+            return
+        for section in file_parser.sections():
+            for option in file_parser.options(section):
+                self._source_map[(section, option)] = path
+
+    def get_source(self, section, option):
+        """Return the file path where the given option was last defined.
+
+        Returns None if the option is not found in any parsed file.
+        """
+        return self._source_map.get((section, option))
 
     def _maintain_renamed_options(self):
         renamed_options = {}

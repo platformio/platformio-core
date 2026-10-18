@@ -731,3 +731,67 @@ test_testing_command = /usr/bin/flash-tool -p $UPLOAD_PORT -b $UPLOAD_SPEED
     assert result["warnings"] and len(result["warnings"]) == 2
     assert "deprecated" in result["warnings"][0]
     assert "Invalid variable declaration" in result["warnings"][1]
+
+
+def test_get_source_single_file(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text("""
+[platformio]
+src_dir = src
+
+[env:myenv]
+board = esp32
+build_flags = -DFOO
+    """)
+    config = ProjectConfig(str(project_conf))
+    assert config.get_source("platformio", "src_dir") == str(project_conf)
+    assert config.get_source("env:myenv", "board") == str(project_conf)
+    assert config.get_source("env:myenv", "build_flags") == str(project_conf)
+
+
+def test_get_source_extra_configs(config):
+    # The module-scoped `config` fixture has three files:
+    # - platformio.ini (BASE_CONFIG)
+    # - extra_envs.ini (EXTRA_ENVS_CONFIG)
+    # - extra_debug.ini (EXTRA_DEBUG_CONFIG)
+
+    # Options only in platformio.ini
+    assert os.path.basename(config.get_source("platformio", "env_default")) == (
+        "platformio.ini"
+    )
+    assert os.path.basename(config.get_source("env:base", "build_flags")) == (
+        "platformio.ini"
+    )
+
+    # Options only in extra_envs.ini
+    assert os.path.basename(config.get_source("env:extra_1", "build_flags")) == (
+        "extra_envs.ini"
+    )
+    assert os.path.basename(config.get_source("env:extra_2", "upload_port")) == (
+        "extra_envs.ini"
+    )
+
+    # Options overridden by extra_debug.ini (last file wins)
+    # custom.debug_flags is defined in platformio.ini and overridden in extra_debug.ini
+    assert os.path.basename(config.get_source("custom", "debug_flags")) == (
+        "extra_debug.ini"
+    )
+    # env:extra_2.build_flags is in extra_envs.ini and overridden in extra_debug.ini
+    assert os.path.basename(config.get_source("env:extra_2", "build_flags")) == (
+        "extra_debug.ini"
+    )
+
+
+def test_get_source_unknown_option(config):
+    assert config.get_source("custom", "nonexistent_option") is None
+    assert config.get_source("nonexistent_section", "option") is None
+
+
+def test_get_source_no_extra(tmp_path: Path):
+    project_conf = tmp_path / "platformio.ini"
+    project_conf.write_text("""
+[env:myenv]
+board = esp32
+    """)
+    config = ProjectConfig(str(project_conf), parse_extra=False)
+    assert config.get_source("env:myenv", "board") == str(project_conf)
