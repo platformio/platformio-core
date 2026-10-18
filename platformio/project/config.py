@@ -531,8 +531,11 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigLintMixin, ProjectConfigDirs
     def as_tuple(self):
         return [(s, self.items(s)) for s in self.sections()]
 
+    def as_dict(self):
+        return {s: self.items(s, as_dict=True) for s in self.sections()}
+
     def to_json(self):
-        return json.dumps(self.as_tuple())
+        return json.dumps(self.as_dict())
 
     def update(self, data, clear=False):
         assert isinstance(data, list)
