@@ -70,7 +70,9 @@ class BaseArchiver:
             self._afo.extract(item, dest_dir, **kwargs)
         except FileNotFoundError as exc:
             src_path = self.get_item_filename(item)
-            if IS_WINDOWS and (len(src_path) + len(dest_dir) > 260):
+            if IS_WINDOWS and (
+                len(os.path.join(os.path.abspath(dest_dir), src_path)) > 260
+            ):
                 raise WindowsLongPathError(src_path, dest_dir) from exc
             raise exc
         self.after_extract(item, dest_dir)
