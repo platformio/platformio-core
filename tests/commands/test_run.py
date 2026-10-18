@@ -12,9 +12,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import subprocess
+import time
 from pathlib import Path
 
 from platformio.run.cli import cli as cmd_run
+
+
+def test_rebuilds_source_when_content_changes_without_metadata_change(
+    clirunner, validate_cliresult, tmp_path: Path
+):
+    project_dir = tmp_path / "project"
+    src_dir = project_dir / "src"
+    src_dir.mkdir(parents=True)
+    (project_dir / "platformio.ini").write_text("""
+[env:native]
+platform = native
+""")
+
+    source_path = src_dir / "main.c"
+    source_path.write_text("int main(void) { return 0; }\n")
+    old_timestamp = time.time() - (3 * 24 * 60 * 60)
+    os.utime(source_path, (old_timestamp, old_timestamp))
+    original_stat = source_path.stat()
+
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
+    validate_cliresult(result)
+
+    # Reproduce a Git checkout that restores different content with the same
+    # file size and modification time. Timestamp-based SCons deciders otherwise
+    # risk reusing the object produced from the previous source state.
+    source_path.write_text("int main(void) { return 1; }\n")
+    os.utime(
+        source_path,
+        ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns),
+    )
+
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
+    validate_cliresult(result)
+
+    object_path = project_dir / ".pio" / "build" / "native" / "src" / "main.o"
+    object_mtime_ns = object_path.stat().st_mtime_ns
+
+    program_name = "program.exe" if os.name == "nt" else "program"
+    program_path = project_dir / ".pio" / "build" / "native" / program_name
+    assert subprocess.run([program_path], check=False).returncode == 1
+
+    # Hashing the source again must not turn an unchanged build into a rebuild.
+    time.sleep(0.01)
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
+    validate_cliresult(result)
+    assert object_path.stat().st_mtime_ns == object_mtime_ns
 
 
 def test_generic_build(clirunner, validate_cliresult, tmpdir):
