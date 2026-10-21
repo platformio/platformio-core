@@ -32,6 +32,7 @@ from platformio import app, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
+from platformio.system.build_cache import prune_build_cache_throttled
 
 AllowSubstExceptions(NameError)
 
@@ -143,6 +144,11 @@ if env.subst("$BUILD_CACHE_DIR"):
     if not os.path.isdir(env.subst("$BUILD_CACHE_DIR")):
         os.makedirs(env.subst("$BUILD_CACHE_DIR"))
     env.CacheDir("$BUILD_CACHE_DIR")
+    prune_build_cache_throttled(
+        env.subst("$BUILD_CACHE_DIR"),
+        config.get("platformio", "build_cache_max_age"),
+        fs.parse_file_size(config.get("platformio", "build_cache_max_size") or 0),
+    )
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")

@@ -79,6 +79,15 @@ def humanize_file_size(filesize):
     return "%d%sB" % ((base * filesize / unit), suffix)
 
 
+def parse_file_size(value):
+    """Convert a human-readable size such as `512MB` or `10GB` to bytes"""
+    match = re.match(r"^\s*(\d+(?:\.\d+)?)\s*([KMGT]?)B?\s*$", str(value), re.I)
+    if not match:
+        raise ValueError("Invalid size `%s`, expected e.g. 500MB or 10GB" % value)
+    exponent = " KMGT".index(match.group(2).upper() or " ")
+    return int(float(match.group(1)) * 1024**exponent)
+
+
 def calculate_file_hashsum(algorithm, path):
     h = hashlib.new(algorithm)
     with io.open(path, "rb", buffering=0) as fp:
