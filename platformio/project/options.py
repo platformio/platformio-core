@@ -19,7 +19,7 @@ from collections import OrderedDict
 
 import click
 
-from platformio import fs
+from platformio import exception, fs
 from platformio.compat import IS_WINDOWS
 
 
@@ -88,6 +88,16 @@ def validate_dir(path):
     if path.startswith("~"):
         path = fs.expanduser(path)
     return os.path.abspath(path)
+
+
+def validate_size(value):
+    if not value or "${" in str(value):  # not all values expanded, ignore
+        return value
+    try:
+        fs.parse_file_size(value)
+    except ValueError as exc:
+        raise exception.UserSideException(str(exc)) from exc
+    return value
 
 
 def get_default_core_dir():
@@ -204,6 +214,28 @@ ProjectOptions = OrderedDict(
                 ),
                 sysenvvar="PLATFORMIO_BUILD_CACHE_DIR",
                 validate=validate_dir,
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="build_cache_max_age",
+                description=(
+                    "Remove entries from `build_cache_dir` that have not been used "
+                    "for this number of days, checked once a day when a build starts. "
+                    "The cache is not pruned by default"
+                ),
+                sysenvvar="PLATFORMIO_BUILD_CACHE_MAX_AGE",
+                type=click.IntRange(min=1),
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="build_cache_max_size",
+                description=(
+                    "Maximum size of `build_cache_dir`, such as `500MB` or `10GB`. "
+                    "The least recently used entries are removed first, checked once a "
+                    "day when a build starts. The cache is not limited by default"
+                ),
+                sysenvvar="PLATFORMIO_BUILD_CACHE_MAX_SIZE",
+                validate=validate_size,
             ),
             ConfigPlatformioOption(
                 group="directory",

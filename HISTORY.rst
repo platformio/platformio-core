@@ -22,6 +22,7 @@ test-driven methodologies, and modern toolchains for unrivaled success.
 6.2.1 (2026-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added optional ``build_cache_max_age`` and ``build_cache_max_size`` project options to limit the size and age of ``build_cache_dir``, which otherwise grows without bound
 * Added support for the `Neovim <https://docs.platformio.org/en/latest/integration/ide/neovim.html>`__ text editor
 * Preserved custom formatting, comments, and settings in ``.vscode/extensions.json`` during project IDE initialization instead of unconditionally overwriting the file (`issue #5473 <https://github.com/platformio/platformio-core/issues/5473>`_)
 * Fixed path parsing in `pio ci <https://docs.platformio.org/en/latest/core/userguide/cmd_ci.html>`__ on Windows by using OS-native path separators for the ``PLATFORMIO_CI_SRC`` environment variable (`pull #5514 <https://github.com/platformio/platformio-core/pull/5514>`_)
