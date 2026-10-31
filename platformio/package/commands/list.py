@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import sys
 from typing import List
 
 import click
@@ -70,6 +71,27 @@ def humanize_package(pkg, spec=None, verbose=False):
     return " ".join(data)
 
 
+_TREE_CHARS_UNICODE = ("│   ", "├──", "└──")
+_TREE_CHARS_ASCII = ("|   ", "|--", "`--")
+
+
+def _get_tree_chars(encoding=None):
+    """Pick tree-drawing characters the output stream is able to encode.
+
+    Legacy Windows code pages (cp1251, cp1252, ...) do not contain the
+    box-drawing characters, so writing them raises UnicodeEncodeError and
+    ``pio pkg list > file`` aborts (issue #5053). Fall back to plain ASCII
+    when the active encoding cannot represent them.
+    """
+    if encoding is None:
+        encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        "".join(_TREE_CHARS_UNICODE).encode(encoding)
+    except (LookupError, UnicodeEncodeError):
+        return _TREE_CHARS_ASCII
+    return _TREE_CHARS_UNICODE
+
+
 def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=False):
     filtered_pkgs = [
         pm.get_package(spec) for spec in filter_specs or [] if pm.get_package(spec)
@@ -87,6 +109,8 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
         return
     candidates = sorted(candidates.values(), key=lambda item: item[0].metadata.name)
 
+    indent_char, branch_char, last_char = _get_tree_chars()
+
     for index, (pkg, spec) in enumerate(candidates):
         if filtered_pkgs and not _pkg_tree_contains(pm, pkg, filtered_pkgs):
             continue
@@ -99,8 +123,8 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
         click.echo(
             "%s%s %s"
             % (
-                "│   " * level,
-                "├──" if index < len(candidates) - 1 else "└──",
+                indent_char * level,
+                branch_char if index < len(candidates) - 1 else last_char,
                 humanize_package(
                     pkg,
                     spec=spec,
