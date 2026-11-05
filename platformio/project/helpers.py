@@ -119,6 +119,12 @@ def compute_project_checksum(config):
         for root, _, files in os.walk(d):
             for f in files:
                 path = os.path.join(root, f)
+                if (
+                    d == config.get("platformio", "src_dir")
+                    and path.endswith((".ino.cpp", ".pde.cpp"))
+                    and os.path.isfile(path[:-4])
+                ):
+                    continue
                 if path.endswith(check_suffixes):
                     chunks.append(path)
         if not chunks:
