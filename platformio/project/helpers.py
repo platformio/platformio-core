@@ -108,9 +108,10 @@ def compute_project_checksum(config):
 
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
+    src_dir = config.get("platformio", "src_dir")
     for d in (
         config.get("platformio", "include_dir"),
-        config.get("platformio", "src_dir"),
+        src_dir,
         config.get("platformio", "lib_dir"),
     ):
         if not os.path.isdir(d):
@@ -120,7 +121,7 @@ def compute_project_checksum(config):
             for f in files:
                 path = os.path.join(root, f)
                 if (
-                    d == config.get("platformio", "src_dir")
+                    d == src_dir
                     and path.endswith((".ino.cpp", ".pde.cpp"))
                     and os.path.isfile(path[:-4])
                 ):
