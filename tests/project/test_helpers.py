@@ -58,3 +58,49 @@ def test_checksum_tracks_regular_cpp_files(tmp_path):
 
     (src_dir / "main.cpp").write_text("int main() { return 0; }\n")
     assert compute_project_checksum(config) != checksum
+
+
+def test_checksum_ignores_generated_pde_cpp(tmp_path):
+    include_dir = tmp_path / "include"
+    src_dir = tmp_path / "src"
+    lib_dir = tmp_path / "lib"
+    for directory in (include_dir, src_dir, lib_dir):
+        directory.mkdir()
+
+    config = DummyProjectConfig(include_dir, src_dir, lib_dir)
+    (src_dir / "legacy.pde").write_text("void setup() {}\nvoid loop() {}\n")
+    checksum = compute_project_checksum(config)
+
+    (src_dir / "legacy.pde.cpp").write_text("#include <Arduino.h>\n")
+    assert compute_project_checksum(config) == checksum
+
+
+def test_checksum_tracks_standalone_cpp_with_sketch_suffix(tmp_path):
+    include_dir = tmp_path / "include"
+    src_dir = tmp_path / "src"
+    lib_dir = tmp_path / "lib"
+    for directory in (include_dir, src_dir, lib_dir):
+        directory.mkdir()
+
+    config = DummyProjectConfig(include_dir, src_dir, lib_dir)
+    checksum = compute_project_checksum(config)
+
+    # Without the original sketch, a *.ino.cpp file is a real source file.
+    (src_dir / "standalone.ino.cpp").write_text("int main() { return 0; }\n")
+    assert compute_project_checksum(config) != checksum
+
+
+def test_checksum_keeps_library_generated_like_sources(tmp_path):
+    include_dir = tmp_path / "include"
+    src_dir = tmp_path / "src"
+    lib_dir = tmp_path / "lib"
+    for directory in (include_dir, src_dir, lib_dir):
+        directory.mkdir()
+
+    config = DummyProjectConfig(include_dir, src_dir, lib_dir)
+    (lib_dir / "sketch.ino").write_text("void setup() {}\n")
+    checksum = compute_project_checksum(config)
+
+    # The exclusion applies only to generated files in the project src_dir.
+    (lib_dir / "sketch.ino.cpp").write_text("void setup() {}\n")
+    assert compute_project_checksum(config) != checksum
