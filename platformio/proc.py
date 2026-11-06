@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import platform
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -156,9 +157,10 @@ def is_ci():
 
 
 def is_container():
+    if "-gvisor-" in platform.platform():
+        return True
     if os.path.exists("/.dockerenv"):
         return True
-
     if not os.path.exists("/proc/1/cgroup"):
         return False
 
