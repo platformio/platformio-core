@@ -141,7 +141,7 @@ class TelemetryLogger:
             return True
         except requests.exceptions.HTTPError as exc:
             # skip Bad Request
-            if exc.response.status_code >= 400 and exc.response.status_code < 500:
+            if 400 <= exc.response.status_code < 500:
                 return True
         except:  # pylint: disable=bare-except
             pass
