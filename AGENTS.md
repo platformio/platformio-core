@@ -348,3 +348,19 @@ and `agent-docs/adr/` for architectural decisions.
 Follow the domain documentation rules in
 `agent-docs/domain.md`.
 
+## 15. Python Test Environment
+
+This project uses a tox-managed Python virtual environment for running tests.
+
+- Do not assume `pytest` is installed globally.
+- Always run pytest using the project's `.tox/py315` environment.
+- Use the following command from the repository root:
+
+  ```bash
+  .tox/py315/bin/python -m pytest
+  ```
+
+- Do not rely on shell-specific virtual environment activation.
+- Do not install pytest globally or create a separate virtual environment just to run tests.
+- If the environment does not exist, inspect the repository's tox configuration and use the established tox command to create or initialize it.
+
