@@ -30,6 +30,7 @@ def prune_cached_data(force=False, dry_run=False, silent=False):
         click.secho("Prune cached data:", bold=True)
         click.echo(" - cached API requests")
         click.echo(" - cached package downloads")
+        click.echo(" - interrupted package downloads")
         click.echo(" - temporary data")
     cache_dir = get_project_cache_dir()
     if os.path.isdir(cache_dir):

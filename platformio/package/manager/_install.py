@@ -169,7 +169,7 @@ class PackageManagerInstallMixin:
             compatibility=dependency_compatibility,
         )
 
-    def install_from_uri(self, uri, spec, checksum=None):
+    def install_from_uri(self, uri, spec, artifact=None, resume_partial=True):
         spec = self.ensure_spec(spec)
 
         if spec.symlink:
@@ -186,7 +186,7 @@ class PackageManagerInstallMixin:
                     fs.rmtree(tmp_dir)
                     shutil.copytree(_uri, tmp_dir, symlinks=True)
             elif uri.startswith(("http://", "https://")):
-                dl_path = self.download(uri, checksum)
+                dl_path = self.download(uri, artifact, resume_partial)
                 assert os.path.isfile(dl_path)
                 self.unpack(dl_path, tmp_dir)
             else:

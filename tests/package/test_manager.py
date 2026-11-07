@@ -28,6 +28,7 @@ from platformio.package.exception import (
     MissingPackageManifestError,
     UnknownPackageError,
 )
+from platformio.package.manager._download import TrustedArtifact
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -40,7 +41,8 @@ def test_download(isolated_pio_core):
     checksum = "69d59642cb91e64344f2cdc1d3b98c5cd57679b5f6db7accc7707bd4c5d9664a"
     lm = LibraryPackageManager()
     lm.set_log_level(logging.ERROR)
-    archive_path = lm.download(url, checksum)
+    archive_path = lm.download(url, TrustedArtifact(checksum))
+    assert os.path.basename(archive_path) == checksum
     assert fs.calculate_file_hashsum("sha256", archive_path) == checksum
     lm.cleanup_expired_downloads(random())
     assert os.path.isfile(archive_path)

@@ -123,8 +123,7 @@ class BasePackageManager(  # pylint: disable=too-many-public-methods,too-many-in
 
     @staticmethod
     def ensure_dir_exists(path):
-        if not os.path.isdir(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         assert os.path.isdir(path)
         return path
 

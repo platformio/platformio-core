@@ -76,7 +76,23 @@ class LockFile:
             self._fp.close()
             self._fp = None
             raise LockFileExists from exc
+        if (
+            LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_FCNTL
+            and not self._holds_current_lock_file()
+        ):
+            # the previous holder removed the file we locked; retry. Windows
+            # cannot delete an open file, so the race does not exist there
+            self._unlock()
+            raise LockFileExists
         return True
+
+    def _holds_current_lock_file(self):
+        try:
+            return os.path.samestat(
+                os.fstat(self._fp.fileno()), os.stat(self._lock_path)
+            )
+        except FileNotFoundError:
+            return False
 
     def _unlock(self):
         if not self._fp:
@@ -100,7 +116,19 @@ class LockFile:
         raise LockFileTimeoutError()
 
     def release(self):
-        self._unlock()
+        if not self._fp:
+            return  # never acquired: the lock file may belong to another owner
+        if LOCKFILE_CURRENT_INTERFACE == LOCKFILE_INTERFACE_FCNTL:
+            # unlink while still holding the lock, so a waiter that opened this
+            # file fails the samestat() check in _lock() and retries
+            self._remove_lock_path()
+            self._unlock()
+        else:
+            # Windows cannot delete a file that is still open
+            self._unlock()
+            self._remove_lock_path()
+
+    def _remove_lock_path(self):
         if os.path.exists(self._lock_path):
             try:
                 os.remove(self._lock_path)

@@ -13,12 +13,15 @@
 # limitations under the License.
 
 import time
+from typing import Optional
 
 import click
 
 from platformio import util
+from platformio.package.download import ArtifactVerificationError
 from platformio.package.exception import IncompatiblePackageError, UnknownPackageError
-from platformio.package.meta import PackageSpec, PackageType
+from platformio.package.manager._download import TrustedArtifact
+from platformio.package.meta import PackageItem, PackageSpec, PackageType
 from platformio.package.version import cast_version_to_semver
 from platformio.registry.client import RegistryClient
 from platformio.registry.mirror import RegistryFileMirrorIterator
@@ -49,26 +52,72 @@ class PackageManagerRegistryMixin:
                 raise IncompatiblePackageError(spec.humanize(), util.get_systype())
             raise UnknownPackageError(spec.humanize())
 
-        for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
+        # the registry API's SHA256 is the canonical artifact identity
+        try:
+            artifact = TrustedArtifact(
+                pkgfile["checksum"]["sha256"], pkgfile.get("size")
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            self.log.warning(
+                click.style(
+                    "Warning! Invalid registry checksum metadata: %s" % exc,
+                    fg="yellow",
+                )
+            )
+            return None
+        pkg_spec = PackageSpec(
+            owner=package["owner"]["username"], id=package["id"], name=package["name"]
+        )
+        pkg, resumed_failures = self._install_from_mirrors(pkgfile, pkg_spec, artifact)
+        if pkg is not None:
+            return pkg
+        # a mirror that failed verification on resumed partial data never had a
+        # clean attempt; give each such mirror exactly one. Interrupted mirrors
+        # are not retried: the partial is kept for the next install.
+        for url in resumed_failures:
+            self.log.warning(
+                click.style("Retrying %s without partial data..." % url, fg="yellow")
+            )
             try:
                 return self.install_from_uri(
-                    url,
-                    PackageSpec(
-                        owner=package["owner"]["username"],
-                        id=package["id"],
-                        name=package["name"],
-                    ),
-                    checksum or pkgfile["checksum"]["sha256"],
+                    url, pkg_spec, artifact, resume_partial=False
                 )
             except Exception as exc:  # pylint: disable=broad-except
-                self.log.warning(
-                    click.style("Warning! Package Mirror: %s" % exc, fg="yellow")
-                )
-                self.log.warning(
-                    click.style("Looking for another mirror...", fg="yellow")
-                )
-
+                self._log_mirror_failure(exc)
         return None
+
+    def _install_from_mirrors(
+        self, pkgfile: dict, spec: PackageSpec, artifact: TrustedArtifact
+    ) -> tuple[Optional[PackageItem], list[str]]:
+        """A single pass over the approved mirrors.
+
+        Return the installed package (or None) and the URLs of mirrors that
+        failed verification on resumed partial data.
+        """
+        resumed_failures: list[str] = []
+        for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
+            if checksum and checksum.lower() != artifact.sha256:
+                self.log.warning(
+                    click.style(
+                        "Warning! Package Mirror: skipping %s, its SHA256 "
+                        "does not match the registry" % url,
+                        fg="yellow",
+                    )
+                )
+                continue
+            try:
+                return self.install_from_uri(url, spec, artifact), resumed_failures
+            except ArtifactVerificationError as exc:
+                if exc.resumed:
+                    resumed_failures.append(url)
+                self._log_mirror_failure(exc)
+            except Exception as exc:  # pylint: disable=broad-except
+                self._log_mirror_failure(exc)
+        return None, resumed_failures
+
+    def _log_mirror_failure(self, exc: Exception) -> None:
+        self.log.warning(click.style("Warning! Package Mirror: %s" % exc, fg="yellow"))
+        self.log.warning(click.style("Looking for another mirror...", fg="yellow"))
 
     def get_registry_client_instance(self):
         if not self._registry_client:
