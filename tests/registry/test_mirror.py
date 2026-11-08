@@ -178,3 +178,84 @@ def test_head_response_caches_mirror_header(
     cached = json.loads(fake_cache._store[ContentCache.key_from_args("head", url, [])])
     assert cached["X-PIO-Mirror"] == "mirror-a"
     assert cached["Location"] == "https://mirror-a.example.com/tool.tar.gz"
+
+
+def _redirect(mirror_id: str) -> _FakeResponse:
+    return _FakeResponse(
+        302,
+        {
+            "Location": "https://%s.example.com/tool.tar.gz" % mirror_id,
+            "X-PIO-Mirror": mirror_id,
+            "X-PIO-Content-SHA256": mirror_id * 3,
+        },
+    )
+
+
+def test_mirror_id_is_exposed(
+    fake_cache: Type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    url = "https://dl.example.com/packages/tool.tar.gz"
+    fake_cache._store[ContentCache.key_from_args("head", url, [])] = json.dumps(
+        {
+            "Location": "https://mirror-a.example.com/tool.tar.gz",
+            "X-PIO-Content-SHA256": "aaa",
+            "X-PIO-Mirror": "mirror-a",
+        }
+    )
+    _install_fake_http(monkeypatch, [_redirect("mirror-b")])
+
+    iterator = RegistryFileMirrorIterator(url)
+    assert iterator.mirror is None
+    next(iterator)
+    assert iterator.mirror == "mirror-a"  # from the cached result
+    next(iterator)
+    assert iterator.mirror == "mirror-b"  # from the live result
+
+
+def test_resume_offset_is_sent_and_bypasses_cache(
+    fake_cache: Type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    url = "https://dl.example.com/packages/tool.tar.gz"
+    key = ContentCache.key_from_args("head", url, [])
+    fake_cache._store[key] = json.dumps(
+        {
+            "Location": "https://mirror-a.example.com/tool.tar.gz",
+            "X-PIO-Content-SHA256": "aaa",
+            "X-PIO-Mirror": "mirror-a",
+        }
+    )
+    http_client = _install_fake_http(
+        monkeypatch, [_redirect("mirror-b"), _redirect("mirror-c")]
+    )
+    offsets = iter([1024, 2048])
+
+    iterator = RegistryFileMirrorIterator(url, get_resume_offset=lambda: next(offsets))
+    # the registry must see the resume, so the cached redirect is not used
+    assert next(iterator)[0] == "https://mirror-b.example.com/tool.tar.gz"
+    # the offset is read again for every mirror lookup
+    assert next(iterator)[0] == "https://mirror-c.example.com/tool.tar.gz"
+    assert [kwargs["params"] for _, _, kwargs in http_client.requests] == [
+        {"resume": 1024},
+        {"bypass": "mirror-b", "resume": 2048},
+    ]
+    # the fresh result is cached as usual
+    assert json.loads(fake_cache._store[key])["X-PIO-Mirror"] == "mirror-b"
+
+
+def test_no_resume_offset_keeps_request_unchanged(
+    fake_cache: Type[_FakeContentCache], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    url = "https://dl.example.com/packages/tool.tar.gz"
+    fake_cache._store[ContentCache.key_from_args("head", url, [])] = json.dumps(
+        {
+            "Location": "https://mirror-a.example.com/tool.tar.gz",
+            "X-PIO-Content-SHA256": "aaa",
+            "X-PIO-Mirror": "mirror-a",
+        }
+    )
+    http_client = _install_fake_http(monkeypatch, [_redirect("mirror-b")])
+
+    iterator = RegistryFileMirrorIterator(url, get_resume_offset=lambda: 0)
+    assert next(iterator)[0] == "https://mirror-a.example.com/tool.tar.gz"
+    next(iterator)
+    assert http_client.requests[-1][2]["params"] == {"bypass": "mirror-a"}

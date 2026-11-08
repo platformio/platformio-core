@@ -24,8 +24,9 @@ from random import random
 from typing import Optional
 
 import pytest
+import requests
 
-from platformio import fs
+from platformio import app, fs, telemetry
 from platformio.package.download import (
     ArtifactVerificationError,
     ResponseValidationError,
@@ -33,7 +34,7 @@ from platformio.package.download import (
 )
 from platformio.package.lockfile import LockFile
 from platformio.package.manager import _download, _registry
-from platformio.package.manager._download import TrustedArtifact
+from platformio.package.manager._download import DownloadAttempt, TrustedArtifact
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 
@@ -43,6 +44,19 @@ DATA = os.urandom(150 * 1024)
 SHA256 = hashlib.sha256(DATA).hexdigest()
 ETAG = '"v1"'
 CUT = 50 * 1024
+REAL_LOG_EVENT = telemetry.log_event
+
+
+@pytest.fixture(autouse=True)
+def events(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, dict]]:
+    """Capture telemetry events; tests never send real ones."""
+    logged: list[tuple[str, dict]] = []
+    monkeypatch.setattr(
+        telemetry,
+        "log_event",
+        lambda name, params, instant_sending=False: logged.append((name, params)),
+    )
+    return logged
 
 
 @pytest.fixture
@@ -564,14 +578,31 @@ def test_concurrent_downloads_share_one_transfer(
 #
 
 
+class FakeMirrors:
+    """Stands in for RegistryFileMirrorIterator: mirror N is `mirror-<abc...>`."""
+
+    def __init__(self, mirrors, download_url, get_resume_offset=None) -> None:
+        self.mirrors = list(mirrors)
+        self.download_url = download_url
+        self.get_resume_offset = get_resume_offset
+        self.offsets: list[int] = []
+        self.mirror: Optional[str] = None
+
+    def __iter__(self):
+        for index, (url, checksum) in enumerate(self.mirrors):
+            self.offsets.append(self.get_resume_offset())
+            self.mirror = "mirror-" + "abcdefgh"[index]
+            yield url, checksum
+
+
 def _patch_registry(
     pm: ToolPackageManager,
     monkeypatch: pytest.MonkeyPatch,
     mirrors: list[tuple[str, Optional[str]]],
     install_from_uri,
-) -> list[str]:
-    """Return a log of mirror iterator constructions (one per registry lookup)."""
-    iterators: list[str] = []
+) -> list[FakeMirrors]:
+    """Return the mirror iterators created (one per registry lookup)."""
+    iterators: list[FakeMirrors] = []
     pkgfile = {
         "download_url": "https://dl.example.com/t.tar.gz",
         "checksum": {"sha256": SHA256},
@@ -579,9 +610,9 @@ def _patch_registry(
     }
     package = {"id": 1, "name": "t", "owner": {"username": "o"}, "versions": []}
 
-    def mirror_iterator(download_url: str):
-        iterators.append(download_url)
-        return iter(list(mirrors))
+    def mirror_iterator(download_url: str, get_resume_offset=None):
+        iterators.append(FakeMirrors(mirrors, download_url, get_resume_offset))
+        return iterators[-1]
 
     monkeypatch.setattr(_registry, "RegistryFileMirrorIterator", mirror_iterator)
     monkeypatch.setattr(pm, "fetch_registry_package", lambda _: package)
@@ -604,7 +635,7 @@ def test_registry_retries_only_resumed_failures_clean(
 ) -> None:
     calls: list[tuple[str, bool]] = []
 
-    def install_from_uri(url, spec, artifact, resume_partial=True):
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
         calls.append((url, resume_partial))
         if not resume_partial:
             return "installed"
@@ -622,7 +653,7 @@ def test_registry_clean_retries_stop_after_one_attempt_each(
 ) -> None:
     calls: list[tuple[str, bool]] = []
 
-    def install_from_uri(url, spec, artifact, resume_partial=True):
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
         calls.append((url, resume_partial))
         if url == C:
             raise TransferInterruptedError("network")
@@ -640,7 +671,7 @@ def test_registry_no_clean_pass_without_resumed_failure(
 ) -> None:
     calls: list[str] = []
 
-    def install_from_uri(url, spec, artifact, resume_partial=True):
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
         calls.append(url)
         raise ArtifactVerificationError("bad mirror", resumed=False)
 
@@ -679,22 +710,278 @@ def test_registry_skips_mirror_with_other_sha256(
         ("https://mirror-a.example.com/t.tar.gz", "f" * 64),
         ("https://mirror-b.example.com/t.tar.gz", SHA256.upper()),
     ]
-    pkgfile = {
-        "download_url": "https://dl.example.com/t.tar.gz",
-        "checksum": {"sha256": SHA256},
-        "size": len(DATA),
-    }
-    package = {"id": 1, "name": "t", "owner": {"username": "o"}, "versions": []}
     calls: list[tuple[str, TrustedArtifact]] = []
-    monkeypatch.setattr(_registry, "RegistryFileMirrorIterator", lambda _: mirrors)
-    monkeypatch.setattr(pm, "fetch_registry_package", lambda _: package)
-    monkeypatch.setattr(pm, "pick_best_registry_version", lambda *_: {"files": []})
-    monkeypatch.setattr(pm, "pick_compatible_pkg_file", lambda _: pkgfile)
-    monkeypatch.setattr(
+    _patch_registry(
         pm,
-        "install_from_uri",
-        lambda url, spec, artifact, resume_partial=True: calls.append((url, artifact))
-        or "installed",
+        monkeypatch,
+        mirrors,
+        lambda url, spec, artifact, **_: calls.append((url, artifact)) or "installed",
     )
     assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
     assert calls == [(mirrors[1][0], TrustedArtifact(SHA256, len(DATA)))]
+
+
+#
+# Download telemetry and the registry resume hint
+#
+
+EVENT_PARAMS = {
+    "outcome",
+    "sha256",
+    "total",
+    "mirror",
+    "host",
+    "pass",
+    "attempt",
+    "range_sent",
+    "status",
+    "offset",
+    "received",
+    "ttfb",
+    "transfer_time",
+    "speed",
+    "duration",
+    "error",
+    "error_cause",
+    "proxy",
+    "ci",
+}
+
+
+def transfer(attempt: DownloadAttempt, **fields) -> None:
+    """Simulate what download() records for one transfer."""
+    attempt.transferred = True
+    for name, value in fields.items():
+        setattr(attempt, name, value)
+
+
+def test_attempt_records_interrupted_and_resumed_transfer(
+    pm: ToolPackageManager, http_server: TestServer
+) -> None:
+    http_server.routes["/a"] = Resource(DATA, cuts=[CUT])
+    first = DownloadAttempt()
+    with pytest.raises(TransferInterruptedError):
+        pm.download(http_server.url("/a"), artifact(), attempt=first)
+    assert first.transferred and not first.completed
+    assert first.status == 200 and first.received == CUT
+    assert not first.range_sent and not first.offset
+    assert first.host == "127.0.0.1"
+    assert first.duration >= first.ttfb >= 0 and first.transfer_time >= 0
+
+    second = DownloadAttempt()
+    pm.download(http_server.url("/a"), artifact(), attempt=second)
+    assert second.transferred and second.completed
+    assert second.range_sent and second.status == 206 and second.offset == CUT
+    assert second.received == len(DATA) - CUT
+
+    # a cache hit transfers nothing
+    third = DownloadAttempt()
+    pm.download(http_server.url("/a"), artifact(), attempt=third)
+    assert third == DownloadAttempt()
+
+
+def test_attempt_records_ignored_range(
+    pm: ToolPackageManager, http_server: TestServer
+) -> None:
+    http_server.routes["/a"] = Resource(DATA, accept_ranges=False, cuts=[CUT])
+    with pytest.raises(TransferInterruptedError):
+        pm.download(http_server.url("/a"), artifact())
+    attempt = DownloadAttempt()
+    pm.download(http_server.url("/a"), artifact(), attempt=attempt)
+    assert (attempt.range_sent, attempt.status, attempt.offset) == (True, 200, 0)
+    assert attempt.received == len(DATA)
+
+
+def test_attempt_records_rejected_status(
+    pm: ToolPackageManager, http_server: TestServer
+) -> None:
+    attempt = DownloadAttempt()
+    with pytest.raises(ResponseValidationError) as exc_info:
+        pm.download(http_server.url("/missing"), artifact(), attempt=attempt)
+    assert exc_info.value.status_code == 404
+    assert attempt.transferred and attempt.status == 404
+
+
+def test_resume_offset_of_partial(
+    pm: ToolPackageManager, http_server: TestServer
+) -> None:
+    assert pm.get_resume_offset(artifact()) == 0
+    http_server.routes["/a"] = Resource(DATA, cuts=[CUT])
+    with pytest.raises(TransferInterruptedError):
+        pm.download(http_server.url("/a"), artifact())
+    assert pm.get_resume_offset(artifact()) == CUT
+    assert pm.get_resume_offset(artifact(sha256="0" * 64)) == 0
+    assert pm.get_resume_offset(artifact(size=CUT - 1)) == 0
+    # read-only: an unusable partial reports 0 and is left for download()
+    part, state = partial_paths(pm, SHA256)
+    with open(state, "w", encoding="utf8") as fp:
+        fp.write("{")
+    assert pm.get_resume_offset(artifact()) == 0
+    assert os.path.isfile(part) and os.path.isfile(state)
+
+
+def test_registry_logs_event_per_attempt(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch, events
+) -> None:
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        if url == A:
+            transfer(attempt, status=200, received=CUT, transfer_time=0.5)
+            try:
+                raise requests.ReadTimeout("slow")
+            except requests.ReadTimeout as exc:
+                raise TransferInterruptedError("interrupted") from exc
+        transfer(
+            attempt,
+            range_sent=True,
+            status=206,
+            offset=CUT,
+            received=len(DATA) - CUT,
+            completed=True,
+        )
+        return "installed"
+
+    _patch_registry(pm, monkeypatch, MIRRORS, install_from_uri)
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+    assert [name for name, _ in events] == ["pkg_download"] * 2
+    first, second = (params for _, params in events)
+    assert set(first) == EVENT_PARAMS and set(second) == EVENT_PARAMS
+    assert {k: first[k] for k in EVENT_PARAMS - {"proxy", "ci"}} == {
+        "outcome": "interrupted",
+        "sha256": SHA256,
+        "total": len(DATA),
+        "mirror": "mirror-a",
+        "host": "",
+        "pass": "main",
+        "attempt": 1,
+        "range_sent": False,
+        "status": 200,
+        "offset": 0,
+        "received": CUT,
+        "ttfb": 0,
+        "transfer_time": 0.5,
+        "speed": CUT * 2,
+        "duration": 0,
+        "error": "TransferInterruptedError",
+        "error_cause": "ReadTimeout",
+    }
+    assert second["outcome"] == "completed" and second["error"] == ""
+    assert second["mirror"] == "mirror-b" and second["attempt"] == 2
+    assert second["range_sent"] and second["offset"] == CUT
+    for _, params in events:
+        assert not any("://" in str(v) or "t.tar.gz" in str(v) for v in params.values())
+
+
+def test_registry_logs_skipped_and_clean_pass(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch, events
+) -> None:
+    mirrors = [(A, "f" * 64), (B, None)]
+
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        transfer(attempt, status=206 if resume_partial else 200)
+        if resume_partial:
+            raise ArtifactVerificationError("mismatch", resumed=True)
+        transfer(attempt, completed=True)
+        return "installed"
+
+    _patch_registry(pm, monkeypatch, mirrors, install_from_uri)
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+    assert [
+        (p["outcome"], p["mirror"], p["pass"], p["attempt"], p["status"])
+        for _, p in events
+    ] == [
+        ("skipped", "mirror-a", "main", 1, 0),
+        ("verification_failed", "mirror-b", "main", 2, 206),
+        ("completed", "mirror-b", "clean", 3, 200),
+    ]
+
+
+def test_registry_logs_no_event_for_cache_hit(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch, events
+) -> None:
+    _patch_registry(pm, monkeypatch, MIRRORS, lambda *_, **__: "installed")
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+    assert not events
+
+
+def test_registry_completed_outcome_survives_install_failure(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch, events
+) -> None:
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        if url == A:
+            transfer(attempt, status=200, completed=True)
+            raise RuntimeError("cannot unpack")
+        return "installed"  # the artifact is in the download cache now
+
+    _patch_registry(pm, monkeypatch, MIRRORS, install_from_uri)
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+    assert [(p["outcome"], p["error"]) for _, p in events] == [("completed", "")]
+
+
+def test_registry_logs_cancelled_download(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch, events
+) -> None:
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        transfer(attempt, status=200, received=CUT)
+        raise KeyboardInterrupt
+
+    _patch_registry(pm, monkeypatch, MIRRORS, install_from_uri)
+    with pytest.raises(KeyboardInterrupt):
+        pm.install_from_registry(PackageSpec("o/t"))
+    assert [(p["outcome"], p["error"]) for _, p in events] == [
+        ("cancelled", "KeyboardInterrupt")
+    ]
+
+
+def test_registry_telemetry_failure_does_not_affect_install(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def broken_log_event(*_, **__):
+        raise RuntimeError("telemetry is broken")
+
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        transfer(attempt, status=200, completed=True)
+        return "installed"
+
+    monkeypatch.setattr(telemetry, "log_event", broken_log_event)
+    _patch_registry(pm, monkeypatch, MIRRORS, install_from_uri)
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+
+
+def test_registry_respects_disabled_telemetry(
+    pm: ToolPackageManager, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def install_from_uri(url, spec, artifact, resume_partial=True, attempt=None):
+        transfer(attempt, status=200, completed=True)
+        return "installed"
+
+    monkeypatch.setattr(telemetry, "log_event", REAL_LOG_EVENT)
+    app.set_setting("enable_telemetry", False)
+    logger = telemetry.TelemetryLogger()
+    pending = len(logger.get_unsent_events())
+    _patch_registry(pm, monkeypatch, MIRRORS, install_from_uri)
+    assert pm.install_from_registry(PackageSpec("o/t")) == "installed"
+    assert len(logger.get_unsent_events()) == pending
+
+
+def test_registry_resume_end_to_end(
+    pm: ToolPackageManager,
+    monkeypatch: pytest.MonkeyPatch,
+    http_server: TestServer,
+    mirror_server: TestServer,
+    events,
+) -> None:
+    http_server.routes["/a"] = Resource(DATA, cuts=[CUT])
+    mirror_server.routes["/b"] = Resource(DATA)
+    mirrors = [(http_server.url("/a"), None), (mirror_server.url("/b"), None)]
+    iterators = _patch_registry(pm, monkeypatch, mirrors, pm.install_from_uri)
+    # the artifact downloads, but random bytes are not an installable archive
+    assert pm.install_from_registry(PackageSpec("o/t")) is None
+    # the registry lookup for the second mirror carries the resume offset
+    assert iterators[0].offsets == [0, CUT]
+    assert [
+        (p["outcome"], p["host"], p["status"], p["offset"], p["received"])
+        for _, p in events
+    ] == [
+        ("interrupted", "127.0.0.1", 200, 0, CUT),
+        ("completed", "127.0.0.1", 206, CUT, len(DATA) - CUT),
+    ]

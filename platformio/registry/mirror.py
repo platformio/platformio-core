@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+from typing import Callable, Optional
 from urllib.parse import urlparse
 
 from platformio import __registry_mirror_hosts__
@@ -25,8 +26,15 @@ from platformio.registry.client import RegistryClient
 class RegistryFileMirrorIterator:
     HTTP_CLIENT_INSTANCES = {}
 
-    def __init__(self, download_url):
+    def __init__(
+        self,
+        download_url: str,
+        get_resume_offset: Optional[Callable[[], int]] = None,
+    ) -> None:
         self.download_url = download_url
+        # bytes of the partial the client will resume from; sent as a hint
+        self.get_resume_offset = get_resume_offset
+        self.mirror: Optional[str] = None  # X-PIO-Mirror of the last result
         self._url_parts = urlparse(download_url)
         self._mirror = "%s://%s" % (self._url_parts.scheme, self._url_parts.netloc)
         self._visited_mirrors = []
@@ -38,8 +46,10 @@ class RegistryFileMirrorIterator:
         cache_key = ContentCache.key_from_args(
             "head", self.download_url, self._visited_mirrors
         )
+        resume_offset = self.get_resume_offset() if self.get_resume_offset else 0
         with ContentCache("http") as cc:
-            result = cc.get(cache_key)
+            # the registry must see a resume, so a cached result is not used
+            result = cc.get(cache_key) if not resume_offset else None
             if result is not None:
                 try:
                     headers = json.loads(result)
@@ -50,6 +60,7 @@ class RegistryFileMirrorIterator:
                     # _visited_mirrors never advances on the cache-hit path.
                     if mirror and mirror not in self._visited_mirrors:
                         self._visited_mirrors.append(mirror)
+                        self.mirror = mirror
                         return (
                             headers["Location"],
                             headers["X-PIO-Content-SHA256"],
@@ -57,16 +68,17 @@ class RegistryFileMirrorIterator:
                 except (ValueError, KeyError):
                     pass
 
+            params = {}
+            if self._visited_mirrors:
+                params["bypass"] = ",".join(self._visited_mirrors)
+            if resume_offset:
+                params["resume"] = resume_offset
             http = self.get_http_client()
             response = http.send_request(
                 "head",
                 self._url_parts.path,
                 allow_redirects=False,
-                params=(
-                    dict(bypass=",".join(self._visited_mirrors))
-                    if self._visited_mirrors
-                    else None
-                ),
+                params=params or None,
                 x_with_authorization=RegistryClient.allowed_private_packages(),
             )
             if response.status_code == 429:
@@ -82,7 +94,8 @@ class RegistryFileMirrorIterator:
             ]
             if any(stop_conditions):
                 raise StopIteration
-            self._visited_mirrors.append(response.headers.get("X-PIO-Mirror"))
+            self.mirror = response.headers.get("X-PIO-Mirror")
+            self._visited_mirrors.append(self.mirror)
             cc.set(
                 cache_key,
                 json.dumps(

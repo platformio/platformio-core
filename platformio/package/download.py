@@ -54,6 +54,10 @@ class TransferInterruptedError(DownloadError):
 class ResponseValidationError(DownloadError):
     """The response is unusable; a partial is modified only after validation."""
 
+    def __init__(self, message: str, status_code: Optional[int] = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code  # of a rejected HTTP status, if any
+
 
 class ArtifactVerificationError(DownloadError):
     """The complete file does not match the trusted size or SHA256."""
@@ -375,7 +379,8 @@ class FileDownloader:
     def _status_error(response: requests.Response) -> ResponseValidationError:
         return ResponseValidationError(
             "Got the unrecognized status code '%d' when downloaded %s"
-            % (response.status_code, response.url)
+            % (response.status_code, response.url),
+            status_code=response.status_code,
         )
 
     #

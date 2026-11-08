@@ -20,6 +20,7 @@ import re
 import time
 from dataclasses import asdict, dataclass, field
 from typing import Callable, Optional
+from urllib.parse import urlparse
 
 from platformio import app, compat, util
 from platformio.package.download import (
@@ -64,6 +65,25 @@ class TrustedArtifact:
         if self.size is not None and (not isinstance(self.size, int) or self.size < 0):
             raise ValueError("Invalid artifact size '%s'" % self.size)
         object.__setattr__(self, "sha256", sha256)
+
+
+@dataclass
+class DownloadAttempt:  # pylint: disable=too-many-instance-attributes
+    """What one ``download()`` call did, filled in as it progresses.
+
+    It stays valid when an exception escapes, e.g. for download telemetry.
+    """
+
+    transferred: bool = False  # False if the download cache had the file
+    range_sent: bool = False
+    status: int = 0  # of the accepted or the rejected response
+    host: str = ""  # of the effective URL after redirects
+    offset: int = 0  # bytes kept from earlier attempts
+    received: int = 0  # bytes received in this attempt
+    ttfb: float = 0  # seconds until the response headers were accepted
+    transfer_time: float = 0  # seconds spent receiving the body
+    duration: float = 0
+    completed: bool = False  # verified and promoted to the download cache
 
 
 @dataclass(frozen=True)
@@ -220,8 +240,12 @@ class PackageManagerDownloadMixin:
         url: str,
         artifact: Optional[TrustedArtifact] = None,
         resume_partial: bool = True,
+        attempt: Optional[DownloadAttempt] = None,
     ) -> str:
-        """``resume_partial=False`` discards any partial data and starts clean."""
+        """``resume_partial=False`` discards any partial data and starts clean.
+
+        ``attempt`` is filled in with what this call did.
+        """
         if artifact is not None and not isinstance(artifact, TrustedArtifact):
             raise TypeError(
                 "download() expects a TrustedArtifact(sha256, size), got %r"
@@ -232,7 +256,13 @@ class PackageManagerDownloadMixin:
             with LockFile(target.cache_path):
                 # another process may have completed it while we waited
                 if not os.path.isfile(target.cache_path):
-                    self._download_to_cache(url, artifact, target, resume_partial)
+                    self._download_to_cache(
+                        url,
+                        artifact,
+                        target,
+                        resume_partial,
+                        attempt if attempt is not None else DownloadAttempt(),
+                    )
         self.set_download_utime(target.cache_path)
         return target.cache_path
 
@@ -254,40 +284,59 @@ class PackageManagerDownloadMixin:
             state_path=base_path + ".json",
         )
 
-    def _download_to_cache(
+    def _download_to_cache(  # pylint: disable=too-many-arguments
         self,
         url: str,
         artifact: Optional[TrustedArtifact],
         target: DownloadTarget,
         resume_partial: bool,
+        attempt: DownloadAttempt,
     ) -> None:
         state = None
         if resume_partial:
             state = self._load_partial_state(url, artifact, target)
         else:
             self._discard_partial(target)
+        resume = self._make_resume_point(state, artifact, target)
         downloader = FileDownloader(url)
         info: Optional[ResponseInfo] = None
         sha256 = hashlib.sha256()
+
+        def on_chunk(chunk: bytes) -> None:
+            attempt.received += len(chunk)
+            if artifact:
+                sha256.update(chunk)
+
+        attempt.transferred, attempt.range_sent = True, resume is not None
+        started = time.monotonic()
         try:
             with downloader.open(
                 target.partial_path,
-                self._make_resume_point(state, artifact, target),
+                resume,
                 expected_size=artifact.size if artifact else None,
                 caller_verifies=artifact is not None,
             ) as info:
+                attempt.ttfb = time.monotonic() - started
+                attempt.status, attempt.offset = info.status, info.offset
+                attempt.host = urlparse(info.effective_url).hostname or ""
                 self._persist_partial_state(url, artifact, target, state, info)
                 if artifact and info.offset:
                     # hash the kept bytes once; new bytes are hashed in flight
                     self._hash_file_prefix(
                         sha256.update, target.partial_path, info.offset
                     )
-                downloader.receive(
-                    with_progress=not app.is_disabled_progressbar(),
-                    silent=not self.log.isEnabledFor(logging.INFO),
-                    on_chunk=sha256.update if artifact else None,
-                )
+                receiving = time.monotonic()
+                try:
+                    downloader.receive(
+                        with_progress=not app.is_disabled_progressbar(),
+                        silent=not self.log.isEnabledFor(logging.INFO),
+                        on_chunk=on_chunk,
+                    )
+                finally:
+                    attempt.transfer_time = time.monotonic() - receiving
         except DownloadError as exc:
+            # the status of a rejected response, which ``info`` never holds
+            attempt.status = getattr(exc, "status_code", None) or attempt.status
             # keep valid partial data for a caller-driven retry; a response
             # rejected after the partial was opened may have modified it
             if info is not None and (
@@ -295,18 +344,43 @@ class PackageManagerDownloadMixin:
             ):
                 self._discard_partial(target)
             raise
+        finally:
+            attempt.duration = time.monotonic() - started
         if artifact:
             self._verify_artifact(
                 artifact, target, sha256.hexdigest(), resumed=info.offset > 0
             )
         os.replace(target.partial_path, target.cache_path)
         self._discard_partial(target)
+        attempt.completed = True
+
+    def get_resume_offset(self, artifact: TrustedArtifact) -> int:
+        """Size of the artifact's partial that ``download()`` would resume.
+
+        Read-only and without the lock, so it is only a hint (e.g. for the
+        registry); 0 if there is nothing to resume.
+        """
+        target = self._resolve_download_target("", artifact)
+        try:
+            if self._find_reusable_partial("", artifact, target) is None:
+                return 0
+            return os.path.getsize(target.partial_path)
+        except OSError:
+            return 0  # removed or replaced by a concurrent download
 
     def _load_partial_state(
         self, url: str, artifact: Optional[TrustedArtifact], target: DownloadTarget
     ) -> Optional[PartialState]:
-        if not os.path.isfile(target.partial_path):
+        state = self._find_reusable_partial(url, artifact, target)
+        if state is None:
             self._discard_partial(target)
+        return state
+
+    def _find_reusable_partial(
+        self, url: str, artifact: Optional[TrustedArtifact], target: DownloadTarget
+    ) -> Optional[PartialState]:
+        """The state of a partial that may be resumed; no side effects."""
+        if not os.path.isfile(target.partial_path):
             return None
         size = os.path.getsize(target.partial_path)
         state = PartialState.load(target.state_path)
@@ -316,7 +390,6 @@ class PackageManagerDownloadMixin:
             or state.mode != target.mode
             or state.key != target.key
         ):
-            self._discard_partial(target)
             return None
         known_total = self._known_total_size(artifact, state)
         reusable = (
@@ -324,10 +397,7 @@ class PackageManagerDownloadMixin:
             and all(s.start <= size for s in state.segments)
             and (artifact is not None or (state.url == url and state.validator()))
         )
-        if not reusable:
-            self._discard_partial(target)
-            return None
-        return state
+        return state if reusable else None
 
     def _make_resume_point(
         self,

@@ -12,15 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import itertools
 import time
-from typing import Optional
+from typing import Iterator, Optional
 
 import click
 
-from platformio import util
-from platformio.package.download import ArtifactVerificationError
+from platformio import proc, telemetry, util
+from platformio.compat import is_proxy_set
+from platformio.package.download import (
+    ArtifactVerificationError,
+    ResponseValidationError,
+    TransferInterruptedError,
+)
 from platformio.package.exception import IncompatiblePackageError, UnknownPackageError
-from platformio.package.manager._download import TrustedArtifact
+from platformio.package.manager._download import DownloadAttempt, TrustedArtifact
 from platformio.package.meta import PackageItem, PackageSpec, PackageType
 from platformio.package.version import cast_version_to_semver
 from platformio.registry.client import RegistryClient
@@ -68,34 +74,54 @@ class PackageManagerRegistryMixin:
         pkg_spec = PackageSpec(
             owner=package["owner"]["username"], id=package["id"], name=package["name"]
         )
-        pkg, resumed_failures = self._install_from_mirrors(pkgfile, pkg_spec, artifact)
+        attempts = itertools.count(1)
+        pkg, resumed_failures = self._install_from_mirrors(
+            pkgfile, pkg_spec, artifact, attempts
+        )
         if pkg is not None:
             return pkg
         # a mirror that failed verification on resumed partial data never had a
         # clean attempt; give each such mirror exactly one. Interrupted mirrors
         # are not retried: the partial is kept for the next install.
-        for url in resumed_failures:
+        for url, mirror in resumed_failures:
             self.log.warning(
                 click.style("Retrying %s without partial data..." % url, fg="yellow")
             )
             try:
-                return self.install_from_uri(
-                    url, pkg_spec, artifact, resume_partial=False
+                return self._install_from_mirror(
+                    url,
+                    pkg_spec,
+                    artifact,
+                    {"mirror": mirror, "pass": "clean", "attempt": next(attempts)},
+                    resume_partial=False,
                 )
             except Exception as exc:  # pylint: disable=broad-except
                 self._log_mirror_failure(exc)
         return None
 
     def _install_from_mirrors(
-        self, pkgfile: dict, spec: PackageSpec, artifact: TrustedArtifact
-    ) -> tuple[Optional[PackageItem], list[str]]:
+        self,
+        pkgfile: dict,
+        spec: PackageSpec,
+        artifact: TrustedArtifact,
+        attempts: Iterator[int],
+    ) -> tuple[Optional[PackageItem], list[tuple[str, str]]]:
         """A single pass over the approved mirrors.
 
-        Return the installed package (or None) and the URLs of mirrors that
-        failed verification on resumed partial data.
+        Return the installed package (or None) and the (URL, mirror id) of
+        mirrors that failed verification on resumed partial data.
         """
-        resumed_failures: list[str] = []
-        for url, checksum in RegistryFileMirrorIterator(pkgfile["download_url"]):
+        resumed_failures: list[tuple[str, str]] = []
+        mirrors = RegistryFileMirrorIterator(
+            pkgfile["download_url"],
+            get_resume_offset=lambda: self.get_resume_offset(artifact),
+        )
+        for url, checksum in mirrors:
+            context = {
+                "mirror": mirrors.mirror or "",
+                "pass": "main",
+                "attempt": next(attempts),
+            }
             if checksum and checksum.lower() != artifact.sha256:
                 self.log.warning(
                     click.style(
@@ -104,16 +130,87 @@ class PackageManagerRegistryMixin:
                         fg="yellow",
                     )
                 )
+                self._log_download_event(
+                    "skipped", artifact, DownloadAttempt(), context
+                )
                 continue
             try:
-                return self.install_from_uri(url, spec, artifact), resumed_failures
+                return (
+                    self._install_from_mirror(url, spec, artifact, context),
+                    resumed_failures,
+                )
             except ArtifactVerificationError as exc:
                 if exc.resumed:
-                    resumed_failures.append(url)
+                    resumed_failures.append((url, context["mirror"]))
                 self._log_mirror_failure(exc)
             except Exception as exc:  # pylint: disable=broad-except
                 self._log_mirror_failure(exc)
         return None, resumed_failures
+
+    def _install_from_mirror(  # pylint: disable=too-many-arguments
+        self,
+        url: str,
+        spec: PackageSpec,
+        artifact: TrustedArtifact,
+        context: dict,
+        resume_partial: bool = True,
+    ) -> Optional[PackageItem]:
+        """One mirror attempt, reported as a ``pkg_download`` event."""
+        attempt = DownloadAttempt()
+        try:
+            pkg = self.install_from_uri(
+                url, spec, artifact, resume_partial=resume_partial, attempt=attempt
+            )
+        except BaseException as exc:
+            if attempt.transferred:  # nothing to report for a cache hit
+                self._log_download_event(
+                    _download_outcome(attempt, exc), artifact, attempt, context, exc
+                )
+            raise
+        if attempt.transferred:
+            self._log_download_event("completed", artifact, attempt, context)
+        return pkg
+
+    def _log_download_event(  # pylint: disable=too-many-arguments
+        self,
+        outcome: str,
+        artifact: TrustedArtifact,
+        attempt: DownloadAttempt,
+        context: dict,
+        exc: Optional[BaseException] = None,
+    ) -> None:
+        if outcome == "completed":
+            exc = None  # e.g. unpacking failed after the download completed
+        cause = exc.__cause__ if exc is not None else None
+        params = {
+            "outcome": outcome,
+            "sha256": artifact.sha256,
+            "total": artifact.size or 0,
+            "mirror": context["mirror"],
+            "host": attempt.host,
+            "pass": context["pass"],
+            "attempt": context["attempt"],
+            "range_sent": attempt.range_sent,
+            "status": attempt.status,
+            "offset": attempt.offset,
+            "received": attempt.received,
+            "ttfb": round(attempt.ttfb, 2),
+            "transfer_time": round(attempt.transfer_time, 2),
+            "speed": (
+                int(attempt.received / attempt.transfer_time)
+                if attempt.transfer_time > 0
+                else 0
+            ),
+            "duration": round(attempt.duration, 2),
+            "error": type(exc).__name__ if exc is not None else "",
+            "error_cause": type(cause).__name__ if cause is not None else "",
+            "proxy": is_proxy_set(),
+            "ci": proc.is_ci(),
+        }
+        try:
+            telemetry.log_event("pkg_download", params)
+        except Exception:  # pylint: disable=broad-except
+            pass  # telemetry must never change the install
 
     def _log_mirror_failure(self, exc: Exception) -> None:
         self.log.warning(click.style("Warning! Package Mirror: %s" % exc, fg="yellow"))
@@ -247,3 +344,17 @@ class PackageManagerRegistryMixin:
             ):
                 return item
         return None
+
+
+def _download_outcome(attempt: DownloadAttempt, exc: BaseException) -> str:
+    if attempt.completed:
+        return "completed"
+    for cls, outcome in (
+        (TransferInterruptedError, "interrupted"),
+        (ResponseValidationError, "rejected"),
+        (ArtifactVerificationError, "verification_failed"),
+        (KeyboardInterrupt, "cancelled"),
+    ):
+        if isinstance(exc, cls):
+            return outcome
+    return "error"
