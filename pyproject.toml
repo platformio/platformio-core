@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "platformio"
+dynamic = ["version", "description", "dependencies"]
+readme = "README.rst"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "PlatformIO Labs", email = "contact@piolabs.com" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: C",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Compilers",
+]
+keywords = [
+    "iot", "embedded", "arduino", "mbed", "esp8266", "esp32", "fpga",
+    "firmware", "continuous-integration", "cloud-ide", "avr", "arm", "ide",
+    "unit-testing", "hardware", "verilog", "microcontroller", "debug",
+]
+
+[project.urls]
+Homepage = "https://platformio.org"
+
+[project.scripts]
+platformio = "platformio.__main__:main"
+pio = "platformio.__main__:main"
+piodebuggdb = "platformio.__main__:debug_gdb_main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = { attr = "platformio.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["platformio", "platformio.*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+platformio = [
+    "assets/system/99-platformio-udev.rules",
+    "project/integration/tpls/*/*.tpl",
+    "project/integration/tpls/*/.*.tpl",
+    "project/integration/tpls/*/.*/*.tpl",
+    "project/integration/tpls/*/*/*.tpl",
+    "project/integration/tpls/*/*/*/*.tpl",
+]
