@@ -13,15 +13,15 @@
 # limitations under the License.
 
 import os
-from typing import List
 
 import click
 
 from platformio import fs
+from platformio.package.graph import walk_package_dependencies
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageSpec
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
@@ -120,14 +120,8 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
             )
 
 
-def _pkg_tree_contains(pm, root: PackageItem, children: List[PackageItem]):
-    if root in children:
-        return True
-    for dependency in pm.get_pkg_dependencies(root) or []:
-        pkg = pm.get_package(pm.dependency_to_spec(dependency))
-        if pkg and _pkg_tree_contains(pm, pkg, children):
-            return True
-    return False
+def _pkg_tree_contains(pm, root, children):
+    return any(pkg in children for pkg in walk_package_dependencies(pm, root))
 
 
 def list_global_packages(options):
