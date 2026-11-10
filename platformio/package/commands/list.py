@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 
 import click
 
 from platformio import fs
 from platformio.package.graph import walk_package_dependencies
+from platformio.package.inventory import collect_project_inventory
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
@@ -48,12 +50,40 @@ from platformio.project.config import ProjectConfig
 @click.option("--only-platforms", is_flag=True, help="List only platform packages")
 @click.option("--only-tools", is_flag=True, help="List only tool packages")
 @click.option("--only-libraries", is_flag=True, help="List only library packages")
+@click.option(
+    "--json-output", is_flag=True, help="Output the project package inventory"
+)
 @click.option("-v", "--verbose", is_flag=True)
 def package_list_cmd(**options):
-    if options.get("global"):
+    if options.get("json_output"):
+        _print_project_inventory(options)
+    elif options.get("global"):
         list_global_packages(options)
     else:
         list_project_packages(options)
+
+
+def _print_project_inventory(options):
+    incompatible = (
+        "global",
+        "storage_dir",
+        "platforms",
+        "tools",
+        "libraries",
+        "only_platforms",
+        "only_tools",
+        "only_libraries",
+        "verbose",
+    )
+    for option in incompatible:
+        if options.get(option):
+            raise click.UsageError(
+                f"--json-output cannot be combined with --{option.replace('_', '-')}."
+            )
+    inventory = collect_project_inventory(
+        options["project_dir"], options["environments"]
+    )
+    click.echo(json.dumps(inventory, indent=2))
 
 
 def humanize_package(pkg, spec=None, verbose=False):
