@@ -18,24 +18,11 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 import click
-from packaging.licenses import InvalidLicenseExpression, canonicalize_license_expression
 
 from platformio import __version__, fs
 from platformio.package.inventory import collect_project_inventory
+from platformio.package.license import normalize_declared_license
 from platformio.project.config import ProjectConfig
-
-
-def _declared_license(value):
-    if not isinstance(value, str):
-        return "NOASSERTION"
-    try:
-        expression = canonicalize_license_expression(value)
-    except InvalidLicenseExpression:
-        return "NOASSERTION"
-    # Custom licenses require extracted license text, which manifests lack.
-    if "LicenseRef-" in expression:
-        return "NOASSERTION"
-    return expression
 
 
 def _package(spdx_id, name, version=None, license_expression=None):
@@ -45,7 +32,8 @@ def _package(spdx_id, name, version=None, license_expression=None):
         "downloadLocation": "NOASSERTION",
         "filesAnalyzed": False,
         "licenseConcluded": "NOASSERTION",
-        "licenseDeclared": _declared_license(license_expression),
+        "licenseDeclared": normalize_declared_license(license_expression)
+        or "NOASSERTION",
         "copyrightText": "NOASSERTION",
     }
     if version is not None:
