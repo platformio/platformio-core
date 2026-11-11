@@ -29,6 +29,7 @@ from platformio.package.version import SemanticVersionError
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.locked_install import install_locked_packages
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
 from platformio.test.helpers import TestDirNotExistsError, list_test_names
 from platformio.test.result import TestSuite
@@ -54,6 +55,9 @@ from platformio.test.runners.factory import TestRunnerFactory
     help="Prevent saving specified packages to `platformio.ini`",
 )
 @click.option("--skip-dependencies", is_flag=True, help="Skip package dependencies")
+@click.option(
+    "--locked", is_flag=True, help="Install exact project packages from platformio.lock"
+)
 @click.option("-g", "--global", is_flag=True, help="Install package globally")
 @click.option(
     "--storage-dir",
@@ -64,7 +68,24 @@ from platformio.test.runners.factory import TestRunnerFactory
 @click.option("-f", "--force", is_flag=True, help="Reinstall package if it exists")
 @click.option("-s", "--silent", is_flag=True, help="Suppress progress reporting")
 def package_install_cmd(**options):
-    if options.get("global") or options.get("storage_dir"):
+    if options.get("locked"):
+        incompatible = (
+            "global",
+            "storage_dir",
+            "platforms",
+            "tools",
+            "libraries",
+            "force",
+            "skip_dependencies",
+        )
+        if any(options.get(key) for key in incompatible):
+            raise click.UsageError(
+                "--locked requires a project install without package overrides."
+            )
+        install_locked_packages(
+            options["project_dir"], options["environments"], silent=options["silent"]
+        )
+    elif options.get("global") or options.get("storage_dir"):
         install_global_dependencies(options)
     else:
         install_project_dependencies(options)
