@@ -29,7 +29,7 @@ def _package_edges(manager, specs, parent=None):
     while pending:
         next_edges = []
         for source, spec, target in pending:
-            yield source, manager.pkg_type, spec, target
+            yield source, manager, spec, target
             if target is None or target in visited:
                 continue
             visited.add(target)
@@ -47,7 +47,7 @@ def _environment_edges(config, env):
         manager = PlatformPackageManager()
         spec = PackageSpec(platform_spec)
         package = manager.get_package(spec)
-        yield None, manager.pkg_type, spec, package
+        yield None, manager, spec, package
         if package is not None:
             platform = PlatformFactory.from_env(env)
             required = [
@@ -68,7 +68,8 @@ def _environment_edges(config, env):
 def _environment_inventory(config, env):
     packages = {}
     dependencies = []
-    for parent, kind, spec, package in _environment_edges(config, env):
+    for parent, manager, spec, package in _environment_edges(config, env):
+        kind = manager.pkg_type
         if package is not None and package not in packages:
             metadata = package.metadata
             packages[package] = {
@@ -77,6 +78,7 @@ def _environment_inventory(config, env):
                 "name": metadata.name,
                 "owner": metadata.spec.owner,
                 "version": str(metadata.version),
+                "license": manager.load_manifest(package).get("license"),
             }
         requested = spec.as_dict()
         # External sources can contain credentials or machine-specific paths.
