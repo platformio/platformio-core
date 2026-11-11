@@ -76,6 +76,7 @@ def _environment_inventory(config, env):
                 "type": kind,
                 "name": metadata.name,
                 "owner": metadata.spec.owner,
+                "registry_id": metadata.spec.id,
                 "version": str(metadata.version),
             }
         requested = spec.as_dict()
