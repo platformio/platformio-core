@@ -58,6 +58,7 @@ class PlatformioCLI(click.Group):
             [
                 args[0] == "debug" and "--interpreter" in " ".join(args),
                 args[0] == "upgrade",
+                args[:2] == ["project", "sbom"],
                 "--json-output" in args,
                 "--version" in args,
             ]
