@@ -12,16 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
-from typing import List
 
 import click
 
 from platformio import fs
+from platformio.package.graph import walk_package_dependencies
+from platformio.package.inventory import collect_project_inventory
 from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
-from platformio.package.meta import PackageItem, PackageSpec
+from platformio.package.meta import PackageSpec
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
@@ -48,12 +50,40 @@ from platformio.project.config import ProjectConfig
 @click.option("--only-platforms", is_flag=True, help="List only platform packages")
 @click.option("--only-tools", is_flag=True, help="List only tool packages")
 @click.option("--only-libraries", is_flag=True, help="List only library packages")
+@click.option(
+    "--json-output", is_flag=True, help="Output the project package inventory"
+)
 @click.option("-v", "--verbose", is_flag=True)
 def package_list_cmd(**options):
-    if options.get("global"):
+    if options.get("json_output"):
+        _print_project_inventory(options)
+    elif options.get("global"):
         list_global_packages(options)
     else:
         list_project_packages(options)
+
+
+def _print_project_inventory(options):
+    incompatible = (
+        "global",
+        "storage_dir",
+        "platforms",
+        "tools",
+        "libraries",
+        "only_platforms",
+        "only_tools",
+        "only_libraries",
+        "verbose",
+    )
+    for option in incompatible:
+        if options.get(option):
+            raise click.UsageError(
+                f"--json-output cannot be combined with --{option.replace('_', '-')}."
+            )
+    inventory = collect_project_inventory(
+        options["project_dir"], options["environments"]
+    )
+    click.echo(json.dumps(inventory, indent=2))
 
 
 def humanize_package(pkg, spec=None, verbose=False):
@@ -120,14 +150,8 @@ def print_dependency_tree(pm, specs=None, filter_specs=None, level=0, verbose=Fa
             )
 
 
-def _pkg_tree_contains(pm, root: PackageItem, children: List[PackageItem]):
-    if root in children:
-        return True
-    for dependency in pm.get_pkg_dependencies(root) or []:
-        pkg = pm.get_package(pm.dependency_to_spec(dependency))
-        if pkg and _pkg_tree_contains(pm, pkg, children):
-            return True
-    return False
+def _pkg_tree_contains(pm, root, children):
+    return any(pkg in children for pkg in walk_package_dependencies(pm, root))
 
 
 def list_global_packages(options):
