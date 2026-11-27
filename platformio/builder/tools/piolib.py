@@ -966,6 +966,10 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return self.env.get("SRC_BUILD_FLAGS") or LibBuilderBase.build_flags.fget(self)
 
     @property
+    def build_unflags(self):
+        return self.env.get("SRC_BUILD_UNFLAGS")
+
+    @property
     def dependencies(self):
         return self.env.GetProjectOption("lib_deps", [])
 

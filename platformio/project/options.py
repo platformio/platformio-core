@@ -410,6 +410,14 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="build",
+                name="build_src_unflags",
+                description="Build flags to remove from the project build environment",
+                multiple=True,
+                sysenvvar="PLATFORMIO_BUILD_SRC_UNFLAGS",
+                buildenvvar="SRC_BUILD_UNFLAGS",
+            ),
+            ConfigEnvOption(
+                group="build",
                 name="build_unflags",
                 description="A list with flags/option which should be removed",
                 multiple=True,
