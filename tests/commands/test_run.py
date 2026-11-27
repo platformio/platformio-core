@@ -40,8 +40,10 @@ extra_scripts =
     post_script.py
 lib_ldf_mode = deep+
 build_src_flags = -DI_AM_ONLY_SRC_FLAG
+build_src_unflags = -DI_AM_ONLY_LIB_FLAG
 build_flags =
     ; -DCOMMENTED_MACRO
+    -DI_AM_ONLY_LIB_FLAG
     %s ; inline comment
     """ % " ".join([f[0] for f in build_flags]))
 
@@ -65,6 +67,10 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
 
     tmpdir.mkdir("src").join("main.cpp").write("""
 #include "foo.h"
+
+#ifdef I_AM_ONLY_LIB_FLAG
+#error "I_AM_ONLY_LIB_FLAG"
+#endif
 
 #ifndef FOO
 #error "FOO"
@@ -122,6 +128,10 @@ int main() {
 void dummy(void);
     """)
     component_dir.join("component.cpp").write("""
+#ifndef I_AM_ONLY_LIB_FLAG
+#error "I_AM_ONLY_LIB_FLAG"
+#endif
+
 #ifdef I_AM_ONLY_SRC_FLAG
 #error "I_AM_ONLY_SRC_FLAG"
 #endif
