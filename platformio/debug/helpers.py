@@ -51,13 +51,11 @@ def escape_gdbmi_stream(prefix, stream):
     if not stream:
         return b"" if bytes_stream else ""
 
-    ends_nl = stream.endswith("\n")
     stream = re.sub(r"\\+", "\\\\\\\\", stream)
     stream = stream.replace('"', '\\"')
     stream = stream.replace("\n", "\\n")
     stream = '%s"%s"' % (prefix, stream)
-    if ends_nl:
-        stream += "\n"
+    stream += "\n"
 
     return stream.encode() if bytes_stream else stream
 
